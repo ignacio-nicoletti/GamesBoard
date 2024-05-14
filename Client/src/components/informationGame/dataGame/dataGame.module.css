@@ -1,0 +1,22 @@
+/* --------info partida */
+.infoPartida {
+    width: 10%;
+    height: auto;
+    background-color: orange;
+    position: absolute;
+    border: solid black 3px;
+    border-radius: 10px;
+    top: 3%;
+    left: 2%;
+    padding: 1%;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    z-index: 1;
+    font-size: 1.1rem;
+  }
+  .infoPartida p {
+    margin: 0;
+  }
+  /* --------info partida */

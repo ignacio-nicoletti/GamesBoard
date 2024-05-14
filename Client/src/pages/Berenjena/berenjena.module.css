@@ -1,0 +1,117 @@
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
+/* ---mesa--- */
+.contain {
+  /* max-width:1200px;
+  max-height:720px; */
+  width: 100%;
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: "Bebas Neue", sans-serif;
+  background-color: green; /* Color de fondo verde para imitar la mesa de póker */
+}
+
+.contain::before {
+  content: ""; /* Necesario para que el elemento pseudo sea visible */
+  position: absolute; /* Posición absoluta en relación con el contenedor */
+  width: 90%; /* Ancho del borde exterior */
+  height: 90%; /* Altura del borde exterior */
+  border: 10px solid #000; /* Borde exterior negro */
+  border-radius: 50%; /* Borde redondeado para imitar la forma de la mesa */
+  top: 5%; /* Posicionamiento para centrar el borde exterior verticalmente */
+  left: 5%; /* Posicionamiento para centrar el borde exterior horizontalmente */
+}
+
+.contain::after {
+  content: ""; /* Necesario para que el elemento pseudo sea visible */
+  position: absolute; /* Posición absoluta en relación con el contenedor */
+  width: 80%; /* Ancho del borde interior */
+  height: 80%; /* Altura del borde interior */
+  border: 10px solid #fff; /* Borde interior blanco */
+  border-radius: 50%; /* Borde redondeado para imitar la forma de la mesa */
+  top: 10%; /* Posicionamiento para centrar el borde interior verticalmente */
+  left: 10%; /* Posicionamiento para centrar el borde interior horizontalmente */
+}
+/* ---mesa--- */
+
+.CardPropias {
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  gap: 10px;
+  bottom: 2.5%;
+  left: 0;
+  width: 100%;
+  justify-content: center;
+  z-index: 1;
+}
+
+.CardPropias:hover {
+  cursor: pointer;
+}
+
+.CardPropiasApost {
+  position: absolute;
+  bottom: 20%;
+}
+
+/* alineacion de jugadores en la mesa  */
+.jugadorestres {
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+}
+
+.jugadoresdos {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  top: 30%;
+}
+
+.jugador2 {
+  position: absolute;
+  display: flex;
+  height: 100%;
+  z-index: 1;
+  align-items: center;
+  left: 2%;
+  
+}
+
+.jugador3 {
+  position: absolute;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+.jugador4 {
+  position: absolute;
+  display: flex;
+  height: 100%;
+  right: 2%;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+/* alineacion de jugadores en la mesa  */
+
+.buttonResult {
+  display: flex;
+  justify-content: end;
+  position: absolute;
+  right: 5%;
+  bottom: 5%;
+  z-index: 1;
+  cursor: pointer;
+}

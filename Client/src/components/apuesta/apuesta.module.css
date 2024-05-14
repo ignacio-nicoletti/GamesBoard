@@ -1,0 +1,41 @@
+.contain {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: absolute;
+  left: 40%;
+  background-color: orange;
+  width: 20%;
+  height: 10%;
+  padding-top: 2%;
+  padding-bottom: 2%;
+  top: 40%;
+  border-radius: 10px;
+  align-items: center;
+  z-index: 1;
+}
+
+.contain p{
+  margin:0
+}
+.contain button {
+  width: 60%;
+  height: 30%;
+  color: black;
+  border: solid black 3px;
+  border-radius: 5px;
+}
+
+.contain button:hover {
+    cursor: pointer;
+    width: 59%;
+  height: 28%;
+}
+.contain select {
+  width: 60%;
+  height: 30%;
+  color: black;
+  border: solid black 3px;
+  border-radius: 5px;
+  margin-bottom: 5%;
+}

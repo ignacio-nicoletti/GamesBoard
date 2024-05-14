@@ -1,0 +1,86 @@
+.contain {
+  width: 100%;
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: "Bebas Neue", sans-serif;
+  background-color: green; /* Color de fondo verde para imitar la mesa de póker */
+}
+
+.contain::before {
+  content: ""; /* Necesario para que el elemento pseudo sea visible */
+  position: absolute; /* Posición absoluta en relación con el contenedor */
+  width: 90%; /* Ancho del borde exterior */
+  height: 90%; /* Altura del borde exterior */
+  border: 10px solid #000; /* Borde exterior negro */
+  border-radius: 50%; /* Borde redondeado para imitar la forma de la mesa */
+  top: 5%; /* Posicionamiento para centrar el borde exterior verticalmente */
+  left: 5%; /* Posicionamiento para centrar el borde exterior horizontalmente */
+}
+
+.contain::after {
+  content: ""; /* Necesario para que el elemento pseudo sea visible */
+  position: absolute; /* Posición absoluta en relación con el contenedor */
+  width: 80%; /* Ancho del borde interior */
+  height: 80%; /* Altura del borde interior */
+  border: 10px solid #fff; /* Borde interior blanco */
+  border-radius: 50%; /* Borde redondeado para imitar la forma de la mesa */
+  top: 10%; /* Posicionamiento para centrar el borde interior verticalmente */
+  left: 10%; /* Posicionamiento para centrar el borde interior horizontalmente */
+}
+
+.info {
+  color: white;
+  margin-top: 5%;
+  margin-inline: 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  font-size: 1.2rem;
+  background-color: #000000a1;
+  z-index: 1;
+  padding: 2rem;
+  border-radius: 10px;
+}
+
+.info p {
+  padding: 8px;
+  margin: 0;
+  text-align: start;
+}
+
+.info h3 {
+  color: goldenrod;
+  text-align: center;
+  text-decoration: underline;
+}
+
+.info span {
+  color: goldenrod;
+  padding-right: 2px;
+}
+
+.linkBackMenu {
+  cursor: pointer;
+  font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+.link {
+  text-decoration: none;
+  color: goldenrod;
+}
+
+@media only screen and (max-width: 730px) {
+  .info {
+    margin-top: 0%;
+    width: 90%;
+  }
+}

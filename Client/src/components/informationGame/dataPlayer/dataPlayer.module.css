@@ -1,0 +1,18 @@
+.infoPropia {
+    width: auto;
+    height: auto;
+    padding: 1%;
+    position: absolute;
+    border: solid black 3px;
+    border-radius: 10px;
+    bottom: 2.5%;
+    background-color: orange;
+    left: 2%;
+    z-index: 1;
+    text-align: start;
+  }
+  
+  .infoPropia p {
+    margin: 0;
+  }
+  
