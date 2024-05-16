@@ -36,7 +36,6 @@ const DataPlayer = ({jugador, myPosition}) => {
           carta/s
           {' '}
         </p>
-        {/* <p>Ganadas: {jugador.cardsganadas}</p> */}
       </div>
 
     </div>
