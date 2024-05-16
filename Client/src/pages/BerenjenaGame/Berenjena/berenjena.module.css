@@ -12,29 +12,31 @@
   justify-content: center;
   align-items: center;
   font-family: "Bebas Neue", sans-serif;
-  background-color: green; /* Color de fondo verde para imitar la mesa de póker */
+  background-image: url("../../../../src/assets/fondoo.png");
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .contain::before {
   content: ""; /* Necesario para que el elemento pseudo sea visible */
   position: absolute; /* Posición absoluta en relación con el contenedor */
-  width: 90%; /* Ancho del borde exterior */
-  height: 90%; /* Altura del borde exterior */
+  width: 70%; /* Ancho del borde exterior */
+  height: 50%; /* Altura del borde exterior */
   border: 10px solid #000; /* Borde exterior negro */
-  border-radius: 50%; /* Borde redondeado para imitar la forma de la mesa */
-  top: 5%; /* Posicionamiento para centrar el borde exterior verticalmente */
-  left: 5%; /* Posicionamiento para centrar el borde exterior horizontalmente */
+  border-radius: 30%; /* Borde redondeado para imitar la forma de la mesa */
+  top: 25%; /* Posicionamiento para centrar el borde exterior verticalmente */
+  left:15%; /* Posicionamiento para centrar el borde exterior horizontalmente */
 }
 
 .contain::after {
   content: ""; /* Necesario para que el elemento pseudo sea visible */
   position: absolute; /* Posición absoluta en relación con el contenedor */
-  width: 80%; /* Ancho del borde interior */
-  height: 80%; /* Altura del borde interior */
+  width: 60%; /* Ancho del borde interior */
+  height: 40%; /* Altura del borde interior */
   border: 10px solid #fff; /* Borde interior blanco */
-  border-radius: 50%; /* Borde redondeado para imitar la forma de la mesa */
-  top: 10%; /* Posicionamiento para centrar el borde interior verticalmente */
-  left: 10%; /* Posicionamiento para centrar el borde interior horizontalmente */
+  border-radius: 30%; /* Borde redondeado para imitar la forma de la mesa */
+  top: 30%; /* Posicionamiento para centrar el borde interior verticalmente */
+  left: 20%; /* Posicionamiento para centrar el borde interior horizontalmente */
 }
 /* ---mesa--- */
 
@@ -84,7 +86,6 @@
   z-index: 1;
   align-items: center;
   left: 2%;
-  
 }
 
 .jugador3 {

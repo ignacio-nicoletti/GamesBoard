@@ -33,6 +33,8 @@ const GameBerenjena = () => {
   const [myPosition, setMyPosition] = useState (null); //base del resultado xronda
   const [sala, setSala] = useState ([]); //base del resultado xronda
 
+  const [votacion, setVotacion] = useState ([]); //base del resultado xronda
+
   const [jugador1, setJugador1] = useState ({
     username: '',
     id: 1,
@@ -89,7 +91,7 @@ const GameBerenjena = () => {
     cantUser: 4, //usuarios conectados
     vuelta: 1, //num de vuelta (4 rondas =1 vuelta)
     numeroRonda: 1, //num de ronda
-    cardPorRonda: 1, //cant de cartas que se reparten
+    cardPorRonda: 7, //cant de cartas que se reparten
     typeRound: '', //apuesta o ronda
     turnoJugadorA: 1, //1j 2j 3j 4j apuesta
     turnoJugadorR: 1, //1j 2j 3j 4j ronda
@@ -390,7 +392,7 @@ const GameBerenjena = () => {
 
   useEffect (
     () => {
-      if (sala.length === 2) {
+      if (sala.length === 1) {
         setLoader (!loader);
         mezclar (
           setJugador1,
@@ -546,6 +548,20 @@ const GameBerenjena = () => {
     [ronda.typeRound]
   );
 
+  const renderPlayerCards = player => {
+    return player.cardPersona.map ((card, index) => (
+      <Cards
+        key={index}
+        valor={card.valor}
+        palo={card.palo}
+        jugador={player}
+        setJugador={setJugador1} // Esto puede variar dependiendo del jugador
+        setRonda={setRonda}
+        ronda={ronda}
+      />
+    ));
+  };
+
   return (
     <div className={style.contain}>
       {writeName === true
@@ -563,14 +579,22 @@ const GameBerenjena = () => {
             setSala={setSala}
           />
         : <div>
-            {loader === true
+            {loader == true
               ? <Loader />
               : ronda.cantUser === 4
                   ? <div className={style.jugadorestres}>
 
-                      <div className={style.jugador2}>
+                      {/* <div className={style.jugador2}>
                         <Jugadores
-                          jugador={jugador2}
+                          jugador={
+                            myPosition === 1
+                              ? jugador2
+                              : myPosition === 2
+                                  ? jugador3
+                                  : myPosition === 3
+                                      ? jugador4
+                                      : myPosition === 4 ? jugador1 : ''
+                          }
                           setJugador={setJugador2}
                           setRonda={setRonda}
                           ronda={ronda}
@@ -591,31 +615,28 @@ const GameBerenjena = () => {
                           setRonda={setRonda}
                           ronda={ronda}
                         />
-                      </div>
+                      </div> */}
                     </div>
                   : <div className={style.jugadoresdos}>
-                      <div>
+                      {/* <div>
                         <Jugadores jugador={jugador2} />
                       </div>
                       <div>
                         <Jugadores jugador={jugador3} />
-                      </div>
+                      </div> */}
                     </div>}
             <div />
-
+            {/* cartas en el centro de la pantalla */}
             <div className={style.CardPropias}>
-              {jugador1.cardPersona.map ((card, index) => (
-                <Cards
-                  key={index}
-                  valor={card.valor}
-                  palo={card.palo}
-                  jugador={jugador1}
-                  setJugador={setJugador1}
-                  setRonda={setRonda}
-                  ronda={ronda}
-                />
-              ))}
+              {myPosition === 1
+                ? renderPlayerCards (jugador1)
+                : myPosition === 2
+                    ? renderPlayerCards (jugador2)
+                    : myPosition === 3
+                        ? renderPlayerCards (jugador3)
+                        : myPosition === 4 ? renderPlayerCards (jugador4) : ''}
             </div>
+            {/* cartas en el centro de la pantalla */}
 
             <div className={style.CardPropiasApost}>
               {jugador1.cardApostada[0].valor &&
@@ -629,7 +650,7 @@ const GameBerenjena = () => {
                 ))}
             </div>
 
-            <DataGame ronda={ronda} />
+            {/* <DataGame ronda={ronda} /> */}
             <DataPlayer
               jugador={
                 myPosition === 1

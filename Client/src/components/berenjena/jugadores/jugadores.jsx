@@ -30,6 +30,7 @@ const Jugadores = ({jugador, setJugador, setRonda, ronda}) => {
     <div className={estiloJugador}>
       <div className={styles.divJugador}>
         <p>Apuesta: {jugador.apuestaP === -1 ? '-' : jugador.apuestaP}</p>
+        <p>Ganadas: {jugador.cardsganadas === 0 ? '-' : jugador.cardsganadas}</p>
         <div>
           <img src={person} alt="persona" width={150} height={100} />
         </div>

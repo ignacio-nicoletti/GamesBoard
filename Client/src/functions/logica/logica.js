@@ -1,6 +1,5 @@
 import { socket } from "../SocketIO/sockets/sockets";
 
-
 const generarObligado = () => {
   let min = 1;
   let max = 4;
@@ -19,24 +18,24 @@ export const mezclar = (
   jugador4,
   ronda
 ) => {
-  
-  socket.emit("barajar", () => {});
+  socket.emit("barajar", ronda);
   socket.on("mezcladas", (data) => {
+    console.log(data);
     setJugador1({
       ...jugador1,
-      cardPersona: data.splice(0, ronda.cardPorRonda),
+      cardPersona: data.jugador1,
     });
     setJugador2({
       ...jugador2,
-      cardPersona: data.splice(0, ronda.cardPorRonda),
+      cardPersona: data.jugador2,
     });
     setJugador3({
       ...jugador3,
-      cardPersona: data.splice(0, ronda.cardPorRonda),
+      cardPersona: data.jugador3,
     });
     setJugador4({
       ...jugador4,
-      cardPersona: data.splice(0, ronda.cardPorRonda),
+      cardPersona: data.jugador4,
     });
   });
 };

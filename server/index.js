@@ -3,6 +3,7 @@ import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
 import { barajar, shuffle } from "./functions/functions.js";
+import { log } from "console";
 
 const app = express();
 const server = http.createServer(app);
@@ -40,10 +41,43 @@ io.on("connection", (socket) => {
 
     //----------barajar------------- 
     
-    socket.on("barajar", () => {
+   
+
+    socket.on("barajar", (ronda) => {
+     
       let baraja = barajar();
       let cartasMezcladas = shuffle(baraja);
-      io.to(`room-${roomId}`).emit("mezcladas", cartasMezcladas); // Emitir a todos los clientes en la sala
+    
+      // Enviar las cartas a cada jugador según la cantidad correspondiente a la ronda
+      if (ronda.cardPorRonda === 1) {
+        io.to(`room-${roomId}`).emit("mezcladas", {
+          jugador1: [cartasMezcladas[0]],
+          jugador2: [cartasMezcladas[1]],
+          jugador3: [cartasMezcladas[2]],
+          jugador4: [cartasMezcladas[3]],
+        });
+      } else if (ronda.cardPorRonda === 3) {
+        io.to(`room-${roomId}`).emit("mezcladas", {
+          jugador1: cartasMezcladas.slice(0, 3),
+          jugador2: cartasMezcladas.slice(3, 6),
+          jugador3: cartasMezcladas.slice(6, 9),
+          jugador4: cartasMezcladas.slice(9, 12),
+        });
+      } else if (ronda.cardPorRonda === 5) {
+        io.to(`room-${roomId}`).emit("mezcladas", {
+          jugador1: cartasMezcladas.slice(0, 5),
+          jugador2: cartasMezcladas.slice(5, 10),
+          jugador3: cartasMezcladas.slice(10, 15),
+          jugador4: cartasMezcladas.slice(15, 20),
+        });
+      } else if (ronda.cardPorRonda === 7) {
+        io.to(`room-${roomId}`).emit("mezcladas", {
+          jugador1: cartasMezcladas.slice(0, 7),
+          jugador2: cartasMezcladas.slice(7, 14),
+          jugador3: cartasMezcladas.slice(14, 21),
+          jugador4: cartasMezcladas.slice(21, 28),
+        });
+      }
     });
 
    //----------barajar------------- 
@@ -62,6 +96,10 @@ io.on("connection", (socket) => {
         io.to(`room-${roomId}`).emit("player_list", playerList);
       }
     });
+  });
+
+  socket.on("disconnect", () => {
+    console.log(`${socket.id} Desconectado del servidor`);
   });
 });
 

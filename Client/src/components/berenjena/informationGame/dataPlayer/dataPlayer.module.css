@@ -1,18 +1,29 @@
 .infoPropia {
-    width: auto;
-    height: auto;
-    padding: 1%;
-    position: absolute;
-    border: solid black 3px;
-    border-radius: 10px;
-    bottom: 2.5%;
-    background-color: orange;
-    left: 2%;
-    z-index: 1;
-    text-align: start;
-  }
-  
-  .infoPropia p {
-    margin: 0;
-  }
-  
+  width: auto;
+  height: auto;
+  position: absolute;
+  bottom: 2.5%;
+  background-color: rgba(0, 0, 0, 0.301);
+  left: 2%;
+  z-index: 1;
+  text-align: center;
+  border-radius: 10%;
+  padding: 1rem;
+  color: orange;
+  border: 2px red solid;
+  /* border: 2px greenyellow solid; */
+}
+
+.avatar svg {
+  width: 150px;
+  height: auto;
+}
+
+.apuesta {
+  margin: 0;
+  font-size: 1.2rem;
+}
+.name {
+  margin: 0;
+  font-size: 2rem;
+}

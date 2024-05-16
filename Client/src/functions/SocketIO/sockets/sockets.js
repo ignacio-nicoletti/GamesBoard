@@ -17,9 +17,9 @@ export const connectSocket = async () => {
   return socket;
 };
 
-//se desconecta del servidor
+//se desconecta de la sala
 export const disconnectRoom = () => {
-  console.log("Disconnecting socket...");
+  console.log("Disconnect from room...");
   socket.emit("disconnectRoom");
 };
 
