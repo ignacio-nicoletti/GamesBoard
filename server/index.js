@@ -2,6 +2,7 @@ import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
+import { barajar, shuffle } from "./functions/functions.js";
 
 const app = express();
 const server = http.createServer(app);
@@ -17,32 +18,50 @@ const users = [];
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);
 
-  socket.on('join_room', ({ roomId, userName }) => {
+  socket.on("join_room", ({ roomId, userName }) => {
     console.log(`User ${userName} joined room ${roomId}`);
     socket.join(`room-${roomId}`);
-    
+
     const user = { id: socket.id, name: userName };
     users.push(user);
 
     // Obtener la posición del usuario en la sala
     const position = users.length;
     // Enviar la posición del usuario de vuelta al cliente
-    socket.emit('position', position);
+    socket.emit("position", position);
 
     // Emitir la lista de jugadores actualizada a todos los clientes en la sala
-    const playerList = users.map((user, index) => ({ position: index + 1, userName: user.name }));
-    io.to(`room-${roomId}`).emit('player_list', playerList);
-  });
+    const playerList = users.map((user, index) => ({
+      position: index + 1,
+      userName: user.name,
+    }));
+    io.to(`room-${roomId}`).emit("player_list", playerList);
 
-  socket.on('disconnectRoom', () => {
-    console.log(`User  ${socket.id} Disconnected`);
-    const index = users.findIndex(user => user.id === socket.id);
-    if (index !== -1) {
-      users.splice(index, 1);
-      // Emitir la lista de jugadores actualizada a todos los clientes en la sala
-      const playerList = users.map((user, index) => ({ position: index + 1, userName: user.name }));
-      io.to(`room-${roomId}`).emit('player_list', playerList);
-    }
+
+    //----------barajar------------- 
+    
+    socket.on("barajar", () => {
+      let baraja = barajar();
+      let cartasMezcladas = shuffle(baraja);
+      io.to(`room-${roomId}`).emit("mezcladas", cartasMezcladas); // Emitir a todos los clientes en la sala
+    });
+
+   //----------barajar------------- 
+
+
+    socket.on("disconnectRoom", () => {
+      console.log(`User  ${socket.id} Disconnected`);
+      const index = users.findIndex((user) => user.id === socket.id);
+      if (index !== -1) {
+        users.splice(index, 1);
+        // Emitir la lista de jugadores actualizada a todos los clientes en la sala
+        const playerList = users.map((user, index) => ({
+          position: index + 1,
+          userName: user.name,
+        }));
+        io.to(`room-${roomId}`).emit("player_list", playerList);
+      }
+    });
   });
 });
 

@@ -1,18 +1,5 @@
-import { barajar } from "./baraja";
+import { socket } from "../SocketIO/sockets/sockets";
 
-export function shuffle(array) {
-  let currentIndex = array.length;
-  let temporaryValue, randomIndex;
-
-  while (currentIndex !== 0) {
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
-  return array;
-}
 
 const generarObligado = () => {
   let min = 1;
@@ -32,24 +19,25 @@ export const mezclar = (
   jugador4,
   ronda
 ) => {
-  let baraja = barajar();
-  let cartasMezcladas = shuffle(baraja);
-
-  setJugador1({
-    ...jugador1,
-    cardPersona: cartasMezcladas.splice(0, ronda.cardPorRonda),
-  });
-  setJugador2({
-    ...jugador2,
-    cardPersona: cartasMezcladas.splice(0, ronda.cardPorRonda),
-  });
-  setJugador3({
-    ...jugador3,
-    cardPersona: cartasMezcladas.splice(0, ronda.cardPorRonda),
-  });
-  setJugador4({
-    ...jugador4,
-    cardPersona: cartasMezcladas.splice(0, ronda.cardPorRonda),
+  
+  socket.emit("barajar", () => {});
+  socket.on("mezcladas", (data) => {
+    setJugador1({
+      ...jugador1,
+      cardPersona: data.splice(0, ronda.cardPorRonda),
+    });
+    setJugador2({
+      ...jugador2,
+      cardPersona: data.splice(0, ronda.cardPorRonda),
+    });
+    setJugador3({
+      ...jugador3,
+      cardPersona: data.splice(0, ronda.cardPorRonda),
+    });
+    setJugador4({
+      ...jugador4,
+      cardPersona: data.splice(0, ronda.cardPorRonda),
+    });
   });
 };
 

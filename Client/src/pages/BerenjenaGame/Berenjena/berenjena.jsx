@@ -546,7 +546,7 @@ const GameBerenjena = () => {
     [ronda.typeRound]
   );
 
-  console.log (sala);
+
   return (
     <div className={style.contain}>
       {writeName === true
