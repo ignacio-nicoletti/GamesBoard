@@ -1,40 +1,40 @@
 import {useEffect, useState} from 'react';
 import style from './berenjena.module.css';
-import {WriteName} from '../../components/writeName/writeName';
-import Jugadores from '../../components/jugadores/jugadores';
-import Cards from '../../components/cards/card';
-import Apuesta from '../../components/apuesta/apuesta';
-import Loader from '../../components/loader/loader';
-import DataGame from '../../components/informationGame/dataGame/dataGame';
-import DataPlayer from '../../components/informationGame/dataPlayer/dataPlayer';
-import Result from '../../components/informationGame/Results/result';
+import {WriteName} from '../../../components/berenjena/writeName/writeName';
+import Jugadores from '../../../components/berenjena/jugadores/jugadores';
+import Cards from '../../../components/berenjena/cards/card';
 
+import Loader from '../../../components/berenjena/loader/loader';
+import DataGame
+  from '../../../components/berenjena/informationGame/dataGame/dataGame';
+import DataPlayer
+  from '../../../components/berenjena/informationGame/dataPlayer/dataPlayer';
+import Result
+  from '../../../components/berenjena/informationGame/Results/result';
 
 import {
   AsignarMayor,
-  gameInit,
   mezclar,
   turno,
-} from '../../functions/logica/logica.js';
-import { io } from 'socket.io-client';
-import { connectSocket } from '../../functions/SocketIO/sockets/sockets';
-
+} from '../../../functions/logica/logica.js';
+import {
+  connectSocket,
+  disconnectRoom,
+} from '../../../functions/SocketIO/sockets/sockets';
+import {Link} from 'react-router-dom';
+import Apuesta from '../../../components/berenjena/apuesta/apuesta';
 
 const GameBerenjena = () => {
-
- 
-  
-
-
-
-  const [writeName, setWriteName] = useState (false);
+  const [writeName, setWriteName] = useState (true);
   const [loader, setLoader] = useState (false);
-  
+
   const [activo, setActivo] = useState (false); //modal del resultado
   const [Base, setBase] = useState ([]); //base del resultado xronda
+  const [myPosition, setMyPosition] = useState (null); //base del resultado xronda
+  const [sala, setSala] = useState ([]); //base del resultado xronda
 
   const [jugador1, setJugador1] = useState ({
-    username: 'a',
+    username: '',
     id: 1,
     cardPersona: [],
     apuestaP: null,
@@ -47,7 +47,7 @@ const GameBerenjena = () => {
   });
 
   const [jugador2, setJugador2] = useState ({
-    username: 'pepito',
+    username: '',
     id: 2,
     cardPersona: [],
     apuestaP: null,
@@ -384,8 +384,13 @@ const GameBerenjena = () => {
     // }
   };
 
+  useEffect (() => {
+    connectSocket ();
+  }, []);
+
   useEffect (
     () => {
+      if(sala.length===2){
       mezclar (
         setJugador1,
         jugador1,
@@ -401,10 +406,10 @@ const GameBerenjena = () => {
         setRonda ({...ronda, typeRound: 'apuesta', obligado: 4});
         setLoader (false);
       }
-      connectSocket()
+      }
     },
-    [jugador1.username]
-    );
+    [sala]
+  );
 
   useEffect (
     () => {
@@ -541,12 +546,10 @@ const GameBerenjena = () => {
     [ronda.typeRound]
   );
 
-
-
-
+  console.log (sala);
   return (
     <div className={style.contain}>
-      {writeName === false
+      {writeName === true
         ? <WriteName
             setWriteName={setWriteName}
             setJugador1={setJugador1}
@@ -557,7 +560,9 @@ const GameBerenjena = () => {
             jugador3={jugador3}
             setJugador4={setJugador4}
             jugador4={jugador4}
-         
+            setMyPosition={setMyPosition}
+            setSala={setSala}
+            sala={sala}
           />
         : <div>
             {loader === true
@@ -627,7 +632,19 @@ const GameBerenjena = () => {
             </div>
 
             <DataGame ronda={ronda} />
-            <DataPlayer jugador1={jugador1} ronda={ronda} />
+            <DataPlayer
+              jugador={
+                myPosition === 1
+                  ? jugador1
+                  : myPosition === 2
+                      ? jugador2
+                      : myPosition === 3
+                          ? jugador3
+                          : myPosition === 4 ? jugador4 : ''
+              }
+              ronda={ronda}
+              myPosition={myPosition}
+            />
 
             {ronda.typeRound === 'apuesta'
               ? <Apuesta
@@ -677,6 +694,16 @@ const GameBerenjena = () => {
                   fill="orange"
                 />
               </svg>
+              <div>
+                <Link
+                  to="/berenjena"
+                  className={style.link}
+                  onClick={() => disconnectRoom ()}
+                >
+
+                  Salir{' '}
+                </Link>
+              </div>
             </div>
 
           </div>}

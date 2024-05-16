@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './jugadores.module.css';
-import person from '../../assets/jugadores/person2.png';
-import backface from '../../assets/valores/backface.png';
+import person from '../../../assets/jugadores/person2.png';
+import backface from '../../../assets/valores/backface.png';
 import Cards from '../cards/card';
 const Jugadores = ({jugador, setJugador, setRonda, ronda}) => {
   let estiloJugador;
