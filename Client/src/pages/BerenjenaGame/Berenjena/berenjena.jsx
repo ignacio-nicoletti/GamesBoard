@@ -26,7 +26,7 @@ import Apuesta from '../../../components/berenjena/apuesta/apuesta';
 
 const GameBerenjena = () => {
   const [writeName, setWriteName] = useState (true);
-  const [loader, setLoader] = useState (false);
+  const [loader, setLoader] = useState (true);
 
   const [activo, setActivo] = useState (false); //modal del resultado
   const [Base, setBase] = useState ([]); //base del resultado xronda
@@ -390,22 +390,22 @@ const GameBerenjena = () => {
 
   useEffect (
     () => {
-      if(sala.length===2){
-      mezclar (
-        setJugador1,
-        jugador1,
-        setJugador2,
-        jugador2,
-        setJugador3,
-        jugador3,
-        setJugador4,
-        jugador4,
-        ronda
-      );
-      if (ronda.vuelta === 1 && jugador1.username !== '') {
-        setRonda ({...ronda, typeRound: 'apuesta', obligado: 4});
-        setLoader (false);
-      }
+      if (sala.length === 2) {
+        setLoader (!loader);
+        mezclar (
+          setJugador1,
+          jugador1,
+          setJugador2,
+          jugador2,
+          setJugador3,
+          jugador3,
+          setJugador4,
+          jugador4,
+          ronda
+        );
+        if (ronda.vuelta === 1 && jugador1.username !== '') {
+          setRonda ({...ronda, typeRound: 'apuesta', obligado: 4});
+        }
       }
     },
     [sala]
@@ -546,7 +546,6 @@ const GameBerenjena = () => {
     [ronda.typeRound]
   );
 
-
   return (
     <div className={style.contain}>
       {writeName === true
@@ -562,7 +561,6 @@ const GameBerenjena = () => {
             jugador4={jugador4}
             setMyPosition={setMyPosition}
             setSala={setSala}
-            sala={sala}
           />
         : <div>
             {loader === true
