@@ -1,16 +1,42 @@
-import style from "./result.module.css";
+import style from './result.module.css';
 
-const Result = ({ Base }) => {
+const Result = ({Base}) => {
+  const rows = 6;
+  const columns = 7;
+
   return (
-    <div className={style.resultContain}>
-      <div className={style.titles}>
-        <p>Ronda |</p>
-        <p>jugador 1 |</p>
-        <p>jugador 2 |</p>
-        <p>jugador 3 |</p>
-        <p>jugador 4 |</p>
-      </div>
 
+    <div className={style.tableWrapper}>
+    <table className={style.table}>
+      <thead>
+        <tr>
+          <th>Ronda</th>
+          <th>jugador1</th>
+          <th>jugador2</th>
+          <th>jugador3</th>
+          <th>jugador4</th>
+          <th>jugador5</th>
+          <th>jugador6</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        {/* {Base.map ((Base, index) => (
+          <tr key={index}>
+            <td className={style.titleCode}>{Base.vuelta}</td>
+            <td className={style.titleTable}>{Base.title}</td>
+            <td>{Base.variant}</td>
+            <td>{Base.category}</td>
+            <td>{Base.brand}</td>
+
+          </tr>
+        ))} */}
+      </tbody>
+    </table>
+  </div>
+
+    /*  
+    <div className={style.resultContain}>
       {Base.map((e, index) => (
         <div key={index} className={style.datos}>
           <div className={style.infoResult}>{e.ronda.cards}</div>
@@ -73,9 +99,8 @@ const Result = ({ Base }) => {
             )}
           </div>
         </div>
-      ))}
-    </div>
-  );
+      ))} */
+  )
 };
 
 export default Result;

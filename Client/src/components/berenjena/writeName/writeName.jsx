@@ -112,6 +112,7 @@ export const WriteName = ({
           placeholder="Nombre"
           value={userName}
           onChange={e => setUserName (e.target.value)}
+          maxLength={15}
         />
         <input
           type="number"

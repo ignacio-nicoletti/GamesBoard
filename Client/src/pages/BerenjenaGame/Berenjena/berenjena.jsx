@@ -26,10 +26,10 @@ import Apuesta from '../../../components/berenjena/apuesta/apuesta';
 
 const GameBerenjena = () => {
   const [writeName, setWriteName] = useState (true);
-  const [loader, setLoader] = useState (true);
+  const [loader, setLoader] = useState (false);
 
   const [activo, setActivo] = useState (false); //modal del resultado
-  const [Base, setBase] = useState ([]); //base del resultado xronda
+
   const [myPosition, setMyPosition] = useState (null); //base del resultado xronda
   const [sala, setSala] = useState ([]); //base del resultado xronda
 
@@ -103,6 +103,22 @@ const GameBerenjena = () => {
     ganadorRonda: null,
     cantQueTiraron: 0,
   });
+
+  const [Base, setBase] = useState ({
+    ronda: [{vuelta: 1, cards: 1}],
+    jugador1: [
+      {
+        puntos: 2,
+        cumplio: true,
+        apostadas: 2,
+      },
+    ],
+    jugador2: [],
+    jugador3: [],
+    jugador4: [],
+    jugador5: [],
+    jugador6: [],
+  }); //base del resultado xronda
 
   const setTurnoRound = () => {
     let turno = ronda.CardGanadoraxRonda[0].id;
@@ -393,7 +409,7 @@ const GameBerenjena = () => {
   useEffect (
     () => {
       if (sala.length === 1) {
-        setLoader (!loader);
+        // setLoader (!loader);
         mezclar (
           setJugador1,
           jugador1,
@@ -564,6 +580,7 @@ const GameBerenjena = () => {
 
   return (
     <div className={style.contain}>
+      <Result Base={Base} />
       {writeName === true
         ? <WriteName
             setWriteName={setWriteName}
@@ -584,8 +601,8 @@ const GameBerenjena = () => {
               : ronda.cantUser === 4
                   ? <div className={style.jugadorestres}>
 
-                      {/* <div className={style.jugador2}>
-                        <Jugadores
+                      <div className={style.jugador2}>
+                        {/* <Jugadores
                           jugador={
                             myPosition === 1
                               ? jugador2
@@ -598,9 +615,9 @@ const GameBerenjena = () => {
                           setJugador={setJugador2}
                           setRonda={setRonda}
                           ronda={ronda}
-                        />
+                        /> */}
                       </div>
-                      <div className={style.jugador3}>
+                      {/* <div className={style.jugador3}>
                         <Jugadores
                           jugador={jugador3}
                           setJugador={setJugador3}
@@ -616,6 +633,7 @@ const GameBerenjena = () => {
                           ronda={ronda}
                         />
                       </div> */}
+
                     </div>
                   : <div className={style.jugadoresdos}>
                       {/* <div>
@@ -727,7 +745,7 @@ const GameBerenjena = () => {
 
           </div>}
 
-      {activo === true ? <Result Base={Base} /> : ''}
+      {/* {activo === true ? <Result Base={Base} /> : ''} */}
     </div>
   );
 };

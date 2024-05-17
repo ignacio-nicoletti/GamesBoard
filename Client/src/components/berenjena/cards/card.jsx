@@ -1,9 +1,9 @@
 import React from 'react';
 import styles from './card.module.css';
-import basto from '../../../assets/valores/basto.png';
-import copa from '../../../assets/valores/copas.png';
-import espada from '../../../assets/valores/espada.png';
-import oro from '../../../assets/valores/oro.png';
+import basto from '../../../assets/berenjena/valores/basto.png';
+import copa from '../../../assets/berenjena/valores/copas.png';
+import espada from '../../../assets/berenjena/valores/espada.png';
+import oro from '../../../assets/berenjena/valores/oro.png';
 
 const Cards = ({jugador, setJugador, valor, palo, ronda, setRonda, border}) => {
   let imgPalo = {
