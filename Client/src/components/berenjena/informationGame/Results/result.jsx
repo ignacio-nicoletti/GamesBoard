@@ -3,39 +3,67 @@ import style from './result.module.css';
 const Result = ({Base}) => {
   const rows = 6;
   const columns = 7;
-
+  console.log (Base);
   return (
-
     <div className={style.tableWrapper}>
-    <table className={style.table}>
-      <thead>
-        <tr>
-          <th>Ronda</th>
-          <th>jugador1</th>
-          <th>jugador2</th>
-          <th>jugador3</th>
-          <th>jugador4</th>
-          <th>jugador5</th>
-          <th>jugador6</th>
-
-        </tr>
-      </thead>
-      <tbody>
-        {/* {Base.map ((Base, index) => (
-          <tr key={index}>
-            <td className={style.titleCode}>{Base.vuelta}</td>
-            <td className={style.titleTable}>{Base.title}</td>
-            <td>{Base.variant}</td>
-            <td>{Base.category}</td>
-            <td>{Base.brand}</td>
+      <table className={style.table}>
+        <thead>
+          <tr>
+            <th>Ronda</th>
+            <th>jugador1</th>
+            <th>jugador2</th>
+            <th>jugador3</th>
+            <th>jugador4</th>
+            <th>jugador5</th>
+            <th>jugador6</th>
 
           </tr>
-        ))} */}
-      </tbody>
-    </table>
-  </div>
+        </thead>
+        <tbody>
+          {Base.map ((Base, index) => (
+            <tr key={index}>
+ 
+               
+              <td className={style.titleCode}>{Base.ronda.vuelta}</td>
+              <td>
+                <td className={style.titleTable}>{Base.jugador1.ganadas}0</td>
+                <td className={style.titleTable}>{Base.jugador1.apostadas}0</td>
+                <tr>{Base.jugador1.puntaje}</tr>
+              </td>
+              <td>
+                <td className={style.titleTable}>{Base.jugador1.ganadas}0</td>
+                <td className={style.titleTable}>{Base.jugador1.apostadas}0</td>
+                <tr>{Base.jugador2.puntaje}</tr>
+              </td>
+              <td>
+                <td className={style.titleTable}>{Base.jugador1.ganadas}0</td>
+                <td className={style.titleTable}>{Base.jugador1.apostadas}0</td>
+                <tr>{Base.jugador3.puntaje}</tr>
+              </td>
+              <td>
+                <td className={style.titleTable}>{Base.jugador1.ganadas}0</td>
+                <td className={style.titleTable}>{Base.jugador1.apostadas}0</td>
+                <tr>{Base.jugador4.puntaje}</tr>
+              </td>
+              <td>
+                <td className={style.titleTable}>{Base.jugador1.ganadas}0</td>
+                <td className={style.titleTable}>{Base.jugador1.apostadas}0</td>
+                <tr>{Base.jugador5?.puntaje}</tr>
+              </td>
+              <td>
+                <td className={style.titleTable}>{Base.jugador1.ganadas}0</td>
+                <td className={style.titleTable}>{Base.jugador1.apostadas}0</td>
+                <tr>{Base.jugador6?.puntaje}</tr>
+              </td>
 
-    /*  
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+
+  /*  
     <div className={style.resultContain}>
       {Base.map((e, index) => (
         <div key={index} className={style.datos}>
@@ -100,7 +128,6 @@ const Result = ({Base}) => {
           </div>
         </div>
       ))} */
-  )
 };
 
 export default Result;

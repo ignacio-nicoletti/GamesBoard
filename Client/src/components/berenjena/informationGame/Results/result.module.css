@@ -1,13 +1,8 @@
 
-.tableContainer {
-  margin-top: 20px;
-  padding-inline: 0.5rem;
-}
-
 .table {
   border-radius: 10px;
-  width: 100%;
-  border-collapse: collapse;
+  width: 400px;
+  /* border-collapse: collapse; */
   font-family: "noto sans";
 }
 
@@ -26,10 +21,7 @@
   background-color: #9ec5ca67;
 }
 
-.titleCodeTable {
-  min-width: 150px;
-}
 
 .titleTable {
-  min-width: 200px;
+  min-width: 50px;
 }
