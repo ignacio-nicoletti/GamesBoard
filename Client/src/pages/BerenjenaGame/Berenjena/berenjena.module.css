@@ -25,7 +25,7 @@
   border: 10px solid #000; /* Borde exterior negro */
   border-radius: 50%; /* Borde redondeado para imitar la forma de la mesa */
   top: 20%; /* Posicionamiento para centrar el borde exterior verticalmente */
-  left:20%; /* Posicionamiento para centrar el borde exterior horizontalmente */
+  left: 20%; /* Posicionamiento para centrar el borde exterior horizontalmente */
 }
 
 .contain::after {
@@ -62,7 +62,7 @@
 }
 
 /* alineacion de jugadores en la mesa  */
-.jugadorestres {
+.tableroJugadores {
   display: flex;
   justify-content: space-between;
   position: absolute;
@@ -72,47 +72,50 @@
   height: 100vh;
 }
 
-.jugadoresdos {
-  display: flex;
-  justify-content: space-between;
-  position: relative;
-  top: 30%;
-}
-
 .jugador2 {
   position: absolute;
   display: flex;
-  height: 100%;
-  z-index: 1;
-  align-items: center;
   left: 2%;
+  top: 40%;
 }
 
 .jugador3 {
   position: absolute;
   display: flex;
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-  z-index: 1;
+  left: 15%;
+  top: 10%;
 }
+
 .jugador4 {
   position: absolute;
   display: flex;
-  height: 100%;
-  right: 2%;
-  align-items: center;
+  top: 0;
+  right: 50%;
+  left: 50%;
   justify-content: center;
-  z-index: 1;
+}
+
+.jugador5 {
+  position: absolute;
+  display: flex;
+  right: 15%;
+  top: 10%;
+}
+
+.jugador6 {
+  position: absolute;
+  display: flex;
+  top: 40%;
+  right: 2%;
 }
 /* alineacion de jugadores en la mesa  */
 
-.buttonResult {
-  display: flex;
-  justify-content: end;
+.resultado {
   position: absolute;
   right: 5%;
   bottom: 5%;
-  z-index: 1;
   cursor: pointer;
+  background-color: #ff904f;
+  padding-inline: 1rem;
+  border-radius: 10px;
 }

@@ -163,7 +163,7 @@ const Apuesta = ({ setJugador1, jugador1, setJugador2, jugador2, setJugador3, ju
 
         )}
       </select>
-      <button onClick={handleSubmit}>Enviar</button>
+      <button onClick={handleSubmit}>Apostar</button>
     </div>
   </>
   );

@@ -5,26 +5,28 @@ const DataPlayer = ({jugador}) => {
   return (
     <div className={style.infoPropia}>
 
-      <div>
-        <table className={style.table}>
-          <td>
-            Tablero
-            <tr>
-              <td>
-                Apostadas
-              </td>
-              <td>{jugador.apuestaP}</td>
-            </tr>
+      <div className={style.table_component} role="region" tabIndex="0">
+        <table>
 
-            <tr>
-              <td>
-                Ganadas
-              </td>
-              <td>{jugador.cardsganadas}</td>
-            </tr>
+          <thead>
 
-          </td>
+            <tr>Tablero</tr>
+
+          </thead>
+          <tbody>
+            <tr>
+              <td>Apostadas</td>
+              <td>0</td>
+
+            </tr>
+            <tr>
+              <td>Ganadas</td>
+              <td>0</td>
+
+            </tr>
+          </tbody>
         </table>
+
       </div>
       <div className={style.avatar}>
         <img src={avatar} alt="" />

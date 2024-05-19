@@ -1,134 +1,61 @@
-import style from './result.module.css';
+import styles from './result.module.css';
 
-const Result = ({Base}) => {
-  const rows = 6;
+const Result = ({Base,setShowResult}) => {
+  const rows = 4;
   const columns = 7;
-  console.log (Base);
+  const headers = [
+    'Ronda',
+    'aaaaaaaaaaaaaaa',
+    'aaaaaaaaaaaaaaa',
+    'aaaaaaaaaaaaaaa',
+    'aaaaaaaaaaaaaaa',
+    'aaaaaaaaaaaaaaa',
+    'aaaaaaaaaaaaaaa',
+  ];
+
   return (
-    <div className={style.tableWrapper}>
-      <table className={style.table}>
-        <thead>
-          <tr>
-            <th>Ronda</th>
-            <th>aaaaaaaaaaaaaaa</th>
-            <th>aaaaaaaaaaaaaaa</th>
-            <th>aaaaaaaaaaaaaaa</th>
-            <th>aaaaaaaaaaaaaaa</th>
-            <th>aaaaaaaaaaaaaaa</th>
-            <th>aaaaaaaaaaaaaaa</th>
+    <div className={styles.ContainResult}>
+      <div className={styles.closeResult}>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="48"
+          height="48"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#ff904f"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="icon icon-tabler icons-tabler-outline icon-tabler-circle-x"
+          onClick={()=>setShowResult(false)}
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+          <path d="M10 10l4 4m0 -4l-4 4" />
+        </svg>
+      </div>
+      <div className={styles.table_component} role="region" tabIndex="0">
+        <table>
 
-          </tr>
-        </thead>
-        <tbody>
-          {Base.map ((Base, index) => (
-            <tr key={index}>
- 
-              <th>Total</th> 
-              <td className={style.titleCode}>{Base.ronda.vuelta}</td>
-
-              <td>
-                <tr>{Base.jugador1.puntaje}100</tr>
-                <td className={style.titleTable}>{Base.jugador1.ganadas}0</td>
-                <td className={style.titleTable}>{Base.jugador1.apostadas}0</td>
-              </td>
-              <td>
-                <td className={style.titleTable}>{Base.jugador1.ganadas}0</td>
-                <td className={style.titleTable}>{Base.jugador1.apostadas}0</td>
-                <tr>{Base.jugador2.puntaje}</tr>
-              </td>
-              <td>
-                <td className={style.titleTable}>{Base.jugador1.ganadas}0</td>
-                <td className={style.titleTable}>{Base.jugador1.apostadas}0</td>
-                <tr>{Base.jugador3.puntaje}</tr>
-              </td>
-              <td>
-                <td className={style.titleTable}>{Base.jugador1.ganadas}0</td>
-                <td className={style.titleTable}>{Base.jugador1.apostadas}0</td>
-                <tr>{Base.jugador4.puntaje}</tr>
-              </td>
-              <td>
-                <td className={style.titleTable}>{Base.jugador1.ganadas}0</td>
-                <td className={style.titleTable}>{Base.jugador1.apostadas}0</td>
-                <tr>{Base.jugador5?.puntaje}</tr>
-              </td>
-              <td>
-                <td className={style.titleTable}>{Base.jugador1.ganadas}0</td>
-                <td className={style.titleTable}>{Base.jugador1.apostadas}0</td>
-                <tr>{Base.jugador6?.puntaje}</tr>
-              </td>
-
+          <thead>
+            <tr>
+              {headers.map ((header, index) => <th key={index}>{header}</th>)}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {Array.from ({length: rows}).map ((_, rowIndex) => (
+              <tr key={rowIndex}>
+                {Array.from ({length: columns}).map ((_, colIndex) => (
+                  <td key={colIndex} />
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+      </div>
     </div>
   );
-
-  /*  
-    <div className={style.resultContain}>
-      {Base.map((e, index) => (
-        <div key={index} className={style.datos}>
-          <div className={style.infoResult}>{e.ronda.cards}</div>
-          <div className={style.infoResult}>
-            {e.jugador1.puntos}
-            {e.jugador1.cumplio === true ? (
-              <div className={style.circuloTrue}>
-                <p>{e.jugador1.apostadas}</p>
-              </div>
-            ) : (
-              <div className={style.circlecontainer}>
-                <div className={style.circle}>
-                  <p>{e.jugador1.apostadas}</p>
-                </div>
-              </div>
-            )}
-          </div>
-          <div className={style.infoResult}>
-            {e.jugador2.puntos}
-            {e.jugador2.cumplio === true ? (
-              <div className={style.circuloTrue}>
-                <p>{e.jugador2.apostadas}</p>
-              </div>
-            ) : (
-              <div className={style.circlecontainer}>
-                <div className={style.circle}>
-                  <div className={style.number}>
-                    <p>{e.jugador2.apostadas}</p>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-          <div className={style.infoResult}>
-            {e.jugador3.puntos}
-            {e.jugador3.cumplio === true ? (
-              <div className={style.circuloTrue}>
-                <p>{e.jugador3.apostadas}</p>
-              </div>
-            ) : (
-              <div className={style.circlecontainer}>
-                <div className={style.circle}>
-                  <p>{e.jugador3.apostadas}</p>
-                </div>
-              </div>
-            )}
-          </div>
-          <div className={style.infoResult}>
-            {e.jugador4.puntos}
-            {e.jugador4.cumplio === true ? (
-              <div className={style.circuloTrue}>
-                <p>{e.jugador4.apostadas}</p>
-              </div>
-            ) : (
-              <div className={style.circlecontainer}>
-                <div className={style.circle}>
-                  <p>{e.jugador4.apostadas}</p>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      ))} */
 };
 
 export default Result;

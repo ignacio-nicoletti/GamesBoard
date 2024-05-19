@@ -17,11 +17,7 @@ import {
   mezclar,
   turno,
 } from '../../../functions/logica/logica.js';
-import {
-  connectSocket,
-  disconnectRoom,
-} from '../../../functions/SocketIO/sockets/sockets';
-import {Link} from 'react-router-dom';
+import {connectSocket} from '../../../functions/SocketIO/sockets/sockets';
 import Apuesta from '../../../components/berenjena/apuesta/apuesta';
 import ButtonExitRoom from '../../../components/buttonExitRoom/buttonExitRoom';
 
@@ -29,11 +25,12 @@ const GameBerenjena = () => {
   const [writeName, setWriteName] = useState (true);
   const [loader, setLoader] = useState (true);
 
-  const [myPosition, setMyPosition] = useState (null); //base del resultado xronda
-  const [sala, setSala] = useState ([]); //base del resultado xronda
+  const [myPosition, setMyPosition] = useState (null);
+  const [sala, setSala] = useState ([]);
 
   const [votacion, setVotacion] = useState ([]); //base del resultado xronda
 
+  const [showResult, setShowResult] = useState (false);
   const [jugador1, setJugador1] = useState ({
     username: '',
     id: 1,
@@ -53,7 +50,7 @@ const GameBerenjena = () => {
     cardPersona: [],
     apuestaP: null,
     cardsganadas: 0,
-    cardApostada: [{valor: null, palo: ''}],
+    cardApostada: [{valor: 1, palo: 'basto'}],
     myturnA: false, //boolean
     myturnR: false, //booleanA
     cumplio: false, //boolean
@@ -393,7 +390,7 @@ const GameBerenjena = () => {
 
   useEffect (
     () => {
-      if (sala.length <= 2) {
+      if (sala.length === 1) {
         setLoader (!loader);
         mezclar (
           setJugador1,
@@ -584,23 +581,15 @@ const GameBerenjena = () => {
         : <div>
             {loader == true
               ? <Loader />
-              : <div className={style.jugadorestres}>
+              : <div className={style.tableroJugadores}>
 
                   <div className={style.jugador2}>
-                    {/* <Jugadores
-                          jugador={
-                            myPosition === 1
-                              ? jugador2
-                              : myPosition === 2
-                                  ? jugador3
-                                  : myPosition === 3
-                                      ? jugador4
-                                      : myPosition === 4 ? jugador1 : ''
-                          }
-                          setJugador={setJugador2}
-                          setRonda={setRonda}
-                          ronda={ronda}
-                        /> */}
+                    <Jugadores
+                      jugador={jugador3}
+                      setJugador={setJugador3}
+                      setRonda={setRonda}
+                      ronda={ronda}
+                    />
                   </div>
                   <div className={style.jugador3}>
                     <Jugadores
@@ -675,7 +664,9 @@ const GameBerenjena = () => {
               myPosition={myPosition}
             />
             {/* <DataGame ronda={ronda} /> */}
-            {/* <Result Base={Base} /> */}
+            {showResult === true
+              ? <Result Base={Base} setShowResult={setShowResult} />
+              : ''}
             <ButtonExitRoom />
 
             {ronda.typeRound === 'apuesta'
@@ -693,7 +684,9 @@ const GameBerenjena = () => {
                 />
               : ''}
           </div>}
-
+      <div className={style.resultado} onClick={() => setShowResult (true)}>
+        <p>Resultados</p>
+      </div>
     </div>
   );
 };

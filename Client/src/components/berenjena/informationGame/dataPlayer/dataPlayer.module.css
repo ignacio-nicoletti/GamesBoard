@@ -9,7 +9,7 @@
   text-align: center;
   border-radius: 10%;
   padding-inline: 1rem;
-  color: orange;
+  color: #ff904f;
   display: flex;
   gap: 2rem;
 }
@@ -27,17 +27,38 @@
   font-size: 1.2rem;
 }
 
-
-.table {
-  border-radius: 10px;
-  width: 100%;
-  height: 100%;
-  /* border-collapse: collapse; */
-  font-family: "noto sans";
-  font-size: 1.2rem;
+.table_component {
+  overflow: auto;
+  width: 150px;
+  
 }
 
-.table td {
-  border: 1px solid #ddd;
+.table_component table {
+  border: 1px solid #dededf;
+  height: 100%;
+  width: 100%;
+  table-layout: auto;
+  border-collapse: collapse;
+  border-spacing: 1px;
+  text-align: center;
+}
+
+.table_component caption {
+  caption-side: top;
+  text-align: left;
+}
+
+.table_component th {
+  border: 1px solid #dededf;
+  background-color: #ff904f;
+  color: #ffffff;
   padding: 5px;
 }
+
+.table_component td {
+  border: 1px solid #dededf;
+
+  color: #ff904f;
+  padding: 5px;
+}
+
