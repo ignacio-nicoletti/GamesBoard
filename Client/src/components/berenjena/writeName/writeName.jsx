@@ -17,6 +17,10 @@ export const WriteName = ({
   jugador3,
   setJugador4,
   jugador4,
+  setJugador5,
+  jugador5,
+  setJugador6,
+  jugador6,
   setMyPosition,
   setSala,
 }) => {
@@ -27,8 +31,7 @@ export const WriteName = ({
     e.preventDefault ();
 
     setWriteName (false);
-    const response = await joinGameRoom (roomId, userName);
-
+    const response = await joinGameRoom ("Berenjena",roomId, userName);
     if (response && response.position) {
       const {position, userName} = response;
 
@@ -45,6 +48,12 @@ export const WriteName = ({
         case 4:
           setJugador4 ({...jugador4, id: position, username: userName});
           break;
+        case 5:
+          setJugador5 ({...jugador5, id: position, username: userName});
+          break;
+        case 6:
+          setJugador6 ({...jugador6, id: position, username: userName});
+          break;
         default:
           console.log ('Número de usuario no reconocido');
       }
@@ -54,43 +63,64 @@ export const WriteName = ({
   useEffect (() => {
     socket.on ('player_list', playerList => {
       setSala (playerList);
-      if (Array.isArray (playerList)) {
-        playerList.forEach (player => {
-          const {position, userName} = player;
-          switch (position) {
-            case 1:
-              setJugador1 (prevState => ({
-                ...prevState,
-                id: position,
-                username: userName,
-              }));
-              break;
-            case 2:
-              setJugador2 (prevState => ({
-                ...prevState,
-                id: position,
-                username: userName,
-              }));
-              break;
-            case 3:
-              setJugador3 (prevState => ({
-                ...prevState,
-                id: position,
-                username: userName,
-              }));
-              break;
-            case 4:
-              setJugador4 (prevState => ({
-                ...prevState,
-                id: position,
-                username: userName,
-              }));
-              break;
-            default:
-              console.log ('Número de usuario no reconocido');
-          }
-        });
-      }
+      console.log(playerList);
+
+      // if (Array.isArray (playerList)) {
+      //   playerList.forEach (player => {
+      //     const {position, userName} = player;
+      //     switch (position) {
+      //       case 1:
+      //         setJugador1 (prevState => ({
+      //           ...prevState,
+      //           id: position,
+      //           username: userName,
+      //         }));
+      //         break;
+      //       case 2:
+      //         setJugador2 (prevState => ({
+      //           ...prevState,
+      //           id: position,
+      //           username: userName,
+      //         }));
+      //         break;
+      //       case 3:
+      //         setJugador3 (prevState => ({
+      //           ...prevState,
+      //           id: position,
+      //           username: userName,
+      //         }));
+      //         break;
+      //       case 4:
+      //         setJugador4 (prevState => ({
+      //           ...prevState,
+      //           id: position,
+      //           username: userName,
+      //         }));
+      //         break;
+      //       case 4:
+      //         setJugador5 (prevState => ({
+      //           ...prevState,
+      //           id: position,
+      //           username: userName,
+      //         }));
+      //         break;
+      //       case 4:
+      //         setJugador6 (prevState => ({
+      //           ...prevState,
+      //           id: position,
+      //           username: userName,
+      //         }));
+      //         break;
+      //       default:
+      //         console.log ('Número de usuario no reconocido');
+      //     }
+      //   });
+      // }
+
+      socket.on ('start_game', () => {
+        // Aquí puedes manejar el inicio del juego
+        console.log ('La partida ha comenzado!');
+      });
     });
   }, []);
 

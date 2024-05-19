@@ -3,8 +3,18 @@ import styles from './home.module.css';
 import Ases from '../../assets/fourAses.png';
 import truco from '../../assets/trucoo.png';
 import joker from '../../assets/jocker.png';
+import {useEffect} from 'react';
+import {connectSocket} from '../../functions/SocketIO/sockets/sockets';
 
 const Home = () => {
+  useEffect (() => {
+    const initializeSocket = async () => {
+      await connectSocket ();
+    };
+
+    initializeSocket ();
+  }, []);
+
   return (
     <div className={styles.contain}>
       <div className={styles.containOption}>

@@ -4,17 +4,28 @@ const URL = "http://localhost:3001";
 // Se conecta al servidor
 export const socket = io(URL,{ forceNew: true });
 
-export const connectSocket = async () => {
-  
-  socket.on("connect", () => {
-    console.log("Conectado al servidor");
-  });
 
-  socket.on("disconnect", () => {
-    console.log("Desconectado del servidor");
-  });
+export const connectSocket = () => {
+  return new Promise((resolve) => {
+    socket.on("connect", () => {
+      console.log("Conectado al servidor");
+      resolve(socket);
+    });
 
-  return socket;
+    socket.on("disconnect", () => {
+      console.log("Desconectado del servidor");
+    });
+  });
+};
+
+// Función para solicitar la información de todas las salas
+export const getAllRoomsInfo = (game) => {
+  return new Promise((resolve) => {
+    socket.emit("get_all_rooms_info", { game });
+    socket.on("all_rooms_info", (data) => {
+      resolve(data);
+    });
+  });
 };
 
 //se desconecta de la sala
@@ -23,9 +34,9 @@ export const disconnectRoom = () => {
   socket.emit("disconnectRoom");
 };
 
-// ingresa a una sala
 
-export const joinGameRoom = (roomId, userName) => {
+// ingresa a una sala
+export const joinGameRoom = (game, roomId, userName) => {
   return new Promise((res, rej) => {
     const responses = {}; // Objeto para almacenar todas las respuestas
 
@@ -60,7 +71,7 @@ export const joinGameRoom = (roomId, userName) => {
     }
 
     // Emitir el evento 'join_room'
-    socket.emit("join_room", { roomId, userName });
+    socket.emit("join_room", { game, roomId, userName });
   });
 };
 

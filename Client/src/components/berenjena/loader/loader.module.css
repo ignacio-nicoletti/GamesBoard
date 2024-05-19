@@ -10,6 +10,7 @@
   top: 0;
   left: 0;
   backdrop-filter: blur(10px);
+  flex-direction: column;
 }
 .loader {
   font-size: 2rem;
@@ -29,8 +30,6 @@
   -webkit-background-clip: text;
 }
 
-
-
 @keyframes animateBackground {
   25% {
     background-position: 0 100%;
@@ -47,4 +46,22 @@
   100% {
     background-position: 0 0;
   }
+}
+
+.PlayerReady {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+.playersAndButton {
+  display: flex;
+  flex-direction: column;
+}
+
+.playersAndButton button{
+  font-family: sans-serif;
+  font-variant: small-caps;
+  color: white;
+  background-color: #ff904f;
+  cursor: pointer;
 }

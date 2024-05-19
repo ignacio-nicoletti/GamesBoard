@@ -17,7 +17,7 @@ import {
   mezclar,
   turno,
 } from '../../../functions/logica/logica.js';
-import {connectSocket} from '../../../functions/SocketIO/sockets/sockets';
+import {getAllRoomsInfo} from '../../../functions/SocketIO/sockets/sockets';
 import Apuesta from '../../../components/berenjena/apuesta/apuesta';
 import ButtonExitRoom from '../../../components/buttonExitRoom/buttonExitRoom';
 
@@ -26,11 +26,12 @@ const GameBerenjena = () => {
   const [loader, setLoader] = useState (true);
 
   const [myPosition, setMyPosition] = useState (null);
-  const [sala, setSala] = useState ([]);
-
+  const [rooms, setRooms] = useState ([]);
+  const [game, setGame] = useState ('Berenjena'); // Juego seleccionado
   const [votacion, setVotacion] = useState ([]); //base del resultado xronda
 
   const [showResult, setShowResult] = useState (false);
+
   const [jugador1, setJugador1] = useState ({
     username: '',
     id: 1,
@@ -43,7 +44,6 @@ const GameBerenjena = () => {
     cumplio: false, //boolean
     puntos: 0,
   });
-
   const [jugador2, setJugador2] = useState ({
     username: '',
     id: 2,
@@ -56,7 +56,6 @@ const GameBerenjena = () => {
     cumplio: false, //boolean
     puntos: 0,
   });
-
   const [jugador3, setJugador3] = useState ({
     username: '',
     id: 3,
@@ -69,10 +68,33 @@ const GameBerenjena = () => {
     cumplio: false, //boolean
     puntos: 0,
   });
-
   const [jugador4, setJugador4] = useState ({
     username: '',
     id: 4,
+    cardPersona: [],
+    apuestaP: null,
+    cardsganadas: 0,
+    cardApostada: [{valor: null, palo: ''}],
+    myturnA: false, //boolean
+    myturnR: false, //boolean
+    cumplio: false, //boolean
+    puntos: 0,
+  });
+  const [jugador5, setJugador5] = useState ({
+    username: '',
+    id: 5,
+    cardPersona: [],
+    apuestaP: null,
+    cardsganadas: 0,
+    cardApostada: [{valor: null, palo: ''}],
+    myturnA: false, //boolean
+    myturnR: false, //boolean
+    cumplio: false, //boolean
+    puntos: 0,
+  });
+  const [jugador6, setJugador6] = useState ({
+    username: '',
+    id: 6,
     cardPersona: [],
     apuestaP: null,
     cardsganadas: 0,
@@ -87,7 +109,7 @@ const GameBerenjena = () => {
     cantUser: 4, //usuarios conectados
     vuelta: 1, //num de vuelta (4 rondas =1 vuelta)
     numeroRonda: 1, //num de ronda
-    cardPorRonda: 7, //cant de cartas que se reparten
+    cardPorRonda: 1, //cant de cartas que se reparten
     typeRound: '', //apuesta o ronda
     turnoJugadorA: 1, //1j 2j 3j 4j apuesta
     turnoJugadorR: 1, //1j 2j 3j 4j ronda
@@ -384,32 +406,40 @@ const GameBerenjena = () => {
     // }
   };
 
-  useEffect (() => {
-    connectSocket ();
-  }, []);
+  useEffect (
+    () => {
+      const initializeSocket = async () => {
+        const roomsInfo = await getAllRoomsInfo (game);
+        setRooms (roomsInfo);
+      };
+
+      initializeSocket ();
+    },
+    [game]
+  );
 
   useEffect (
     () => {
-      if (sala.length === 1) {
-        setLoader (!loader);
-        mezclar (
-          setJugador1,
-          jugador1,
-          setJugador2,
-          jugador2,
-          setJugador3,
-          jugador3,
-          setJugador4,
-          jugador4,
-          ronda
-        );
-        if (ronda.vuelta === 1 && jugador1.username !== '') {
-          setRonda ({...ronda, typeRound: 'apuesta', obligado: 4});
-          GuardarEnBase ();
-        }
+      // if (salas.length === 3) {
+      // setLoader (!loader);
+      mezclar (
+        setJugador1,
+        jugador1,
+        setJugador2,
+        jugador2,
+        setJugador3,
+        jugador3,
+        setJugador4,
+        jugador4,
+        ronda
+      );
+      if (ronda.vuelta === 1 && jugador1.username !== '') {
+        setRonda ({...ronda, typeRound: 'apuesta', obligado: 4});
+        GuardarEnBase ();
       }
+      // }
     },
-    [sala]
+    [rooms]
   );
 
   useEffect (
@@ -576,11 +606,11 @@ const GameBerenjena = () => {
             setJugador4={setJugador4}
             jugador4={jugador4}
             setMyPosition={setMyPosition}
-            setSala={setSala}
+            setSala={setRooms}
           />
         : <div>
             {loader == true
-              ? <Loader />
+              ? <Loader sala={rooms} />
               : <div className={style.tableroJugadores}>
 
                   <div className={style.jugador2}>

@@ -3,7 +3,6 @@ import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
 import { barajar, shuffle } from "./functions/functions.js";
-import { log } from "console";
 
 const app = express();
 const server = http.createServer(app);
@@ -14,88 +13,130 @@ const io = new Server(server, {
   cors: { origin: "http://localhost:3000", methods: ["GET", "POST"] },
 });
 
-const users = [];
+const games = {
+  Berenjena: {},
+  Poker: {},
+  Truco: {},
+  Generala: {},
+};
+
+
 
 io.on("connection", (socket) => {
-  console.log(`User Connected: ${socket.id}`);
+  console.log(`User Connected: ${socket.id} to server`);
 
-  socket.on("join_room", ({ roomId, userName }) => {
-    console.log(`User ${userName} joined room ${roomId}`);
-    socket.join(`room-${roomId}`);
+  socket.on("get_all_rooms_info", ({ game }) => {
+    const rooms = games[game];
+    if (rooms) {
+      const allRoomsInfo = Object.keys(rooms).map(roomId => ({
+        roomId,
+        users: rooms[roomId]
+      }));
+      socket.emit("all_rooms_info", allRoomsInfo);
+    } else {
+      socket.emit("error", { error: "Invalid game" });
+    }
+  });
 
-    const user = { id: socket.id, name: userName };
-    users.push(user);
+  socket.on("join_room", ({ game, roomId, userName }) => {
+    const rooms = games[game];
+    if (!rooms) {
+      socket.emit("error", { error: "Invalid game" });
+      return;
+    }
 
-    // Obtener la posición del usuario en la sala
-    const position = users.length;
-    // Enviar la posición del usuario de vuelta al cliente
-    socket.emit("position", position);
+    if (!rooms[roomId]) {
+      rooms[roomId] = [];
+    }
 
-    // Emitir la lista de jugadores actualizada a todos los clientes en la sala
-    const playerList = users.map((user, index) => ({
-      position: index + 1,
-      userName: user.name,
-    }));
-    io.to(`room-${roomId}`).emit("player_list", playerList);
+    if (rooms[roomId].length < 6) {
+      console.log(`User ${userName} joined room ${roomId} in game ${game}`);
+      socket.join(`${game}-${roomId}`);
 
+      const user = { id: socket.id, name: userName, ready: false, room: roomId };
+      rooms[roomId].push(user);
 
-    //----------barajar------------- 
-    
-   
+      const position = rooms[roomId].length;
+      socket.emit("position", position);
+      io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId]);
+    } else {
+      socket.emit("room_full", { error: "Room is full" });
+    }
+  });
 
-    socket.on("barajar", (ronda) => {
-     
-      let baraja = barajar();
-      let cartasMezcladas = shuffle(baraja);
-    
-      // Enviar las cartas a cada jugador según la cantidad correspondiente a la ronda
+  socket.on("player_ready", ({ game, roomId }) => {
+    const rooms = games[game];
+    if (rooms && rooms[roomId]) {
+      const user = rooms[roomId].find(u => u.id === socket.id);
+      if (user) {
+        user.ready = true;
+
+        io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId]);
+
+        const allReady = rooms[roomId].every(u => u.ready);
+        if (allReady || rooms[roomId].length === 6) {
+          io.to(`${game}-${roomId}`).emit("start_game");
+        }
+      }
+    }
+  });
+
+  socket.on("barajar", ({ game, roomId, ronda }) => {
+    let baraja = barajar();
+    let cartasMezcladas = shuffle(baraja);
+
+    const rooms = games[game];
+    if (rooms && rooms[roomId] && rooms[roomId].length === 4) {
       if (ronda.cardPorRonda === 1) {
-        io.to(`room-${roomId}`).emit("mezcladas", {
+        io.to(`${game}-${roomId}`).emit("mezcladas", {
           jugador1: [cartasMezcladas[0]],
           jugador2: [cartasMezcladas[1]],
           jugador3: [cartasMezcladas[2]],
           jugador4: [cartasMezcladas[3]],
         });
       } else if (ronda.cardPorRonda === 3) {
-        io.to(`room-${roomId}`).emit("mezcladas", {
+        io.to(`${game}-${roomId}`).emit("mezcladas", {
           jugador1: cartasMezcladas.slice(0, 3),
           jugador2: cartasMezcladas.slice(3, 6),
           jugador3: cartasMezcladas.slice(6, 9),
           jugador4: cartasMezcladas.slice(9, 12),
         });
       } else if (ronda.cardPorRonda === 5) {
-        io.to(`room-${roomId}`).emit("mezcladas", {
+        io.to(`${game}-${roomId}`).emit("mezcladas", {
           jugador1: cartasMezcladas.slice(0, 5),
           jugador2: cartasMezcladas.slice(5, 10),
           jugador3: cartasMezcladas.slice(10, 15),
           jugador4: cartasMezcladas.slice(15, 20),
         });
       } else if (ronda.cardPorRonda === 7) {
-        io.to(`room-${roomId}`).emit("mezcladas", {
+        io.to(`${game}-${roomId}`).emit("mezcladas", {
           jugador1: cartasMezcladas.slice(0, 7),
           jugador2: cartasMezcladas.slice(7, 14),
           jugador3: cartasMezcladas.slice(14, 21),
           jugador4: cartasMezcladas.slice(21, 28),
         });
       }
-    });
+    } else {
+      socket.emit("error", { error: "Room not found or invalid number of players" });
+    }
+  });
 
-   //----------barajar------------- 
-
-
-    socket.on("disconnectRoom", () => {
-      console.log(`User  ${socket.id} Disconnected`);
-      const index = users.findIndex((user) => user.id === socket.id);
-      if (index !== -1) {
-        users.splice(index, 1);
-        // Emitir la lista de jugadores actualizada a todos los clientes en la sala
-        const playerList = users.map((user, index) => ({
-          position: index + 1,
-          userName: user.name,
-        }));
-        io.to(`room-${roomId}`).emit("player_list", playerList);
+  socket.on("disconnectRoom", () => {
+    console.log(`User ${socket.id} Disconnected`);
+    for (const game in games) {
+      const rooms = games[game];
+      for (const roomId in rooms) {
+        const userIndex = rooms[roomId].findIndex(user => user.id === socket.id);
+        if (userIndex !== -1) {
+          rooms[roomId].splice(userIndex, 1);
+          io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId]);
+          if (rooms[roomId].length === 0) {
+            delete rooms[roomId];
+          }
+          break;
+        }
       }
-    });
+    }
   });
 
   socket.on("disconnect", () => {
@@ -104,5 +145,5 @@ io.on("connection", (socket) => {
 });
 
 server.listen(3001, () => {
-  console.log("Server listen on port 3001");
+  console.log("Server listening on port 3001");
 });

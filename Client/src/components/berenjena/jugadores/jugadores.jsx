@@ -50,7 +50,7 @@ const Jugadores = ({jugador, setJugador, setRonda, ronda}) => {
             </div>
             ))}
           </div> */}
-        {/* <div className={divAlinearCards}>
+        <div className={divAlinearCards}>
           {jugador.cardPersona.map ((card, index) => (
             <div className={alinearCards}>
 
@@ -65,7 +65,7 @@ const Jugadores = ({jugador, setJugador, setRonda, ronda}) => {
               />
             </div>
           ))}
-        </div> */}
+        </div>
 
         <div className={divAlinearCards}>
           {jugador.cardApostada[0].valor &&
