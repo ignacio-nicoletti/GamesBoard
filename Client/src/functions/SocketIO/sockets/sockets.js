@@ -14,6 +14,7 @@ export const connectSocket = () => {
 
     socket.on("disconnect", () => {
       console.log("Desconectado del servidor");
+      disconnectRoom()
     });
   });
 };

@@ -122,7 +122,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnectRoom", () => {
-    console.log(`User ${socket.id} Disconnected`);
     for (const game in games) {
       const rooms = games[game];
       for (const roomId in rooms) {
@@ -132,6 +131,7 @@ io.on("connection", (socket) => {
           io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId]);
           if (rooms[roomId].length === 0) {
             delete rooms[roomId];
+            console.log(`User ${socket.id} Disconnected from room =>${roomId}`);
           }
           break;
         }
