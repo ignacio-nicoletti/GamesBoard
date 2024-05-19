@@ -5,7 +5,9 @@
   height: 100vh;
   display: flex;
   justify-content: center;
-  background-color: green;
+  background-image: url("../../../../src/assets/fondoo.png");
+  background-repeat: no-repeat;
+  background-size: cover;
   font-family: "Bebas Neue", sans-serif;
 }
 
