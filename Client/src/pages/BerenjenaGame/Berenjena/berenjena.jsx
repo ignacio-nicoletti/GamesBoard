@@ -408,7 +408,7 @@ const GameBerenjena = () => {
         );
         if (ronda.vuelta === 1 && jugador1.username !== '') {
           setRonda ({...ronda, typeRound: 'apuesta', obligado: 4});
-          GuardarEnBase()
+          GuardarEnBase ();
         }
       }
     },
@@ -566,7 +566,7 @@ const GameBerenjena = () => {
 
   return (
     <div className={style.contain}>
-      
+
       {writeName === true
         ? <WriteName
             setWriteName={setWriteName}
@@ -584,11 +584,10 @@ const GameBerenjena = () => {
         : <div>
             {loader == true
               ? <Loader />
-              : ronda.cantUser === 4
-                  ? <div className={style.jugadorestres}>
+              : <div className={style.jugadorestres}>
 
-                      <div className={style.jugador2}>
-                        {/* <Jugadores
+                  <div className={style.jugador2}>
+                    {/* <Jugadores
                           jugador={
                             myPosition === 1
                               ? jugador2
@@ -602,33 +601,41 @@ const GameBerenjena = () => {
                           setRonda={setRonda}
                           ronda={ronda}
                         /> */}
-                      </div>
-                      {/* <div className={style.jugador3}>
-                        <Jugadores
-                          jugador={jugador3}
-                          setJugador={setJugador3}
-                          setRonda={setRonda}
-                          ronda={ronda}
-                        />
-                      </div>
-                      <div className={style.jugador4}>
-                        <Jugadores
-                          jugador={jugador4}
-                          setJugador={setJugador4}
-                          setRonda={setRonda}
-                          ronda={ronda}
-                        />
-                      </div> */}
+                  </div>
+                  <div className={style.jugador3}>
+                    <Jugadores
+                      jugador={jugador3}
+                      setJugador={setJugador3}
+                      setRonda={setRonda}
+                      ronda={ronda}
+                    />
+                  </div>
+                  <div className={style.jugador4}>
+                    <Jugadores
+                      jugador={jugador4}
+                      setJugador={setJugador4}
+                      setRonda={setRonda}
+                      ronda={ronda}
+                    />
+                  </div>
+                  <div className={style.jugador5}>
+                    <Jugadores
+                      jugador={jugador4}
+                      setJugador={setJugador4}
+                      setRonda={setRonda}
+                      ronda={ronda}
+                    />
+                  </div>
+                  <div className={style.jugador6}>
+                    <Jugadores
+                      jugador={jugador4}
+                      setJugador={setJugador4}
+                      setRonda={setRonda}
+                      ronda={ronda}
+                    />
+                  </div>
 
-                    </div>
-                  : <div className={style.jugadoresdos}>
-                      {/* <div>
-                        <Jugadores jugador={jugador2} />
-                      </div>
-                      <div>
-                        <Jugadores jugador={jugador3} />
-                      </div> */}
-                    </div>}
+                </div>}
             <div />
             {/* cartas en el centro de la pantalla */}
             <div className={style.CardPropias}>
@@ -654,7 +661,6 @@ const GameBerenjena = () => {
                 ))}
             </div>
 
-            {/* <DataGame ronda={ronda} /> */}
             <DataPlayer
               jugador={
                 myPosition === 1
@@ -668,7 +674,9 @@ const GameBerenjena = () => {
               ronda={ronda}
               myPosition={myPosition}
             />
+            {/* <DataGame ronda={ronda} /> */}
             {/* <Result Base={Base} /> */}
+            <ButtonExitRoom />
 
             {ronda.typeRound === 'apuesta'
               ? <Apuesta
@@ -684,7 +692,6 @@ const GameBerenjena = () => {
                   setRonda={setRonda}
                 />
               : ''}
-<ButtonExitRoom/>
           </div>}
 
     </div>

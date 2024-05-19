@@ -2,6 +2,8 @@ import React from 'react';
 import styles from './jugadores.module.css';
 import person from '../../../assets/berenjena/jugadores/avatar.png';
 import backface from '../../../assets/berenjena/valores/backface.png';
+import cardsIcon from '../../../assets/berenjena/jugadores/cartas.png';
+
 import Cards from '../cards/card';
 const Jugadores = ({jugador, setJugador, setRonda, ronda}) => {
   let estiloJugador;
@@ -29,12 +31,14 @@ const Jugadores = ({jugador, setJugador, setRonda, ronda}) => {
   return (
     <div className={estiloJugador}>
       <div className={styles.divJugador}>
-        <p>Apuesta: {jugador.apuestaP === -1 ? '-' : jugador.apuestaP}</p>
-        <p>Ganadas: {jugador.cardsganadas === 0 ? '-' : jugador.cardsganadas}</p>
-        <div>
+
+        <div className={styles.avatar}>
           <img src={person} alt="persona" width={150} height={100} />
+          <p style={{margin: 0}}>aaaaaaaaaaaaaaa {jugador.username}</p>
         </div>
-        <p style={{margin: 0}}>name: {jugador.username}</p>
+        <div className={styles.cards}>
+          <img src={cardsIcon} alt="" />
+        </div>
       </div>
 
       <div>
@@ -46,7 +50,7 @@ const Jugadores = ({jugador, setJugador, setRonda, ronda}) => {
             </div>
             ))}
           </div> */}
-        <div className={divAlinearCards}>
+        {/* <div className={divAlinearCards}>
           {jugador.cardPersona.map ((card, index) => (
             <div className={alinearCards}>
 
@@ -61,14 +65,19 @@ const Jugadores = ({jugador, setJugador, setRonda, ronda}) => {
               />
             </div>
           ))}
-        </div>
+        </div> */}
 
         <div className={divAlinearCards}>
           {jugador.cardApostada[0].valor &&
             jugador.cardApostada.map ((card, index) => (
               <div className={cardApost}>
-                <Cards key={index} valor={card.valor} palo={card.palo}  jugador={jugador}/>
-               </div>
+                <Cards
+                  key={index}
+                  valor={card.valor}
+                  palo={card.palo}
+                  jugador={jugador}
+                />
+              </div>
             ))}
         </div>
 
