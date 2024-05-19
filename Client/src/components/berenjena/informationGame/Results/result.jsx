@@ -10,12 +10,12 @@ const Result = ({Base}) => {
         <thead>
           <tr>
             <th>Ronda</th>
-            <th>jugador1</th>
-            <th>jugador2</th>
-            <th>jugador3</th>
-            <th>jugador4</th>
-            <th>jugador5</th>
-            <th>jugador6</th>
+            <th>aaaaaaaaaaaaaaa</th>
+            <th>aaaaaaaaaaaaaaa</th>
+            <th>aaaaaaaaaaaaaaa</th>
+            <th>aaaaaaaaaaaaaaa</th>
+            <th>aaaaaaaaaaaaaaa</th>
+            <th>aaaaaaaaaaaaaaa</th>
 
           </tr>
         </thead>
@@ -23,12 +23,13 @@ const Result = ({Base}) => {
           {Base.map ((Base, index) => (
             <tr key={index}>
  
-               
+              <th>Total</th> 
               <td className={style.titleCode}>{Base.ronda.vuelta}</td>
+
               <td>
+                <tr>{Base.jugador1.puntaje}100</tr>
                 <td className={style.titleTable}>{Base.jugador1.ganadas}0</td>
                 <td className={style.titleTable}>{Base.jugador1.apostadas}0</td>
-                <tr>{Base.jugador1.puntaje}</tr>
               </td>
               <td>
                 <td className={style.titleTable}>{Base.jugador1.ganadas}0</td>

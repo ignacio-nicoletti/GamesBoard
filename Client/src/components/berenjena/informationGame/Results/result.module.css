@@ -1,7 +1,10 @@
-
+.tableWrapper {
+  max-width: 400px;
+  background-color: red;
+}
 .table {
-  border-radius: 10px;
   width: 400px;
+  border-radius: 10px;
   /* border-collapse: collapse; */
   font-family: "noto sans";
 }
@@ -10,6 +13,10 @@
 .table td {
   border: 1px solid #ddd;
   padding: 5px;
+ 
+}
+.table td {
+  width: 100%;
 }
 
 .table th {
@@ -20,8 +27,9 @@
 .table tr:hover {
   background-color: #9ec5ca67;
 }
-
+.table tr {
+}
 
 .titleTable {
-  min-width: 50px;
+  max-width: 50px;
 }

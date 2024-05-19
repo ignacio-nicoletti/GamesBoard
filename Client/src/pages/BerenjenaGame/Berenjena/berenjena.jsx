@@ -23,10 +23,11 @@ import {
 } from '../../../functions/SocketIO/sockets/sockets';
 import {Link} from 'react-router-dom';
 import Apuesta from '../../../components/berenjena/apuesta/apuesta';
+import ButtonExitRoom from '../../../components/buttonExitRoom/buttonExitRoom';
 
 const GameBerenjena = () => {
   const [writeName, setWriteName] = useState (true);
-  const [loader, setLoader] = useState (false);
+  const [loader, setLoader] = useState (true);
 
   const [myPosition, setMyPosition] = useState (null); //base del resultado xronda
   const [sala, setSala] = useState ([]); //base del resultado xronda
@@ -392,8 +393,8 @@ const GameBerenjena = () => {
 
   useEffect (
     () => {
-      if (sala.length === 1) {
-        // setLoader (!loader);
+      if (sala.length <= 2) {
+        setLoader (!loader);
         mezclar (
           setJugador1,
           jugador1,
@@ -667,7 +668,7 @@ const GameBerenjena = () => {
               ronda={ronda}
               myPosition={myPosition}
             />
-            <Result Base={Base} />
+            {/* <Result Base={Base} /> */}
 
             {ronda.typeRound === 'apuesta'
               ? <Apuesta
@@ -683,7 +684,7 @@ const GameBerenjena = () => {
                   setRonda={setRonda}
                 />
               : ''}
-
+<ButtonExitRoom/>
           </div>}
 
     </div>

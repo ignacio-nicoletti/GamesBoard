@@ -1,0 +1,37 @@
+.backHome {
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+    background-color: green;
+    width: 300px;
+    position: absolute;
+    right: 2.5%;
+    top: 2.5%;
+  }
+  
+  .LogoBack {
+    border-bottom-left-radius: 10px;
+    border-top-left-radius: 10px;
+    display: flex;
+    align-items: center;
+    background-color: red;
+    height: 50px;
+    width: 30%;
+    justify-content: center;
+  }
+  
+  .parrafo {
+    border-bottom-right-radius: 10px;
+    border-top-right-radius: 10px;
+    display: flex;
+    align-items: center;
+    height: 50px;
+    background-color: #ff904f;
+    width: 70%;
+    justify-content: center;
+  }
+  
+  .link {
+    text-decoration: none;
+    color: white;
+  }
