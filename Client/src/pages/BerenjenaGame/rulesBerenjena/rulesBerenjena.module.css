@@ -1,45 +1,27 @@
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Reddit+Sans:ital,wght@0,200..900;1,200..900&display=swap");
+
 .contain {
   width: 100%;
   height: 100vh;
-  padding: 0;
-  margin: 0;
+  padding-bottom: 5rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  font-family: "Bebas Neue", sans-serif;
-  background-color: green; /* Color de fondo verde para imitar la mesa de póker */
-}
-
-.contain::before {
-  content: ""; /* Necesario para que el elemento pseudo sea visible */
-  position: absolute; /* Posición absoluta en relación con el contenedor */
-  width: 90%; /* Ancho del borde exterior */
-  height: 90%; /* Altura del borde exterior */
-  border: 10px solid #000; /* Borde exterior negro */
-  border-radius: 50%; /* Borde redondeado para imitar la forma de la mesa */
-  top: 5%; /* Posicionamiento para centrar el borde exterior verticalmente */
-  left: 5%; /* Posicionamiento para centrar el borde exterior horizontalmente */
-}
-
-.contain::after {
-  content: ""; /* Necesario para que el elemento pseudo sea visible */
-  position: absolute; /* Posición absoluta en relación con el contenedor */
-  width: 80%; /* Ancho del borde interior */
-  height: 80%; /* Altura del borde interior */
-  border: 10px solid #fff; /* Borde interior blanco */
-  border-radius: 50%; /* Borde redondeado para imitar la forma de la mesa */
-  top: 10%; /* Posicionamiento para centrar el borde interior verticalmente */
-  left: 10%; /* Posicionamiento para centrar el borde interior horizontalmente */
+  justify-content: center;
+  background-image: url("../../../assets/berenjena/bgBerenjena.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  font-family: "Reddit Sans";
 }
 
 .info {
   color: white;
-  margin-top: 5%;
-  margin-inline: 20%;
+  margin: 15% 10%;
   display: flex;
   flex-direction: column;
-  align-items: start;
+  justify-content: center;
+  align-items: flex-start;
   font-size: 1.2rem;
   background-color: #000000a1;
   z-index: 1;
@@ -53,14 +35,22 @@
   text-align: start;
 }
 
+.rulesTitle {
+  width: 100%;
+}
+
 .info h3 {
-  color: goldenrod;
+  font-family: "Reddit Sans";
+  font-size: 25px;
+  background-color: rgb(255, 255, 255);
+  padding: 0.5rem;
+  border-radius: 5px;
+  color: #ff914d;
   text-align: center;
-  text-decoration: underline;
 }
 
 .info span {
-  color: goldenrod;
+  color: #ff914d;
   padding-right: 2px;
 }
 
@@ -73,14 +63,57 @@
   text-align: center;
   width: 100%;
 }
+
 .link {
+  margin-top: 2rem;
+  background-color: rgb(255, 255, 255);
+  padding: 0.5rem;
+  border-radius: 5px;
+  font-size: 25px;
   text-decoration: none;
-  color: goldenrod;
+  font-family: "Reddit Sans";
+  font-weight: bold;
+  color: #ff914d;
+  width: 10rem;
+  text-align: center;
+  transition: width 0.3s ease-in-out;
+}
+
+.link:hover {
+  width: 14rem;
+  box-shadow: #ff914d 0px 1px 4px, #ff914d 0px 0px 0px 3px;
+}
+
+@media only screen and (max-width: 1024px) {
+  .info {
+    margin: 10% 5%;
+    font-size: 1.1rem;
+    padding: 1.5rem;
+  }
 }
 
 @media only screen and (max-width: 730px) {
   .info {
-    margin-top: 0%;
+    margin: 5% 5%;
     width: 90%;
+    font-size: 1rem;
+    padding: 1rem;
+  }
+
+  .linkBackMenu {
+    font-size: 1.5rem;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .info {
+    margin: 5% 2%;
+    width: 95%;
+    font-size: 0.9rem;
+    padding: 0.8rem;
+  }
+
+  .linkBackMenu {
+    font-size: 1.2rem;
   }
 }
