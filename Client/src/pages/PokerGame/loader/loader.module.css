@@ -1,0 +1,41 @@
+.loaderContainer {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 9999;
+}
+
+.loaderVideo {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.loaderLogo {
+  position: absolute;
+  width: 100%;
+  height: auto;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  animation: zoomIn 1.5s forwards;
+  opacity: 0; 
+}
+
+
+@keyframes zoomIn {
+    from {
+      transform: translate(-50%, -50%) scale(0.5); /* Escala inicial del 50% */
+      opacity: 0;
+    }
+    to {
+      transform: translate(-50%, -50%) scale(1); /* Escala máxima del 100% */
+      opacity: 1;
+    }
+  }

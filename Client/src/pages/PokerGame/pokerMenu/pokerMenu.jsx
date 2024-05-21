@@ -1,8 +1,25 @@
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import styles from "./pokerMenu.module.css";
 import pokerTitle from "../../../assets/poker/pokerTitle.png";
+import Loader from "../loader/loader";
 
 const PagePrimaryPoker = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simula un tiempo de carga de 3 segundos
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 8000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return <Loader />;
+  }
+
   return (
     <div className={styles.contain}>
       <div className={styles.containOption}>
