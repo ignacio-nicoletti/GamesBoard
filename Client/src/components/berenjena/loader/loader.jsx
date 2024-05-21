@@ -4,7 +4,7 @@ import ButtonExitRoom from '../../buttonExitRoom/buttonExitRoom';
 import { useEffect, useState } from 'react';
 import { socket } from '../../../functions/SocketIO/sockets/sockets';
 
-const Loader = ({ game, sala }) => {
+const Loader = ({ game, sala ,setStarGame}) => {
   const [readyMe, setReadyMe] = useState(false);
   const [playerList, setPlayerList] = useState([]);
 
@@ -58,7 +58,7 @@ const Loader = ({ game, sala }) => {
             </svg>
           ))}
         </div>
-        <button onClick={handleReady}>Ready</button>
+        <button onClick={handleReady} disabled={readyMe}>Ready</button>
       </div>
       <ButtonExitRoom />
     </div>

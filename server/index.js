@@ -28,7 +28,8 @@ io.on("connection", (socket) => {
     if (rooms) {
       const allRoomsInfo = Object.keys(rooms).map((roomId) => ({
         roomId,
-        users: rooms[roomId],
+        users: rooms[roomId].users,
+        gameStarted: rooms[roomId].gameStarted
       }));
       socket.emit("all_rooms_info", allRoomsInfo);
     } else {
@@ -44,51 +45,55 @@ io.on("connection", (socket) => {
     }
 
     if (!rooms[roomId]) {
-      rooms[roomId] = [];
-    } else if (rooms[roomId].length >= 6) {
+      rooms[roomId] = { users: [], gameStarted: false };
+    } else if (rooms[roomId].users.length >= 6) {
       socket.emit("room_full", { error: "Room is full" });
       return;
     }
 
-    if (rooms[roomId].some((user) => user.id === socket.id)) {
+    if (rooms[roomId].gameStarted) {
+      socket.emit("error", { error: "Game already started, cannot join" });
+      return;
+    }
+
+    if (rooms[roomId].users.some((user) => user.id === socket.id)) {
       socket.emit("room_join_error", { error: "User already in the room" });
       return;
     }
 
     console.log(`User ${userName} joined room ${roomId} in game ${game}`);
     socket.join(`${game}-${roomId}`);
-    const position = rooms[roomId].length + 1;
+    const position = rooms[roomId].users.length + 1;
     const user = {
       id: socket.id,
       name: userName,
       ready: false,
       room: roomId,
-      postion: position,
+      position: position,
     };
-    rooms[roomId].push(user);
+    rooms[roomId].users.push(user);
 
     socket.emit("position", position);
-    io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId]);
+    io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId].users);
     socket.emit("room_joined", { roomId, game, userName, position: position });
   });
-  // Probar sala full
-  // Readys for start game
-  // repartir
 
   socket.on("player_ready", ({ game, roomId }) => {
     console.log(`Player ready in room ${roomId} of game ${game}`);
     const rooms = games[game];
     if (rooms && rooms[roomId]) {
-      const user = rooms[roomId].find((u) => u.id === socket.id);
-      if (user) {
-        user.ready = true;
-        io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId]);
-        //si hay 2 en sala y ponen listo los 2 comienza la partida mientras deja que se unan hasta 6
-        const allReady = rooms[roomId].every((u) => u.ready);
-        if (allReady || rooms[roomId].length === 6) {
-          io.to(`${game}-${roomId}`).emit("start_game");
+        const user = rooms[roomId].users.find((u) => u.id === socket.id);
+        if (user) {
+            user.ready = true;
+            io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId].users);
+            // Verificar si todos los jugadores están listos y hay al menos 2 jugadores
+            const allReady = rooms[roomId].users.every((u) => u.ready);
+            const enoughPlayers = rooms[roomId].users.length >= 2;
+            if (allReady && enoughPlayers) {
+                rooms[roomId].gameStarted = true;
+                io.to(`${game}-${roomId}`).emit("start_game");
+            }
         }
-      }
     }
   });
 
@@ -97,7 +102,7 @@ io.on("connection", (socket) => {
     let cartasMezcladas = shuffle(baraja);
 
     const rooms = games[game];
-    if (rooms && rooms[roomId] && rooms[roomId].length === 4) {
+    if (rooms && rooms[roomId] && rooms[roomId].users.length === 4) {
       if (ronda.cardPorRonda === 1) {
         io.to(`${game}-${roomId}`).emit("mezcladas", {
           jugador1: [cartasMezcladas[0]],
@@ -138,13 +143,13 @@ io.on("connection", (socket) => {
     for (const game in games) {
       const rooms = games[game];
       for (const roomId in rooms) {
-        const userIndex = rooms[roomId].findIndex(
+        const userIndex = rooms[roomId].users.findIndex(
           (user) => user.id === socket.id
         );
         if (userIndex !== -1) {
-          rooms[roomId].splice(userIndex, 1);
-          io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId]);
-          if (rooms[roomId].length === 0) {
+          rooms[roomId].users.splice(userIndex, 1);
+          io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId].users);
+          if (rooms[roomId].users.length === 0) {
             delete rooms[roomId];
             console.log(`User ${socket.id} Disconnected from room =>${roomId}`);
           }
@@ -162,3 +167,9 @@ io.on("connection", (socket) => {
 server.listen(3001, () => {
   console.log("Server listening on port 3001");
 });
+
+
+
+  // Probar sala full
+  // Readys for start game
+  // repartir

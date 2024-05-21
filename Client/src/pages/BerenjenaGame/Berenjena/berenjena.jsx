@@ -24,13 +24,13 @@ import {socket} from '../../../functions/SocketIO/sockets/sockets';
 
 const GameBerenjena = ({roomIdberenjena}) => {
   const [loader, setLoader] = useState (true);
-
   const [myPosition, setMyPosition] = useState (null);
-
   const [game, setGame] = useState ('Berenjena'); // Juego seleccionado
   const [votacion, setVotacion] = useState ([]); //base del resultado xronda
-
   const [showResult, setShowResult] = useState (false);
+  const [startgame, setStarGame] = useState (false); // Juego seleccionado
+  
+
 
   const [jugador1, setJugador1] = useState ({
     username: '',
@@ -408,13 +408,16 @@ const GameBerenjena = ({roomIdberenjena}) => {
 
 
   useEffect (() => {
+    socket.on ('start_game', () => {
+      console.log ('La partida ha comenzado!');
+       setLoader (!loader);
+    });
+    
     socket.on ('player_list', playerList => {
       //   setSala (playerList);
       console.log (playerList);
 
-      // socket.on ('start_game', () => {
-      //   console.log ('La partida ha comenzado!');
-      // });
+      
     });
     // if (salas.length === 3) {
     // setLoader (!loader);
@@ -589,7 +592,7 @@ const GameBerenjena = ({roomIdberenjena}) => {
     <div className={style.contain}>
 
       {loader == true
-        ? <Loader sala={roomIdberenjena} game={game} />
+        ? <Loader sala={roomIdberenjena} game={game} setStarGame={setStarGame}/>
         : <div className={style.tableroJugadores}>
 
             <div className={style.jugador2}>
