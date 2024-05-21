@@ -1,5 +1,5 @@
 import {
-  joinGameRoom,
+  // joinGameRoom,
   OnSalaLLena,
   socket,
 } from '../../../functions/SocketIO/sockets/sockets';
@@ -27,11 +27,12 @@ export const WriteName = ({
   const [roomId, setRoomId] = useState ('');
   const [userName, setUserName] = useState ('');
 
+  let response;
   const joinRoom = async e => {
     e.preventDefault ();
 
     setWriteName (false);
-    const response = await joinGameRoom ("Berenjena",roomId, userName);
+    // const response = await joinGameRoom ("Berenjena",roomId, userName);
     if (response && response.position) {
       const {position, userName} = response;
 
@@ -127,7 +128,6 @@ export const WriteName = ({
   useEffect (() => {
     socket.on ('position', position => {
       console.log ('Mi posición en la sala:', position);
-      // Actualizar el estado con la posición del usuario
       setMyPosition (position);
     });
   }, []);

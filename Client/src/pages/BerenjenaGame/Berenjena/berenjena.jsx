@@ -26,7 +26,7 @@ const GameBerenjena = () => {
   const [loader, setLoader] = useState (true);
 
   const [myPosition, setMyPosition] = useState (null);
-  const [rooms, setRooms] = useState ([]);
+
   const [game, setGame] = useState ('Berenjena'); // Juego seleccionado
   const [votacion, setVotacion] = useState ([]); //base del resultado xronda
 
@@ -406,18 +406,7 @@ const GameBerenjena = () => {
     // }
   };
 
-  useEffect (
-    () => {
-      const initializeSocket = async () => {
-        const roomsInfo = await getAllRoomsInfo (game);
-        setRooms (roomsInfo);
-      };
-
-      initializeSocket ();
-    },
-    [game]
-  );
-
+ 
   useEffect (
     () => {
       // if (salas.length === 3) {
@@ -439,7 +428,7 @@ const GameBerenjena = () => {
       }
       // }
     },
-    [rooms]
+    []
   );
 
   useEffect (
@@ -595,22 +584,24 @@ const GameBerenjena = () => {
     <div className={style.contain}>
 
       {writeName === true
-        ? <WriteName
-            setWriteName={setWriteName}
-            setJugador1={setJugador1}
-            jugador1={jugador1}
-            setJugador2={setJugador2}
-            jugador2={jugador2}
-            setJugador3={setJugador3}
-            jugador3={jugador3}
-            setJugador4={setJugador4}
-            jugador4={jugador4}
-            setMyPosition={setMyPosition}
-            setSala={setRooms}
-          />
+        ? 
+        // <WriteName
+        //     setWriteName={setWriteName}
+        //     setJugador1={setJugador1}
+        //     jugador1={jugador1}
+        //     setJugador2={setJugador2}
+        //     jugador2={jugador2}
+        //     setJugador3={setJugador3}
+        //     jugador3={jugador3}
+        //     setJugador4={setJugador4}
+        //     jugador4={jugador4}
+        //     setMyPosition={setMyPosition}
+        //     setSala={"setRooms"}
+        //   />
+        ""
         : <div>
             {loader == true
-              ? <Loader sala={rooms} />
+              ? <Loader sala={"rooms"} game={game}/>
               : <div className={style.tableroJugadores}>
 
                   <div className={style.jugador2}>

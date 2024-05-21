@@ -12,10 +12,10 @@ const PagePrimaryBerenjena =()=>{
             <Link to="/gameberenjenaIA" className={styles.link}>
               • Jugar contra la IA 👤
             </Link>
-            <Link to="/gameberenjenafriend" className={styles.link}>
+            <Link to="/berenjena/joinRoom" className={styles.link}>
               • Jugar con un amigo 👥
             </Link>
-            <Link to="/rulesofberenjena" className={styles.link}>• Reglas 📜</Link>
+            <Link to="/berenjena/rules" className={styles.link}>• Reglas 📜</Link>
             <Link to="/" className={styles.link}>• Inicio 📜</Link>
           </div>
   

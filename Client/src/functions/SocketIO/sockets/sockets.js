@@ -35,15 +35,14 @@ export const disconnectRoom = () => {
   socket.emit("disconnectRoom");
 };
 
-
 // ingresa a una sala
-export const joinGameRoom = (game, roomId, userName) => {
+export const CreateGameRoom = (game, roomId, userName) => {
   return new Promise((res, rej) => {
     const responses = {}; // Objeto para almacenar todas las respuestas
 
     // Manejar el evento 'room_joined'
     socket.once("room_joined", (data) => {
-      responses.roomJoined = data;
+      // responses.roomJoined = data;
       checkIfReadyToResolve();
     });
 
@@ -73,6 +72,45 @@ export const joinGameRoom = (game, roomId, userName) => {
 
     // Emitir el evento 'join_room'
     socket.emit("join_room", { game, roomId, userName });
+  });
+};
+
+export const joinGameRoom = (game, roomId, userName) => {
+  return new Promise((resolve, reject) => {
+    const responses = {};
+
+    // Manejar el evento 'room_joined'
+    socket.once('room_joined', (data) => {
+      // responses.roomJoined = data;
+      checkIfReadyToResolve();
+    });
+
+    // Manejar el evento 'player_list'
+    socket.once('player_list', (data) => {
+      responses.playerList = data;
+      checkIfReadyToResolve();
+    });
+
+    // Manejar el evento 'position'
+    socket.once('position', (data) => {
+      responses.position = data;
+      checkIfReadyToResolve();
+    });
+
+    // Manejar el evento 'room_join_error'
+    socket.once('room_join_error', (error) => {
+      reject(error);
+    });
+
+    // Función para verificar si todas las respuestas han sido recibidas y resolver la promesa
+    function checkIfReadyToResolve() {
+      if (Object.keys(responses).length === 3) {
+        resolve(responses);
+      }
+    }
+
+    // Emitir el evento 'join_room'
+    socket.emit('join_room', { game, roomId, userName });
   });
 };
 

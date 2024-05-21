@@ -4,6 +4,7 @@ import { Route, Routes } from "react-router-dom";
 import PagePrimaryBerenjena from "./pages/BerenjenaGame/PagePrimaryBerenjena/pagePrimaryBerenjena";
 import RulesOfBerenjena from "./pages/BerenjenaGame/rulesBerenjena/rulesBerenjena";
 import GameBerenjena from "./pages/BerenjenaGame/Berenjena/berenjena";
+import JoinRoom from "./pages/BerenjenaGame/joinRoom/JoinRoom";
 
 function App() {
   return (
@@ -14,9 +15,10 @@ function App() {
 
 
         <Route path="/berenjena" element={<PagePrimaryBerenjena/>} />
-        <Route path="/rulesofberenjena" element={<RulesOfBerenjena />} />
+        <Route path="/berenjena/rules" element={<RulesOfBerenjena />} />
+        <Route path="/berenjena/joinRoom" element={<JoinRoom />} />
+        <Route path="/berenjena/gamefriend" element={<GameBerenjena />} />
         <Route path="/gameberenjenaIA" element={<GameBerenjena />} />
-        <Route path="/gameberenjenafriend" element={<GameBerenjena />} />
 
       </Routes>
     </div>

@@ -1,0 +1,112 @@
+.containRoom {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  font-family: "Bebas Neue", sans-serif;
+  background-image: url("../../../../src/assets/fondoo.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.sideBar {
+  height: 100vh;
+  width: 20%;
+  background-color: #ff904f;
+  padding-inline: 1rem;
+  font-size: 1.3rem;
+  display: flex;
+  flex-direction: column;
+  color: white;
+}
+.DivButtonBack {
+  margin-top: 1rem;
+}
+.DivButtonBack button {
+  width: 100%;
+  height: 2rem;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.DivName {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  width: 100%;
+  margin-top: 4rem;
+}
+.DivName input {
+  height: 2rem;
+  border-radius: 10px;
+  width: 95%;
+  padding-left: 0.5rem;
+}
+.DivAvatars {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+}
+.DivAvatarsGrid {
+  display: grid;
+  gap: 30px;
+  grid-template-columns: repeat(3, 1fr);
+}
+.DivAvatars img {
+  width: 80px;
+}
+
+.DivInputRoom {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  width: 100%;
+  margin-top: 4rem;
+  font-size: 1.3rem;
+}
+.DivInputRoom input {
+  height: 2rem;
+  border-radius: 10px;
+  width: 95%;
+  padding-left: 0.5rem;
+}
+
+.DivInputRoom button {
+  width: 100px;
+  border-radius: 5px;
+  align-self: end;
+  margin-top: 0.5rem;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+.DivRooms {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 2rem;
+  gap: 2rem;
+  height: 200px;
+  width: 80%;
+  justify-content: center;
+}
+
+.DivRoom {
+  font-size: 1.3rem;
+  color: white;
+}
+.DivRoom p {
+  font-size: 1.3rem;
+  margin: 0;
+}
+
+.DivRoom img {
+  width: 150px;
+  border-radius: 50%;
+  border: 3px solid white;
+}
+.DivRoom button {
+  width: 100%;
+  border-radius: 10px;
+  border: 5px solid green;
+  cursor: pointer;
+}
