@@ -4,13 +4,13 @@ import ButtonExitRoom from '../../buttonExitRoom/buttonExitRoom';
 import { useEffect, useState } from 'react';
 import { socket } from '../../../functions/SocketIO/sockets/sockets';
 
-const Loader = ({ game, sala ,setStarGame}) => {
+const Loader = ({ game, roomIdberenjena ,setStarGame}) => {
   const [readyMe, setReadyMe] = useState(false);
   const [playerList, setPlayerList] = useState([]);
 
   const handleReady = () => {
     setReadyMe(true);
-    socket.emit('player_ready', { game, roomId: sala });
+    socket.emit('player_ready', { game, roomId: roomIdberenjena.roomId });
   };
 
   useEffect(() => {

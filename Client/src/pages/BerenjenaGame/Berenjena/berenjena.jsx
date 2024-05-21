@@ -30,7 +30,7 @@ const GameBerenjena = ({roomIdberenjena}) => {
   const [showResult, setShowResult] = useState (false);
   const [startgame, setStarGame] = useState (false); // Juego seleccionado
   
-console.log(roomIdberenjena);
+
 
   const [jugador1, setJugador1] = useState ({
     username: '',
@@ -419,7 +419,7 @@ console.log(roomIdberenjena);
 
       
     });
-    // if (salas.length === 3) {
+    if (salas.length === 3) {
     // setLoader (!loader);
     mezclar (
       setJugador1,
@@ -436,7 +436,7 @@ console.log(roomIdberenjena);
       setRonda ({...ronda, typeRound: 'apuesta', obligado: 4});
       GuardarEnBase ();
     }
-    // }
+    }
   }, []);
 
   useEffect (
@@ -592,7 +592,7 @@ console.log(roomIdberenjena);
     <div className={style.contain}>
 
       {loader == true
-        ? <Loader sala={roomIdberenjena} game={game} setStarGame={setStarGame}/>
+        ? <Loader roomIdberenjena={roomIdberenjena} game={game} setStarGame={setStarGame}/>
         : <div className={style.tableroJugadores}>
 
             <div className={style.jugador2}>
