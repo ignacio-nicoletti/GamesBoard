@@ -11,10 +11,10 @@ const PagePrimaryBerenjena = () => {
           <Link to="/gameberenjenaIA" className={styles.link}>
             VS CPU
           </Link>
-          <Link to="/gameberenjenafriend" className={styles.link}>
+          <Link to="/berenjena/joinRoom" className={styles.link}>
             Multiplayer
           </Link>
-          <Link to="/rulesofberenjena" className={styles.link}>
+          <Link to="/berenjena/rules" className={styles.link}>
             Rules
           </Link>
           <Link to="/" className={styles.link}>

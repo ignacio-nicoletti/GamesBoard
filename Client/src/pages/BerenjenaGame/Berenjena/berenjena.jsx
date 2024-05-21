@@ -684,7 +684,7 @@ const GameBerenjena = () => {
             ""
           )}
         </div>
-      )}
+      }
       <div className={style.resultado} onClick={() => setShowResult(true)}>
         <p>Resultados</p>
       </div>
