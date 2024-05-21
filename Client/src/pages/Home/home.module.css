@@ -5,79 +5,139 @@
   height: 100vh;
   display: flex;
   justify-content: center;
-  background-color: rgb(0, 128, 0);
+  align-items: center;
+  background-image: url("../../assets/bgHome.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
   font-family: "Bebas Neue", sans-serif;
-  box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset,
-    rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset,
-    rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px,
-    rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px,
-    rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
 }
 
 .containOption {
-  width: 50%;
+  width: 80%;
   display: flex;
-  /* justify-content: center; */
   flex-direction: column;
   align-items: center;
   margin-top: 3rem;
 }
 
 .containOption h1 {
+  color: white;
   font-size: 3rem;
   margin: 0;
   padding: 0;
 }
 
-.option {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.description {
+  font-size: 1.5rem;
+  color: white;
   text-align: center;
+  margin: 1rem 0;
+  padding: 0 1rem;
+}
+
+.optionGrid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
-  font-size: 2rem;
+  gap: 2rem;
   width: 100%;
-  z-index: 1;
+  padding: 2rem;
 }
 
 .link {
-  margin: 2rem;
   text-decoration: none;
   color: white;
-  width: fit-content;
 }
 
-.jocker {
-  position: absolute;
-  z-index: 1;
+.gameCard {
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-size: 2rem;
-}
-.jocker img {
-  opacity: 0.8;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 1rem;
+  border-radius: 10px;
+  height: 12rem;
+  transition: transform 0.3s ease;
 }
 
-.Poker {
-  position: absolute;
-  bottom: 0;
-  right: 15px;
+.gameCard p {
+  margin: 1rem 0;
+  font-size: 1.5rem;
 }
-/* border-radius: 50%; */
 
-.Berenjena {
-  position: absolute;
-  bottom: 0;
-  left: 0px;
+.gameCard img {
+  width: 100%;
+  max-width: 150px;
+  height: 8rem;
+  border-radius: 5px;
 }
-.Berenjena img,
-.Poker img {
-  width: 400px;
+
+.gameCard:hover {
+  transform: scale(1.05);
+}
+
+@media only screen and (max-width: 1024px) {
+  .containOption h1 {
+    font-size: 2.5rem;
+  }
+
+  .description {
+    font-size: 1.3rem;
+  }
+
+  .gameCard p {
+    font-size: 1.3rem;
+  }
+
+  .gameCard img {
+    max-width: 120px;
+  }
 }
 
 @media only screen and (max-width: 730px) {
   .containOption {
+    width: 90%;
+    margin-top: 2rem;
+  }
+
+  .containOption h1 {
+    font-size: 2rem;
+  }
+
+  .description {
+    font-size: 1.2rem;
+  }
+
+  .gameCard p {
+    font-size: 1.2rem;
+  }
+
+  .gameCard img {
+    max-width: 100px;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .containOption {
     width: 100%;
+    margin-top: 1rem;
+  }
+
+  .containOption h1 {
+    font-size: 1.5rem;
+  }
+
+  .description {
+    font-size: 1rem;
+  }
+
+  .gameCard p {
+    font-size: 1rem;
+  }
+
+  .gameCard img {
+    max-width: 80px;
   }
 }
