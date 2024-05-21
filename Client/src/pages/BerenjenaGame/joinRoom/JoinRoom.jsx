@@ -25,6 +25,7 @@ const JoinRoom = ({setRoomIdberenjena}) => {
       if (roomId !== '' && userName !== '') {
         const response = await CreateGameRoom (game, roomId, userName);
         console.log (response);
+        //poner alerta de que uniste
         
       }
     } catch (error) {
