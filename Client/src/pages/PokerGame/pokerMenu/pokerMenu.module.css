@@ -1,0 +1,98 @@
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
+
+.contain,
+.welcomeTitle,
+.welcomeImg,
+.containOption,
+.option,
+.link {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.contain {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-image: url("../../../assets/berenjena/bgBerenjena.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  font-family: "Bebas Neue", sans-serif;
+}
+
+.containOption {
+  width: 40rem;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  padding-inline: 1rem;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.774);
+  backdrop-filter: blur(2px);
+}
+
+.welcomeImg {
+  height: 15rem;
+  max-height: 70%;
+}
+
+.option {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  font-size: 2rem;
+  width: 100%;
+}
+
+.link {
+  width: 15rem;
+  margin: 1rem;
+  padding: 0.5rem;
+  text-decoration: none;
+  background-color: rgb(255, 255, 255);
+  border: none;
+  border-radius: 10px;
+  color: #ff914d;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  cursor: pointer;
+}
+
+.link:hover {
+  box-shadow: #ff914d 0px 1px 4px, #ff914d 0px 0px 0px 3px;
+}
+
+@media only screen and (max-width: 730px) {
+  .containOption {
+    width: 90%;
+  }
+  .option {
+    font-size: 1.5rem;
+  }
+  .link {
+    width: 15rem;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .welcomeTitle {
+    height: 20rem;
+  }
+  .option {
+    font-size: 1.2rem;
+  }
+  .link {
+    width: 12rem;
+    margin: 0.5rem;
+    padding: 0.4rem;
+  }
+}

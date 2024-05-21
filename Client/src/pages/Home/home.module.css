@@ -43,7 +43,6 @@
   align-items: center;
   gap: 2rem;
   width: 100%;
-  padding: 2rem;
 }
 
 .link {
@@ -58,6 +57,7 @@
   background-color: rgba(0, 0, 0, 0.7);
   padding: 1rem;
   border-radius: 10px;
+  width: 10rem;
   height: 12rem;
   transition: transform 0.3s ease;
 }
