@@ -59,12 +59,9 @@ const JoinRoom = ({setRoomIdberenjena, roomIdberenjena}) => {
   useEffect (
     () => {
       const handlePlayerList = playerList => {
-        console.log (playerList);
         navigate ('/berenjena/multiplayer');
       };
-
       socket.on ('player_list', handlePlayerList);
-
       return () => {
         socket.off ('player_list', handlePlayerList);
       };
