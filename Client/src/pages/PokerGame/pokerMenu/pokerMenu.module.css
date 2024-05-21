@@ -34,14 +34,14 @@
   align-items: center;
   padding: 1rem;
   padding-inline: 1rem;
-  border-radius: 10px;
-  background-color: rgba(255, 255, 255, 0.774);
-  backdrop-filter: blur(2px);
 }
 
 .welcomeImg {
   height: 15rem;
   max-height: 70%;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.849);
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
 .option {
@@ -50,25 +50,26 @@
   justify-content: center;
   text-align: center;
   align-items: center;
-  font-size: 2rem;
+  margin-top: 2rem;
+  font-size: 1.5rem;
   width: 100%;
 }
 
 .link {
   width: 15rem;
-  margin: 1rem;
+  margin: 0.5rem;
   padding: 0.5rem;
   text-decoration: none;
   background-color: rgb(255, 255, 255);
   border: none;
   border-radius: 10px;
-  color: #ff914d;
+  color: #da0505;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   cursor: pointer;
 }
 
 .link:hover {
-  box-shadow: #ff914d 0px 1px 4px, #ff914d 0px 0px 0px 3px;
+  box-shadow: #da0505 0px 1px 4px, #da0505 0px 0px 0px 3px;
 }
 
 @media only screen and (max-width: 730px) {
