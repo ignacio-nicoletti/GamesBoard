@@ -10,7 +10,7 @@ import avatar from '../../../assets/berenjena/jugadores/avatar.png';
 import people from '../../../assets/berenjena/jugadores/people.png';
 import {Link, useNavigate} from 'react-router-dom';
 
-const JoinRoom = () => {
+const JoinRoom = ({setRoomIdberenjena}) => {
   const [rooms, setRooms] = useState ([]); //mapeo de todas las salas
   const [game, setGame] = useState ('Berenjena'); // Juego seleccionado
   const [userName, setUserName] = useState (''); //mi nombre
@@ -18,43 +18,30 @@ const JoinRoom = () => {
 
   const navigate = useNavigate ();
 
-  const CreateRoom = async (e) => {
-    e.preventDefault();
+  const CreateRoom = async e => {
+    e.preventDefault ();
 
     try {
       if (roomId !== '' && userName !== '') {
-        const response = await CreateGameRoom(game, roomId, userName);
-        console.log(response);
-        if (response) {
-          navigate('/berenjena/multiplayer');
-        } else {
-          alert('Failed to create room');
-        }
-      } else {
-        alert('Room ID and Username are required');
+        const response = await CreateGameRoom (game, roomId, userName);
+        console.log (response);
+        
       }
     } catch (error) {
-      console.error(error);
-      alert(error.message || 'An error occurred while creating the room');
+      console.error (error);
+      alert (error); // Muestra una alerta con el mensaje de error
     }
   };
 
-  const handlerJoinRoom = async (roomId) => {
+  const handlerJoinRoom = async roomId => {
     try {
       if (roomId !== '' && userName !== '') {
-        const response = await joinGameRoom(game, roomId, userName);
-        console.log(response);
-        if (response) {
-          navigate('/berenjena/multiplayer');
-        } else {
-          alert('Failed to join room');
-        }
-      } else {
-        alert('Room ID and Username are required');
+        const response = await joinGameRoom (game, roomId, userName);
+        console.log (response);
       }
     } catch (error) {
-      console.error(error);
-      alert(error.message || 'An error occurred while joining the room');
+      console.error (error);
+      alert (error); // Muestra una alerta con el mensaje de error
     }
   };
 
@@ -63,9 +50,7 @@ const JoinRoom = () => {
       const initializeSocket = async () => {
         const roomsInfo = await getAllRoomsInfo (game);
         setRooms (roomsInfo);
-        console.log (roomsInfo);
       };
-
       initializeSocket ();
     },
     [game]
@@ -75,15 +60,15 @@ const JoinRoom = () => {
     socket.on ('player_list', playerList => {
       //   setSala (playerList);
       console.log (playerList);
+      setRoomIdberenjena(playerList[0].room)
+      navigate ('/berenjena/multiplayer');
 
       socket.on ('start_game', () => {
-        // Aquí puedes manejar el inicio del juego
         console.log ('La partida ha comenzado!');
       });
     });
     return () => {
       socket.off ('player_list');
-      socket.off ('start_game');
     };
   }, []);
 

@@ -8,8 +8,11 @@ import GameBerenjena from "./pages/BerenjenaGame/Berenjena/berenjena";
 import JoinRoom from "./pages/BerenjenaGame/joinRoom/JoinRoom";
 
 import PokerMenu from "./pages/PokerGame/pokerMenu/pokerMenu";
+import { useState } from "react";
 
 function App() {
+const[roomIdberenjena,setRoomIdberenjena]=useState(null)
+
   return (
     <div className="App">
       <Routes>
@@ -18,8 +21,8 @@ function App() {
         {/* BERENJENA */}
         <Route path="/berenjena" element={<PagePrimaryBerenjena />} />
         <Route path="/berenjena/rules" element={<RulesOfBerenjena />} />
-        <Route path="/berenjena/joinRoom" element={<JoinRoom />} />
-        <Route path="/berenjena/multiplayer" element={<GameBerenjena />} />
+        <Route path="/berenjena/joinRoom" element={<JoinRoom setRoomIdberenjena={setRoomIdberenjena}/>} />
+        <Route path="/berenjena/multiplayer" element={<GameBerenjena roomIdberenjena={roomIdberenjena}/>} />
         <Route path="/gameberenjenaIA" element={<GameBerenjena />} />
 
         {/* Poker */}

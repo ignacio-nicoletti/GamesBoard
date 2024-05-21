@@ -10,13 +10,12 @@ const Loader = ({ game, sala }) => {
 
   const handleReady = () => {
     setReadyMe(true);
-    socket.emit('player_ready', { game, roomId: sala[0].room });
+    socket.emit('player_ready', { game, roomId: sala });
   };
 
   useEffect(() => {
     socket.on('player_list', data => {
       setPlayerList(data);
-      console.log(data);
     });
 
     return () => {
