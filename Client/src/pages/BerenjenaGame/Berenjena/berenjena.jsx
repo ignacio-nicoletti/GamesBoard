@@ -419,7 +419,7 @@ const GameBerenjena = ({roomIdberenjena}) => {
 
       
     });
-    if (salas.length === 3) {
+    // if (salas.length === 3) {
     // setLoader (!loader);
     mezclar (
       setJugador1,
@@ -436,7 +436,7 @@ const GameBerenjena = ({roomIdberenjena}) => {
       setRonda ({...ronda, typeRound: 'apuesta', obligado: 4});
       GuardarEnBase ();
     }
-    }
+    // }
   }, []);
 
   useEffect (
