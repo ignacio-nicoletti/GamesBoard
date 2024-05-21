@@ -8,10 +8,9 @@ const PagePrimaryPoker = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simula un tiempo de carga de 3 segundos
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 8000);
+    }, 6000);
 
     return () => clearTimeout(timer);
   }, []);

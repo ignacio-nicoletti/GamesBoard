@@ -1,20 +1,22 @@
-import { useEffect, useState } from 'react';
-import style from './joinRoom.module.css';
+import { useEffect, useState } from "react";
+import style from "./joinRoom.module.css";
 import {
   getAllRoomsInfo,
   CreateGameRoom,
   socket,
   joinGameRoom,
-} from '../../../functions/SocketIO/sockets/sockets';
-import avatar from '../../../assets/berenjena/jugadores/avatar.png';
-import people from '../../../assets/berenjena/jugadores/people.png';
-import { Link, useNavigate } from 'react-router-dom';
+} from "../../../functions/SocketIO/sockets/sockets";
+import avatar from "../../../assets/berenjena/jugadores/avatar.png";
+import imgRoom from "../../../assets/berenjena/jugadores/imgRoom.png";
+import logoBerenjena from "../../../assets/berenjena/home/logoBerenjena.png";
+import { Link, useNavigate } from "react-router-dom";
+import Autocomplete from "../../../components/autocomplete/autocomplete";
 
 const JoinRoom = ({ setRoomIdberenjena, roomIdberenjena }) => {
   const [rooms, setRooms] = useState([]); // mapeo de todas las salas
-  const [game, setGame] = useState('Berenjena'); // Juego seleccionado
-  const [userName, setUserName] = useState(''); // mi nombre
-  const [roomId, setRoomId] = useState(''); // id de room
+  const [game, setGame] = useState("Berenjena"); // Juego seleccionado
+  const [userName, setUserName] = useState(""); // mi nombre
+  const [roomId, setRoomId] = useState(""); // id de room
 
   const navigate = useNavigate();
 
@@ -22,7 +24,7 @@ const JoinRoom = ({ setRoomIdberenjena, roomIdberenjena }) => {
     e.preventDefault();
 
     try {
-      if (roomId !== '' && userName !== '') {
+      if (roomId !== "" && userName !== "") {
         const response = await CreateGameRoom(game, roomId, userName);
         console.log(response);
         // poner alerta de que uniste
@@ -35,7 +37,7 @@ const JoinRoom = ({ setRoomIdberenjena, roomIdberenjena }) => {
 
   const handlerJoinRoom = async (roomId) => {
     try {
-      if (roomId !== '' && userName !== '') {
+      if (roomId !== "" && userName !== "") {
         const response = await joinGameRoom(game, roomId, userName);
         console.log(response);
       }
@@ -57,49 +59,48 @@ const JoinRoom = ({ setRoomIdberenjena, roomIdberenjena }) => {
     const handlePlayerList = (playerList) => {
       console.log(playerList);
       // Actualizar el estado global de roomIdberenjena aquí si es necesario
-      navigate('/berenjena/multiplayer');
+      navigate("/berenjena/multiplayer");
     };
 
-    socket.on('player_list', handlePlayerList);
+    socket.on("player_list", handlePlayerList);
 
     return () => {
-      socket.off('player_list', handlePlayerList);
+      socket.off("player_list", handlePlayerList);
     };
   }, [navigate]);
 
   useEffect(() => {
     const handlePosition = (position) => {
       setRoomIdberenjena((prev) => ({ ...prev, positionId: position }));
-      console.log('Position:', position);
+      console.log("Position:", position);
     };
 
-    socket.on('position', handlePosition);
+    socket.on("position", handlePosition);
 
     return () => {
-      socket.off('position', handlePosition);
+      socket.off("position", handlePosition);
     };
   }, [setRoomIdberenjena]);
 
   useEffect(() => {
     const handleRoomJoined = ({ roomId, position }) => {
       setRoomIdberenjena((prev) => ({ ...prev, roomId, positionId: position }));
-      console.log('Room Joined:', { roomId, position });
+      console.log("Room Joined:", { roomId, position });
     };
 
-    socket.on('room_joined', handleRoomJoined);
+    socket.on("room_joined", handleRoomJoined);
 
     return () => {
-      socket.off('room_joined', handleRoomJoined);
+      socket.off("room_joined", handleRoomJoined);
     };
   }, [setRoomIdberenjena]);
 
+  console.log(rooms);
   return (
     <div className={style.containRoom}>
       <div className={style.sideBar}>
         <div className={style.DivButtonBack}>
-          <Link to="/berenjena">
-            <button> Home</button>
-          </Link>
+          <Link to="/berenjena">Back to menu</Link>
         </div>
         <div className={style.DivName}>
           <span>Name: </span>
@@ -132,20 +133,29 @@ const JoinRoom = ({ setRoomIdberenjena, roomIdberenjena }) => {
       </div>
 
       <div className={style.DivRooms}>
-        {rooms.map((el) => (
-          <div key={el.roomId} className={style.DivRoom}>
-            <p>sala {el.roomId}</p>
-            <img src={people} alt="" />
-            <p>{el.users.length}/6</p>
-            <button
-              onClick={() => {
-                handlerJoinRoom(el.roomId);
-              }}
-            >
-              Join
-            </button>
-          </div>
-        ))}
+        <div className={style.autocomplete}>
+          <img src={logoBerenjena} alt="" className={style.logoBerenjena} />
+          <Autocomplete />
+          <Autocomplete />
+        </div>
+        <div className={style.roomsContainer}>
+          {rooms.map((el) => (
+            <div key={el.roomId} className={style.DivRoom}>
+              <div className={style.textRoom}>
+                <p>sala {el.roomId}</p>
+                <p>{el.users.length}/6</p>
+              </div>
+              <img src={imgRoom} alt="" className={style.imgRoom}/>
+              <button
+                onClick={() => {
+                  handlerJoinRoom(el.roomId);
+                }}
+              >
+                Join
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

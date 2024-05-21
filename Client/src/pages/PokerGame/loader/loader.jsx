@@ -9,7 +9,7 @@ import "aos/dist/aos.css";
 
 const Loader = () => {
   useEffect(() => {
-    AOS.init({ duration: 100000 });
+    AOS.init({ duration: 10000000 });
   }, []);
   return (
     <div className={styles.loaderContainer}>

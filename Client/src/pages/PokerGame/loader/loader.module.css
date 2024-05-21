@@ -25,17 +25,16 @@
   transform: translate(-50%, -50%);
   z-index: 1;
   animation: zoomIn 1.5s forwards;
-  opacity: 0; 
+  opacity: 0;
 }
 
-
 @keyframes zoomIn {
-    from {
-      transform: translate(-50%, -50%) scale(0.5); /* Escala inicial del 50% */
-      opacity: 0;
-    }
-    to {
-      transform: translate(-50%, -50%) scale(1); /* Escala máxima del 100% */
-      opacity: 1;
-    }
+  from {
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 0;
   }
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
