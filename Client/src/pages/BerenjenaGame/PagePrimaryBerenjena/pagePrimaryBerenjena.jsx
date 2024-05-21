@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import styles from "./pagePrimaryBerenjena.module.css";
-import welcomeTitle from "../../../assets/berenjena/welcomeTitle.png";
+import welcomeTitle from "../../../assets/berenjena/home/welcomeTitle.png";
 
 const PagePrimaryBerenjena = () => {
   return (

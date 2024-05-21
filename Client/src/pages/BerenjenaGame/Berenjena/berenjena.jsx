@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import style from './berenjena.module.css';
-import {WriteName} from '../../../components/berenjena/writeName/writeName';
+
 import Jugadores from '../../../components/berenjena/jugadores/jugadores';
 import Cards from '../../../components/berenjena/cards/card';
 

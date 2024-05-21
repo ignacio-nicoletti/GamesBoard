@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import styles from "./home.module.css";
-import PokerImg from "../../assets/pokerImg.png";
-import BerenjenaImg from "../../assets/berenjenaImg.png";
+import PokerImg from "../../assets/homeFirst/pokerImg.png";
+import BerenjenaImg from "../../assets/homeFirst/berenjenaImg.png";
 import { useEffect } from "react";
 import { connectSocket } from "../../functions/SocketIO/sockets/sockets";
 
