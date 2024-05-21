@@ -43,24 +43,24 @@ io.on("connection", (socket) => {
       socket.emit("error", { error: "Invalid game" });
       return;
     }
-
+  
     if (!rooms[roomId]) {
       rooms[roomId] = { users: [], gameStarted: false };
     } else if (rooms[roomId].users.length >= 6) {
       socket.emit("room_full", { error: "Room is full" });
       return;
     }
-
+  
     if (rooms[roomId].gameStarted) {
       socket.emit("error", { error: "Game already started, cannot join" });
       return;
     }
-
+  
     if (rooms[roomId].users.some((user) => user.id === socket.id)) {
       socket.emit("room_join_error", { error: "User already in the room" });
       return;
     }
-
+  
     console.log(`User ${userName} joined room ${roomId} in game ${game}`);
     socket.join(`${game}-${roomId}`);
     const position = rooms[roomId].users.length + 1;
@@ -72,10 +72,11 @@ io.on("connection", (socket) => {
       position: position,
     };
     rooms[roomId].users.push(user);
-
-    socket.emit("position", position);
+  
+    // Emitir el evento 'room_joined' al usuario actual
+    socket.emit("room_joined", { roomId, position });
+    // Emitir la lista de jugadores actualizada a todos los usuarios en la sala
     io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId].users);
-    socket.emit("room_joined", { roomId, game, userName, position: position });
   });
 
   socket.on("player_ready", ({ game, roomId }) => {
