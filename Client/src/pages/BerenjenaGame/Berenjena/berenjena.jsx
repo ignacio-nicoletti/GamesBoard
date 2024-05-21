@@ -30,7 +30,7 @@ const GameBerenjena = ({roomIdberenjena}) => {
   const [showResult, setShowResult] = useState (false);
   const [startgame, setStarGame] = useState (false); // Juego seleccionado
   
-
+console.log(roomIdberenjena);
 
   const [jugador1, setJugador1] = useState ({
     username: '',
@@ -412,7 +412,7 @@ const GameBerenjena = ({roomIdberenjena}) => {
       console.log ('La partida ha comenzado!');
        setLoader (!loader);
     });
-    
+
     socket.on ('player_list', playerList => {
       //   setSala (playerList);
       console.log (playerList);

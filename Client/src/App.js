@@ -11,7 +11,10 @@ import PokerMenu from "./pages/PokerGame/pokerMenu/pokerMenu";
 import { useState } from "react";
 
 function App() {
-const[roomIdberenjena,setRoomIdberenjena]=useState(null)
+const[roomIdberenjena,setRoomIdberenjena]=useState({
+  roomId:null,
+  positionId:null
+})
 
   return (
     <div className="App">
@@ -21,7 +24,7 @@ const[roomIdberenjena,setRoomIdberenjena]=useState(null)
         {/* BERENJENA */}
         <Route path="/berenjena" element={<PagePrimaryBerenjena />} />
         <Route path="/berenjena/rules" element={<RulesOfBerenjena />} />
-        <Route path="/berenjena/joinRoom" element={<JoinRoom setRoomIdberenjena={setRoomIdberenjena}/>} />
+        <Route path="/berenjena/joinRoom" element={<JoinRoom setRoomIdberenjena={setRoomIdberenjena} roomIdberenjena={roomIdberenjena}/>} />
         <Route path="/berenjena/multiplayer" element={<GameBerenjena roomIdberenjena={roomIdberenjena}/>} />
         <Route path="/gameberenjenaIA" element={<GameBerenjena />} />
 
