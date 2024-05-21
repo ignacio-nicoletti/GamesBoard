@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
-import styles from "./pagePrimaryPoker.module.css";
-import welcomeTitle from "../../../assets/poker/welcomeTitle.png";
+import styles from "./pokerMenu.module.css";
+import pokerTitle from "../../../assets/poker/pokerTitle.png";
 
 const PagePrimaryPoker = () => {
   return (
     <div className={styles.contain}>
       <div className={styles.containOption}>
-        <img src={welcomeTitle} alt="" className={styles.welcomeImg} />
+        <img src={pokerTitle} alt="" className={styles.welcomeImg} />
         <div className={`${styles.option} no-text-select`}>
           <Link to="/gamepokerIA" className={styles.link}>
             VS CPU
@@ -18,7 +18,7 @@ const PagePrimaryPoker = () => {
             Rules
           </Link>
           <Link to="/" className={styles.link}>
-            Exit{" "}
+            Exit
           </Link>
         </div>
       </div>

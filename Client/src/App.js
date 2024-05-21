@@ -1,10 +1,13 @@
 import "./App.css";
 import Home from "./pages/Home/home";
 import { Route, Routes } from "react-router-dom";
+
 import PagePrimaryBerenjena from "./pages/BerenjenaGame/PagePrimaryBerenjena/pagePrimaryBerenjena";
 import RulesOfBerenjena from "./pages/BerenjenaGame/rulesBerenjena/rulesBerenjena";
 import GameBerenjena from "./pages/BerenjenaGame/Berenjena/berenjena";
 import JoinRoom from "./pages/BerenjenaGame/joinRoom/JoinRoom";
+
+import PokerMenu from "./pages/PokerGame/pokerMenu/pokerMenu";
 
 function App() {
   return (
@@ -12,14 +15,15 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
 
-
-
-        <Route path="/berenjena" element={<PagePrimaryBerenjena/>} />
+        {/* BERENJENA */}
+        <Route path="/berenjena" element={<PagePrimaryBerenjena />} />
         <Route path="/berenjena/rules" element={<RulesOfBerenjena />} />
         <Route path="/berenjena/joinRoom" element={<JoinRoom />} />
         <Route path="/berenjena/multiplayer" element={<GameBerenjena />} />
         <Route path="/gameberenjenaIA" element={<GameBerenjena />} />
 
+        {/* Poker */}
+        <Route path="/poker" element={<PokerMenu />} />
       </Routes>
     </div>
   );
