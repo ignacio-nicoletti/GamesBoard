@@ -19,7 +19,7 @@ import {
 } from '../../../functions/logica/logica.js';
 
 import Apuesta from '../../../components/berenjena/apuesta/apuesta';
-import ButtonExitRoom from '../../../components/buttonExitRoom/buttonExitRoom';
+import ButtonExitRoom from '../../../components/berenjena/buttonExitRoom/buttonExitRoom.jsx';
 import {socket} from '../../../functions/SocketIO/sockets/sockets';
 
 const GameBerenjena = ({roomIdberenjena}) => {

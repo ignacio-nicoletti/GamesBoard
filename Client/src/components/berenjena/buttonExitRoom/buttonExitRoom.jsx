@@ -1,9 +1,9 @@
-import {Link} from 'react-router-dom';
-import style from './buttonExitRoom.module.css';
-import {disconnectRoom} from '../../functions/SocketIO/sockets/sockets';
+import { Link } from "react-router-dom";
+import style from "./buttonExitRoom.module.css";
+import { disconnectRoom } from "../../../functions/SocketIO/sockets/sockets";
 const ButtonExitRoom = () => {
   const handlerExitRoom = () => {
-    disconnectRoom ();
+    disconnectRoom();
   };
 
   return (
@@ -11,7 +11,6 @@ const ButtonExitRoom = () => {
       <Link to="/berenjena" className={style.link}>
         <div className={style.backHome} onClick={handlerExitRoom}>
           <div className={style.LogoBack}>
-
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -35,7 +34,6 @@ const ButtonExitRoom = () => {
           </div>
         </div>
       </Link>
-
     </div>
   );
 };

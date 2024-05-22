@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Reddit+Sans:ital,wght@0,200..900;1,200..900&display=swap");
+
 .containRoom {
   display: flex;
   flex-direction: column;
@@ -5,7 +7,7 @@
   padding: 0;
   margin: 0;
   min-height: 100vh;
-  background-color: aliceblue;
+  background-color: rgb(246, 246, 247);
 }
 
 .sideBar {
@@ -16,50 +18,197 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+  height: 120vh;
 }
 
 @media (min-width: 768px) {
   .sideBar {
     width: 30%;
-    height: 100vh;
+    height: 130vh;
+    margin-bottom: 0;
   }
 }
 
-.DivButtonBack {
+.containRoom.blurredBackground {
+  backdrop-filter: blur(5px);
+  pointer-events: none;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url("../../../assets/berenjena/jugadores//bgModal.png");
+}
+
+.modalContent {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px,
+    rgba(0, 0, 0, 0.22) 0px 10px 10px;
+}
+
+.modalContent h2 {
+  font-size: 1.5rem;
+}
+
+.modalContent button {
+  width: 8rem;
+  border-radius: 5px;
+  margin-top: 2rem;
+  cursor: pointer;
+  background-color: #ff914d;
+  color: white;
+  border: none;
+  padding: 0.5rem;
+  transition: background-color 0.3s;
+  font-family: "Bebas Neue";
+  font-size: 1.2rem;
+  transition: width 0.3s ease-in-out;
+}
+
+.modalContent button:hover {
+  background-color: #218838;
+  width: calc(8rem + 2rem);
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+}
+
+.profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin-top: 1rem;
 }
 
-.DivButtonBack a {
-  display: inline-block;
-  width: 100%;
-  height: 2rem;
-  border-radius: 10px;
-  text-align: center;
-  line-height: 2rem;
-  color: #fff;
-  text-decoration: none;
-  background-color: #007bff;
-  transition: background-color 0.3s;
+.profileAvatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.userName {
+  font-size: 2rem;
+}
+
+.editIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  width: 5rem;
+  border: none;
   cursor: pointer;
+  font-family: "Bebas Neue";
+  font-size: 1rem;
+  text-decoration: none;
+  background-color: green;
+  color: white;
+  padding: 0.5rem;
+  transition: background-color 0.3s;
+  transition: width 0.3s ease-in-out;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.createButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  width: 5rem;
+  font-family: "Bebas Neue";
+  font-size: 1rem;
+  text-decoration: none;
+  background-color: green;
+  color: white;
+  padding: 0.5rem;
+  transition: background-color 0.3s;
+  transition: width 0.3s ease-in-out;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.createButton:hover,
+.editIcon:hover {
+  width: calc(5rem + 2rem);
+  background-color: white;
+  color: #ff914d;
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+}
+
+.DivButtonBack a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-family: "Bebas Neue";
+  text-decoration: none;
+  background-color: green;
+  color: white;
+  padding: 0.5rem;
+  transition: background-color 0.3s;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
 .DivButtonBack a:hover {
-  background-color: #0056b3;
+  background-color: white;
+  color: #ff914d;
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
 }
 
 .DivName {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
   width: 100%;
-  margin-top: 4rem;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.DivName span {
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
 }
 
 .DivName input {
   height: 2rem;
-  border-radius: 10px;
-  width: 100%;
-  padding-left: 0.5rem;
+  border-radius: 8px;
+  width: 50%;
+  padding-left: 0.75rem;
+  font-family: "Bebas Neue";
+  border: 1px solid #ff914d;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  outline: none;
+  font-size: 1rem;
+  color: #333;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.DivName input:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 8px #4caf50;
+  background-color: #fff;
+}
+
+.DivName input::placeholder {
+  color: #aaa;
 }
 
 .DivAvatars {
@@ -69,11 +218,18 @@
   margin-top: 2rem;
 }
 
+.DivAvatars p {
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
 .DivAvatarsGrid {
-  display: grid;
-  gap: 10px;
-  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
-  width: 100%;
+  display: flex;
+  justify-content: center;
+  width: 50%;
+  flex-wrap: wrap;
+  gap: 2rem;
 }
 
 .DivAvatars img {
@@ -81,58 +237,58 @@
   height: 60px;
   border-radius: 50%;
   transition: transform 0.3s;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
+    rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
 }
 
 .DivAvatars img:hover {
-  transform: scale(1.1);
+  transform: scale(1.5);
+  cursor: pointer;
+}
+
+.selectedAvatar {
+  border: 3px solid #218838;
 }
 
 .DivInputRoom {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  width: 10rem;
+  align-items: center;
   margin-top: 4rem;
   font-size: 1.3rem;
+  gap: 1rem;
 }
 
 .DivInputRoom input {
   height: 2rem;
-  border-radius: 10px;
-  width: 100%;
-  padding-left: 0.5rem;
-}
-
-.DivInputRoom button {
-  width: 100%;
-  max-width: 150px;
-  border-radius: 5px;
-  margin-top: 0.5rem;
-  cursor: pointer;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  padding: 0.5rem;
-  transition: background-color 0.3s;
-}
-
-.DivInputRoom button:hover {
-  background-color: #218838;
+  border-radius: 8px;
+  width: 80%;
+  padding-left: 0.75rem;
+  font-family: "Bebas Neue";
+  border: 2px solid #218838;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  outline: none;
+  font-size: 1rem;
+  color: #333;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .DivRooms {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   width: 100%;
-  padding: 2rem;
+  padding: 1.5rem;
   gap: 2rem;
 }
 
 .roomsContainer {
   display: flex;
-  flex-direction: column;
-  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  flex-direction: row;
+  gap: 1.5rem;
 }
 
 @media (min-width: 768px) {
@@ -142,22 +298,34 @@
   }
 }
 
-.logoBerenjena{
-  width: 20rem;
-  height: 100%;
+.logoContainer {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.logoBerenjena {
+  width: 100%;
+  max-width: 12rem;
 }
 
 .autocomplete {
   display: flex;
+  flex-wrap: wrap;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  background-color: #ff914d;
-  border: 3px solid black;
   border-radius: 10px;
   padding: 1rem;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
-    rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
+}
+
+@media (max-width: 1000px) {
+  .autocomplete {
+    flex-direction: column;
+    justify-content: center;
+  }
 }
 
 .DivRoom {
@@ -178,9 +346,18 @@
 .textRoom {
   display: flex;
   flex-direction: row;
+  align-items: center;
   justify-content: space-between;
   width: 100%;
   gap: 2rem;
+  font-family: "Reddit Sans";
+  font-size: 1rem;
+}
+
+.groupIcon {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .DivRoom p {
@@ -195,10 +372,11 @@
 }
 
 .DivRoom button {
-  width: 80%;
+  width: 5rem;
   border-radius: 5px;
   border: none;
   cursor: pointer;
+  font-family: "Reddit Sans";
   background-color: green;
   color: white;
   padding: 0.5rem;
@@ -209,7 +387,6 @@
 .DivRoom button:hover {
   background-color: rgb(0, 32, 100);
   box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
-
 }
 
 @media (min-width: 768px) {
