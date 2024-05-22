@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './jugadores.module.css';
-import person from '../../../assets/berenjena/jugadores/avatar.png';
+import person from '../../../assets/berenjena/jugadores/avatar1.png';
 import cardsIcon from '../../../assets/berenjena/jugadores/cartas.png';
 
 import Cards from '../cards/card';

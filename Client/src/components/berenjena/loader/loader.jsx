@@ -1,5 +1,5 @@
 import style from './loader.module.css';
-import ButtonExitRoom from '../../buttonExitRoom/buttonExitRoom';
+import ButtonExitRoom from "../buttonExitRoom/buttonExitRoom"
 import { useEffect, useState } from 'react';
 import { socket } from '../../../functions/SocketIO/sockets/sockets';
 

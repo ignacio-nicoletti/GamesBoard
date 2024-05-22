@@ -3,31 +3,108 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
+import style from "./autocomplete.module.css";
 
-export default function Autcomplete() {
-  const [age, setAge] = React.useState("");
+export default function AutocompleteExample() {
+  const [selectedRoom, setSelectedRoom] = React.useState("");
+  const [selectedPlayer, setSelectedPlayer] = React.useState("");
+  const [roomNumber, setRoomNumber] = React.useState("");
 
-  const handleChange = (event) => {
-    setAge(event.target.value);
+  const handleRoomChange = (event) => {
+    setSelectedRoom(event.target.value);
   };
 
+  const handlePlayerChange = (event) => {
+    setSelectedPlayer(event.target.value);
+  };
+
+  const handleRoomNumberChange = (event, newValue) => {
+    setRoomNumber(newValue);
+  };
+
+  const roomOptions = ["Room 101", "Room 102", "Room 103", "Room 104"];
+
   return (
-    <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-      <InputLabel id="demo-select-small-label">Age</InputLabel>
-      <Select
-        labelId="demo-select-small-label"
-        id="demo-select-small"
-        value={age}
-        label="Age"
-        onChange={handleChange}
+    <div className={style.container}>
+      <FormControl
+        sx={{ m: 1, minWidth: 120, backgroundColor: "white" }}
+        size="small"
       >
-        <MenuItem value="">
-          <em>Clear</em>
-        </MenuItem>
-        <MenuItem value={10}>Ten</MenuItem>
-        <MenuItem value={20}>Twenty</MenuItem>
-        <MenuItem value={30}>Thirty</MenuItem>
-      </Select>
-    </FormControl>
+        <InputLabel
+          id="room-select-label"
+          sx={{
+            backgroundColor: "white",
+            paddingInline: "3px",
+            borderRadius: "3px",
+          }}
+        >
+          Rooms
+        </InputLabel>
+        <Select
+          labelId="room-select-label"
+          id="room-select"
+          value={selectedRoom}
+          onChange={handleRoomChange}
+        >
+          <MenuItem value="room1">Open</MenuItem>
+          <MenuItem value="room2">In progress</MenuItem>
+        </Select>
+      </FormControl>
+
+      <FormControl
+        sx={{ m: 1, minWidth: 120, backgroundColor: "white" }}
+        size="small"
+      >
+        <InputLabel
+          id="player-select-label"
+          sx={{
+            backgroundColor: "white",
+            paddingInline: "3px",
+            borderRadius: "3px",
+          }}
+        >
+          Players
+        </InputLabel>
+        <Select
+          labelId="player-select-label"
+          id="player-select"
+          value={selectedPlayer}
+          onChange={handlePlayerChange}
+        >
+          <MenuItem value="player1">1</MenuItem>
+          <MenuItem value="player2">2</MenuItem>
+          <MenuItem value="player3">3</MenuItem>
+          <MenuItem value="player4">4</MenuItem>
+          <MenuItem value="player5">5</MenuItem>
+          <MenuItem value="player6">6</MenuItem>
+        </Select>
+      </FormControl>
+
+      <Autocomplete
+        sx={{ m: 1, minWidth: 150, backgroundColor: "white" }}
+        size="small"
+        options={roomOptions}
+        value={roomNumber}
+        onChange={handleRoomNumberChange}
+        freeSolo
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="N° Room"
+            variant="outlined"
+            size="small"
+            InputLabelProps={{
+              sx: {
+                backgroundColor: "white",
+                paddingInline: "3px",
+                borderRadius: "3px",
+              },
+            }}
+          />
+        )}
+      />
+    </div>
   );
 }

@@ -1,5 +1,5 @@
 import style from './dataPlayer.module.css';
-import avatar from '../../../../assets/berenjena/jugadores/avatar.png';
+import avatar from '../../../../assets/berenjena/jugadores/avatar1.png';
 
 const DataPlayer = ({jugador}) => {
   return (
