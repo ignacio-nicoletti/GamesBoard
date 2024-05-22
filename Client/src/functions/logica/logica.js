@@ -7,46 +7,43 @@ const generarObligado = () => {
   return obligado;
 };
 
-export const mezclar = (
-  setJugador1,
-  jugador1,
-  setJugador2,
-  jugador2,
-  setJugador3,
-  jugador3,
-  setJugador4,
-  jugador4,
+export const distribute = (
+
+
+  roomIdberenjena, //pistionId y roomId
+  game,
   ronda
 ) => {
-  socket.emit("barajar", ronda);
-  socket.on("mezcladas", (data) => {
+  socket.emit("distribute", { game, roomIdberenjena, ronda });
+  socket.on("distribute", (data) => {
     console.log(data);
-    setJugador1({
-      ...jugador1,
-      cardPersona: data.jugador1,
-    });
-    setJugador2({
-      ...jugador2,
-      cardPersona: data.jugador2,
-    });
-    setJugador3({
-      ...jugador3,
-      cardPersona: data.jugador3,
-    });
-    setJugador4({
-      ...jugador4,
-      cardPersona: data.jugador4,
-    });
   });
+  //   setJugador1({
+  //     ...jugador1,
+  //     cardPersona: data.jugador1,
+  //   });
+  //   setJugador2({
+  //     ...jugador2,
+  //     cardPersona: data.jugador2,
+  //   });
+  //   setJugador3({
+  //     ...jugador3,
+  //     cardPersona: data.jugador3,
+  //   });
+  //   setJugador4({
+  //     ...jugador4,
+  //     cardPersona: data.jugador4,
+  //   });
+  // });
 };
 
-export const gameInit = (setRonda, ronda, jugador1, setLoader) => {
-  // let numObligado = generarObligado ();
-  if (ronda.vuelta === 1 && jugador1.username !== "") {
-    setRonda({ ...ronda, typeRound: "apuesta", obligado: 4 });
-    setLoader(false);
-  }
-};
+// export const gameInit = (setRonda, ronda, jugador1, setLoader) => {
+//   // let numObligado = generarObligado ();
+//   if (ronda.vuelta === 1 && jugador1.username !== "") {
+//     setRonda({ ...ronda, typeRound: "apuesta", obligado: 4 });
+//     setLoader(false);
+//   }
+// };
 
 export const turno = (
   ronda,

@@ -13,7 +13,7 @@ export function shuffle(array) {
   }
 
   
-export const barajar=()=>{
+export const distribute=()=>{
 
     const baraja = [];
     for (let valor = 1; valor <= 12; valor++) {

@@ -1,10 +1,9 @@
-import { Link } from 'react-router-dom';
 import style from './loader.module.css';
 import ButtonExitRoom from '../../buttonExitRoom/buttonExitRoom';
 import { useEffect, useState } from 'react';
 import { socket } from '../../../functions/SocketIO/sockets/sockets';
 
-const Loader = ({ game, roomIdberenjena ,setStarGame}) => {
+const Loader = ({ game, roomIdberenjena}) => {
   const [readyMe, setReadyMe] = useState(false);
   const [playerList, setPlayerList] = useState([]);
 

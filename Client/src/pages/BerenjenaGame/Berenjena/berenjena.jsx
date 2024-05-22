@@ -14,7 +14,7 @@ import Result
 
 import {
   AsignarMayor,
-  mezclar,
+  distribute,
   turno,
 } from '../../../functions/logica/logica.js';
 
@@ -26,11 +26,8 @@ const GameBerenjena = ({roomIdberenjena}) => {
   const [loader, setLoader] = useState (true);
   const [myPosition, setMyPosition] = useState (null);
   const [game, setGame] = useState ('Berenjena'); // Juego seleccionado
-  const [votacion, setVotacion] = useState ([]); //base del resultado xronda
-  const [showResult, setShowResult] = useState (false);
-  const [startgame, setStarGame] = useState (false); // Juego seleccionado
-  
 
+  const [showResult, setShowResult] = useState (false);
 
   const [jugador1, setJugador1] = useState ({
     username: '',
@@ -406,37 +403,25 @@ const GameBerenjena = ({roomIdberenjena}) => {
     // }
   };
 
-
   useEffect (() => {
-    socket.on ('start_game', () => {
-      console.log ('La partida ha comenzado!');
-       setLoader (!loader);
-    });
+    socket.on ('start_game', (data) => {
+      console.log (roomIdberenjena);
+      console.log(data);
+      setLoader (!loader);
+      setRonda({...ronda,cantUser:data.length})
 
-    socket.on ('player_list', playerList => {
-      //   setSala (playerList);
-      console.log (playerList);
+      distribute (
 
-      
+        ronda,
+        game,
+        roomIdberenjena,
+        data
+      );
+      if (ronda.vuelta === 1 && jugador1.username !== '') {
+        setRonda ({...ronda, typeRound: 'apuesta', obligado: 4});
+        GuardarEnBase ();
+      }
     });
-    // if (salas.length === 3) {
-    // setLoader (!loader);
-    mezclar (
-      setJugador1,
-      jugador1,
-      setJugador2,
-      jugador2,
-      setJugador3,
-      jugador3,
-      setJugador4,
-      jugador4,
-      ronda
-    );
-    if (ronda.vuelta === 1 && jugador1.username !== '') {
-      setRonda ({...ronda, typeRound: 'apuesta', obligado: 4});
-      GuardarEnBase ();
-    }
-    // }
   }, []);
 
   useEffect (
@@ -557,7 +542,7 @@ const GameBerenjena = ({roomIdberenjena}) => {
     () => {
       if (ronda.vuelta > 1) {
         if (ronda.typeRound === 'apuesta') {
-          mezclar (
+          distribute (
             setJugador1,
             jugador1,
             setJugador2,
@@ -592,7 +577,7 @@ const GameBerenjena = ({roomIdberenjena}) => {
     <div className={style.contain}>
 
       {loader == true
-        ? <Loader roomIdberenjena={roomIdberenjena} game={game} setStarGame={setStarGame}/>
+        ? <Loader roomIdberenjena={roomIdberenjena} game={game} />
         : <div className={style.tableroJugadores}>
 
             <div className={style.jugador2}>

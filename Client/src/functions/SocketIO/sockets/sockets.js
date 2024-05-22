@@ -115,12 +115,5 @@ export const joinGameRoom = (game, roomId, userName) => {
 };
 
 
-export const OnSalaLLena = (socket) => {
-  return new Promise((res, rej) => {
-    socket.on("salaLLena", (data) => {
-      res(data);
-    });
-  });
-};
-;
+
 
