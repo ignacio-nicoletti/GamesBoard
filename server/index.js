@@ -98,25 +98,56 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("distribute", ({ game, roomIdberenjena, ronda, data }) => {
-    console.log("Received data:", { game, roomIdberenjena, ronda });
-  
-    // Verificar si roomIdberenjena y roomId están definidos
-    if (!roomIdberenjena || !roomIdberenjena.roomId) {
-      console.error("Invalid roomIdberenjena object:", roomIdberenjena);
-      socket.emit("error", { error: "Invalid roomIdberenjena object" });
-      return;
+  socket.on("distribute", ({ game, round, roomId, data }) => {
+
+    // Verificar si roomId y roomId están definidos
+    if (!roomId) {
+        console.error("Invalid roomId object:", roomId);
+        socket.emit("error", { error: "Invalid roomId object" });
+        return;
     }
-  
+
     try {
-      let deck = distribute();
-      let cartasMezcladas = shuffle(deck);
-      io.to(`${game}-${roomIdberenjena.roomId}`).emit("distribute", cartasMezcladas);
+        let deck = distribute(); // Función para obtener el mazo
+        let cartasMezcladas = shuffle(deck); // Función para mezclar las cartas
+
+        const numPlayers = data.length;
+        const cardsPerPlayer = round.cardXRound;
+
+        // Calcular cuántas cartas debe recibir cada jugador en total
+        const totalCardsToDistribute = numPlayers * cardsPerPlayer;
+
+        // Verificar si hay suficientes cartas para distribuir
+        if (cartasMezcladas.length < totalCardsToDistribute) {
+            console.error("Not enough cards to distribute.");
+            socket.emit("error", { error: "Not enough cards to distribute" });
+            return;
+        }
+
+        let distributedCards = {};
+
+        // Iterar sobre los jugadores y asignarles las cartas correspondientes
+        for (let i = 0; i < numPlayers; i++) {
+            // const playerId = data[i].id;
+            distributedCards[`jugador${i + 1}`] = [];
+
+            for (let j = 0; j < cardsPerPlayer; j++) {
+                const card = cartasMezcladas.pop(); // Tomar la última carta del mazo (ya que está mezclado)
+                distributedCards[`jugador${i + 1}`].push(card);
+            }
+        }
+
+    
+        io.to(`${game}-${roomId}`).emit("distribute", distributedCards);
+        // No emitimos las cartas aquí, sino que retornamos los datos para manejarlos de manera adecuada en el cliente
+        // return distributedCards;
     } catch (error) {
-      console.error("Error in distribute function:", error);
-      socket.emit("error", { error: "Error in distribute function" });
+        console.error("Error in distribute function:", error);
+        socket.emit("error", { error: "Error in distribute function" });
     }
-  });
+});
+
+    
 
   socket.on("disconnectRoom", () => {
     for (const game in games) {

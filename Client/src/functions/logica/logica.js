@@ -8,34 +8,67 @@ const generarObligado = () => {
 };
 
 export const distribute = (
-
-
-  roomIdberenjena, //pistionId y roomId
   game,
-  ronda
+  round,
+  roomId,
+  data,
+  setJugador1,
+  jugador1,
+  setJugador2,
+  jugador2,
+  setJugador3,
+  jugador3,
+  setJugador4,
+  jugador4,
+  setJugador5,
+  jugador5,
+  setJugador6,
+  jugador6
 ) => {
-  socket.emit("distribute", { game, roomIdberenjena, ronda });
+  socket.emit("distribute", { game, round, roomId, data });
+
   socket.on("distribute", (data) => {
-    console.log(data);
+    setJugador1({
+      ...jugador1,
+      cardPerson: data.jugador1,
+    });
+    setJugador2({
+      ...jugador1,
+      cardPerson: data.jugador1,
+    });
+    setJugador3({
+      ...jugador3,
+      cardPerson: data.jugador3,
+    });
+    setJugador4({
+      ...jugador4,
+      cardPerson: data.jugador4,
+    });
+    setJugador5({
+      ...jugador5,
+      cardPerson: data.jugador5,
+    });
+    setJugador6({
+      ...jugador6,
+      cardPerson: data.jugador6,
+    });
+    
   });
-  //   setJugador1({
-  //     ...jugador1,
-  //     cardPersona: data.jugador1,
-  //   });
-  //   setJugador2({
-  //     ...jugador2,
-  //     cardPersona: data.jugador2,
-  //   });
-  //   setJugador3({
-  //     ...jugador3,
-  //     cardPersona: data.jugador3,
-  //   });
-  //   setJugador4({
-  //     ...jugador4,
-  //     cardPersona: data.jugador4,
-  //   });
-  // });
 };
+
+//   setJugador2({
+//     ...jugador2,
+//     cardPersona: data.jugador2,
+//   });
+//   setJugador3({
+//     ...jugador3,
+//     cardPersona: data.jugador3,
+//   });
+//   setJugador4({
+//     ...jugador4,
+//     cardPersona: data.jugador4,
+//   });
+// });
 
 // export const gameInit = (setRonda, ronda, jugador1, setLoader) => {
 //   // let numObligado = generarObligado ();
