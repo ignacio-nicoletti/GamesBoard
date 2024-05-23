@@ -2,6 +2,7 @@ import style from './dataPlayer.module.css';
 import avatar from '../../../../assets/berenjena/jugadores/avatar1.png';
 
 const DataPlayer = ({jugador}) => {
+  console.log(jugador);
   return (
     <div className={style.infoPropia}>
 

@@ -15,12 +15,12 @@ export function shuffle(array) {
   
 export const distribute=()=>{
 
-    const baraja = [];
-    for (let valor = 1; valor <= 12; valor++) {
-      baraja.push({ valor: valor, palo: "basto" });
-      baraja.push({ valor: valor, palo: "copa" });
-      baraja.push({ valor: valor, palo: "espada" });
-      baraja.push({ valor: valor, palo: "oro" });
+    const deck = [];
+    for (let value = 1; value <= 12; value++) {
+      deck.push({ value: value, suit: "basto" });
+      deck.push({ value: value, suit: "copa" });
+      deck.push({ value: value, suit: "espada" });
+      deck.push({ value: value, suit: "oro" });
     }
-    return baraja
+    return deck
     }

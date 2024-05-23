@@ -23,9 +23,9 @@ import ButtonExitRoom
   from '../../../components/berenjena/buttonExitRoom/buttonExitRoom.jsx';
 import {socket} from '../../../functions/SocketIO/sockets/sockets';
 
-const GameBerenjena = ({roomIdberenjena}) => {
+const GameBerenjena = () => {
   const [loader, setLoader] = useState (true);
-  const [myPosition, setMyPosition] = useState (null);
+
   const [game, setGame] = useState ('Berenjena'); // Juego seleccionado
 
   const [showResult, setShowResult] = useState (false);
@@ -403,18 +403,14 @@ const GameBerenjena = ({roomIdberenjena}) => {
   //   }
   //   // }
   // };
-
   //setear el name depende la position
+  // `jugador${i + 1}`
   useEffect (() => {
-    setMyPosition (roomIdberenjena.positionId);
-   
     socket.on ('start_game', data => {
-
-      setLoader (!loader);
       let roomId = data[0].roomId;
+      setLoader (!loader);
       distribute (
         game,
-        round,
         roomId,
         data,
         setJugador1,
@@ -429,13 +425,14 @@ const GameBerenjena = ({roomIdberenjena}) => {
         jugador5,
         setJugador6,
         jugador6,
+        round,
         setRound
       );
-
-      // GuardarEnBase ();
     });
   }, []);
-
+  
+  // GuardarEnBase ();
+  
   // useEffect (
   //   () => {
   //     turno (
@@ -575,7 +572,7 @@ const GameBerenjena = ({roomIdberenjena}) => {
     return player.cardPerson.map ((card, index) => (
       <Cards
         key={index}
-        valor={card.valor}
+        value={card.value}
         palo={card.palo}
         jugador={player}
         setJugador={setJugador1} // Esto puede variar dependiendo del jugador
@@ -589,7 +586,22 @@ const GameBerenjena = ({roomIdberenjena}) => {
     <div className={style.contain}>
 
       {loader == true
-        ? <Loader roomIdberenjena={roomIdberenjena} game={game} />
+        ? <Loader
+       
+            game={game}
+            setJugador1={setJugador1}
+            jugador1={jugador1}
+            setJugador2={setJugador2}
+            jugador2={jugador2}
+            setJugador3={jugador3}
+            jugador3={jugador3}
+            setJugador4={setJugador4}
+            jugador4={jugador4}
+            setJugador5={setJugador5}
+            jugador5={jugador5}
+            setJugador6={setJugador6}
+            jugador6={jugador6}
+          />
         : <div className={style.tableroJugadores}>
 
             {/* <div className={style.jugador2}>
@@ -636,21 +648,21 @@ const GameBerenjena = ({roomIdberenjena}) => {
           </div>}
       <div />
       {/* cartas en el centro de la pantalla */}
-      <div className={style.CardPropias}>
-        {myPosition === 1
+      {/* <div className={style.CardPropias}>
+        {roomIdberenjena.positionId === 1
           ? renderPlayerCards (jugador1)
-          : myPosition === 2
+          : roomIdberenjena.positionId === 2
               ? renderPlayerCards (jugador2)
-              : myPosition === 3
+              : roomIdberenjena.positionId === 3
                   ? renderPlayerCards (jugador3)
-                  : myPosition === 4
+                  : roomIdberenjena.positionId === 4
                       ? renderPlayerCards (jugador4)
-                      : myPosition === 5
+                      : roomIdberenjena.positionId === 5
                           ? renderPlayerCards (jugador5)
-                          : myPosition === 6
+                          : roomIdberenjena.positionId === 6
                               ? renderPlayerCards (jugador6)
                               : ''}
-      </div>
+      </div> */}
       {/* cartas en el centro de la pantalla */}
 
       {/* <div className={style.CardPropiasApost}>
@@ -665,17 +677,24 @@ const GameBerenjena = ({roomIdberenjena}) => {
           ))}
       </div> */}
 
-      <DataPlayer
+      {/* <DataPlayer
         jugador={
-          myPosition === 1
+          roomIdberenjena.positionId === 1 && jugador1
             ? jugador1
-            : myPosition === 2
+            : roomIdberenjena.positionId === 2 && jugador2
                 ? jugador2
-                : myPosition === 3 ? jugador3 : myPosition === 4 ? jugador4 : ''
+                : roomIdberenjena.positionId === 3 && jugador3
+                    ? jugador3
+                    : roomIdberenjena.positionId === 4 && jugador4
+                        ? jugador4
+                        : roomIdberenjena.positionId === 5 && jugador5
+                            ? jugador5
+                            : roomIdberenjena.positionId === 6 && jugador6
+                                ? jugador6
+                                : ''
         }
-        ronda={round}
-        myPosition={myPosition}
-      />
+      /> */}
+
       <DataGame ronda={round} />
       {showResult === true
         ? <Result Base={Base} setShowResult={setShowResult} />

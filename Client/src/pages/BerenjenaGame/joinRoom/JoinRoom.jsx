@@ -26,7 +26,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 import Swal from "sweetalert2";
 
-const JoinRoom = ({ setRoomIdberenjena, roomIdberenjena }) => {
+const JoinRoom = () => {
   const [rooms, setRooms] = useState([]); // mapeo de todas las salas
   const [game, setGame] = useState("Berenjena"); // Juego seleccionado
   const [userName, setUserName] = useState(""); // mi nombre
@@ -34,8 +34,8 @@ const JoinRoom = ({ setRoomIdberenjena, roomIdberenjena }) => {
   const [selectedAvatar, setSelectedAvatar] = useState(avatar1); // avatar seleccionado
   const [showModal, setShowModal] = useState(true); // Mostrar modal al inicio
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   const navigate = useNavigate();
+
 
   const CreateRoom = async (e) => {
     e.preventDefault();
@@ -74,21 +74,26 @@ const JoinRoom = ({ setRoomIdberenjena, roomIdberenjena }) => {
 
   useEffect(() => {
     const handlePlayerList = (playerList) => {
-      console.log(playerList);
       // Actualizar el estado global de roomIdberenjena aquí si es necesario
-      navigate("/berenjena/multiplayer");
     };
+    
+    socket.on("player_list",(playerList)=>{
+      console.log(playerList);
+      navigate("/berenjena/multiplayer");
 
-    socket.on("player_list", handlePlayerList);
+    });
+    socket.on("update_json", (data)=>{console.log(data)});
 
     return () => {
       socket.off("player_list", handlePlayerList);
     };
   }, [navigate]);
 
+
+
   useEffect(() => {
     const handlePosition = (position) => {
-      setRoomIdberenjena((prev) => ({ ...prev, positionId: position }));
+    
       console.log("Position:", position);
     };
 
@@ -97,11 +102,14 @@ const JoinRoom = ({ setRoomIdberenjena, roomIdberenjena }) => {
     return () => {
       socket.off("position", handlePosition);
     };
-  }, [setRoomIdberenjena]);
+  }, []);
+
+
 
   useEffect(() => {
     const handleRoomJoined = ({ roomId, position }) => {
-      setRoomIdberenjena((prev) => ({ ...prev, roomId, positionId: position }));
+    
+      
       console.log("Room Joined:", { roomId, position });
     };
 
@@ -110,9 +118,16 @@ const JoinRoom = ({ setRoomIdberenjena, roomIdberenjena }) => {
     return () => {
       socket.off("room_joined", handleRoomJoined);
     };
-  }, [setRoomIdberenjena]);
+  }, []);
 
-  console.log(rooms);
+
+
+
+
+
+
+
+
   const avatars = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6];
 
   const handleSubmit = () => {

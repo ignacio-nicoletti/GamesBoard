@@ -9,7 +9,6 @@ const generarObligado = () => {
 
 export const distribute = (
   game,
-  round,
   roomId,
   data,
   setJugador1,
@@ -24,10 +23,11 @@ export const distribute = (
   jugador5,
   setJugador6,
   jugador6,
+  round,
   setRound,
 ) => {
   socket.emit("distribute", { game, round, roomId, data });
-
+ 
   socket.on("distribute", (data) => {
     setJugador1({
       ...jugador1,

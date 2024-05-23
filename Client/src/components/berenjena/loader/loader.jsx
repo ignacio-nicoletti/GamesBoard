@@ -1,28 +1,107 @@
 import style from './loader.module.css';
-import ButtonExitRoom from "../buttonExitRoom/buttonExitRoom"
-import { useEffect, useState } from 'react';
-import { socket } from '../../../functions/SocketIO/sockets/sockets';
+import ButtonExitRoom from '../buttonExitRoom/buttonExitRoom';
+import {useEffect, useState} from 'react';
+import {socket} from '../../../functions/SocketIO/sockets/sockets';
 
-const Loader = ({ game, roomIdberenjena}) => {
-  const [readyMe, setReadyMe] = useState(false);
-  const [playerList, setPlayerList] = useState([]);
+const Loader = ({
+  roomIdberenjena,
+  game,
+  setJugador1,
+  jugador1,
+  setJugador2,
+  jugador2,
+  setJugador3,
+  jugador3,
+  setJugador4,
+  jugador4,
+  setJugador5,
+  jugador5,
+  setJugador6,
+  jugador6,
+}) => {
+  //cuando entras a la partida setloader(true) y cuando comienza la aprtida loader en false
+  //loader en false siempre
+
+  const [readyMe, setReadyMe] = useState (false);
+  const [playerList, setPlayerList] = useState ([]);
+
+// console.log(roomIdberenjena);
+
+useEffect(()=>{
+  switch (roomIdberenjena?.positionId) {
+    case 1:
+      setJugador1 ({...jugador1, username: roomIdberenjena.name});
+      break;
+    case 2:
+      setJugador2 ({...jugador2, username: roomIdberenjena.name});
+      break;
+    case 3:
+      setJugador3 ({...jugador3, username: roomIdberenjena.name});
+      break;
+    case 4:
+      setJugador4 ({...jugador4, username: roomIdberenjena.name});
+      break;
+    case 5:
+      setJugador5 ({...jugador5, username: roomIdberenjena.name});
+      break;
+    case 6:
+      setJugador6 ({...jugador6, username: roomIdberenjena.name});
+      break;
+    default:console.log("no user");
+      break;
+  }
+},[])
+
+
 
   const handleReady = () => {
-    setReadyMe(true);
-    socket.emit('player_ready', { game, roomId: roomIdberenjena.roomId });
+    setReadyMe (true);
+    socket.emit ('player_ready', {game, roomId: roomIdberenjena.roomId});
   };
 
   useEffect(() => {
     socket.on('player_list', data => {
-      setPlayerList(data);
+        setPlayerList(data);
+        console.log(data);
+
+        // Encontrar el jugador correspondiente a la posición actual
+        const currentPlayer = data.find(player => player.position === roomIdberenjena.positionId);
+
+        // Verificar si se encontró el jugador actual
+        if (currentPlayer) {
+            // Establecer el nombre del jugador según la posición
+            switch (roomIdberenjena.positionId) {
+                case 1:
+                    setJugador1({ ...jugador1, username: currentPlayer.userName });
+                    break;
+                case 2:
+                    setJugador2({ ...jugador2, username: currentPlayer.userName });
+                    break;
+                case 3:
+                    setJugador3({ ...jugador3, username: currentPlayer.userName });
+                    break;
+                case 4:
+                    setJugador4({ ...jugador4, username: currentPlayer.userName });
+                    break;
+                case 5:
+                    setJugador5({ ...jugador5, username: currentPlayer.userName });
+                    break;
+                case 6:
+                    setJugador6({ ...jugador6, username: currentPlayer.userName });
+                    break;
+                default:
+                    break;
+            }
+        }
     });
 
     return () => {
-      socket.off('player_list');
+        socket.off('player_list');
     };
-  }, []);
+}, []);
 
-  const readyCount = playerList.filter(player => player.ready).length;
+
+  const readyCount = playerList.filter (player => player.ready).length;
   return (
     <div className={style.containLoader}>
       <div className={style.loader}>
@@ -30,7 +109,7 @@ const Loader = ({ game, roomIdberenjena}) => {
       </div>
       <div className={style.playersAndButton}>
         <div className={style.PlayersReady}>
-          {[...Array(6)].map((_, index) => (
+          {[...Array (6)].map ((_, index) => (
             <svg
               key={index}
               xmlns="http://www.w3.org/2000/svg"
