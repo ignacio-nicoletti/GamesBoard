@@ -21,9 +21,9 @@ import logoBerenjena from "../../../assets/berenjena/home/logoBerenjena.png";
 // MATERIAL
 import Autocomplete from "../../../components/berenjena/autocomplete/autocomplete";
 import GroupIcon from "@mui/icons-material/Group";
-import MenuIcon from '@mui/icons-material/Menu';
-import CloseIcon from '@mui/icons-material/Close';
-import EditIcon from '@mui/icons-material/Edit';
+import MenuIcon from "@mui/icons-material/Menu";
+import CloseIcon from "@mui/icons-material/Close";
+import EditIcon from "@mui/icons-material/Edit";
 import Swal from "sweetalert2";
 
 const JoinRoom = ({ setRoomIdberenjena, roomIdberenjena }) => {
@@ -141,118 +141,117 @@ const JoinRoom = ({ setRoomIdberenjena, roomIdberenjena }) => {
 
   return (
     <div className={style.containRoom}>
-    {showModal && (
-      <div className={style.modalOverlay}>
-        <div className={style.modal}>
-          <div className={style.modalContent}>
-            <h2>Enter your name and choose an avatar</h2>
-            <div className={style.DivName}>
-              <span>Name: </span>
-              <input
-                type="text"
-                placeholder="Type your name here..."
-                value={userName}
-                onChange={(e) => setUserName(e.target.value)}
-                maxLength={15}
-              />
-            </div>
-            <div className={style.DivAvatars}>
-              <p>Choose your Avatar</p>
-              <div className={style.DivAvatarsGrid}>
-                {avatars.map((avatar, index) => (
-                  <img
-                    key={index}
-                    src={avatar}
-                    alt={`Avatar ${index + 1}`}
-                    className={
-                      selectedAvatar === avatar ? style.selectedAvatar : ""
-                    }
-                    onClick={() => setSelectedAvatar(avatar)}
-                  />
-                ))}
+      {showModal && (
+        <div className={style.modalOverlay}>
+          <div className={style.modal}>
+            <div className={style.modalContent}>
+              <h2>Enter your name and choose an avatar</h2>
+              <div className={style.DivName}>
+                <span>Name: </span>
+                <input
+                  type="text"
+                  placeholder="Type your name here..."
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
+                  maxLength={15}
+                />
               </div>
-            </div>
-            <button onClick={handleSubmit}>Save</button>
-          </div>
-        </div>
-      </div>
-    )}
-    {!showModal && (
-      <>
-        <button className={style.hamburgerButton} onClick={toggleMenu}>
-          {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
-        </button>
-        <div className={`${style.sideBar} ${isMenuOpen ? style.open : ""}`}>
-          <div className={style.DivButtonBack}>
-            <Link to="/berenjena">Back to menu</Link>
-          </div>
-          <p>Player:</p>
-          <div className={style.profile}>
-            <img
-              src={selectedAvatar}
-              alt="Selected Avatar"
-              className={style.profileAvatar}
-            />
-            <span className={style.userName}>{userName}</span>
-            <button className={style.editIcon} onClick={handleEditProfile}>
-              <EditIcon/>
-            </button>
-          </div>
-          <div className={style.DivInputRoom}>
-            <span>Create a new room: </span>
-            <input
-              type="number"
-              placeholder="New room number... "
-              value={roomId}
-              onChange={(e) => setRoomId(e.target.value)}
-            />
-            <button className={style.createButton} onClick={CreateRoom}>
-              Create
-            </button>
-          </div>
-        </div>
-
-        <div className={style.DivRooms}>
-          <div className={style.autocomplete}>
-            <div className={style.logoContainer}>
-              <img
-                src={logoBerenjena}
-                alt=""
-                className={style.logoBerenjena}
-              />
-            </div>
-            <div>
-              <Autocomplete />
-            </div>
-          </div>
-          <div className={style.roomsContainer}>
-            {rooms.map((el) => (
-              <div key={el.roomId} className={style.DivRoom}>
-                <div className={style.textRoom}>
-                  <p>Room {el.roomId}</p>
-
-                  <p className={style.groupIcon}>
-                    <GroupIcon />
-                    {el.users.length}/6
-                  </p>
+              <div className={style.DivAvatars}>
+                <p>Choose your Avatar</p>
+                <div className={style.DivAvatarsGrid}>
+                  {avatars.map((avatar, index) => (
+                    <img
+                      key={index}
+                      src={avatar}
+                      alt={`Avatar ${index + 1}`}
+                      className={
+                        selectedAvatar === avatar ? style.selectedAvatar : ""
+                      }
+                      onClick={() => setSelectedAvatar(avatar)}
+                    />
+                  ))}
                 </div>
-                <img src={imgRoom} alt="" className={style.imgRoom} />
-                <button
-                  onClick={() => {
-                    handlerJoinRoom(el.roomId);
-                  }}
-                >
-                  Join
-                </button>
               </div>
-            ))}
+              <button onClick={handleSubmit}>Save</button>
+            </div>
           </div>
         </div>
-      </>
-    )}
-  </div>
-);
-};
+      )}
+      {!showModal && (
+        <>
+          <button className={style.hamburgerButton} onClick={toggleMenu}>
+            {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
+          </button>
+          <div className={`${style.sideBar} ${isMenuOpen ? style.open : ""}`}>
+            <div className={style.DivButtonBack}>
+              <Link to="/berenjena">Back to menu</Link>
+            </div>
+            <p>Player:</p>
+            <div className={style.profile}>
+              <img
+                src={selectedAvatar}
+                alt="Selected Avatar"
+                className={style.profileAvatar}
+              />
+              <span className={style.userName}>{userName}</span>
+              <button className={style.editIcon} onClick={handleEditProfile}>
+                <EditIcon />
+              </button>
+            </div>
+            <div className={style.DivInputRoom}>
+              <span>Create a new room: </span>
+              <input
+                type="number"
+                placeholder="New room number... "
+                value={roomId}
+                onChange={(e) => setRoomId(e.target.value)}
+              />
+              <button className={style.createButton} onClick={CreateRoom}>
+                Create
+              </button>
+            </div>
+          </div>
 
+          <div className={style.DivRooms}>
+            <div className={style.autocomplete}>
+              <div className={style.logoContainer}>
+                <img
+                  src={logoBerenjena}
+                  alt=""
+                  className={style.logoBerenjena}
+                />
+              </div>
+              <div>
+                <Autocomplete />
+              </div>
+            </div>
+            <div className={style.roomsContainer}>
+              {rooms.map((el) => (
+                <div key={el.roomId} className={style.DivRoom}>
+                  <div className={style.textRoom}>
+                    <p>Room {el.roomId}</p>
+
+                    <p className={style.groupIcon}>
+                      <GroupIcon />
+                      {el.users.length}/6
+                    </p>
+                  </div>
+                  <img src={imgRoom} alt="" className={style.imgRoom} />
+                  <button
+                    onClick={() => {
+                      handlerJoinRoom(el.roomId);
+                    }}
+                  >
+                    Join
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
 
 export default JoinRoom;
