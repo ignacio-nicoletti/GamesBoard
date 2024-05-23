@@ -2,12 +2,15 @@
 
 .containRoom {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+
   font-family: "Bebas Neue", sans-serif;
   padding: 0;
   margin: 0;
+  width: 100%;
   min-height: 100vh;
   background-color: rgb(246, 246, 247);
+  overflow-x: hidden;
 }
 
 .sideBar {
@@ -17,16 +20,41 @@
   font-size: 1.3rem;
   display: flex;
   flex-direction: column;
-  width: 100%;
-  height: 120vh;
+  width: 15%;
+  height: auto;
 }
 
-@media (min-width: 768px) {
-  .sideBar {
-    width: 30%;
-    height: 130vh;
-    margin-bottom: 0;
+@media (max-width: 815px) {
+  .containRoom {
+    flex-direction: column;
   }
+
+  .sideBar {
+    background-color: #ff914d;
+    color: white;
+    padding: 1rem;
+    font-size: 1.3rem;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: auto;
+  }
+  .sideBar p {
+    display: none;
+  }
+}
+
+.hamburgerButton {
+  display: none;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 1000;
 }
 
 .containRoom.blurredBackground {
@@ -51,6 +79,7 @@
 
 .modalContent {
   background: white;
+  margin-inline: 0.5rem;
   padding: 20px;
   border-radius: 10px;
   text-align: center;
@@ -83,7 +112,7 @@
   box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
 }
 
-.swal2-container{
+.swal2-container {
   font-family: "Bebas Neue";
 }
 
@@ -95,23 +124,22 @@
 }
 
 .profileAvatar {
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   margin-bottom: 10px;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
 .userName {
-  font-size: 2rem;
+  font-size: 1.8rem;
 }
 
 .editIcon {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 5px;
-  width: 5rem;
+  border-radius: 50%;
   border: none;
   cursor: pointer;
   font-family: "Bebas Neue";
@@ -144,12 +172,23 @@
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
-.createButton:hover,
-.editIcon:hover {
+.createButton:hover {
   width: calc(5rem + 2rem);
   background-color: white;
   color: #ff914d;
   box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+}
+
+.editIcon:hover {
+  transform: scale(1.1);
+  background-color: white;
+  color: #ff914d;
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+}
+
+.DivButtonBack {
+  display: flex;
+  justify-content: center;
 }
 
 .DivButtonBack a {
@@ -163,6 +202,7 @@
   text-decoration: none;
   background-color: green;
   color: white;
+  width: 6rem;
   padding: 0.5rem;
   transition: background-color 0.3s;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
@@ -172,6 +212,80 @@
   background-color: white;
   color: #ff914d;
   box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+}
+
+@media (max-width: 815px) {
+  .profile {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    margin: 0;
+  }
+
+  .profileAvatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  }
+
+  .userName {
+    font-size: 1.2rem;
+  }
+
+  .editIcon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    width: 2rem;
+    height: 2rem;
+    cursor: pointer;
+    background-color: green;
+    color: white;
+    transition: background-color 0.3s;
+    transition: width 0.3s ease-in-out;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  }
+
+  .createButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    width: 5rem;
+    font-family: "Bebas Neue";
+    font-size: 1rem;
+    text-decoration: none;
+    background-color: green;
+    color: white;
+    padding: 0.3rem;
+    transition: background-color 0.3s;
+    transition: width 0.3s ease-in-out;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  }
+
+  .DivButtonBack a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-family: "Bebas Neue";
+    font-size: 1rem;
+    text-decoration: none;
+    background-color: green;
+    color: white;
+    padding: 0.5rem;
+    transition: background-color 0.3s;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  }
 }
 
 .DivName {
@@ -231,7 +345,7 @@
 .DivAvatarsGrid {
   display: flex;
   justify-content: center;
-  width: 50%;
+  width: 100%;
   flex-wrap: wrap;
   gap: 2rem;
 }
@@ -295,10 +409,52 @@
   gap: 1.5rem;
 }
 
-@media (min-width: 768px) {
+@media (max-width: 815px) {
   .roomsContainer {
     flex-direction: row;
     flex-wrap: wrap;
+  }
+
+  .DivRooms {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    width: auto;
+    padding: 1.5rem;
+    gap: 2rem;
+  }
+
+  .DivInputRoom {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 0;
+
+    font-size: 1.3rem;
+    gap: 1rem;
+  }
+
+  .DivInputRoom span {
+    display: flex;
+    width: auto;
+    font-size: 1rem;
+  }
+
+  .DivInputRoom input {
+    height: 2rem;
+    border-radius: 8px;
+    width: 8rem;
+    padding-left: 0.75rem;
+    font-family: "Bebas Neue";
+    border: 2px solid #218838;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    outline: none;
+    font-size: 1rem;
+    color: #333;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 }
 
@@ -391,14 +547,4 @@
 .DivRoom button:hover {
   background-color: rgb(0, 32, 100);
   box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
-}
-
-@media (min-width: 768px) {
-  .containRoom {
-    flex-direction: row;
-  }
-
-  .DivRooms {
-    flex-grow: 1;
-  }
 }
