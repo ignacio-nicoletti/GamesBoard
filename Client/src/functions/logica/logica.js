@@ -23,7 +23,8 @@ export const distribute = (
   setJugador5,
   jugador5,
   setJugador6,
-  jugador6
+  jugador6,
+  setRound,
 ) => {
   socket.emit("distribute", { game, round, roomId, data });
 
@@ -33,8 +34,8 @@ export const distribute = (
       cardPerson: data.jugador1,
     });
     setJugador2({
-      ...jugador1,
-      cardPerson: data.jugador1,
+      ...jugador2,
+      cardPerson: data.jugador2,
     });
     setJugador3({
       ...jugador3,
@@ -52,23 +53,9 @@ export const distribute = (
       ...jugador6,
       cardPerson: data.jugador6,
     });
-    
+    setRound({ ...round, typeRound: "apuesta", obligado: 4 });
   });
 };
-
-//   setJugador2({
-//     ...jugador2,
-//     cardPersona: data.jugador2,
-//   });
-//   setJugador3({
-//     ...jugador3,
-//     cardPersona: data.jugador3,
-//   });
-//   setJugador4({
-//     ...jugador4,
-//     cardPersona: data.jugador4,
-//   });
-// });
 
 // export const gameInit = (setRonda, ronda, jugador1, setLoader) => {
 //   // let numObligado = generarObligado ();

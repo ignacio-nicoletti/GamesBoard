@@ -19,7 +19,8 @@ import {
 } from '../../../functions/logica/logica.js';
 
 import Apuesta from '../../../components/berenjena/apuesta/apuesta';
-import ButtonExitRoom from '../../../components/berenjena/buttonExitRoom/buttonExitRoom.jsx';
+import ButtonExitRoom
+  from '../../../components/berenjena/buttonExitRoom/buttonExitRoom.jsx';
 import {socket} from '../../../functions/SocketIO/sockets/sockets';
 
 const GameBerenjena = ({roomIdberenjena}) => {
@@ -35,7 +36,7 @@ const GameBerenjena = ({roomIdberenjena}) => {
     cardPerson: [], //cards
     betP: null, //num de cards apostadas
     cardswins: 0, //cards ganadas
-    cardBet: [{valor: null, palo: ''}], //card apostada
+    cardBet: [{value: null, palo: ''}], //card apostada
     myturnA: false, //boolean  //turno apuesta
     myturnR: false, //boolean //turno ronda
     cumplio: false, //boolean  //cumplio su apuesta
@@ -47,7 +48,7 @@ const GameBerenjena = ({roomIdberenjena}) => {
     cardPerson: [],
     betP: null,
     cardswins: 0,
-    cardBet: [{valor: 1, palo: 'basto'}],
+    cardBet: [{value: null, palo: ''}],
     myturnA: false, //boolean
     myturnR: false, //booleanA
     cumplio: false, //boolean
@@ -59,7 +60,7 @@ const GameBerenjena = ({roomIdberenjena}) => {
     cardPerson: [],
     betP: null,
     cardswins: 0,
-    cardBet: [{valor: null, palo: ''}],
+    cardBet: [{value: null, palo: ''}],
     myturnA: false, //boolean
     myturnR: false, //boolean
     cumplio: false, //boolean
@@ -71,7 +72,7 @@ const GameBerenjena = ({roomIdberenjena}) => {
     cardPerson: [],
     betP: null,
     cardswins: 0,
-    cardBet: [{valor: null, palo: ''}],
+    cardBet: [{value: null, palo: ''}],
     myturnA: false, //boolean
     myturnR: false, //boolean
     cumplio: false, //boolean
@@ -83,7 +84,7 @@ const GameBerenjena = ({roomIdberenjena}) => {
     cardPerson: [],
     betP: null,
     cardswins: 0,
-    cardBet: [{valor: null, palo: ''}],
+    cardBet: [{value: null, palo: ''}],
     myturnA: false, //boolean
     myturnR: false, //boolean
     cumplio: false, //boolean
@@ -95,7 +96,7 @@ const GameBerenjena = ({roomIdberenjena}) => {
     cardPerson: [],
     betP: null,
     cardswins: 0,
-    cardBet: [{valor: null, palo: ''}],
+    cardBet: [{value: null, palo: ''}],
     myturnA: false, //boolean
     myturnR: false, //boolean
     cumplio: false, //boolean
@@ -111,10 +112,10 @@ const GameBerenjena = ({roomIdberenjena}) => {
     turnJugadorA: 1, //1j 2j 3j 4j apuesta
     turnJugadorR: 1, //1j 2j 3j 4j ronda
     obligado: null, //numero de jugador obligado
-    BetTotal: 0, //suma de la apuesta de todos
-    CardWinxRonda: [{valor: null, palo: '', id: ''}], //card ganada en la ronda
-    LastCardApostada: [{valor: null, palo: '', id: ''}], //ultima card apostada
-    beforLastCardBet: [{valor: null, palo: '', id: ''}], //anteultima card apostada
+    betTotal: 0, //suma de la apuesta de todos
+    cardWinxRound: [{value: null, palo: '', id: ''}], //card ganada en la ronda
+    lastCardBet: [{value: null, palo: '', id: ''}], //ultima card apostada
+    beforeLastCardBet: [{value: null, palo: '', id: ''}], //anteultima card apostada
     ganadorRonda: null,
     cantQueTiraron: 0,
   });
@@ -403,11 +404,12 @@ const GameBerenjena = ({roomIdberenjena}) => {
   //   // }
   // };
 
+  //setear el name depende la position
   useEffect (() => {
-    setMyPosition (roomIdberenjena.positionId);
     socket.on ('start_game', data => {
+      setMyPosition (roomIdberenjena.positionId);
+
       setLoader (!loader);
-      console.log (data);
       let roomId = data[0].roomId;
       distribute (
         game,
@@ -425,11 +427,11 @@ const GameBerenjena = ({roomIdberenjena}) => {
         setJugador5,
         jugador5,
         setJugador6,
-        jugador6
+        jugador6,
+        setRound
       );
 
       if (round.vuelta === 1 && jugador1.username !== '') {
-        setRound ({...round, typeRound: 'apuesta', obligado: 4});
         // GuardarEnBase ();
       }
     });
@@ -675,7 +677,7 @@ const GameBerenjena = ({roomIdberenjena}) => {
         ronda={round}
         myPosition={myPosition}
       />
-      {/* <DataGame ronda={ronda} /> */}
+      <DataGame ronda={round} />
       {showResult === true
         ? <Result Base={Base} setShowResult={setShowResult} />
         : ''}

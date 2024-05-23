@@ -4,22 +4,22 @@ const DataGame=({ronda})=>{
         <div className={style.infoPartida}>
               <p>tipo: {ronda.typeRound} </p>
               <p>Obligado: jugador{ronda.obligado}</p>
-              <p>Cartas Repartidas: {ronda.cardPorRonda} </p>
-              <p>Apuesta total: {ronda.ApuestaTotal}</p>
+              <p>Cartas Repartidas: {ronda.cardXRound} </p>
+              <p>Apuesta total: {ronda.betTotal}</p>
               <p>
                 Carta Ganadora:
 
-                {' ' + ronda.CardGanadoraxRonda[0].valor + ' '}
+                {' ' + ronda.cardWinxRound[0].valor + ' '}
 
-                {ronda.CardGanadoraxRonda[0].palo}
+                {ronda.cardWinxRound[0].palo}
               </p>
               <p>Vuelta: {ronda.vuelta}</p>
               <p>Ronda: {ronda.numeroRonda}</p>
               <p>
                 turno: jugador
                 {ronda.typeRound === 'apuesta'
-                  ? ronda.turnoJugadorA
-                  : ronda.turnoJugadorR}
+                  ? ronda.turnJugadorA
+                  : ronda.turnJugadorR}
               </p>
             </div>
     )
