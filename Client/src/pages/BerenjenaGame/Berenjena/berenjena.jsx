@@ -406,11 +406,11 @@ const GameBerenjena = ({roomIdberenjena}) => {
 
   //setear el name depende la position
   useEffect (() => {
+    setMyPosition (roomIdberenjena.positionId);
+    roomIdberenjena.positionId === 1
+      ? setJugador1 ({...jugador1, username: roomIdberenjena.name})
+      : '';
     socket.on ('start_game', data => {
-      setMyPosition (roomIdberenjena.positionId);
-      roomIdberenjena.positionId === 1
-        ? setJugador1 ({...jugador1, username: roomIdberenjena.name})
-        : '';
 
       setLoader (!loader);
       let roomId = data[0].roomId;
