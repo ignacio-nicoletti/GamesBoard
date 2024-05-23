@@ -408,6 +408,9 @@ const GameBerenjena = ({roomIdberenjena}) => {
   useEffect (() => {
     socket.on ('start_game', data => {
       setMyPosition (roomIdberenjena.positionId);
+      roomIdberenjena.positionId === 1
+        ? setJugador1 ({...jugador1, username: roomIdberenjena.name})
+        : '';
 
       setLoader (!loader);
       let roomId = data[0].roomId;
@@ -431,9 +434,7 @@ const GameBerenjena = ({roomIdberenjena}) => {
         setRound
       );
 
-      if (round.vuelta === 1 && jugador1.username !== '') {
-        // GuardarEnBase ();
-      }
+      // GuardarEnBase ();
     });
   }, []);
 

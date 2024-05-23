@@ -97,9 +97,8 @@ const JoinRoom = ({ setRoomIdberenjena, roomIdberenjena }) => {
   }, [setRoomIdberenjena]);
 
   useEffect(() => {
-    const handleRoomJoined = ({ roomId, position }) => {
-      setRoomIdberenjena((prev) => ({ ...prev, roomId, positionId: position }));
-      console.log("Room Joined:", { roomId, position });
+    const handleRoomJoined = ({ roomId, position,userName }) => {
+      setRoomIdberenjena((prev) => ({ ...prev, roomId, positionId: position,name:userName }));
     };
 
     socket.on("room_joined", handleRoomJoined);
@@ -109,7 +108,7 @@ const JoinRoom = ({ setRoomIdberenjena, roomIdberenjena }) => {
     };
   }, [setRoomIdberenjena]);
 
-  console.log(rooms);
+
   const avatars = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6];
 
   const handleSubmit = () => {

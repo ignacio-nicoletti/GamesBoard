@@ -66,7 +66,7 @@ io.on("connection", (socket) => {
     const position = rooms[roomId].users.length + 1;
     const user = {
       id: socket.id,
-      name: userName,
+      userName: userName,
       ready: false,
       roomId: roomId,
       position: position,
@@ -74,7 +74,7 @@ io.on("connection", (socket) => {
     rooms[roomId].users.push(user);
 
     // Emitir el evento 'room_joined' al usuario actual
-    socket.emit("room_joined", { roomId, position });
+    socket.emit("room_joined", { roomId, position,userName });
     // Emitir la lista de jugadores actualizada a todos los usuarios en la sala
     io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId].users);
   });
