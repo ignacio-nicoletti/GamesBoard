@@ -5,7 +5,7 @@ import copa from '../../../assets/berenjena/valores/copas.png';
 import espada from '../../../assets/berenjena/valores/espada.png';
 import oro from '../../../assets/berenjena/valores/oro.png';
 
-const Cards = ({jugador, setJugador, valor, palo, ronda, setRonda, border}) => {
+const Cards = ({jugador, setJugador, value, palo, ronda, setRonda, border}) => {
   let imgPalo = {
     oro: oro,
     espada: espada,
@@ -39,12 +39,12 @@ const Cards = ({jugador, setJugador, valor, palo, ronda, setRonda, border}) => {
   const handlerclick = () => {
     if (ronda.typeRound === 'ronda' && jugador.myturnR === true) {
       filterCard = jugador.cardPersona.filter (
-        e => e.valor !== valor || e.palo !== palo
+        e => e.value !== value || e.palo !== palo
       );
 
       setJugador ({
         ...jugador,
-        cardApostada: [{valor, palo}],
+        cardApostada: [{value, palo}],
         cardPersona: filterCard,
       });
 
@@ -58,7 +58,7 @@ const Cards = ({jugador, setJugador, valor, palo, ronda, setRonda, border}) => {
         setRonda ({
           ...ronda,
           AnteultimaCardApostada: ronda.ultimaCardApostada,
-          ultimaCardApostada: [{valor, palo, id: jugador.id}],
+          ultimaCardApostada: [{value, palo, id: jugador.id}],
           turnoJugadorR: ronda.turnoJugadorR + 1,
           cantQueTiraron: ronda.cantQueTiraron + 1,
         }); //setea la card apostada en la ultima y lo que habia en ultima pasa a ser anteultima
@@ -67,7 +67,7 @@ const Cards = ({jugador, setJugador, valor, palo, ronda, setRonda, border}) => {
           ...ronda,
           turnoJugadorR: 1,
           AnteultimaCardApostada: ronda.ultimaCardApostada,
-          ultimaCardApostada: [{valor, palo, id: jugador.id}],
+          ultimaCardApostada: [{value, palo, id: jugador.id}],
           cantQueTiraron: ronda.cantQueTiraron + 1,
         });
       }
@@ -79,7 +79,7 @@ const Cards = ({jugador, setJugador, valor, palo, ronda, setRonda, border}) => {
     <div className={deck} style={{border: border}}>
       <div className={valueContain} onClick={() => handlerclick ()}>
 
-        <p style={{display: 'flex', alignSelf: 'flex-end'}}>{valor}</p>
+        <p style={{display: 'flex', alignSelf: 'flex-end'}}>{value}</p>
         <img
           src={imgPalo[palo]}
           alt="logoCard"
@@ -94,7 +94,7 @@ const Cards = ({jugador, setJugador, valor, palo, ronda, setRonda, border}) => {
             margin: 0,
           }}
         >
-          {valor}
+          {value}
         </p>
       </div>
     </div>
