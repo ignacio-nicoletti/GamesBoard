@@ -1,33 +1,51 @@
 import style from './loader.module.css';
 import ButtonExitRoom from '../buttonExitRoom/buttonExitRoom';
-import {useEffect, useState} from 'react';
-import {socket} from '../../../functions/SocketIO/sockets/sockets';
+import { useEffect, useState } from 'react';
+import { socket } from '../../../functions/SocketIO/sockets/sockets';
 import { useParams } from 'react-router-dom';
 
-const Loader = ({game}) => {
-  const [readyMe, setReadyMe] = useState (false);
-  const [playerList, setPlayerList] = useState ([]);
-  // const [roomId, setRoomId] = useState (11);
-  
-  const {id}=useParams()
- 
- 
-  const handleReady = () => {
-    setReadyMe (true);
+const Loader = ({ game }) => {
+  const [readyMe, setReadyMe] = useState(false);
+  const [playerList, setPlayerList] = useState([]);
+  const { id } = useParams();
 
-    socket.emit ('player_ready', {
+  const handleReady = () => {
+    setReadyMe(true);
+
+    socket.emit('player_ready', {
       game,
       roomId: id,
     });
   };
 
-  useEffect (() => {
-    socket.on ('player_list', data => {
-      setPlayerList (data);
+  useEffect(() => {
+    socket.on('player_list', data => {
+      setPlayerList(data);
     });
 
     return () => {
-      socket.off ('player_list');
+      socket.off('player_list');
+    };
+  }, []);
+
+  useEffect(() => {
+    // Escuchar el evento cuando se une un nuevo jugador
+    socket.on('player_joined', (newPlayer) => {
+      setPlayerList((prevList) => [...prevList, newPlayer]);
+    });
+
+    // Escuchar el evento cuando un jugador está listo
+    socket.on('player_ready_status', (playerReadyStatus) => {
+      setPlayerList((prevList) =>
+        prevList.map(player =>
+          player.id === playerReadyStatus.id ? { ...player, ready: playerReadyStatus.ready } : player
+        )
+      );
+    });
+
+    return () => {
+      socket.off('player_joined');
+      socket.off('player_ready_status');
     };
   }, []);
 
@@ -38,7 +56,7 @@ const Loader = ({game}) => {
       </div>
       <div className={style.playersAndButton}>
         <div className={style.PlayersReady}>
-          {playerList.map ((player, index) => (
+          {playerList.map((player, index) => (
             <svg
               key={index}
               xmlns="http://www.w3.org/2000/svg"
@@ -65,7 +83,7 @@ const Loader = ({game}) => {
             </svg>
           ))}
           {/* Agregar un SVG adicional si el usuario actual no está en la lista de jugadores */}
-          {!playerList.some (player => player.id === socket.id) &&
+          {!playerList.some(player => player.id === socket.id) &&
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"

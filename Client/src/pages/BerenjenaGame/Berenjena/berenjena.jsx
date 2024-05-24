@@ -410,11 +410,11 @@ const GameBerenjena = () => {
 
   useEffect (() => {
   
-    // socket.on ('start_game', data => {
-    //   let roomId = data[0].roomId;
-    //   setLoader (!loader);
-    //   // distribute (game, roomId, data, setPlayers, players, round, setRound);
-    // });
+    socket.on ('start_game', data => {
+      let roomId = data[0].roomId;
+      setLoader (!loader);
+      // distribute (game, roomId, data, setPlayers, players, round, setRound);
+    });
   }, []);
 
   // GuardarEnBase ();
