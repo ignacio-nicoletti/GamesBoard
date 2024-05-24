@@ -19,7 +19,7 @@ function App() {
         <Route path="/berenjena" element={<PagePrimaryBerenjena />} />
         <Route path="/berenjena/rules" element={<RulesOfBerenjena />} />
         <Route path="/berenjena/joinRoom" element={<JoinRoom />} />
-        <Route path="/berenjena/multiplayer" element={<GameBerenjena />} />
+        <Route path="/berenjena/multiplayer/:id" element={<GameBerenjena />} />
         <Route path="/gameberenjenaIA" element={<GameBerenjena />} />
 
         {/* Poker */}

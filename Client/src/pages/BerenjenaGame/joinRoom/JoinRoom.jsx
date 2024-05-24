@@ -90,7 +90,8 @@ const JoinRoom = () => {
 
   useEffect(() => {
     const handlePlayerList = (playerList) => {
-      navigate(`/berenjena/multiplayer/${roomId}`);
+      console.log(playerList);
+      navigate(`/berenjena/multiplayer/${playerList[0].roomId}`);
     };
     socket.on("player_list", handlePlayerList);
     return () => {
