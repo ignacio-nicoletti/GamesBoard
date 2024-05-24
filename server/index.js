@@ -3,7 +3,6 @@ import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
 import { distribute, shuffle } from "./functions/functions.js";
-import { Berenjena } from "./informationGames/informationGames.js";
 
 const app = express();
 const server = http.createServer(app);
@@ -15,11 +14,26 @@ const io = new Server(server, {
 });
 
 const games = {
-  Berenjena: {},
-  Poker: {},
-  Truco: {},
-  Generala: {},
+  Berenjena: createRooms(10),
+  Poker: createRooms(10),
+  Truco: createRooms(10),
+  Generala: createRooms(10),
 };
+
+const permanentRooms = {
+  Berenjena: createRooms(10),
+  Poker: createRooms(10),
+  Truco: createRooms(10),
+  Generala: createRooms(10),
+};
+
+function createRooms(numberOfRooms) {
+  const rooms = {};
+  for (let i = 1; i <= numberOfRooms; i++) {
+    rooms[i] = { users: [], gameStarted: false };
+  }
+  return rooms;
+}
 
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id} to server`);
@@ -28,8 +42,8 @@ io.on("connection", (socket) => {
     const rooms = games[game];
     if (rooms) {
       const allRoomsInfo = Object.keys(rooms).map((roomId) => ({
-        roomId,
-        users: rooms[roomId].users,
+        roomId: Number(roomId), // Convertir roomId a número
+        users: rooms[roomId].users, // Asegurarse de que los usuarios se envíen correctamente
         gameStarted: rooms[roomId].gameStarted,
       }));
       socket.emit("all_rooms_info", allRoomsInfo);
@@ -47,13 +61,6 @@ io.on("connection", (socket) => {
 
     if (!rooms[roomId]) {
       rooms[roomId] = { users: [], gameStarted: false };
-      // Al crear una nueva sala, inicializa los datos de usuario con los datos del JSON Berenjena
-      Berenjena.jugadores.forEach((jugador, index) => {
-        rooms[roomId].users.push(Berenjena.jugadores[index]); // Copia el jugador del JSON Berenjena
-        rooms[roomId].users[index].roomId = roomId; // Actualiza el roomId del jugador
-        rooms[roomId].users[index].position = index + 1; // Actualiza la posición del jugador
-        // Puedes agregar otras propiedades de jugador según sea necesario
-      });
     } else if (rooms[roomId].users.length >= 6) {
       socket.emit("room_full", { error: "Room is full" });
       return;
@@ -69,20 +76,79 @@ io.on("connection", (socket) => {
       return;
     }
 
+    const user = {
+      id: socket.id,
+      userName,
+      roomId,
+      position: rooms[roomId].users.length + 1,
+    };
+    rooms[roomId].users.push(user);
+
     console.log(`User ${userName} joined room ${roomId} in game ${game}`);
     socket.join(`${game}-${roomId}`);
-    // Emitir el evento 'room_joined' al usuario actual
-    socket.emit("room_joined", { roomId, position: 1, userName }); // Suponiendo que el usuario siempre ingresa en la posición 1
-    // Emitir la lista de jugadores actualizada a todos los usuarios en la sala
+    socket.emit("room_joined", { roomId, position: user.position, userName });
     io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId].users);
-
-    // Envía el JSON actualizado al front-end
-
-    io.to(`${game}-${roomId}`).emit("update_json", Berenjena);
   });
 
-  // Puedes agregar más eventos para actualizar el JSON según sea necesario
-  // Por ejemplo, si un jugador marca como listo, actualiza el JSON y envíalo nuevamente al front-end.
+  socket.on("disconnect", () => {
+    Object.keys(games).forEach((game) => {
+      Object.values(games[game]).forEach((room) => {
+        const index = room.users.findIndex((user) => user.id === socket.id);
+        if (index !== -1) {
+          room.users.splice(index, 1);
+          io.to(`${game}-${room.roomId}`).emit("player_list", room.users);
+        }
+      });
+    });
+
+    for (const game in games) {
+      const rooms = games[game];
+      for (const roomId in rooms) {
+        const userIndex = rooms[roomId].users.findIndex(
+          (user) => user.id === socket.id
+        );
+        if (userIndex !== -1) {
+          rooms[roomId].users.splice(userIndex, 1);
+          io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId].users);
+          if (
+            rooms[roomId].users.length === 0 &&
+            !permanentRooms[game][roomId]
+          ) {
+            delete rooms[roomId];
+            console.log(`User ${socket.id} Disconnected from room =>${roomId}`);
+          }
+          break;
+        }
+      }
+    }
+  });
+
+  socket.on("disconnectRoom", () => {
+    let roomDisconnected = false;
+    for (const game in games) {
+      const rooms = games[game];
+      for (const roomId in rooms) {
+        const userIndex = rooms[roomId].users.findIndex(
+          (user) => user.id === socket.id
+        );
+        if (userIndex !== -1) {
+          rooms[roomId].users.splice(userIndex, 1);
+          io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId].users);
+          if (
+            rooms[roomId].users.length === 0 &&
+            !permanentRooms[game][roomId]
+          ) {
+            delete rooms[roomId];
+            roomDisconnected = true;
+            console.log(`User ${socket.id} Disconnected from room =>${roomId}`);
+          }
+          break;
+        }
+      }
+      if (roomDisconnected) break; // Salir del bucle exterior si se desconectó de una sala
+    }
+  });
+
 
   socket.on("player_ready", ({ game, roomId }) => {
     console.log(`Player ready in room ${roomId} of game ${game}`);
@@ -150,29 +216,6 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("disconnectRoom", () => {
-    for (const game in games) {
-      const rooms = games[game];
-      for (const roomId in rooms) {
-        const userIndex = rooms[roomId].users.findIndex(
-          (user) => user.id === socket.id
-        );
-        if (userIndex !== -1) {
-          rooms[roomId].users.splice(userIndex, 1);
-          io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId].users);
-          if (rooms[roomId].users.length === 0) {
-            delete rooms[roomId];
-            console.log(`User ${socket.id} Disconnected from room =>${roomId}`);
-          }
-          break;
-        }
-      }
-    }
-  });
-
-  socket.on("disconnect", () => {
-    console.log(`${socket.id} Desconectado del servidor`);
-  });
 });
 
 server.listen(3001, () => {

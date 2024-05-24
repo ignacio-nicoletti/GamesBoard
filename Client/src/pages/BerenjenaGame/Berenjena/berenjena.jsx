@@ -25,83 +25,84 @@ import {socket} from '../../../functions/SocketIO/sockets/sockets';
 
 const GameBerenjena = () => {
   const [loader, setLoader] = useState (true);
-
   const [game, setGame] = useState ('Berenjena'); // Juego seleccionado
-
   const [showResult, setShowResult] = useState (false);
+  const [myPosition, setMyPosition] = useState ({});
 
-  const [jugador1, setJugador1] = useState ({
-    username: '', //nombre
-    id: 1, //position
-    cardPerson: [], //cards
-    betP: null, //num de cards apostadas
-    cardswins: 0, //cards ganadas
-    cardBet: [{value: null, palo: ''}], //card apostada
-    myturnA: false, //boolean  //turno apuesta
-    myturnR: false, //boolean //turno ronda
-    cumplio: false, //boolean  //cumplio su apuesta
-    points: 0, //puntos
-  });
-  const [jugador2, setJugador2] = useState ({
-    username: '',
-    id: 2,
-    cardPerson: [],
-    betP: null,
-    cardswins: 0,
-    cardBet: [{value: null, palo: ''}],
-    myturnA: false, //boolean
-    myturnR: false, //booleanA
-    cumplio: false, //boolean
-    points: 0,
-  });
-  const [jugador3, setJugador3] = useState ({
-    username: '',
-    id: 3,
-    cardPerson: [],
-    betP: null,
-    cardswins: 0,
-    cardBet: [{value: null, palo: ''}],
-    myturnA: false, //boolean
-    myturnR: false, //boolean
-    cumplio: false, //boolean
-    points: 0,
-  });
-  const [jugador4, setJugador4] = useState ({
-    username: '',
-    id: 4,
-    cardPerson: [],
-    betP: null,
-    cardswins: 0,
-    cardBet: [{value: null, palo: ''}],
-    myturnA: false, //boolean
-    myturnR: false, //boolean
-    cumplio: false, //boolean
-    points: 0,
-  });
-  const [jugador5, setJugador5] = useState ({
-    username: '',
-    id: 5,
-    cardPerson: [],
-    betP: null,
-    cardswins: 0,
-    cardBet: [{value: null, palo: ''}],
-    myturnA: false, //boolean
-    myturnR: false, //boolean
-    cumplio: false, //boolean
-    points: 0,
-  });
-  const [jugador6, setJugador6] = useState ({
-    username: '',
-    id: 6,
-    cardPerson: [],
-    betP: null,
-    cardswins: 0,
-    cardBet: [{value: null, palo: ''}],
-    myturnA: false, //boolean
-    myturnR: false, //boolean
-    cumplio: false, //boolean
-    points: 0,
-  });
+  const [players, setPlayers] = useState ([
+    {
+      userName: '', //nombre
+      id: 1, //position
+      cardPerson: [], //cards
+      betP: null, //num de cards apostadas
+      cardswins: 0, //cards ganadas
+      cardBet: [{value: null, palo: ''}], //card apostada
+      myturnA: false, //boolean  //turno apuesta
+      myturnR: false, //boolean //turno ronda
+      cumplio: false, //boolean  //cumplio su apuesta
+      points: 0, //puntos
+    },
+    {
+      userName: '',
+      id: 2,
+      cardPerson: [],
+      betP: null,
+      cardswins: 0,
+      cardBet: [{value: null, palo: ''}],
+      myturnA: false, //boolean
+      myturnR: false, //booleanA
+      cumplio: false, //boolean
+      points: 0,
+    },
+    {
+      userName: '',
+      id: 3,
+      cardPerson: [],
+      betP: null,
+      cardswins: 0,
+      cardBet: [{value: null, palo: ''}],
+      myturnA: false, //boolean
+      myturnR: false, //booleanA
+      cumplio: false, //boolean
+      points: 0,
+    },
+    {
+      userName: '',
+      id: 4,
+      cardPerson: [],
+      betP: null,
+      cardswins: 0,
+      cardBet: [{value: null, palo: ''}],
+      myturnA: false, //boolean
+      myturnR: false, //booleanA
+      cumplio: false, //boolean
+      points: 0,
+    },
+    {
+      userName: '',
+      id: 5,
+      cardPerson: [],
+      betP: null,
+      cardswins: 0,
+      cardBet: [{value: null, palo: ''}],
+      myturnA: false, //boolean
+      myturnR: false, //booleanA
+      cumplio: false, //boolean
+      points: 0,
+    },
+    {
+      userName: '',
+      id: 6,
+      cardPerson: [],
+      betP: null,
+      cardswins: 0,
+      cardBet: [{value: null, palo: ''}],
+      myturnA: false, //boolean
+      myturnR: false, //booleanA
+      cumplio: false, //boolean
+      points: 0,
+    },
+  ]);
 
   const [round, setRound] = useState ({
     users: 4, //usuarios conectados
@@ -118,6 +119,7 @@ const GameBerenjena = () => {
     beforeLastCardBet: [{value: null, palo: '', id: ''}], //anteultima card apostada
     ganadorRonda: null,
     cantQueTiraron: 0,
+    roomId: null,
   });
 
   const [Base, setBase] = useState ([]); //base del resultado xronda
@@ -405,34 +407,17 @@ const GameBerenjena = () => {
   // };
   //setear el name depende la position
   // `jugador${i + 1}`
+
   useEffect (() => {
     socket.on ('start_game', data => {
       let roomId = data[0].roomId;
       setLoader (!loader);
-      distribute (
-        game,
-        roomId,
-        data,
-        setJugador1,
-        jugador1,
-        setJugador2,
-        jugador2,
-        setJugador3,
-        jugador3,
-        setJugador4,
-        jugador4,
-        setJugador5,
-        jugador5,
-        setJugador6,
-        jugador6,
-        round,
-        setRound
-      );
+      // distribute (game, roomId, data, setPlayers, players, round, setRound);
     });
   }, []);
-  
+
   // GuardarEnBase ();
-  
+
   // useEffect (
   //   () => {
   //     turno (
@@ -575,7 +560,7 @@ const GameBerenjena = () => {
         value={card.value}
         palo={card.palo}
         jugador={player}
-        setJugador={setJugador1} // Esto puede variar dependiendo del jugador
+        setJugador={'setJugador1'} // Esto puede variar dependiendo del jugador
         setRonda={setRound}
         ronda={round}
       />
@@ -586,22 +571,7 @@ const GameBerenjena = () => {
     <div className={style.contain}>
 
       {loader == true
-        ? <Loader
-       
-            game={game}
-            setJugador1={setJugador1}
-            jugador1={jugador1}
-            setJugador2={setJugador2}
-            jugador2={jugador2}
-            setJugador3={jugador3}
-            jugador3={jugador3}
-            setJugador4={setJugador4}
-            jugador4={jugador4}
-            setJugador5={setJugador5}
-            jugador5={jugador5}
-            setJugador6={setJugador6}
-            jugador6={jugador6}
-          />
+        ? <Loader game={game} players={players} />
         : <div className={style.tableroJugadores}>
 
             {/* <div className={style.jugador2}>

@@ -36,7 +36,6 @@ const JoinRoom = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
 
-
   const CreateRoom = async (e) => {
     e.preventDefault();
 
@@ -44,7 +43,7 @@ const JoinRoom = () => {
       if (roomId !== "" && userName !== "") {
         const response = await CreateGameRoom(game, roomId, userName);
         console.log(response);
-        // poner alerta de que uniste
+        navigate(`/berenjena/multiplayer?roomId=${roomId}&game=${game}`); // Navegar después de crear la sala
       }
     } catch (error) {
       console.error(error);
@@ -57,6 +56,7 @@ const JoinRoom = () => {
       if (roomId !== "" && userName !== "") {
         const response = await joinGameRoom(game, roomId, userName);
         console.log(response);
+        navigate(`/berenjena/multiplayer`); // Navegar después de unirse a la sala
       }
     } catch (error) {
       console.error(error);
@@ -74,43 +74,18 @@ const JoinRoom = () => {
 
   useEffect(() => {
     const handlePlayerList = (playerList) => {
-      // Actualizar el estado global de roomIdberenjena aquí si es necesario
+      navigate('/berenjena/multiplayer');
     };
-    
-    socket.on("player_list",(playerList)=>{
-      console.log(playerList);
-      navigate("/berenjena/multiplayer");
-
-    });
-    socket.on("update_json", (data)=>{console.log(data)});
-
+    socket.on('player_list', handlePlayerList);
     return () => {
-      socket.off("player_list", handlePlayerList);
+      socket.off('player_list', handlePlayerList);
     };
   }, [navigate]);
 
-
-
   useEffect(() => {
-    const handlePosition = (position) => {
-    
-      console.log("Position:", position);
-    };
-
-    socket.on("position", handlePosition);
-
-    return () => {
-      socket.off("position", handlePosition);
-    };
-  }, []);
-
-
-
-  useEffect(() => {
-    const handleRoomJoined = ({ roomId, position }) => {
-    
-      
-      console.log("Room Joined:", { roomId, position });
+    const handleRoomJoined = (data) => {
+      // console.log("Room Joined:", data );
+      navigate(`/berenjena/multiplayer`); // Navegar cuando se une a la sala
     };
 
     socket.on("room_joined", handleRoomJoined);
@@ -118,15 +93,7 @@ const JoinRoom = () => {
     return () => {
       socket.off("room_joined", handleRoomJoined);
     };
-  }, []);
-
-
-
-
-
-
-
-
+  }, [navigate]);
 
   const avatars = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6];
 
