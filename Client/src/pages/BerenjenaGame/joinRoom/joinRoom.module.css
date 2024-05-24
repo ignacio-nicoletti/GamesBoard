@@ -41,20 +41,6 @@
     justify-content: space-between;
     width: auto;
   }
-  .sideBar p {
-    display: none;
-  }
-}
-
-.hamburgerButton {
-  display: none;
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  z-index: 1000;
 }
 
 .containRoom.blurredBackground {
@@ -387,9 +373,27 @@
   transition: border-color 0.3s, box-shadow 0.3s;
   outline: none;
   font-size: 1rem;
-  color: #333;
   background-color: #f9f9f9;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.inputPlaceholder::placeholder {
+  color: rgb(167, 167, 167); 
+  font-style: italic;
+}
+
+.errorMsgContainer{
+  display: flex;
+  flex-wrap: wrap;
+  width: 8rem;
+}
+
+.errorMsg{
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  color: red;
+  font-size: 1rem;
 }
 
 .DivRooms {
@@ -426,6 +430,7 @@
 
   .DivInputRoom {
     display: flex;
+    flex-wrap: wrap;
     flex-direction: row;
     justify-content: center;
     align-items: center;
@@ -445,15 +450,13 @@
   .DivInputRoom input {
     height: 2rem;
     border-radius: 8px;
-    width: 8rem;
-    padding-left: 0.75rem;
+    width: 5rem;
+    padding-left: 0.3rem;
     font-family: "Bebas Neue";
     border: 2px solid #218838;
     transition: border-color 0.3s, box-shadow 0.3s;
     outline: none;
     font-size: 1rem;
-    color: #333;
-    background-color: #f9f9f9;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import style from "./joinRoom.module.css";
@@ -22,8 +22,6 @@ import logoBerenjena from "../../../assets/berenjena/home/logoBerenjena.png";
 // MATERIAL
 import Autocomplete from "../../../components/berenjena/autocomplete/autocomplete";
 import GroupIcon from "@mui/icons-material/Group";
-import MenuIcon from "@mui/icons-material/Menu";
-import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 
 const JoinRoom = () => {
@@ -31,6 +29,8 @@ const JoinRoom = () => {
   const [game, setGame] = useState("Berenjena"); // Juego seleccionado
   const [userName, setUserName] = useState(""); // mi nombre
   const [roomId, setRoomId] = useState(""); // id de room
+  const [tempMaxUsers, setTempMaxUsers] = useState("");
+  const [error, setError] = useState("");
   const [maxUsers, setMaxUsers] = useState(6); // cantidad máxima de usuarios
   const [selectedAvatar, setSelectedAvatar] = useState(avatar1); // avatar seleccionado
   const [showModal, setShowModal] = useState(true); // Mostrar modal al inicio
@@ -91,11 +91,11 @@ const JoinRoom = () => {
 
   useEffect(() => {
     const handlePlayerList = (playerList) => {
-      navigate('/berenjena/multiplayer');
+      navigate("/berenjena/multiplayer");
     };
-    socket.on('player_list', handlePlayerList);
+    socket.on("player_list", handlePlayerList);
     return () => {
-      socket.off('player_list', handlePlayerList);
+      socket.off("player_list", handlePlayerList);
     };
   }, [navigate]);
 
@@ -115,13 +115,14 @@ const JoinRoom = () => {
     const handleRoomCreationError = (data) => {
       Swal.fire({
         title: "Error!",
-        text: data.error,
+        text: data,
         icon: "error",
         confirmButtonText: "OK",
         customClass: {
           container: "swal2-container",
         },
       });
+      console.log(data)
     };
 
     socket.on("room_creation_error", handleRoomCreationError);
@@ -153,8 +154,25 @@ const JoinRoom = () => {
     setShowModal(true);
   };
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+  const handleChange = (e) => {
+    const value = e.target.value;
+    if (["2", "3", "4", "5", "6"].includes(value)) {
+      setTempMaxUsers(value);
+      setError("");
+    } else {
+      setTempMaxUsers("");
+      setError("Please enter a value between 2 and 6");
+    }
+  };
+
+  const handleBlur = (e) => {
+    const value = parseInt(e.target.value, 10);
+    if (isNaN(value) || value < 2 || value > 6) {
+      setError("Please enter a value between 2 and 6");
+    } else {
+      setMaxUsers(value);
+      setError("");
+    }
   };
 
   return (
@@ -197,10 +215,7 @@ const JoinRoom = () => {
       )}
       {!showModal && (
         <>
-          <button className={style.hamburgerButton} onClick={toggleMenu}>
-            {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
-          </button>
-          <div className={`${style.sideBar} ${isMenuOpen ? style.open : ""}`}>
+          <div className={style.sideBar}>
             <div className={style.DivButtonBack}>
               <Link to="/berenjena">Back to menu</Link>
             </div>
@@ -220,18 +235,26 @@ const JoinRoom = () => {
               <span>Create a new room: </span>
               <input
                 type="number"
-                placeholder="New room number... "
+                placeholder="room number... "
                 value={roomId}
                 onChange={(e) => setRoomId(e.target.value)}
+                className={style.inputPlaceholder}
               />
               <input
-                type="number"
-                placeholder="Max users... "
-                value={maxUsers}
-                onChange={(e) => setMaxUsers(e.target.value)}
+                type="text"
+                placeholder="players: 2 to 6..."
+                value={tempMaxUsers}
+                onChange={handleChange}
+                onBlur={handleBlur}
                 min={2}
                 max={6}
+                className={style.inputPlaceholder}
               />
+              {error && (
+                <div className={style.errorMsgContainer}>
+                  <p className={style.errorMsg}>{error}</p>
+                </div>
+              )}
               <button className={style.createButton} onClick={CreateRoom}>
                 Create
               </button>
