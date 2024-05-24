@@ -34,13 +34,12 @@ export const disconnectRoom = () => {
   socket.emit("disconnectRoom");
 };
 
-// ingresa a una sala
-export const CreateGameRoom = (game, roomId, userName) => {
+export const CreateGameRoom = (game, roomId, userName, maxUsers = 6) => {
   return new Promise((res, rej) => {
     const responses = {};
 
-    socket.once("room_joined", (data) => {
-      responses.roomJoined = data;
+    socket.once("room_created", (data) => {
+      responses.roomCreated = data;
       checkIfReadyToResolve();
     });
 
@@ -54,7 +53,7 @@ export const CreateGameRoom = (game, roomId, userName) => {
       checkIfReadyToResolve();
     });
 
-    socket.once("room_join_error", ({ error }) => {
+    socket.once("room_creation_error", ({ error }) => {
       rej(error);
     });
 
@@ -64,9 +63,10 @@ export const CreateGameRoom = (game, roomId, userName) => {
       }
     }
 
-    socket.emit("join_room", { game, roomId, userName });
+    socket.emit("create_room", { game, roomId, userName, maxUsers });
   });
 };
+
 
 export const joinGameRoom = (game, roomId, userName) => {
   return new Promise((resolve, reject) => {

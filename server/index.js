@@ -45,6 +45,7 @@ io.on("connection", (socket) => {
         roomId: Number(roomId), // Convertir roomId a número
         users: rooms[roomId].users, // Asegurarse de que los usuarios se envíen correctamente
         gameStarted: rooms[roomId].gameStarted,
+        maxUser:rooms[roomId].maxUsers || 6
       }));
       socket.emit("all_rooms_info", allRoomsInfo);
     } else {
@@ -60,21 +61,57 @@ io.on("connection", (socket) => {
     }
 
     if (!rooms[roomId]) {
-      rooms[roomId] = { users: [], gameStarted: false };
-    } else if (rooms[roomId].users.length >= 6) {
+      socket.emit("room_join_error", { error: "Room does not exist" });
+      return;
+    }
+
+    const room = rooms[roomId];
+    const maxUsers = room.maxUsers || 6; // Default to 6 if maxUsers is not defined
+
+    if (room.users.length >= maxUsers) {
       socket.emit("room_full", { error: "Room is full" });
       return;
     }
 
-    if (rooms[roomId].gameStarted) {
+    if (room.gameStarted) {
       socket.emit("error", { error: "Game already started, cannot join" });
       return;
     }
 
-    if (rooms[roomId].users.some((user) => user.id === socket.id)) {
+    if (room.users.some((user) => user.id === socket.id)) {
       socket.emit("room_join_error", { error: "User already in the room" });
       return;
     }
+
+    const user = {
+      id: socket.id,
+      userName,
+      roomId,
+      position: room.users.length + 1,
+    };
+    room.users.push(user);
+
+    console.log(`User ${userName} joined room ${roomId} in game ${game}`);
+    socket.join(`${game}-${roomId}`);
+    socket.emit("room_joined", { roomId, position: user.position, userName });
+    io.to(`${game}-${roomId}`).emit("player_list", room.users);
+});
+
+
+  // Back-end
+  socket.on("create_room", ({ game, roomId, userName, maxUsers = 6 }) => {
+    const rooms = games[game];
+    if (!rooms) {
+      socket.emit("error", { error: "Invalid game" });
+      return;
+    }
+
+    if (rooms[roomId]) {
+      socket.emit("room_creation_error", { error: "Room already exists" });
+      return;
+    }
+
+    rooms[roomId] = { users: [], gameStarted: false, maxUsers };
 
     const user = {
       id: socket.id,
@@ -84,9 +121,16 @@ io.on("connection", (socket) => {
     };
     rooms[roomId].users.push(user);
 
-    console.log(`User ${userName} joined room ${roomId} in game ${game}`);
+    console.log(
+      `Room ${roomId} created by ${userName} in game ${game} with max ${maxUsers} users`
+    );
     socket.join(`${game}-${roomId}`);
-    socket.emit("room_joined", { roomId, position: user.position, userName });
+    socket.emit("room_created", {
+      roomId,
+      position: user.position,
+      userName,
+      maxUsers,
+    });
     io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId].users);
   });
 
@@ -148,7 +192,6 @@ io.on("connection", (socket) => {
       if (roomDisconnected) break; // Salir del bucle exterior si se desconectó de una sala
     }
   });
-
 
   socket.on("player_ready", ({ game, roomId }) => {
     console.log(`Player ready in room ${roomId} of game ${game}`);
@@ -215,7 +258,6 @@ io.on("connection", (socket) => {
       socket.emit("error", { error: "Error in distribute function" });
     }
   });
-
 });
 
 server.listen(3001, () => {

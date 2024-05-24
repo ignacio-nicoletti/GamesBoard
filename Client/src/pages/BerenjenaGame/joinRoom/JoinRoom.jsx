@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import style from "./joinRoom.module.css";
 import {
   getAllRoomsInfo,
@@ -24,13 +25,13 @@ import GroupIcon from "@mui/icons-material/Group";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
-import Swal from "sweetalert2";
 
 const JoinRoom = () => {
   const [rooms, setRooms] = useState([]); // mapeo de todas las salas
   const [game, setGame] = useState("Berenjena"); // Juego seleccionado
   const [userName, setUserName] = useState(""); // mi nombre
   const [roomId, setRoomId] = useState(""); // id de room
+  const [maxUsers, setMaxUsers] = useState(6); // cantidad máxima de usuarios
   const [selectedAvatar, setSelectedAvatar] = useState(avatar1); // avatar seleccionado
   const [showModal, setShowModal] = useState(true); // Mostrar modal al inicio
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -41,13 +42,21 @@ const JoinRoom = () => {
 
     try {
       if (roomId !== "" && userName !== "") {
-        const response = await CreateGameRoom(game, roomId, userName);
+        const response = await CreateGameRoom(game, roomId, userName, maxUsers);
         console.log(response);
-        navigate(`/berenjena/multiplayer?roomId=${roomId}&game=${game}`); // Navegar después de crear la sala
+        navigate(`/berenjena/multiplayer`); // Navegar después de crear la sala
       }
     } catch (error) {
       console.error(error);
-      alert(error); // Muestra una alerta con el mensaje de error
+      Swal.fire({
+        title: "Error!",
+        text: error.message,
+        icon: "error",
+        confirmButtonText: "OK",
+        customClass: {
+          container: "swal2-container",
+        },
+      });
     }
   };
 
@@ -60,7 +69,15 @@ const JoinRoom = () => {
       }
     } catch (error) {
       console.error(error);
-      alert(error); // Muestra una alerta con el mensaje de error
+      Swal.fire({
+        title: "Error!",
+        text: error.message,
+        icon: "error",
+        confirmButtonText: "OK",
+        customClass: {
+          container: "swal2-container",
+        },
+      });
     }
   };
 
@@ -84,7 +101,6 @@ const JoinRoom = () => {
 
   useEffect(() => {
     const handleRoomJoined = (data) => {
-      // console.log("Room Joined:", data );
       navigate(`/berenjena/multiplayer`); // Navegar cuando se une a la sala
     };
 
@@ -94,6 +110,26 @@ const JoinRoom = () => {
       socket.off("room_joined", handleRoomJoined);
     };
   }, [navigate]);
+
+  useEffect(() => {
+    const handleRoomCreationError = (data) => {
+      Swal.fire({
+        title: "Error!",
+        text: data.error,
+        icon: "error",
+        confirmButtonText: "OK",
+        customClass: {
+          container: "swal2-container",
+        },
+      });
+    };
+
+    socket.on("room_creation_error", handleRoomCreationError);
+
+    return () => {
+      socket.off("room_creation_error", handleRoomCreationError);
+    };
+  }, []);
 
   const avatars = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6];
 
@@ -188,6 +224,14 @@ const JoinRoom = () => {
                 value={roomId}
                 onChange={(e) => setRoomId(e.target.value)}
               />
+              <input
+                type="number"
+                placeholder="Max users... "
+                value={maxUsers}
+                onChange={(e) => setMaxUsers(e.target.value)}
+                min={1}
+                max={6}
+              />
               <button className={style.createButton} onClick={CreateRoom}>
                 Create
               </button>
@@ -215,7 +259,7 @@ const JoinRoom = () => {
 
                     <p className={style.groupIcon}>
                       <GroupIcon />
-                      {el.users.length}/6
+                      {el.users.length}/{el.maxUser || 6}
                     </p>
                   </div>
                   <img src={imgRoom} alt="" className={style.imgRoom} />
