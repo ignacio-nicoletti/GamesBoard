@@ -10,7 +10,7 @@ import style from "./autocomplete.module.css";
 export default function AutocompleteExample() {
   const [selectedRoom, setSelectedRoom] = React.useState("");
   const [selectedPlayer, setSelectedPlayer] = React.useState("");
-  const [roomNumber, setRoomNumber] = React.useState("");
+  const [roomNumber, setRoomNumber] = React.useState(null); 
 
   const handleRoomChange = (event) => {
     setSelectedRoom(event.target.value);
@@ -48,6 +48,8 @@ export default function AutocompleteExample() {
           value={selectedRoom}
           onChange={handleRoomChange}
         >
+
+          <MenuItem value="room">All</MenuItem>
           <MenuItem value="room1">Open</MenuItem>
           <MenuItem value="room2">In progress</MenuItem>
         </Select>
@@ -73,12 +75,11 @@ export default function AutocompleteExample() {
           value={selectedPlayer}
           onChange={handlePlayerChange}
         >
-          <MenuItem value="player1">1</MenuItem>
-          <MenuItem value="player2">2</MenuItem>
-          <MenuItem value="player3">3</MenuItem>
-          <MenuItem value="player4">4</MenuItem>
-          <MenuItem value="player5">5</MenuItem>
-          <MenuItem value="player6">6</MenuItem>
+          {[...Array(5)].map((_, index) => (
+            <MenuItem key={index} value={index + 2}>
+              {index + 2}
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
 

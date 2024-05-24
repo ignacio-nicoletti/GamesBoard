@@ -34,7 +34,6 @@ const JoinRoom = () => {
   const [maxUsers, setMaxUsers] = useState(6); // cantidad máxima de usuarios
   const [selectedAvatar, setSelectedAvatar] = useState(avatar1); // avatar seleccionado
   const [showModal, setShowModal] = useState(true); // Mostrar modal al inicio
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   const CreateRoom = async (e) => {
@@ -50,7 +49,7 @@ const JoinRoom = () => {
       console.error(error);
       Swal.fire({
         title: "Error!",
-        text: error.message,
+        text: error,
         icon: "error",
         confirmButtonText: "OK",
         customClass: {
@@ -71,7 +70,7 @@ const JoinRoom = () => {
       console.error(error);
       Swal.fire({
         title: "Error!",
-        text: error.message,
+        text: error,
         icon: "error",
         confirmButtonText: "OK",
         customClass: {
@@ -113,17 +112,16 @@ const JoinRoom = () => {
 
   useEffect(() => {
     const handleRoomCreationError = (data) => {
-   
       Swal.fire({
         title: "Error!",
-        text: data,
+        text: error,
         icon: "error",
         confirmButtonText: "OK",
         customClass: {
           container: "swal2-container",
         },
       });
-      console.log(data)
+      console.log(data);
     };
     socket.on("room_creation_error", handleRoomCreationError);
 
