@@ -20,12 +20,13 @@ import imgRoom from "../../../assets/berenjena/jugadores/imgRoom.png";
 import logoBerenjena from "../../../assets/berenjena/home/logoBerenjena.png";
 
 // MATERIAL
-import Autocomplete from "../../../components/berenjena/autocomplete/autocomplete";
+import AutocompleteExample from "../../../components/berenjena/autocomplete/autocomplete";
 import GroupIcon from "@mui/icons-material/Group";
 import EditIcon from "@mui/icons-material/Edit";
 
 const JoinRoom = () => {
   const [rooms, setRooms] = useState([]); // mapeo de todas las salas
+  const [filteredRooms, setFilteredRooms] = useState([]);
   const [game, setGame] = useState("Berenjena"); // Juego seleccionado
   const [userName, setUserName] = useState(""); // mi nombre
   const [roomId, setRoomId] = useState(""); // id de room
@@ -84,6 +85,8 @@ const JoinRoom = () => {
     const initializeSocket = async () => {
       const roomsInfo = await getAllRoomsInfo(game);
       setRooms(roomsInfo);
+      setFilteredRooms(roomsInfo); // Inicializa las salas filtradas
+      console.log(roomsInfo);
     };
     initializeSocket();
   }, [game]);
@@ -173,6 +176,10 @@ const JoinRoom = () => {
     }
   };
 
+  const handleFilter = (filteredRooms) => {
+    setFilteredRooms(filteredRooms);
+  };
+
   return (
     <div className={style.containRoom}>
       {showModal && (
@@ -217,7 +224,6 @@ const JoinRoom = () => {
             <div className={style.DivButtonBack}>
               <Link to="/berenjena">Back to menu</Link>
             </div>
-            <p>Player:</p>
             <div className={style.profile}>
               <img
                 src={selectedAvatar}
@@ -269,11 +275,14 @@ const JoinRoom = () => {
                 />
               </div>
               <div>
-                <Autocomplete />
+                <AutocompleteExample
+                  roomsInfo={rooms}
+                  onFilter={handleFilter}
+                />
               </div>
             </div>
             <div className={style.roomsContainer}>
-              {rooms.map((el) => (
+              {filteredRooms.map((el) => (
                 <div key={el.roomId} className={style.DivRoom}>
                   <div className={style.textRoom}>
                     <p>Room {el.roomId}</p>

@@ -25,3 +25,26 @@
 
   }
 }
+
+
+.clearFiltersBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  width: 2rem;
+  height: 2rem;
+  background-color: green;
+  color: white;
+  transition: background-color 0.3s;
+  transition: width 0.3s ease-in-out;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.clearFiltersBtn:hover {
+  background-color: white;
+  color: #ff914d;
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+}

@@ -5,12 +5,18 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 import style from "./autocomplete.module.css";
+import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 
-export default function AutocompleteExample() {
-  const [selectedRoom, setSelectedRoom] = React.useState("");
+export default function AutocompleteExample({ roomsInfo, onFilter }) {
+  const [selectedRoom, setSelectedRoom] = React.useState("all");
   const [selectedPlayer, setSelectedPlayer] = React.useState("");
-  const [roomNumber, setRoomNumber] = React.useState(null); 
+  const [roomNumber, setRoomNumber] = React.useState(null);
+
+  React.useEffect(() => {
+    filterRooms();
+  }, [selectedRoom, selectedPlayer, roomNumber]);
 
   const handleRoomChange = (event) => {
     setSelectedRoom(event.target.value);
@@ -24,7 +30,43 @@ export default function AutocompleteExample() {
     setRoomNumber(newValue);
   };
 
-  const roomOptions = ["Room 101", "Room 102", "Room 103", "Room 104"];
+  const filterRooms = () => {
+    let filtered = roomsInfo;
+
+    if (selectedRoom !== "all") {
+      if (selectedRoom === "open") {
+        filtered = filtered.filter((room) => room.users.length < room.maxUser);
+      } else if (selectedRoom === "inProgress") {
+        filtered = filtered.filter((room) => room.users.length >= room.maxUser);
+      }
+    }
+
+    if (selectedPlayer) {
+      filtered = filtered.filter(
+        (room) => room.users.length === Number(selectedPlayer)
+      );
+    }
+
+    if (roomNumber) {
+      filtered = filtered.filter((room) =>
+        room.roomId.toString().includes(roomNumber.value.toString())
+      );
+    }
+
+    onFilter(filtered);
+  };
+
+  const handleClearFilters = () => {
+    setSelectedRoom("all");
+    setSelectedPlayer("");
+    setRoomNumber("");
+    onFilter(roomsInfo);
+  };
+
+  const roomOptions = roomsInfo.map((room) => ({
+    label: `Room ${room.roomId}`,
+    value: room.roomId,
+  }));
 
   return (
     <div className={style.container}>
@@ -48,10 +90,9 @@ export default function AutocompleteExample() {
           value={selectedRoom}
           onChange={handleRoomChange}
         >
-
-          <MenuItem value="room">All</MenuItem>
-          <MenuItem value="room1">Open</MenuItem>
-          <MenuItem value="room2">In progress</MenuItem>
+          <MenuItem value="all">All</MenuItem>
+          <MenuItem value="open">Open</MenuItem>
+          <MenuItem value="inProgress">In progress</MenuItem>
         </Select>
       </FormControl>
 
@@ -106,6 +147,11 @@ export default function AutocompleteExample() {
           />
         )}
       />
+      <button
+      className={style.clearFiltersBtn}
+       variant="outlined" onClick={handleClearFilters}>
+        <FilterAltOffIcon />
+      </button>
     </div>
   );
 }
