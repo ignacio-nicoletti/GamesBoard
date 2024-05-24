@@ -113,6 +113,7 @@ const JoinRoom = () => {
 
   useEffect(() => {
     const handleRoomCreationError = (data) => {
+   
       Swal.fire({
         title: "Error!",
         text: data,
@@ -124,7 +125,6 @@ const JoinRoom = () => {
       });
       console.log(data)
     };
-
     socket.on("room_creation_error", handleRoomCreationError);
 
     return () => {

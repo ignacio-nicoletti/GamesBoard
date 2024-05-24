@@ -69,12 +69,12 @@ io.on("connection", (socket) => {
     const maxUsers = room.maxUsers || 6; // Default to 6 if maxUsers is not defined
 
     if (room.users.length >= maxUsers) {
-      socket.emit("room_full", { error: "Room is full" });
+      socket.emit("room_join_error", { error: "Room is full" });
       return;
     }
 
     if (room.gameStarted) {
-      socket.emit("error", { error: "Game already started, cannot join" });
+      socket.emit("room_join_error", { error: "Game already started, cannot join" });
       return;
     }
 
@@ -97,8 +97,6 @@ io.on("connection", (socket) => {
     io.to(`${game}-${roomId}`).emit("player_list", room.users);
 });
 
-
-  // Back-end
   socket.on("create_room", ({ game, roomId, userName, maxUsers = 6 }) => {
     const rooms = games[game];
     if (!rooms) {
@@ -197,20 +195,22 @@ io.on("connection", (socket) => {
     console.log(`Player ready in room ${roomId} of game ${game}`);
     const rooms = games[game];
     if (rooms && rooms[roomId]) {
-      const user = rooms[roomId].users.find((u) => u.id === socket.id);
-      if (user) {
-        user.ready = true;
-        io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId].users);
-        // Verificar si todos los jugadores están listos y hay al menos 2 jugadores
-        const allReady = rooms[roomId].users.every((u) => u.ready);
-        const enoughPlayers = rooms[roomId].users.length >= 2;
-        if (allReady && enoughPlayers) {
-          rooms[roomId].gameStarted = true;
-          io.to(`${game}-${roomId}`).emit("start_game", rooms[roomId].users);
+        const user = rooms[roomId].users.find((u) => u.id === socket.id);
+        if (user) {
+            user.ready = true;
+            io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId].users);
+            // Verificar si todos los jugadores están listos y el número de jugadores coincide con maxUsers
+            const allReady = rooms[roomId].users.every((u) => u.ready);
+            const maxUsers = rooms[roomId].maxUsers || 6; // Default to 6 if maxUsers is not defined
+            const correctNumberOfPlayers = rooms[roomId].users.length === maxUsers;
+            if (allReady && correctNumberOfPlayers) {
+                rooms[roomId].gameStarted = true;
+                io.to(`${game}-${roomId}`).emit("start_game", rooms[roomId].users);
+            }
         }
-      }
     }
-  });
+});
+
 
   socket.on("distribute", ({ game, round, roomId, data }) => {
     // Verificar si roomId y roomId están definidos
