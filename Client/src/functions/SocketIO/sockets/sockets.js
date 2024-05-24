@@ -54,6 +54,7 @@ export const CreateGameRoom = (game, roomId, userName, maxUsers = 6) => {
     });
 
     socket.once("room_creation_error", ({ error }) => {
+      console.log(error);
       rej(error);
     });
 
@@ -88,6 +89,7 @@ export const joinGameRoom = (game, roomId, userName) => {
     });
 
     socket.once('room_join_error', (error) => {
+      console.log(error);
       reject(error);
     });
 

@@ -36,7 +36,7 @@ const Loader = ({game,players}) => {
       </div>
       <div className={style.playersAndButton}>
         <div className={style.PlayersReady}>
-          {players.map ((player, index) => (
+          {playerList.map ((player, index) => (
             <svg
               key={index}
               xmlns="http://www.w3.org/2000/svg"
