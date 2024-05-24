@@ -50,7 +50,7 @@ const JoinRoom = () => {
       console.error(error);
       Swal.fire({
         title: "Error!",
-        text: error,
+        text: error.message || "An error occurred while creating the room.",
         icon: "error",
         confirmButtonText: "OK",
         customClass: {
@@ -65,13 +65,13 @@ const JoinRoom = () => {
       if (roomId !== "" && userName !== "") {
         const response = await joinGameRoom(game, roomId, userName);
         console.log(response);
-        navigate(`/berenjena/multiplayer${roomId}`); // Navegar después de unirse a la sala
+        navigate(`/berenjena/multiplayer/${roomId}`); // Navegar después de unirse a la sala
       }
     } catch (error) {
       console.error(error);
       Swal.fire({
         title: "Error!",
-        text: error,
+        text: error.message || "Room is full.",
         icon: "error",
         confirmButtonText: "OK",
         customClass: {
@@ -119,7 +119,7 @@ const JoinRoom = () => {
     const handleRoomCreationError = (data) => {
       Swal.fire({
         title: "Error!",
-        text: error,
+        text: data.message || "An error occurred while creating the room.",
         icon: "error",
         confirmButtonText: "OK",
         customClass: {
