@@ -2,12 +2,16 @@ import style from './loader.module.css';
 import ButtonExitRoom from '../buttonExitRoom/buttonExitRoom';
 import {useEffect, useState} from 'react';
 import {socket} from '../../../functions/SocketIO/sockets/sockets';
+import { useParams } from 'react-router-dom';
 
 const Loader = ({game}) => {
   const [readyMe, setReadyMe] = useState (false);
   const [playerList, setPlayerList] = useState ([]);
-  const [roomId, setRoomId] = useState (11);
-
+  // const [roomId, setRoomId] = useState (11);
+  
+  const {id}=useParams()
+  let roomId=id
+ 
   const handleReady = () => {
     setReadyMe (true);
 
