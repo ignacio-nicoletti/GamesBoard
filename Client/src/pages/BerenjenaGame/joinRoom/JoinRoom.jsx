@@ -43,7 +43,7 @@ const JoinRoom = () => {
       if (roomId !== "" && userName !== "") {
         const response = await CreateGameRoom(game, roomId, userName, maxUsers);
         console.log(response);
-        navigate(`/berenjena/multiplayer`); // Navegar después de crear la sala
+        navigate(`/berenjena/multiplayer/${roomId}`); // Navegar después de crear la sala
       }
     } catch (error) {
       console.error(error);
@@ -64,7 +64,7 @@ const JoinRoom = () => {
       if (roomId !== "" && userName !== "") {
         const response = await joinGameRoom(game, roomId, userName);
         console.log(response);
-        navigate(`/berenjena/multiplayer`); // Navegar después de unirse a la sala
+        navigate(`/berenjena/multiplayer${roomId}`); // Navegar después de unirse a la sala
       }
     } catch (error) {
       console.error(error);
@@ -90,7 +90,7 @@ const JoinRoom = () => {
 
   useEffect(() => {
     const handlePlayerList = (playerList) => {
-      navigate("/berenjena/multiplayer");
+      navigate("/berenjena/multiplayer${roomId}");
     };
     socket.on("player_list", handlePlayerList);
     return () => {
