@@ -58,10 +58,42 @@
   flex-direction: column;
 }
 
-.playersAndButton button{
+.playersAndButton button {
   font-family: sans-serif;
   font-variant: small-caps;
   color: white;
   background-color: #ff904f;
   cursor: pointer;
+}
+
+.playerImage {
+  width: 50px; /* Ajusta el tamaño según sea necesario */
+  height: 50px;
+  border: 2px solid;
+  border-radius: 50%; /* Esto hará que las imágenes sean redondas */
+  margin: 0 10px;
+}
+
+.readyBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  margin-top: 3rem;
+  border: none;
+  cursor: pointer;
+  font-family: "Bebas Neue";
+  text-decoration: none;
+  background-color: green;
+  color: white;
+  width: 6rem;
+  padding: 0.5rem;
+  transition: background-color 0.3s;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.readyBtn:hover {
+  background-color: white;
+  color: #ff914d;
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
 }

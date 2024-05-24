@@ -85,7 +85,7 @@ const JoinRoom = () => {
     const initializeSocket = async () => {
       const roomsInfo = await getAllRoomsInfo(game);
       setRooms(roomsInfo);
-      setFilteredRooms(roomsInfo); // Inicializa las salas filtradas
+      setFilteredRooms(roomsInfo);
       console.log(roomsInfo);
     };
     initializeSocket();
