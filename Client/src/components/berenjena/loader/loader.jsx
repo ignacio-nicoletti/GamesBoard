@@ -10,14 +10,14 @@ const Loader = ({game}) => {
   // const [roomId, setRoomId] = useState (11);
   
   const {id}=useParams()
-  let roomId=id
+ 
  
   const handleReady = () => {
     setReadyMe (true);
 
     socket.emit ('player_ready', {
       game,
-      roomId: roomId,
+      roomId: id,
     });
   };
 

@@ -102,7 +102,7 @@ const JoinRoom = () => {
   useEffect(() => {
     const handleRoomJoined = (data) => {
       console.log(data);
-      navigate(`/berenjena/multiplayer/${data[0].roomId}`); // Navegar cuando se une a la sala
+      navigate(`/berenjena/multiplayer/${data.roomId}`); // Navegar cuando se une a la sala
     };
 
     socket.on("room_joined", handleRoomJoined);
