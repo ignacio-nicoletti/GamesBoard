@@ -90,7 +90,7 @@ const JoinRoom = () => {
 
   useEffect(() => {
     const handlePlayerList = (playerList) => {
-      navigate("/berenjena/multiplayer${roomId}");
+      navigate(`/berenjena/multiplayer/${roomId}`);
     };
     socket.on("player_list", handlePlayerList);
     return () => {
@@ -100,7 +100,7 @@ const JoinRoom = () => {
 
   useEffect(() => {
     const handleRoomJoined = (data) => {
-      navigate(`/berenjena/multiplayer`); // Navegar cuando se une a la sala
+      navigate(`/berenjena/multiplayer/${roomId}`); // Navegar cuando se une a la sala
     };
 
     socket.on("room_joined", handleRoomJoined);
