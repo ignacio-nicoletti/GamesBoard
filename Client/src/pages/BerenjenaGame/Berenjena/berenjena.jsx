@@ -28,7 +28,7 @@ const GameBerenjena = () => {
   const [game, setGame] = useState ('Berenjena'); // Juego seleccionado
   const [showResult, setShowResult] = useState (false);
   const [myPosition, setMyPosition] = useState ({});
-
+ 
   const [players, setPlayers] = useState ([
     {
       userName: '', //nombre
@@ -409,6 +409,7 @@ const GameBerenjena = () => {
   // `jugador${i + 1}`
 
   useEffect (() => {
+  
     socket.on ('start_game', data => {
       let roomId = data[0].roomId;
       setLoader (!loader);
@@ -571,7 +572,7 @@ const GameBerenjena = () => {
     <div className={style.contain}>
 
       {loader == true
-        ? <Loader game={game} players={players} />
+        ? <Loader game={game}/>
         : <div className={style.tableroJugadores}>
 
             {/* <div className={style.jugador2}>

@@ -3,6 +3,7 @@ import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
 import { distribute, shuffle } from "./functions/functions.js";
+import { readv } from "fs";
 
 const app = express();
 const server = http.createServer(app);
@@ -116,6 +117,7 @@ io.on("connection", (socket) => {
       userName,
       roomId,
       position: rooms[roomId].users.length + 1,
+      ready:false
     };
     rooms[roomId].users.push(user);
 

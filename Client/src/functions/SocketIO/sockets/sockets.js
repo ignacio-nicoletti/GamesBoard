@@ -2,8 +2,7 @@ import { io } from "socket.io-client";
 
 const URL = "http://localhost:3001";
 // Se conecta al servidor
-export const socket = io(URL,{ forceNew: true });
-
+export const socket = io(URL, { forceNew: true });
 
 export const connectSocket = () => {
   return new Promise((resolve) => {
@@ -14,7 +13,7 @@ export const connectSocket = () => {
 
     socket.on("disconnect", () => {
       console.log("Desconectado del servidor");
-      disconnectRoom()
+      disconnectRoom();
     });
   });
 };
@@ -48,11 +47,6 @@ export const CreateGameRoom = (game, roomId, userName, maxUsers = 6) => {
       checkIfReadyToResolve();
     });
 
-    socket.once("position", (data) => {
-      responses.position = data;
-      checkIfReadyToResolve();
-    });
-
     socket.once("room_creation_error", ({ error }) => {
       console.log(error);
       rej(error);
@@ -68,27 +62,21 @@ export const CreateGameRoom = (game, roomId, userName, maxUsers = 6) => {
   });
 };
 
-
 export const joinGameRoom = (game, roomId, userName) => {
   return new Promise((resolve, reject) => {
     const responses = {};
 
-    socket.once('room_joined', (data) => {
+    socket.once("room_joined", (data) => {
       responses.roomJoined = data;
       checkIfReadyToResolve();
     });
 
-    socket.once('player_list', (data) => {
+    socket.once("player_list", (data) => {
       responses.playerList = data;
       checkIfReadyToResolve();
     });
 
-    socket.once('position', (data) => {
-      responses.position = data;
-      checkIfReadyToResolve();
-    });
-
-    socket.once('room_join_error', (error) => {
+    socket.once("room_join_error", (error) => {
       console.log(error);
       reject(error);
     });
@@ -99,8 +87,6 @@ export const joinGameRoom = (game, roomId, userName) => {
       }
     }
 
-    socket.emit('join_room', { game, roomId, userName });
+    socket.emit("join_room", { game, roomId, userName });
   });
 };
-
-
