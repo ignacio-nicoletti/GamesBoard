@@ -229,7 +229,7 @@ const JoinRoom = () => {
                 placeholder="Max users... "
                 value={maxUsers}
                 onChange={(e) => setMaxUsers(e.target.value)}
-                min={1}
+                min={2}
                 max={6}
               />
               <button className={style.createButton} onClick={CreateRoom}>
