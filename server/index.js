@@ -53,7 +53,7 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("join_room", ({ game, roomId, userName }) => {
+  socket.on("join_room", ({ game, roomId, userName, selectedAvatar }) => {
     const rooms = games[game];
     if (!rooms) {
       socket.emit("error", { error: "Invalid game" });
@@ -74,7 +74,9 @@ io.on("connection", (socket) => {
     }
 
     if (room.gameStarted) {
-      socket.emit("room_join_error", { error: "Game already started, cannot join" });
+      socket.emit("room_join_error", {
+        error: "Game already started, cannot join",
+      });
       return;
     }
 
@@ -88,6 +90,8 @@ io.on("connection", (socket) => {
       userName,
       roomId,
       position: room.users.length + 1,
+      ready: false,
+      selectedAvatar,
     };
     room.users.push(user);
 
@@ -97,42 +101,46 @@ io.on("connection", (socket) => {
     io.to(`${game}-${roomId}`).emit("player_list", room.users);
   });
 
-  socket.on("create_room", ({ game, roomId, userName, maxUsers = 6 }) => {
-    const rooms = games[game];
-    if (!rooms) {
-      socket.emit("error", { error: "Invalid game" });
-      return;
+  socket.on(
+    "create_room",
+    ({ game, roomId, userName, maxUsers = 6, selectedAvatar }) => {
+      const rooms = games[game];
+      if (!rooms) {
+        socket.emit("error", { error: "Invalid game" });
+        return;
+      }
+
+      if (rooms[roomId]) {
+        socket.emit("room_creation_error", { error: "Room already exists" });
+        return;
+      }
+
+      rooms[roomId] = { users: [], gameStarted: false, maxUsers };
+
+      const user = {
+        id: socket.id,
+        userName,
+        roomId,
+        position: rooms[roomId].users.length + 1,
+        ready: false,
+        selectedAvatar,
+      };
+      rooms[roomId].users.push(user);
+
+      console.log(
+        `Room ${roomId} created by ${userName} in game ${game} with max ${maxUsers} users`
+      );
+      socket.join(`${game}-${roomId}`);
+      socket.emit("room_created", {
+        roomId,
+        position: user.position,
+        userName,
+        maxUsers,
+      });
+
+      io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId].users);
     }
-
-    if (rooms[roomId]) {
-      socket.emit("room_creation_error", { error: "Room already exists" });
-      return;
-    }
-
-    rooms[roomId] = { users: [], gameStarted: false, maxUsers };
-
-    const user = {
-      id: socket.id,
-      userName,
-      roomId,
-      position: rooms[roomId].users.length + 1,
-      ready: false,
-    };
-    rooms[roomId].users.push(user);
-
-    console.log(
-      `Room ${roomId} created by ${userName} in game ${game} with max ${maxUsers} users`
-    );
-    socket.join(`${game}-${roomId}`);
-    socket.emit("room_created", {
-      roomId,
-      position: user.position,
-      userName,
-      maxUsers,
-    });
-
-    io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId].users);
-  });
+  );
 
   socket.on("disconnect", () => {
     Object.keys(games).forEach((game) => {

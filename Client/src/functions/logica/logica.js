@@ -7,15 +7,7 @@ const generarObligado = () => {
   return obligado;
 };
 
-export const distribute = (
-  game,
-  roomId,
-  data,
-  setPlayers,
-  players,
-  round,
-) => {
-  console.log(data);
+export const distribute = (game, round, roomId, data,setPlayers) => {
   socket.emit("distribute", { game, round, roomId, data });
 
   socket.on("distribute", (data) => {

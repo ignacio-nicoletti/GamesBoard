@@ -32,7 +32,7 @@ const Loader = ({ game, setMyPosition, players, setPlayers }) => {
       setPlayers(prevPlayers =>
         prevPlayers.map(player => {
           const updatedPlayer = data.find(p => p.position === player.id);
-          return updatedPlayer ? { ...player, userName: updatedPlayer.userName } : player;
+          return updatedPlayer ? { ...player, userName: updatedPlayer.userName,avatar:updatedPlayer.selectedAvatar } : player;
         })
       );
     });
@@ -40,7 +40,7 @@ const Loader = ({ game, setMyPosition, players, setPlayers }) => {
     return () => {
       socket.off('player_list');
     };
-  }, []);
+  }, [setMyPosition, setPlayers]);
 
   useEffect(() => {
     // Escuchar el evento cuando se une un nuevo jugador
@@ -48,7 +48,8 @@ const Loader = ({ game, setMyPosition, players, setPlayers }) => {
       setMyPosition(data);
       setPlayers(prevPlayers =>
         prevPlayers.map(player =>
-          player.id === data.position ? { ...player, userName: data.userName } : player
+          player.id === data.position ? { ...player, userName: data.userName,avatar:data.selectedAvatar
+          } : player
         )
       );
     });
@@ -69,7 +70,7 @@ const Loader = ({ game, setMyPosition, players, setPlayers }) => {
       socket.off('room_joined');
       socket.off('player_ready_status');
     };
-  }, []);
+  }, [setMyPosition, setPlayers]);
 
   return (
     <div className={style.containLoader}>
