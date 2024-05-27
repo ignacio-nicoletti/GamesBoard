@@ -5,7 +5,7 @@ import copa from '../../../assets/berenjena/valores/copas.png';
 import espada from '../../../assets/berenjena/valores/espada.png';
 import oro from '../../../assets/berenjena/valores/oro.png';
 
-const Cards = ({jugador, setJugador, value, palo, ronda, setRonda, border}) => {
+const Cards = ({jugador, setJugador, value, suit, ronda, setRonda, border}) => {
   let imgPalo = {
     oro: oro,
     espada: espada,
@@ -39,12 +39,12 @@ const Cards = ({jugador, setJugador, value, palo, ronda, setRonda, border}) => {
   const handlerclick = () => {
     if (ronda.typeRound === 'ronda' && jugador.myturnR === true) {
       filterCard = jugador.cardPersona.filter (
-        e => e.value !== value || e.palo !== palo
+        e => e.value !== value || e.psuitalo !== suit
       );
 
       setJugador ({
         ...jugador,
-        cardApostada: [{value, palo}],
+        cardApostada: [{value, suit}],
         cardPersona: filterCard,
       });
 
@@ -58,7 +58,7 @@ const Cards = ({jugador, setJugador, value, palo, ronda, setRonda, border}) => {
         setRonda ({
           ...ronda,
           AnteultimaCardApostada: ronda.ultimaCardApostada,
-          ultimaCardApostada: [{value, palo, id: jugador.id}],
+          ultimaCardApostada: [{value, suit, id: jugador.id}],
           turnoJugadorR: ronda.turnoJugadorR + 1,
           cantQueTiraron: ronda.cantQueTiraron + 1,
         }); //setea la card apostada en la ultima y lo que habia en ultima pasa a ser anteultima
@@ -67,7 +67,7 @@ const Cards = ({jugador, setJugador, value, palo, ronda, setRonda, border}) => {
           ...ronda,
           turnoJugadorR: 1,
           AnteultimaCardApostada: ronda.ultimaCardApostada,
-          ultimaCardApostada: [{value, palo, id: jugador.id}],
+          ultimaCardApostada: [{value, suit, id: jugador.id}],
           cantQueTiraron: ronda.cantQueTiraron + 1,
         });
       }
@@ -81,7 +81,7 @@ const Cards = ({jugador, setJugador, value, palo, ronda, setRonda, border}) => {
 
         <p style={{display: 'flex', alignSelf: 'flex-end'}}>{value}</p>
         <img
-          src={imgPalo[palo]}
+          src={imgPalo[suit]}
           alt="logoCard"
           width={20}
           height={20}

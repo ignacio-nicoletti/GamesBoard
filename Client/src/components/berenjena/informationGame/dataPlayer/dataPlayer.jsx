@@ -32,7 +32,7 @@ const DataPlayer = ({jugador}) => {
       <div className={style.avatar}>
         <img src={avatar} alt="" />
         <span className={style.name}>
-          {jugador.username ? jugador.username : 'Jugador'}
+          {jugador.userName ? jugador.userName : 'Jugador'}
         </span>
       </div>
     </div>

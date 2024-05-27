@@ -11,49 +11,23 @@ export const distribute = (
   game,
   roomId,
   data,
-  setJugador1,
-  jugador1,
-  setJugador2,
-  jugador2,
-  setJugador3,
-  jugador3,
-  setJugador4,
-  jugador4,
-  setJugador5,
-  jugador5,
-  setJugador6,
-  jugador6,
+  setPlayers,
+  players,
   round,
-  setRound,
 ) => {
+  console.log(data);
   socket.emit("distribute", { game, round, roomId, data });
- 
+
   socket.on("distribute", (data) => {
-    setJugador1({
-      ...jugador1,
-      cardPerson: data.jugador1,
-    });
-    setJugador2({
-      ...jugador2,
-      cardPerson: data.jugador2,
-    });
-    setJugador3({
-      ...jugador3,
-      cardPerson: data.jugador3,
-    });
-    setJugador4({
-      ...jugador4,
-      cardPerson: data.jugador4,
-    });
-    setJugador5({
-      ...jugador5,
-      cardPerson: data.jugador5,
-    });
-    setJugador6({
-      ...jugador6,
-      cardPerson: data.jugador6,
-    });
-    setRound({ ...round, typeRound: "apuesta", obligado: 4 });
+    setPlayers((prevPlayers) =>
+      prevPlayers.map((player, index) => {
+        const playerIndex = index + 1;
+        return {
+          ...player,
+          cardPerson: data[`jugador${playerIndex}`] || [],
+        };
+      })
+    );
   });
 };
 

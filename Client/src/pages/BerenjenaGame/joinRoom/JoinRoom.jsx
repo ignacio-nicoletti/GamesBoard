@@ -43,7 +43,6 @@ const JoinRoom = () => {
     try {
       if (roomId !== "" && userName !== "") {
         const response = await CreateGameRoom(game, roomId, userName, maxUsers);
-        console.log(response);
         navigate(`/berenjena/multiplayer/${roomId}`); // Navegar después de crear la sala
       }
     } catch (error) {
@@ -64,7 +63,6 @@ const JoinRoom = () => {
     try {
       if (roomId !== "" && userName !== "") {
         const response = await joinGameRoom(game, roomId, userName);
-        console.log(response);
         navigate(`/berenjena/multiplayer/${roomId}`); // Navegar después de unirse a la sala
       }
     } catch (error) {
@@ -86,14 +84,12 @@ const JoinRoom = () => {
       const roomsInfo = await getAllRoomsInfo(game);
       setRooms(roomsInfo);
       setFilteredRooms(roomsInfo);
-      console.log(roomsInfo);
     };
     initializeSocket();
   }, [game]);
 
   useEffect(() => {
     const handlePlayerList = (playerList) => {
-      console.log(playerList);
       navigate(`/berenjena/multiplayer/${playerList[0].roomId}`);
     };
     socket.on("player_list", handlePlayerList);
@@ -291,7 +287,7 @@ const JoinRoom = () => {
 
                     <p className={style.groupIcon}>
                       <GroupIcon />
-                      {el.users.length}/{el.maxUser || 6}
+                      {el.users.length}/{el.maxUsers || 6}
                     </p>
                   </div>
                   <img src={imgRoom} alt="" className={style.imgRoom} />

@@ -2,8 +2,7 @@ import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
-import { distribute, shuffle } from "./functions/functions.js";
-import { readv } from "fs";
+import { distribute, shuffle } from "./functions/functions.js"; // Asegúrate de que estas funciones estén definidas en el archivo adecuado
 
 const app = express();
 const server = http.createServer(app);
@@ -43,10 +42,10 @@ io.on("connection", (socket) => {
     const rooms = games[game];
     if (rooms) {
       const allRoomsInfo = Object.keys(rooms).map((roomId) => ({
-        roomId: Number(roomId), // Convertir roomId a número
-        users: rooms[roomId].users, // Asegurarse de que los usuarios se envíen correctamente
+        roomId: Number(roomId),
+        users: rooms[roomId].users,
         gameStarted: rooms[roomId].gameStarted,
-        maxUser:rooms[roomId].maxUsers || 6
+        maxUsers: rooms[roomId].maxUsers || 6,
       }));
       socket.emit("all_rooms_info", allRoomsInfo);
     } else {
@@ -67,7 +66,7 @@ io.on("connection", (socket) => {
     }
 
     const room = rooms[roomId];
-    const maxUsers = room.maxUsers || 6; // Default to 6 if maxUsers is not defined
+    const maxUsers = room.maxUsers || 6;
 
     if (room.users.length >= maxUsers) {
       socket.emit("room_join_error", { error: "Room is full" });
@@ -96,7 +95,7 @@ io.on("connection", (socket) => {
     socket.join(`${game}-${roomId}`);
     socket.emit("room_joined", { roomId, position: user.position, userName });
     io.to(`${game}-${roomId}`).emit("player_list", room.users);
-});
+  });
 
   socket.on("create_room", ({ game, roomId, userName, maxUsers = 6 }) => {
     const rooms = games[game];
@@ -117,7 +116,7 @@ io.on("connection", (socket) => {
       userName,
       roomId,
       position: rooms[roomId].users.length + 1,
-      ready:false
+      ready: false,
     };
     rooms[roomId].users.push(user);
 
@@ -131,6 +130,7 @@ io.on("connection", (socket) => {
       userName,
       maxUsers,
     });
+
     io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId].users);
   });
 
@@ -197,22 +197,21 @@ io.on("connection", (socket) => {
     console.log(`Player ready in room ${roomId} of game ${game}`);
     const rooms = games[game];
     if (rooms && rooms[roomId]) {
-        const user = rooms[roomId].users.find((u) => u.id === socket.id);
-        if (user) {
-            user.ready = true;
-            io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId].users);
-            // Verificar si todos los jugadores están listos y el número de jugadores coincide con maxUsers
-            const allReady = rooms[roomId].users.every((u) => u.ready);
-            const maxUsers = rooms[roomId].maxUsers || 6; // Default to 6 if maxUsers is not defined
-            const correctNumberOfPlayers = rooms[roomId].users.length === maxUsers;
-            if (allReady && correctNumberOfPlayers) {
-                rooms[roomId].gameStarted = true;
-                io.to(`${game}-${roomId}`).emit("start_game", rooms[roomId].users);
-            }
+      const user = rooms[roomId].users.find((u) => u.id === socket.id);
+      if (user) {
+        user.ready = true;
+        io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId].users);
+        // Verificar si todos los jugadores están listos y el número de jugadores coincide con maxUsers
+        const allReady = rooms[roomId].users.every((u) => u.ready);
+        const maxUsers = rooms[roomId].maxUsers || 6;
+        const correctNumberOfPlayers = rooms[roomId].users.length === maxUsers;
+        if (allReady && correctNumberOfPlayers) {
+          rooms[roomId].gameStarted = true;
+          io.to(`${game}-${roomId}`).emit("start_game", rooms[roomId].users);
         }
+      }
     }
-});
-
+  });
 
   socket.on("distribute", ({ game, round, roomId, data }) => {
     // Verificar si roomId y roomId están definidos
@@ -243,7 +242,6 @@ io.on("connection", (socket) => {
 
       // Iterar sobre los jugadores y asignarles las cartas correspondientes
       for (let i = 0; i < numPlayers; i++) {
-        // const playerId = data[i].id;
         distributedCards[`jugador${i + 1}`] = [];
 
         for (let j = 0; j < cardsPerPlayer; j++) {
@@ -253,8 +251,6 @@ io.on("connection", (socket) => {
       }
 
       io.to(`${game}-${roomId}`).emit("distribute", distributedCards);
-      // No emitimos las cartas aquí, sino que retornamos los datos para manejarlos de manera adecuada en el cliente
-      // return distributedCards;
     } catch (error) {
       console.error("Error in distribute function:", error);
       socket.emit("error", { error: "Error in distribute function" });
@@ -265,7 +261,3 @@ io.on("connection", (socket) => {
 server.listen(3001, () => {
   console.log("Server listening on port 3001");
 });
-
-// Probar sala full
-// Readys for start game
-// repartir
