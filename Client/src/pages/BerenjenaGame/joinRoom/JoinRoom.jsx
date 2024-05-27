@@ -16,6 +16,7 @@ import avatar3 from "../../../assets/berenjena/jugadores/avatar3.png";
 import avatar4 from "../../../assets/berenjena/jugadores/avatar4.png";
 import avatar5 from "../../../assets/berenjena/jugadores/avatar5.png";
 import avatar6 from "../../../assets/berenjena/jugadores/avatar6.png";
+
 import imgRoom from "../../../assets/berenjena/jugadores/imgRoom.png";
 import logoBerenjena from "../../../assets/berenjena/home/logoBerenjena.png";
 
@@ -33,7 +34,7 @@ const JoinRoom = () => {
   const [tempMaxUsers, setTempMaxUsers] = useState("");
   const [error, setError] = useState("");
   const [maxUsers, setMaxUsers] = useState(6); // cantidad máxima de usuarios
-  const [selectedAvatar, setSelectedAvatar] = useState(avatar1); // avatar seleccionado
+  const [selectedAvatar, setSelectedAvatar] = useState("avatar1"); // avatar seleccionado
   const [showModal, setShowModal] = useState(true); // Mostrar modal al inicio
   const navigate = useNavigate();
 
@@ -42,7 +43,7 @@ const JoinRoom = () => {
 
     try {
       if (roomId !== "" && userName !== "") {
-        const response = await CreateGameRoom(game, roomId, userName, maxUsers);
+        const response = await CreateGameRoom(game, roomId, userName, maxUsers, selectedAvatar);
         navigate(`/berenjena/multiplayer/${roomId}`); // Navegar después de crear la sala
       }
     } catch (error) {
@@ -62,7 +63,7 @@ const JoinRoom = () => {
   const handlerJoinRoom = async (roomId) => {
     try {
       if (roomId !== "" && userName !== "") {
-        const response = await joinGameRoom(game, roomId, userName);
+        const response = await joinGameRoom(game, roomId, userName, selectedAvatar);
         navigate(`/berenjena/multiplayer/${roomId}`); // Navegar después de unirse a la sala
       }
     } catch (error) {
@@ -204,9 +205,9 @@ const JoinRoom = () => {
                       src={avatar}
                       alt={`Avatar ${index + 1}`}
                       className={
-                        selectedAvatar === avatar ? style.selectedAvatar : ""
+                        selectedAvatar === `avatar${index + 1}` ? style.selectedAvatar : ""
                       }
-                      onClick={() => setSelectedAvatar(avatar)}
+                      onClick={() => setSelectedAvatar(`avatar${index + 1}`)}
                     />
                   ))}
                 </div>
@@ -224,7 +225,7 @@ const JoinRoom = () => {
             </div>
             <div className={style.profile}>
               <img
-                src={selectedAvatar}
+                src={avatars[parseInt(selectedAvatar.replace("avatar", ""), 10) - 1]}
                 alt="Selected Avatar"
                 className={style.profileAvatar}
               />

@@ -15,6 +15,7 @@ import Result
 import {
   AsignarMayor,
   distribute,
+  generarObligado,
   turno,
 } from '../../../functions/logica/logica.js';
 
@@ -29,86 +30,94 @@ const GameBerenjena = () => {
   const [showResult, setShowResult] = useState (false);
   const [myPosition, setMyPosition] = useState (1);
 
-  const [players, setPlayers] = useState ([
-    {
-      userName: '', //nombre
-      id: 1, //position
-      cardPerson: [], //cards
-      betP: null, //num de cards apostadas
-      cardswins: 0, //cards ganadas
-      cardBet: [{value: null, suit: ''}], //card apostada
-      myturnA: false, //boolean  //turno apuesta
-      myturnR: false, //boolean //turno ronda
-      cumplio: false, //boolean  //cumplio su apuesta
-      points: 0, //puntos
-    },
-    {
-      userName: '',
-      id: 2,
-      cardPerson: [],
-      betP: null,
-      cardswins: 0,
-      cardBet: [{value: null, suit: ''}],
-      myturnA: false, //boolean
-      myturnR: false, //booleanA
-      cumplio: false, //boolean
-      points: 0,
-    },
-    {
-      userName: '',
-      id: 3,
-      cardPerson: [],
-      betP: null,
-      cardswins: 0,
-      cardBet: [{value: null, suit: ''}],
-      myturnA: false, //boolean
-      myturnR: false, //booleanA
-      cumplio: false, //boolean
-      points: 0,
-    },
-    {
-      userName: '',
-      id: 4,
-      cardPerson: [],
-      betP: null,
-      cardswins: 0,
-      cardBet: [{value: null, suit: ''}],
-      myturnA: false, //boolean
-      myturnR: false, //booleanA
-      cumplio: false, //boolean
-      points: 0,
-    },
-    {
-      userName: '',
-      id: 5,
-      cardPerson: [],
-      betP: null,
-      cardswins: 0,
-      cardBet: [{value: null, suit: ''}],
-      myturnA: false, //boolean
-      myturnR: false, //booleanA
-      cumplio: false, //boolean
-      points: 0,
-    },
-    {
-      userName: '',
-      id: 6,
-      cardPerson: [],
-      betP: null,
-      cardswins: 0,
-      cardBet: [{value: null, suit: ''}],
-      myturnA: false, //boolean
-      myturnR: false, //booleanA
-      cumplio: false, //boolean
-      points: 0,
-    },
-  ]);
+  const [players, setPlayers] = useState ([])
+
+  // const [players, setPlayers] = useState ([
+  //   {
+  //     userName: '', //nombre
+  //     avatar: '',
+  //     id: 1, //position
+  //     cardPerson: [], //cards
+  //     betP: 0, //num de cards apostadas
+  //     cardswins: 0, //cards ganadas
+  //     cardBet: [{value: null, suit: ''}], //card apostada
+  //     myturnA: false, //boolean  //turno apuesta
+  //     myturnR: false, //boolean //turno ronda
+  //     cumplio: false, //boolean  //cumplio su apuesta
+  //     points: 0, //puntos
+  //   },
+  //   {
+  //     userName: '',
+  //     avatar: '',
+  //     id: 2,
+  //     cardPerson: [],
+  //     betP: 0,
+  //     cardswins: 0,
+  //     cardBet: [{value: null, suit: ''}],
+  //     myturnA: false, //boolean
+  //     myturnR: false, //booleanA
+  //     cumplio: false, //boolean
+  //     points: 0,
+  //   },
+  //   {
+  //     userName: '',
+  //     avatar: '',
+  //     id: 3,
+  //     cardPerson: [],
+  //     betP: 0,
+  //     cardswins: 0,
+  //     cardBet: [{value: null, suit: ''}],
+  //     myturnA: false, //boolean
+  //     myturnR: false, //booleanA
+  //     cumplio: false, //boolean
+  //     points: 0,
+  //   },
+  //   {
+  //     userName: '',
+  //     avatar: '',
+  //     id: 4,
+  //     cardPerson: [],
+  //     betP: 0,
+  //     cardswins: 0,
+  //     cardBet: [{value: null, suit: ''}],
+  //     myturnA: false, //boolean
+  //     myturnR: false, //booleanA
+  //     cumplio: false, //boolean
+  //     points: 0,
+  //   },
+  //   {
+  //     userName: '',
+  //     avatar: '',
+  //     id: 5,
+  //     cardPerson: [],
+  //     betP: 0,
+  //     cardswins: 0,
+  //     cardBet: [{value: null, suit: ''}],
+  //     myturnA: false, //boolean
+  //     myturnR: false, //booleanA
+  //     cumplio: false, //boolean
+  //     points: 0,
+  //   },
+  //   {
+  //     userName: '',
+  //     avatar: '',
+  //     id: 6,
+  //     cardPerson: [],
+  //     betP: 0,
+  //     cardswins: 0,
+  //     cardBet: [{value: null, suit: ''}],
+  //     myturnA: false, //boolean
+  //     myturnR: false, //booleanA
+  //     cumplio: false, //boolean
+  //     points: 0,
+  //   },
+  // ]);
 
   const [round, setRound] = useState ({
     users: 4, //usuarios conectados
     vuelta: 1, //num de vuelta (4 rondas =1 vuelta)
     numRound: 1, //num de ronda
-    cardXRound: 1, //cant de cartas que se reparten
+    cardXRound: 7, //cant de cartas que se reparten
     typeRound: '', //apuesta o ronda
     turnJugadorA: 1, //1j 2j 3j 4j apuesta
     turnJugadorR: 1, //1j 2j 3j 4j ronda
@@ -120,6 +129,7 @@ const GameBerenjena = () => {
     ganadorRonda: null,
     cantQueTiraron: 0,
     roomId: null,
+    timer:""
   });
 
   const [Base, setBase] = useState ([]); //base del resultado xronda
@@ -410,13 +420,13 @@ const GameBerenjena = () => {
 
   useEffect (() => {
     socket.on ('start_game', data => {
-      let roomId = data[0].roomId;
+    
+      console.log(data);
       setLoader (!loader);
-      setRound({ ...round, typeRound: "apuesta", obligado: 4 });
-      distribute (game, roomId, data, setPlayers, players, round, setRound);
+      // distribute (game, round, roomId, data, setPlayers);
+      
     });
   }, []);
-  console.log (players);
   // GuardarEnBase ();
 
   // useEffect (
@@ -560,14 +570,14 @@ const GameBerenjena = () => {
         key={index}
         value={card.value}
         suit={card.suit}
-        jugador={player}
-        setJugador={'setJugador1'} // Esto puede variar dependiendo del jugador
-        setRonda={setRound}
-        ronda={round}
+        players={players}
+        setPlayers={setPlayers} // Esto puede variar dependiendo del jugador
+        setRound={setRound}
+        round={round}
       />
     ));
   };
-
+  
   return (
     <div className={style.contain}>
 
@@ -577,54 +587,56 @@ const GameBerenjena = () => {
             setMyPosition={setMyPosition}
             players={players}
             setPlayers={setPlayers}
+            round={round}
+setRound={setRound}
           />
         : <div className={style.tableroJugadores}>
 
             {/* <div className={style.jugador2}>
               <Jugadores
-                jugador={jugador3}
-                setJugador={setJugador3}
-                setRonda={setRonda}
-                ronda={ronda}
+                player={players[1]}
+                setPlayers={setPlayers}
+                setRound={setRound}
+                round={round}
               />
             </div>
             <div className={style.jugador3}>
               <Jugadores
-                jugador={jugador3}
-                setJugador={setJugador3}
-                setRonda={setRonda}
-                ronda={ronda}
+                player={players[2]}
+                setPlayerss={setPlayers}
+                setRound={setRound}
+                round={round}
               />
             </div>
             <div className={style.jugador4}>
               <Jugadores
-                jugador={jugador4}
-                setJugador={setJugador4}
-                setRonda={setRonda}
-                ronda={ronda}
+                player={players[3]}
+                setPlayers={setPlayers}
+                setRound={setRound}
+                round={round}
               />
             </div>
             <div className={style.jugador5}>
               <Jugadores
-                jugador={jugador4}
-                setJugador={setJugador4}
-                setRonda={setRonda}
-                ronda={ronda}
+                player={players[4]}
+                setPlayers={setPlayers}
+                setRound={setRound}
+                round={round}
               />
             </div>
             <div className={style.jugador6}>
               <Jugadores
-                jugador={jugador4}
-                setJugador={setJugador4}
-                setRonda={setRonda}
-                ronda={ronda}
+                player={players[5]}
+                setPlayers={setPlayers}
+                setRound={setRound}
+                round={round}
               />
             </div> */}
 
           </div>}
       <div />
       {/* cartas en el centro de la pantalla */}
-      <div className={style.CardPropias}>
+      {/* <div className={style.CardPropias}>
         {myPosition.position === 1
           ? renderPlayerCards (players[0])
           : myPosition.position === 2
@@ -638,7 +650,7 @@ const GameBerenjena = () => {
                           : myPosition.position === 6
                               ? renderPlayerCards (players[5])
                               : ''}
-      </div>
+      </div> */}
       {/* cartas en el centro de la pantalla */}
 
       {/* <div className={style.CardPropiasApost}>
@@ -655,28 +667,19 @@ const GameBerenjena = () => {
 
       {/* <DataPlayer
         jugador={
-          myPosition === 1
+          myPosition.position === 1
             ? players[0]
-            : myPosition === 2
+            : myPosition.position === 2
                 ? players[1]
-                : myPosition === 3
+                : myPosition.position === 3
                     ? players[2]
-                    : myPosition === 4
+                    : myPosition.position === 4
                         ? players[3]
-                        : myPosition === 5
+                        : myPosition.position === 5
                             ? players[4]
-                            : myPosition === 6 ? players[5] : null
+                            : myPosition.position === 6 ?? players[5] 
         }
-      /> */}
-{/* <DataPlayer
-        jugador={
-          myPosition
-            ? players.find(player => player.id === myPosition)
-            : null
-        }
-      />
-    */}
-
+        />  */}
 
       <DataGame ronda={round} />
       {showResult === true

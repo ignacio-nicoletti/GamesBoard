@@ -2,38 +2,40 @@ import React from 'react';
 import styles from './jugadores.module.css';
 import person from '../../../assets/berenjena/jugadores/avatar1.png';
 import cardsIcon from '../../../assets/berenjena/jugadores/cartas.png';
-
 import Cards from '../cards/card';
-const Jugadores = ({jugador, setJugador, setRonda, ronda}) => {
+
+import avatar1 from "../../../assets/berenjena/jugadores/avatar1.png";
+import avatar2 from "../../../assets/berenjena/jugadores/avatar2.png";
+import avatar3 from "../../../assets/berenjena/jugadores/avatar3.png";
+import avatar4 from "../../../assets/berenjena/jugadores/avatar4.png";
+import avatar5 from "../../../assets/berenjena/jugadores/avatar5.png";
+import avatar6 from "../../../assets/berenjena/jugadores/avatar6.png";
+
+const Jugadores = ({player, setPlayers, setRonda, ronda}) => {
+  const avatarMap = {
+    avatar1: avatar1,
+    avatar2: avatar2,
+    avatar3: avatar3,
+    avatar4: avatar4,
+    avatar5: avatar5,
+    avatar6: avatar6,
+  }
   let estiloJugador;
-  let divAlinearCards;
-  let alinearCards;
-  let cardApost;
+  let playerAvatar = avatarMap[player.avatar] // Seleccionar el avatar correcto
 
-  if (jugador.id === 4) {
-    estiloJugador = styles.AcomodarCard4;
-    divAlinearCards = styles.card4;
-    cardApost = styles.cardApost4;
-  }
-  if (jugador.id === 3) {
-    estiloJugador = styles.AcomodarCard3;
-    divAlinearCards = styles.card3;
-    cardApost = styles.cardApost3;
-  }
-  if (jugador.id === 2) {
-    estiloJugador = styles.AcomodarCard2;
-    divAlinearCards = styles.divCard2;
-    alinearCards = styles.card2;
-    cardApost = styles.cardApost2;
-  }
-
+  // if (jugador.id === 4) {
+  //   estiloJugador = styles.AcomodarCard4;
+  //   divAlinearCards = styles.card4;
+  //   cardApost = styles.cardApost4;
+  // }
+  console.log(player);
   return (
     <div className={estiloJugador}>
       <div className={styles.divJugador}>
 
         <div className={styles.avatar}>
-          <img src={person} alt="persona" width={150} height={100} />
-          <p style={{margin: 0}}>aaaaaaaaaaaaaaa {jugador.username}</p>
+          <img src={playerAvatar} alt="persona" width={150} height={100} />
+          <p style={{margin: 0}}>{player.userName}</p>
         </div>
         <div className={styles.cards}>
           <img src={cardsIcon} alt="" />
@@ -42,43 +44,19 @@ const Jugadores = ({jugador, setJugador, setRonda, ronda}) => {
 
       <div>
 
-        {/* <div className={alinear}>
-          {jugador.cardPersona.map ((e ,index)=> (
-            <div className={cardalign} style={{gap:"50"}} key={index}>
-            <Image src={backface} alt="backface Card" width={30} height={30}  style={{transform:rotate}}/>
-            </div>
-            ))}
-          </div> */}
-        <div className={divAlinearCards}>
-          {jugador.cardPersona.map ((card, index) => (
-            <div className={alinearCards}>
-
-              <Cards
-                key={index}
-                valor={card.valor}
-                palo={card.palo}
-                jugador={jugador}
-                setJugador={setJugador}
-                setRonda={setRonda}
-                ronda={ronda}
-              />
-            </div>
-          ))}
-        </div>
-
-        <div className={divAlinearCards}>
-          {jugador.cardApostada[0].valor &&
-            jugador.cardApostada.map ((card, index) => (
+        {/* <div className={divAlinearCards}>
+          {players.cardApostada[0].valor &&
+            players.cardApostada.map ((card, index) => (
               <div className={cardApost}>
                 <Cards
                   key={index}
-                  valor={card.valor}
-                  palo={card.palo}
-                  jugador={jugador}
+                  valor={card.value}
+                  palo={card.suit}
+                  players={players}
                 />
               </div>
             ))}
-        </div>
+        </div> */}
 
       </div>
 

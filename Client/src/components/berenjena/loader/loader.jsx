@@ -1,9 +1,9 @@
-import style from "./loader.module.css";
-import ButtonExitRoom from "../buttonExitRoom/buttonExitRoom";
 import { useEffect, useState } from "react";
-import { socket } from "../../../functions/SocketIO/sockets/sockets";
 import { useParams } from "react-router-dom";
+import { socket } from "../../../functions/SocketIO/sockets/sockets";
 import PersonIcon from "@mui/icons-material/Person";
+import ButtonExitRoom from "../buttonExitRoom/buttonExitRoom";
+import style from "./loader.module.css";
 
 const Loader = ({ game, setMyPosition, players, setPlayers }) => {
   const [readyMe, setReadyMe] = useState(false);
@@ -12,53 +12,22 @@ const Loader = ({ game, setMyPosition, players, setPlayers }) => {
 
   const handleReady = () => {
     setReadyMe(true);
-
-    socket.emit("player_ready", {
-      game,
-      roomId: id,
-    });
+    socket.emit("player_ready", { game, roomId: id });
   };
 
   useEffect(() => {
-    socket.on("player_list", (data) => {
+    const updatePlayerList = (data) => {
       setPlayerList(data);
-
-      const currentPlayer = data.find((player) => player.id === socket.id);
+      const currentPlayer = data.find(
+        (player) => player.idSocket === socket.id
+      );
       if (currentPlayer) {
-        setMyPosition(currentPlayer);
+        setMyPosition(currentPlayer.position);
       }
-
-      // Update the players state with the received data
-      setPlayers((prevPlayers) =>
-        prevPlayers.map((player) => {
-          const updatedPlayer = data.find((p) => p.position === player.id);
-          return updatedPlayer
-            ? { ...player, userName: updatedPlayer.userName }
-            : player;
-        })
-      );
-    });
-
-    return () => {
-      socket.off("player_list");
+      setPlayers(data);
     };
-  }, []);
 
-  useEffect(() => {
-    // Escuchar el evento cuando se une un nuevo jugador
-    socket.on("room_joined", (data) => {
-      setMyPosition(data);
-      setPlayers((prevPlayers) =>
-        prevPlayers.map((player) =>
-          player.id === data.position
-            ? { ...player, userName: data.userName }
-            : player
-        )
-      );
-    });
-
-    // Escuchar el evento cuando un jugador está listo
-    socket.on("player_ready_status", (playerReadyStatus) => {
+    const updatePlayerReadyStatus = (playerReadyStatus) => {
       setPlayerList((prevList) =>
         prevList.map((player) =>
           player.id === playerReadyStatus.id
@@ -66,46 +35,55 @@ const Loader = ({ game, setMyPosition, players, setPlayers }) => {
             : player
         )
       );
-    });
+    };
+
+    socket.on("player_list", updatePlayerList);
+    socket.on("player_ready_status", updatePlayerReadyStatus);
 
     return () => {
-      socket.off("room_joined");
-      socket.off("player_ready_status");
+      socket.off("player_list", updatePlayerList);
+      socket.off("player_ready_status", updatePlayerReadyStatus);
     };
-  }, []);
+  }, [setMyPosition, setPlayers]);
 
   return (
     <div className={style.containLoader}>
-      <div className={style.loader}>Loading...</div>
+      <ul className={style.background}>
+        {Array.from({ length: 30 }).map((_, index) => (
+          <li key={index}></li>
+        ))}
+      </ul>
+      <div className={style.loader}></div>
+      <p className={style.preGameMessage}>
+        Esperando que todos los jugadores estén listos para comenzar.
+      </p>
       <div className={style.playersAndButton}>
         <div className={style.PlayersReady}>
-          {playerList.map((player, index) => (
+          {playerList.map((player) => (
             <PersonIcon
+              key={player.id}
               sx={{ fontSize: 50 }}
               alt="Current Player"
-              className={style.playerImage}
-              style={{ borderColor: readyMe ? "#ff904f" : "#dededf" }}
+              className={`${style.playerImage} ${
+                player.ready ? style.ready : ""
+              }`}
             />
           ))}
-
-          {!playerList.some((player) => player.id === socket.id) && (
+          {!playerList.some((player) => player.idSocket === socket.id) && (
             <PersonIcon
               sx={{ fontSize: 50 }}
               alt="Current Player"
-              className={style.playerImage}
-              style={{ borderColor: readyMe ? "#ff904f" : "#dededf" }}
+              className={`${style.playerImage} ${readyMe ? style.ready : ""}`}
             />
           )}
         </div>
-        <div>
-          <button
-            className={style.readyBtn}
-            onClick={handleReady}
-            disabled={readyMe}
-          >
-            Ready
-          </button>
-        </div>
+        <button
+          className={style.readyBtn}
+          onClick={handleReady}
+          disabled={readyMe}
+        >
+          Ready
+        </button>
       </div>
       <ButtonExitRoom />
     </div>
