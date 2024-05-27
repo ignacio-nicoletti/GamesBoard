@@ -1,11 +1,19 @@
 import { socket } from "../SocketIO/sockets/sockets";
 
-const generarObligado = () => {
-  let min = 1;
-  let max = 4;
-  let obligado = Math.floor(Math.random() * (max - min + 1) + min);
+export const generarObligado = (data) => {
+  // Asegurar que el valor de data está entre 2 y 6
+  if (data < 2 || data > 6) {
+    throw new Error("El valor de data debe estar entre 2 y 6");
+  }
+
+  let min = 0;
+  let max = data - 1; // max será entre 1 y 5
+  console.log(`Data: ${data}`);
+  let obligado = Math.floor(Math.random() * (max - min + 1)) + min;
+  console.log(`Obligado: ${obligado}`);
   return obligado;
 };
+
 
 export const distribute = (game, round, roomId, data,setPlayers) => {
   socket.emit("distribute", { game, round, roomId, data });

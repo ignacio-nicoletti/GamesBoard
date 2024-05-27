@@ -80,18 +80,27 @@ io.on("connection", (socket) => {
       return;
     }
 
-    if (room.users.some((user) => user.id === socket.id)) {
+    if (room.users.some((user) => user.idSocket === socket.id)) {
       socket.emit("room_join_error", { error: "User already in the room" });
       return;
     }
 
     const user = {
-      id: socket.id,
+      idSocket: socket.id,
       userName,
       roomId,
       position: room.users.length + 1,
       ready: false,
-      selectedAvatar,
+      avatar: selectedAvatar,
+      id: room.users.length + 1, //position
+      cardPerson: [], //cards
+      betP: 0, //num de cards apostadas
+      cardswins: 0, //cards ganadas
+      cardBet: [{ value: null, suit: '' }], //card apostada
+      myturnA: false, //boolean  //turno apuesta
+      myturnR: false, //boolean //turno ronda
+      cumplio: false, //boolean  //cumplio su apuesta
+      points: 0, //puntos
     };
     room.users.push(user);
 
@@ -118,12 +127,21 @@ io.on("connection", (socket) => {
       rooms[roomId] = { users: [], gameStarted: false, maxUsers };
 
       const user = {
-        id: socket.id,
+        idSocket: socket.id,
         userName,
         roomId,
         position: rooms[roomId].users.length + 1,
         ready: false,
-        selectedAvatar,
+        avatar: selectedAvatar,
+        id: rooms[roomId].users.length + 1, //position
+        cardPerson: [], //cards
+        betP: 0, //num de cards apostadas
+        cardswins: 0, //cards ganadas
+        cardBet: [{ value: null, suit: '' }], //card apostada
+        myturnA: false, //boolean  //turno apuesta
+        myturnR: false, //boolean //turno ronda
+        cumplio: false, //boolean  //cumplio su apuesta
+        points: 0, //puntos
       };
       rooms[roomId].users.push(user);
 
@@ -145,7 +163,7 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     Object.keys(games).forEach((game) => {
       Object.values(games[game]).forEach((room) => {
-        const index = room.users.findIndex((user) => user.id === socket.id);
+        const index = room.users.findIndex((user) => user.idSocket === socket.id);
         if (index !== -1) {
           room.users.splice(index, 1);
           io.to(`${game}-${room.roomId}`).emit("player_list", room.users);
@@ -157,7 +175,7 @@ io.on("connection", (socket) => {
       const rooms = games[game];
       for (const roomId in rooms) {
         const userIndex = rooms[roomId].users.findIndex(
-          (user) => user.id === socket.id
+          (user) => user.idSocket === socket.id
         );
         if (userIndex !== -1) {
           rooms[roomId].users.splice(userIndex, 1);
@@ -181,7 +199,7 @@ io.on("connection", (socket) => {
       const rooms = games[game];
       for (const roomId in rooms) {
         const userIndex = rooms[roomId].users.findIndex(
-          (user) => user.id === socket.id
+          (user) => user.idSocket === socket.id
         );
         if (userIndex !== -1) {
           rooms[roomId].users.splice(userIndex, 1);
@@ -202,21 +220,27 @@ io.on("connection", (socket) => {
   });
 
   socket.on("player_ready", ({ game, roomId }) => {
-    console.log(`Player ready in room ${roomId} of game ${game}`);
-    const rooms = games[game];
-    if (rooms && rooms[roomId]) {
-      const user = rooms[roomId].users.find((u) => u.id === socket.id);
-      if (user) {
-        user.ready = true;
-        io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId].users);
-        // Verificar si todos los jugadores están listos y el número de jugadores coincide con maxUsers
-        const allReady = rooms[roomId].users.every((u) => u.ready);
-        const maxUsers = rooms[roomId].maxUsers || 6;
-        const correctNumberOfPlayers = rooms[roomId].users.length === maxUsers;
-        if (allReady && correctNumberOfPlayers) {
-          rooms[roomId].gameStarted = true;
-          io.to(`${game}-${roomId}`).emit("start_game", rooms[roomId].users);
-        }
+    // Verificar que el juego y la sala existen
+    const room = games[game] && games[game][roomId];
+    if (!room) return;
+
+    // Buscar el usuario en la sala
+    const user = room.users.find((u) => u.idSocket === socket.id);
+    if (user) {
+      // Marcar al usuario como listo
+      user.ready = true;
+
+      // Emitir el estado de los jugadores listos a todos los usuarios en la sala
+      io.to(`${game}-${roomId}`).emit("player_ready_status", { id: user.id, ready: true });
+
+      // Verificar si todos los jugadores están listos y si hay al menos dos jugadores en la sala
+      const allReady = room.users.every((u) => u.ready);
+      if (allReady && room.users.length >= 2) {
+        // Marcar que el juego ha comenzado
+        room.gameStarted = true;
+
+        // Emitir el evento de inicio del juego a todos los usuarios en la sala
+        io.to(`${game}-${roomId}`).emit("start_game");
       }
     }
   });

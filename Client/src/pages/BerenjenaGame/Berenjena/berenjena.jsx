@@ -15,6 +15,7 @@ import Result
 import {
   AsignarMayor,
   distribute,
+  generarObligado,
   turno,
 } from '../../../functions/logica/logica.js';
 
@@ -29,86 +30,88 @@ const GameBerenjena = () => {
   const [showResult, setShowResult] = useState (false);
   const [myPosition, setMyPosition] = useState (1);
 
-  const [players, setPlayers] = useState ([
-    {
-      userName: '', //nombre
-      avatar: '',
-      id: 1, //position
-      cardPerson: [], //cards
-      betP: 0, //num de cards apostadas
-      cardswins: 0, //cards ganadas
-      cardBet: [{value: null, suit: ''}], //card apostada
-      myturnA: false, //boolean  //turno apuesta
-      myturnR: false, //boolean //turno ronda
-      cumplio: false, //boolean  //cumplio su apuesta
-      points: 0, //puntos
-    },
-    {
-      userName: '',
-      avatar: '',
-      id: 2,
-      cardPerson: [],
-      betP: 0,
-      cardswins: 0,
-      cardBet: [{value: null, suit: ''}],
-      myturnA: false, //boolean
-      myturnR: false, //booleanA
-      cumplio: false, //boolean
-      points: 0,
-    },
-    {
-      userName: '',
-      avatar: '',
-      id: 3,
-      cardPerson: [],
-      betP: 0,
-      cardswins: 0,
-      cardBet: [{value: null, suit: ''}],
-      myturnA: false, //boolean
-      myturnR: false, //booleanA
-      cumplio: false, //boolean
-      points: 0,
-    },
-    {
-      userName: '',
-      avatar: '',
-      id: 4,
-      cardPerson: [],
-      betP: 0,
-      cardswins: 0,
-      cardBet: [{value: null, suit: ''}],
-      myturnA: false, //boolean
-      myturnR: false, //booleanA
-      cumplio: false, //boolean
-      points: 0,
-    },
-    {
-      userName: '',
-      avatar: '',
-      id: 5,
-      cardPerson: [],
-      betP: 0,
-      cardswins: 0,
-      cardBet: [{value: null, suit: ''}],
-      myturnA: false, //boolean
-      myturnR: false, //booleanA
-      cumplio: false, //boolean
-      points: 0,
-    },
-    {
-      userName: '',
-      avatar: '',
-      id: 6,
-      cardPerson: [],
-      betP: 0,
-      cardswins: 0,
-      cardBet: [{value: null, suit: ''}],
-      myturnA: false, //boolean
-      myturnR: false, //booleanA
-      cumplio: false, //boolean
-      points: 0,
-    },
-  ]);
+  const [players, setPlayers] = useState ([])
+
+  // const [players, setPlayers] = useState ([
+  //   {
+  //     userName: '', //nombre
+  //     avatar: '',
+  //     id: 1, //position
+  //     cardPerson: [], //cards
+  //     betP: 0, //num de cards apostadas
+  //     cardswins: 0, //cards ganadas
+  //     cardBet: [{value: null, suit: ''}], //card apostada
+  //     myturnA: false, //boolean  //turno apuesta
+  //     myturnR: false, //boolean //turno ronda
+  //     cumplio: false, //boolean  //cumplio su apuesta
+  //     points: 0, //puntos
+  //   },
+  //   {
+  //     userName: '',
+  //     avatar: '',
+  //     id: 2,
+  //     cardPerson: [],
+  //     betP: 0,
+  //     cardswins: 0,
+  //     cardBet: [{value: null, suit: ''}],
+  //     myturnA: false, //boolean
+  //     myturnR: false, //booleanA
+  //     cumplio: false, //boolean
+  //     points: 0,
+  //   },
+  //   {
+  //     userName: '',
+  //     avatar: '',
+  //     id: 3,
+  //     cardPerson: [],
+  //     betP: 0,
+  //     cardswins: 0,
+  //     cardBet: [{value: null, suit: ''}],
+  //     myturnA: false, //boolean
+  //     myturnR: false, //booleanA
+  //     cumplio: false, //boolean
+  //     points: 0,
+  //   },
+  //   {
+  //     userName: '',
+  //     avatar: '',
+  //     id: 4,
+  //     cardPerson: [],
+  //     betP: 0,
+  //     cardswins: 0,
+  //     cardBet: [{value: null, suit: ''}],
+  //     myturnA: false, //boolean
+  //     myturnR: false, //booleanA
+  //     cumplio: false, //boolean
+  //     points: 0,
+  //   },
+  //   {
+  //     userName: '',
+  //     avatar: '',
+  //     id: 5,
+  //     cardPerson: [],
+  //     betP: 0,
+  //     cardswins: 0,
+  //     cardBet: [{value: null, suit: ''}],
+  //     myturnA: false, //boolean
+  //     myturnR: false, //booleanA
+  //     cumplio: false, //boolean
+  //     points: 0,
+  //   },
+  //   {
+  //     userName: '',
+  //     avatar: '',
+  //     id: 6,
+  //     cardPerson: [],
+  //     betP: 0,
+  //     cardswins: 0,
+  //     cardBet: [{value: null, suit: ''}],
+  //     myturnA: false, //boolean
+  //     myturnR: false, //booleanA
+  //     cumplio: false, //boolean
+  //     points: 0,
+  //   },
+  // ]);
 
   const [round, setRound] = useState ({
     users: 4, //usuarios conectados
@@ -417,10 +420,11 @@ const GameBerenjena = () => {
 
   useEffect (() => {
     socket.on ('start_game', data => {
-      let roomId = data[0].roomId;
+    
+      console.log(data);
       setLoader (!loader);
-      setRound ({...round, typeRound: 'apuesta', obligado: 4});
-      distribute (game, round, roomId, data, setPlayers);
+      // distribute (game, round, roomId, data, setPlayers);
+      
     });
   }, []);
   // GuardarEnBase ();
@@ -583,10 +587,12 @@ const GameBerenjena = () => {
             setMyPosition={setMyPosition}
             players={players}
             setPlayers={setPlayers}
+            round={round}
+setRound={setRound}
           />
         : <div className={style.tableroJugadores}>
 
-            <div className={style.jugador2}>
+            {/* <div className={style.jugador2}>
               <Jugadores
                 player={players[1]}
                 setPlayers={setPlayers}
@@ -625,12 +631,12 @@ const GameBerenjena = () => {
                 setRound={setRound}
                 round={round}
               />
-            </div>
+            </div> */}
 
           </div>}
       <div />
       {/* cartas en el centro de la pantalla */}
-      <div className={style.CardPropias}>
+      {/* <div className={style.CardPropias}>
         {myPosition.position === 1
           ? renderPlayerCards (players[0])
           : myPosition.position === 2
@@ -644,7 +650,7 @@ const GameBerenjena = () => {
                           : myPosition.position === 6
                               ? renderPlayerCards (players[5])
                               : ''}
-      </div>
+      </div> */}
       {/* cartas en el centro de la pantalla */}
 
       {/* <div className={style.CardPropiasApost}>
@@ -659,7 +665,7 @@ const GameBerenjena = () => {
           ))}
       </div> */}
 
-      <DataPlayer
+      {/* <DataPlayer
         jugador={
           myPosition.position === 1
             ? players[0]
@@ -673,7 +679,7 @@ const GameBerenjena = () => {
                             ? players[4]
                             : myPosition.position === 6 ?? players[5] 
         }
-        /> 
+        />  */}
 
       <DataGame ronda={round} />
       {showResult === true
