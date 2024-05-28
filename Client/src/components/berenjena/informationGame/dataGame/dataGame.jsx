@@ -1,25 +1,27 @@
 import style from "./dataGame.module.css"
-const DataGame=({ronda})=>{
+const DataGame=({round})=>{
+
+ 
     return(
         <div className={style.infoPartida}>
-              <p>tipo: {ronda.typeRound} </p>
-              <p>Obligado: jugador{ronda.obligado}</p>
-              <p>Cartas Repartidas: {ronda.cardXRound} </p>
-              <p>Apuesta total: {ronda.betTotal}</p>
+              <p>tipo: {round?.typeRound} </p>
+              <p>Obligado: jugador{round?.obligado}</p>
+              <p>Cartas Repartidas: {round?.cardXRound} </p>
+              <p>Apuesta total: {round?.betTotal}</p>
               <p>
                 Carta Ganadora:
 
-                {' ' + ronda.cardWinxRound[0].valor + ' '}
+                {' ' + round?.cardWinxRound[0].valor + ' '}
 
-                {ronda.cardWinxRound[0].palo}
+                {round?.cardWinxRound[0].palo}
               </p>
-              <p>Vuelta: {ronda.vuelta}</p>
-              <p>Ronda: {ronda.numeroRonda}</p>
+              <p>Vuelta: {round?.vuelta}</p>
+              <p>Ronda: {round?.numeroRonda}</p>
               <p>
                 turno: jugador
-                {ronda.typeRound === 'apuesta'
-                  ? ronda.turnJugadorA
-                  : ronda.turnJugadorR}
+                {round?.typeRound === 'apuesta'
+                  ? round?.turnJugadorA
+                  : round?.turnJugadorR}
               </p>
             </div>
     )

@@ -9,7 +9,7 @@ import avatar5 from "../../../../assets/berenjena/jugadores/avatar5.png";
 import avatar6 from "../../../../assets/berenjena/jugadores/avatar6.png";
 
 const DataPlayer = ({player}) => {
-  console.log(player);
+
   const avatarMap = {
     avatar1: avatar1,
     avatar2: avatar2,

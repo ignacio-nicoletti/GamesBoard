@@ -1,6 +1,5 @@
 import React from 'react';
 import styles from './jugadores.module.css';
-import person from '../../../assets/berenjena/jugadores/avatar1.png';
 import cardsIcon from '../../../assets/berenjena/jugadores/cartas.png';
 import Cards from '../cards/card';
 
@@ -28,7 +27,7 @@ const Jugadores = ({player, setPlayers, setRonda, ronda}) => {
   //   divAlinearCards = styles.card4;
   //   cardApost = styles.cardApost4;
   // }
-  console.log(player);
+
   return (
     <div className={estiloJugador}>
       <div className={styles.divJugador}>

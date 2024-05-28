@@ -12,6 +12,13 @@ const Result = ({Base,setShowResult}) => {
     'aaaaaaaaaaaaaaa',
     'aaaaaaaaaaaaaaa',
   ];
+  
+//ronda
+//nombre 
+//position
+//nombre 
+//nombre 
+
 
   return (
     <div className={styles.ContainResult}>

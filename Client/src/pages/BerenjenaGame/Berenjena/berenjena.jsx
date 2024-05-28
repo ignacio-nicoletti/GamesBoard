@@ -32,92 +32,11 @@ const GameBerenjena = () => {
 
   const [players, setPlayers] = useState ([]);
 
-  // const [players, setPlayers] = useState ([
-  //   {
-  //     userName: '', //nombre
-  //     avatar: '',
-  //     id: 1, //position
-  //     cardPerson: [], //cards
-  //     betP: 0, //num de cards apostadas
-  //     cardswins: 0, //cards ganadas
-  //     cardBet: [{value: null, suit: ''}], //card apostada
-  //     myturnA: false, //boolean  //turno apuesta
-  //     myturnR: false, //boolean //turno ronda
-  //     cumplio: false, //boolean  //cumplio su apuesta
-  //     points: 0, //puntos
-  //   },
-  //   {
-  //     userName: '',
-  //     avatar: '',
-  //     id: 2,
-  //     cardPerson: [],
-  //     betP: 0,
-  //     cardswins: 0,
-  //     cardBet: [{value: null, suit: ''}],
-  //     myturnA: false, //boolean
-  //     myturnR: false, //booleanA
-  //     cumplio: false, //boolean
-  //     points: 0,
-  //   },
-  //   {
-  //     userName: '',
-  //     avatar: '',
-  //     id: 3,
-  //     cardPerson: [],
-  //     betP: 0,
-  //     cardswins: 0,
-  //     cardBet: [{value: null, suit: ''}],
-  //     myturnA: false, //boolean
-  //     myturnR: false, //booleanA
-  //     cumplio: false, //boolean
-  //     points: 0,
-  //   },
-  //   {
-  //     userName: '',
-  //     avatar: '',
-  //     id: 4,
-  //     cardPerson: [],
-  //     betP: 0,
-  //     cardswins: 0,
-  //     cardBet: [{value: null, suit: ''}],
-  //     myturnA: false, //boolean
-  //     myturnR: false, //booleanA
-  //     cumplio: false, //boolean
-  //     points: 0,
-  //   },
-  //   {
-  //     userName: '',
-  //     avatar: '',
-  //     id: 5,
-  //     cardPerson: [],
-  //     betP: 0,
-  //     cardswins: 0,
-  //     cardBet: [{value: null, suit: ''}],
-  //     myturnA: false, //boolean
-  //     myturnR: false, //booleanA
-  //     cumplio: false, //boolean
-  //     points: 0,
-  //   },
-  //   {
-  //     userName: '',
-  //     avatar: '',
-  //     id: 6,
-  //     cardPerson: [],
-  //     betP: 0,
-  //     cardswins: 0,
-  //     cardBet: [{value: null, suit: ''}],
-  //     myturnA: false, //boolean
-  //     myturnR: false, //booleanA
-  //     cumplio: false, //boolean
-  //     points: 0,
-  //   },
-  // ]);
-
   const [round, setRound] = useState ({
-    users: 4, //usuarios conectados
+    users: null, //usuarios conectados
     vuelta: 1, //num de vuelta (4 rondas =1 vuelta)
     numRound: 1, //num de ronda
-    cardXRound: 7, //cant de cartas que se reparten
+    cardXRound: 1, //cant de cartas que se reparten
     typeRound: '', //apuesta o ronda
     turnJugadorA: 1, //1j 2j 3j 4j apuesta
     turnJugadorR: 1, //1j 2j 3j 4j ronda
@@ -127,13 +46,14 @@ const GameBerenjena = () => {
     lastCardBet: [{value: null, suit: '', id: ''}], //ultima card apostada
     beforeLastCardBet: [{value: null, suit: '', id: ''}], //anteultima card apostada
     ganadorRonda: null,
+    cantQueApostaron: 0,
     cantQueTiraron: 0,
     roomId: null,
     timer: '',
   });
 
   const [Base, setBase] = useState ([]); //base del resultado xronda
-
+  
   // const setTurnoRound = () => {
   //   let turno = ronda.CardGanadoraxRonda[0].id;
 
@@ -417,25 +337,44 @@ const GameBerenjena = () => {
   // };
   //setear el name depende la position
   // `jugador${i + 1}`
-  
+
   const {id} = useParams ();
 
-  useEffect(() => {
-    // setLoader((prevLoader) => !prevLoader);
-    const handleStartGame = () => {
-      let roomId = id;
-      setLoader((prevLoader) => !prevLoader);
-      distribute(game, round, roomId, setPlayers, players);
-    };
-  
-    socket.on('start_game', handleStartGame);
-  
-    // Cleanup para evitar múltiples registros del evento
-    return () => {
-      socket.off('start_game', handleStartGame);
-    };
-  }, [id, game, round, setPlayers, players]);
-  
+  useEffect (
+    () => {
+      const handleStartGame = data => {
+        setLoader (prevLoader => !prevLoader);
+        setRound ({
+          ...round,
+          typeRound: 'Bet',
+          turnJugadorA: data.nextTurn + 1,
+          obligado: data.userObligado + 1,
+          roomId: data.room,
+          users: data.cantUser,
+        });
+        // Reseteamos la distribución de cartas para la nueva ronda
+      };
+
+      socket.on ('start_game', handleStartGame);
+
+      return () => {
+        socket.off ('start_game', handleStartGame);
+      };
+    },
+    [id, game]
+  );
+
+  useEffect (
+    () => {
+      if (round.typeRound === 'Bet' ) {
+        let roomId = id;
+        distribute (game, round, roomId, setPlayers, players);
+        // Marcar que las cartas han sido distribuidas
+      }
+    },
+    [round ]
+  );
+
   // GuardarEnBase ();
 
   // useEffect (
@@ -574,19 +513,21 @@ const GameBerenjena = () => {
   // );
 
   const renderPlayerCards = player => {
-    return player?.cardPerson.map ((card, index) => (
-      <Cards
-        key={index}
-        value={card.value}
-        suit={card.suit}
-        players={players}
-        setPlayers={setPlayers} // Esto puede variar dependiendo del jugador
-        setRound={setRound}
-        round={round}
-      />
-    ));
+    if (player) {
+      return player.cardPerson.map ((card, index) => (
+        <Cards
+          key={index}
+          value={card.value}
+          suit={card.suit}
+          players={players}
+          setPlayers={setPlayers} // Esto puede variar dependiendo del jugador
+          setRound={setRound}
+          round={round}
+        />
+      ));
+    }
   };
-
+  // console.log(players);
   return (
     <div className={style.contain}>
 
@@ -640,7 +581,7 @@ const GameBerenjena = () => {
                 setRound={setRound}
                 round={round}
               />
-            </div> 
+            </div>
 
           </div>}
       <div />
@@ -682,34 +623,31 @@ const GameBerenjena = () => {
                 ? players[1]
                 : myPosition === 3
                     ? players[2]
-                    : myPosition=== 4
+                    : myPosition === 4
                         ? players[3]
                         : myPosition === 5
                             ? players[4]
-                            : myPosition === 6 ?? players[5] 
+                            : myPosition === 6 ? players[5] : null
         }
-        /> 
+      />
 
-      <DataGame ronda={round} />
-      {showResult === true
-        ? <Result Base={Base} setShowResult={setShowResult} />
+      {round.typeRound === 'Bet'
+        ? <Apuesta
+            players={players}
+            setPlayers={setPlayers}
+            round={round}
+            roomId={id}
+            setRound={setRound}
+            myPosition={myPosition}
+            game={game}
+          />
+        : ''}
+       {/* <Result Base={Base} setShowResult={setShowResult} /> */}
+
+      <DataGame round={round} />
+      {showResult === true?""
         : ''}
       <ButtonExitRoom />
-
-      {/* {ronda.typeRound === 'apuesta'
-        ? <Apuesta
-            jugador1={jugador1}
-            setJugador1={setJugador1}
-            jugador2={jugador2}
-            setJugador2={setJugador2}
-            jugador3={jugador3}
-            setJugador3={setJugador3}
-            jugador4={jugador4}
-            setJugador4={setJugador4}
-            ronda={ronda}
-            setRonda={setRonda}
-          />
-        : ''} */}
 
       <div className={style.resultado} onClick={() => setShowResult (true)}>
         <p>Resultados</p>

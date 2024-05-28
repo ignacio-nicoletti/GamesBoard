@@ -243,9 +243,15 @@ io.on("connection", (socket) => {
       if (allReady && room.users.length >= 2) {
         // Marcar que el juego ha comenzado
         room.gameStarted = true;
-
+        const userObligado = Math.floor(Math.random() * room.users.length);
+        const nextTurn = (userObligado + 1) % room.users.length;
         // Emitir el evento de inicio del juego a todos los usuarios en la sala
-        io.to(`${game}-${roomId}`).emit("start_game");
+        io.to(`${game}-${roomId}`).emit("start_game", {
+          userObligado,
+          nextTurn,
+          room,
+          cantUser: room.users.length,
+        });
       }
     }
   });
@@ -256,40 +262,74 @@ io.on("connection", (socket) => {
       socket.emit("error", { error: "Invalid roomId object" });
       return;
     }
-  
+
     try {
       let deck = distribute(); // Función para obtener el mazo
       let cartasMezcladas = shuffle(deck); // Función para mezclar las cartas
-  
+
       const numPlayers = players.length;
       const cardsPerPlayer = round.cardXRound;
-  
+
       const totalCardsToDistribute = numPlayers * cardsPerPlayer;
-  
+
       if (cartasMezcladas.length < totalCardsToDistribute) {
         console.error("Not enough cards to distribute.");
         socket.emit("error", { error: "Not enough cards to distribute" });
         return;
       }
-  
+
       let distributedCards = {};
-  
+
       for (let i = 0; i < numPlayers; i++) {
         distributedCards[`jugador${i + 1}`] = [];
-  
+
         for (let j = 0; j < cardsPerPlayer; j++) {
           const card = cartasMezcladas.pop();
           distributedCards[`jugador${i + 1}`].push(card);
         }
       }
-      console.log(distributedCards);
       io.to(`${game}-${roomId}`).emit("distribute", distributedCards);
     } catch (error) {
       console.error("Error in distribute function:", error);
       socket.emit("error", { error: "Error in distribute function" });
     }
   });
-  });
+
+  socket.on(
+    "BetPlayer",
+    ({ game, roomId, round, players, bet, myPosition }) => {
+      const room = games[game] && games[game][roomId];
+      if (!room) return;
+
+      // Actualizar la apuesta del jugador
+      const playerIndex = players.findIndex(
+        (player) => player.position === myPosition
+      );
+      if (playerIndex !== -1) {
+        players[playerIndex].betP = bet;
+      }
+
+      // Determinar el siguiente jugador en turno
+      let nextTurn = (round.turnJugadorA % players.length) + 1;
+
+      round.cantQueApostaron = round.cantQueApostaron + 1;
+      round.betTotal = Number(round.betTotal) + Number(bet);
+
+      if (round.cantQueApostaron === players.length) {
+        // Cambiar de ronda
+        round.typeRound = "ronda";
+        round.turnJugadorR = (round.obligado % players.length) + 1;
+        round.cantQueApostaron = 0;
+        round.betTotal = 0;
+      } else {
+        // Continuar con la ronda de apuestas
+        round.turnJugadorA = nextTurn;
+      }
+
+      io.to(`${game}-${roomId}`).emit("update_game_state", { round, players });
+    }
+  );
+});
 
 server.listen(3001, () => {
   console.log("Server listening on port 3001");
