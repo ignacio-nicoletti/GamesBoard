@@ -23,14 +23,14 @@ import Apuesta from '../../../components/berenjena/apuesta/apuesta';
 import ButtonExitRoom
   from '../../../components/berenjena/buttonExitRoom/buttonExitRoom.jsx';
 import {socket} from '../../../functions/SocketIO/sockets/sockets';
-
+import {useParams} from 'react-router-dom';
 const GameBerenjena = () => {
   const [loader, setLoader] = useState (true);
   const [game, setGame] = useState ('Berenjena'); // Juego seleccionado
   const [showResult, setShowResult] = useState (false);
   const [myPosition, setMyPosition] = useState (1);
 
-  const [players, setPlayers] = useState ([])
+  const [players, setPlayers] = useState ([]);
 
   // const [players, setPlayers] = useState ([
   //   {
@@ -129,7 +129,7 @@ const GameBerenjena = () => {
     ganadorRonda: null,
     cantQueTiraron: 0,
     roomId: null,
-    timer:""
+    timer: '',
   });
 
   const [Base, setBase] = useState ([]); //base del resultado xronda
@@ -417,16 +417,25 @@ const GameBerenjena = () => {
   // };
   //setear el name depende la position
   // `jugador${i + 1}`
+  
+  const {id} = useParams ();
 
-  useEffect (() => {
-    socket.on ('start_game', data => {
-    
-      console.log(data);
-      setLoader (!loader);
-      // distribute (game, round, roomId, data, setPlayers);
-      
-    });
-  }, []);
+  useEffect(() => {
+    // setLoader((prevLoader) => !prevLoader);
+    const handleStartGame = () => {
+      let roomId = id;
+      setLoader((prevLoader) => !prevLoader);
+      distribute(game, round, roomId, setPlayers, players);
+    };
+  
+    socket.on('start_game', handleStartGame);
+  
+    // Cleanup para evitar múltiples registros del evento
+    return () => {
+      socket.off('start_game', handleStartGame);
+    };
+  }, [id, game, round, setPlayers, players]);
+  
   // GuardarEnBase ();
 
   // useEffect (
@@ -565,7 +574,7 @@ const GameBerenjena = () => {
   // );
 
   const renderPlayerCards = player => {
-    return player.cardPerson.map ((card, index) => (
+    return player?.cardPerson.map ((card, index) => (
       <Cards
         key={index}
         value={card.value}
@@ -577,7 +586,7 @@ const GameBerenjena = () => {
       />
     ));
   };
-  
+
   return (
     <div className={style.contain}>
 
@@ -588,11 +597,11 @@ const GameBerenjena = () => {
             players={players}
             setPlayers={setPlayers}
             round={round}
-setRound={setRound}
+            setRound={setRound}
           />
         : <div className={style.tableroJugadores}>
 
-            {/* <div className={style.jugador2}>
+            <div className={style.jugador2}>
               <Jugadores
                 player={players[1]}
                 setPlayers={setPlayers}
@@ -602,7 +611,7 @@ setRound={setRound}
             </div>
             <div className={style.jugador3}>
               <Jugadores
-                player={players[2]}
+                player={players[1]}
                 setPlayerss={setPlayers}
                 setRound={setRound}
                 round={round}
@@ -610,7 +619,7 @@ setRound={setRound}
             </div>
             <div className={style.jugador4}>
               <Jugadores
-                player={players[3]}
+                player={players[1]}
                 setPlayers={setPlayers}
                 setRound={setRound}
                 round={round}
@@ -618,7 +627,7 @@ setRound={setRound}
             </div>
             <div className={style.jugador5}>
               <Jugadores
-                player={players[4]}
+                player={players[1]}
                 setPlayers={setPlayers}
                 setRound={setRound}
                 round={round}
@@ -626,31 +635,31 @@ setRound={setRound}
             </div>
             <div className={style.jugador6}>
               <Jugadores
-                player={players[5]}
+                player={players[1]}
                 setPlayers={setPlayers}
                 setRound={setRound}
                 round={round}
               />
-            </div> */}
+            </div> 
 
           </div>}
       <div />
       {/* cartas en el centro de la pantalla */}
-      {/* <div className={style.CardPropias}>
-        {myPosition.position === 1
+      <div className={style.CardPropias}>
+        {myPosition === 1
           ? renderPlayerCards (players[0])
-          : myPosition.position === 2
+          : myPosition === 2
               ? renderPlayerCards (players[1])
-              : myPosition.position === 3
+              : myPosition === 3
                   ? renderPlayerCards (players[2])
-                  : myPosition.position === 4
+                  : myPosition === 4
                       ? renderPlayerCards (players[3])
-                      : myPosition.position === 5
+                      : myPosition === 5
                           ? renderPlayerCards (players[4])
-                          : myPosition.position === 6
+                          : myPosition === 6
                               ? renderPlayerCards (players[5])
                               : ''}
-      </div> */}
+      </div>
       {/* cartas en el centro de la pantalla */}
 
       {/* <div className={style.CardPropiasApost}>
@@ -665,21 +674,21 @@ setRound={setRound}
           ))}
       </div> */}
 
-      {/* <DataPlayer
-        jugador={
-          myPosition.position === 1
+      <DataPlayer
+        player={
+          myPosition === 1
             ? players[0]
-            : myPosition.position === 2
+            : myPosition === 2
                 ? players[1]
-                : myPosition.position === 3
+                : myPosition === 3
                     ? players[2]
-                    : myPosition.position === 4
+                    : myPosition=== 4
                         ? players[3]
-                        : myPosition.position === 5
+                        : myPosition === 5
                             ? players[4]
-                            : myPosition.position === 6 ?? players[5] 
+                            : myPosition === 6 ?? players[5] 
         }
-        />  */}
+        /> 
 
       <DataGame ronda={round} />
       {showResult === true

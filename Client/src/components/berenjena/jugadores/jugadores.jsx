@@ -21,7 +21,7 @@ const Jugadores = ({player, setPlayers, setRonda, ronda}) => {
     avatar6: avatar6,
   }
   let estiloJugador;
-  let playerAvatar = avatarMap[player.avatar] // Seleccionar el avatar correcto
+  let playerAvatar = avatarMap[player?.avatar] // Seleccionar el avatar correcto
 
   // if (jugador.id === 4) {
   //   estiloJugador = styles.AcomodarCard4;
@@ -35,7 +35,7 @@ const Jugadores = ({player, setPlayers, setRonda, ronda}) => {
 
         <div className={styles.avatar}>
           <img src={playerAvatar} alt="persona" width={150} height={100} />
-          <p style={{margin: 0}}>{player.userName}</p>
+          <p style={{margin: 0}}>{player?.userName}</p>
         </div>
         <div className={styles.cards}>
           <img src={cardsIcon} alt="" />

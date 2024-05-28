@@ -15,10 +15,11 @@ export const generarObligado = (data) => {
 };
 
 
-export const distribute = (game, round, roomId, data,setPlayers) => {
-  socket.emit("distribute", { game, round, roomId, data });
+export const distribute = (game, round, roomId, setPlayers, players) => {
+  socket.emit('distribute', { game, round, roomId, players });
 
-  socket.on("distribute", (data) => {
+  socket.on('distribute', (data) => {
+    console.log(data);
     setPlayers((prevPlayers) =>
       prevPlayers.map((player, index) => {
         const playerIndex = index + 1;

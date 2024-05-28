@@ -1,7 +1,28 @@
 import style from './dataPlayer.module.css';
 import avatar from '../../../../assets/berenjena/jugadores/avatar1.png';
 
-const DataPlayer = ({jugador}) => {
+import avatar1 from "../../../../assets/berenjena/jugadores/avatar1.png";
+import avatar2 from "../../../../assets/berenjena/jugadores/avatar2.png";
+import avatar3 from "../../../../assets/berenjena/jugadores/avatar3.png";
+import avatar4 from "../../../../assets/berenjena/jugadores/avatar4.png";
+import avatar5 from "../../../../assets/berenjena/jugadores/avatar5.png";
+import avatar6 from "../../../../assets/berenjena/jugadores/avatar6.png";
+
+const DataPlayer = ({player}) => {
+  console.log(player);
+  const avatarMap = {
+    avatar1: avatar1,
+    avatar2: avatar2,
+    avatar3: avatar3,
+    avatar4: avatar4,
+    avatar5: avatar5,
+    avatar6: avatar6,
+  }
+
+  let playerAvatar = avatarMap[player?.avatar]
+
+
+
   return (
     <div className={style.infoPropia}>
 
@@ -16,12 +37,12 @@ const DataPlayer = ({jugador}) => {
           <tbody>
             <tr>
               <td>Apostadas</td>
-              <td>{jugador.betP}</td>
+              <td>{player?.betP}</td>
 
             </tr>
             <tr>
               <td>Ganadas</td>
-              <td>{jugador.cardswins}</td>
+              <td>{player?.cardswins}</td>
 
             </tr>
           </tbody>
@@ -29,9 +50,9 @@ const DataPlayer = ({jugador}) => {
 
       </div>
       <div className={style.avatar}>
-        <img src={avatar} alt="" />
+        <img src={playerAvatar} alt="" />
         <span className={style.name}>
-          {jugador.userName ? jugador.userName : 'Jugador'}
+          {player?.userName ? player.userName : 'Jugador'}
         </span>
       </div>
     </div>

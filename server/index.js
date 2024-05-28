@@ -96,7 +96,7 @@ io.on("connection", (socket) => {
       cardPerson: [], //cards
       betP: 0, //num de cards apostadas
       cardswins: 0, //cards ganadas
-      cardBet: [{ value: null, suit: '' }], //card apostada
+      cardBet: [{ value: null, suit: "" }], //card apostada
       myturnA: false, //boolean  //turno apuesta
       myturnR: false, //boolean //turno ronda
       cumplio: false, //boolean  //cumplio su apuesta
@@ -137,7 +137,7 @@ io.on("connection", (socket) => {
         cardPerson: [], //cards
         betP: 0, //num de cards apostadas
         cardswins: 0, //cards ganadas
-        cardBet: [{ value: null, suit: '' }], //card apostada
+        cardBet: [{ value: null, suit: "" }], //card apostada
         myturnA: false, //boolean  //turno apuesta
         myturnR: false, //boolean //turno ronda
         cumplio: false, //boolean  //cumplio su apuesta
@@ -163,7 +163,9 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     Object.keys(games).forEach((game) => {
       Object.values(games[game]).forEach((room) => {
-        const index = room.users.findIndex((user) => user.idSocket === socket.id);
+        const index = room.users.findIndex(
+          (user) => user.idSocket === socket.id
+        );
         if (index !== -1) {
           room.users.splice(index, 1);
           io.to(`${game}-${room.roomId}`).emit("player_list", room.users);
@@ -231,7 +233,10 @@ io.on("connection", (socket) => {
       user.ready = true;
 
       // Emitir el estado de los jugadores listos a todos los usuarios en la sala
-      io.to(`${game}-${roomId}`).emit("player_ready_status", { id: user.id, ready: true });
+      io.to(`${game}-${roomId}`).emit("player_ready_status", {
+        id: user.id,
+        ready: true,
+      });
 
       // Verificar si todos los jugadores están listos y si hay al menos dos jugadores en la sala
       const allReady = room.users.every((u) => u.ready);
@@ -245,50 +250,46 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("distribute", ({ game, round, roomId, data }) => {
-    // Verificar si roomId y roomId están definidos
+  socket.on("distribute", ({ game, round, roomId, players }) => {
     if (!roomId) {
       console.error("Invalid roomId object:", roomId);
       socket.emit("error", { error: "Invalid roomId object" });
       return;
     }
-
+  
     try {
       let deck = distribute(); // Función para obtener el mazo
       let cartasMezcladas = shuffle(deck); // Función para mezclar las cartas
-
-      const numPlayers = data.length;
+  
+      const numPlayers = players.length;
       const cardsPerPlayer = round.cardXRound;
-
-      // Calcular cuántas cartas debe recibir cada jugador en total
+  
       const totalCardsToDistribute = numPlayers * cardsPerPlayer;
-
-      // Verificar si hay suficientes cartas para distribuir
+  
       if (cartasMezcladas.length < totalCardsToDistribute) {
         console.error("Not enough cards to distribute.");
         socket.emit("error", { error: "Not enough cards to distribute" });
         return;
       }
-
+  
       let distributedCards = {};
-
-      // Iterar sobre los jugadores y asignarles las cartas correspondientes
+  
       for (let i = 0; i < numPlayers; i++) {
         distributedCards[`jugador${i + 1}`] = [];
-
+  
         for (let j = 0; j < cardsPerPlayer; j++) {
-          const card = cartasMezcladas.pop(); // Tomar la última carta del mazo (ya que está mezclado)
+          const card = cartasMezcladas.pop();
           distributedCards[`jugador${i + 1}`].push(card);
         }
       }
-
+      console.log(distributedCards);
       io.to(`${game}-${roomId}`).emit("distribute", distributedCards);
     } catch (error) {
       console.error("Error in distribute function:", error);
       socket.emit("error", { error: "Error in distribute function" });
     }
   });
-});
+  });
 
 server.listen(3001, () => {
   console.log("Server listening on port 3001");
