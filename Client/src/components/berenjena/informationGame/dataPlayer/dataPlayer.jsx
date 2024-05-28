@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import style from "./dataPlayer.module.css";
 import avatar1 from "../../../../assets/berenjena/jugadores/avatar1.png";
 import avatar2 from "../../../../assets/berenjena/jugadores/avatar2.png";
@@ -6,8 +6,8 @@ import avatar3 from "../../../../assets/berenjena/jugadores/avatar3.png";
 import avatar4 from "../../../../assets/berenjena/jugadores/avatar4.png";
 import avatar5 from "../../../../assets/berenjena/jugadores/avatar5.png";
 import avatar6 from "../../../../assets/berenjena/jugadores/avatar6.png";
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import CancelIcon from '@mui/icons-material/Cancel';
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
 
 const DataPlayer = ({ player }) => {
   const avatarMap = {
@@ -52,14 +52,19 @@ const DataPlayer = ({ player }) => {
             </tr>
             <tr>
               <td>Cumplió</td>
-              <td className={isFulfilled ? style.fulfilled : style.notFulfilled}>
+
+              <td
+                className={isFulfilled ? style.fulfilled : style.notFulfilled}
+              >
                 {isFulfilled ? (
                   <>
-                    Cumplió <CheckCircleIcon className={style.icon} />
+                    Cumplió
+                    {/* <CheckCircleIcon className={style.icon} /> */}
                   </>
                 ) : (
                   <>
-                    No Cumplió <CancelIcon className={style.icon} />
+                    No Cumplió
+                    {/* <CancelIcon className={style.icon} /> */}
                   </>
                 )}
               </td>

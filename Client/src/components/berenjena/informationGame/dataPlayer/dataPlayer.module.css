@@ -64,11 +64,13 @@
   background-color: #444;
 }
 
+
 .fulfilled {
   color: #00ff00 !important;
   display: flex;
   align-items: center;
   justify-content: center;
+
 }
 
 .notFulfilled {
