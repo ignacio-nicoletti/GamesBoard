@@ -33,7 +33,7 @@ const Jugadores = ({player, setPlayers, setRonda, ronda}) => {
       <div className={styles.divJugador}>
 
         <div className={styles.avatar}>
-          <img src={playerAvatar} alt="persona" width={150} height={100} />
+          <img src={playerAvatar} alt="persona" width={80} height={80} />
           <p style={{margin: 0}}>{player?.userName}</p>
         </div>
         <div className={styles.cards}>

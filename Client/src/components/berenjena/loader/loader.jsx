@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { socket } from "../../../functions/SocketIO/sockets/sockets";
 import PersonIcon from "@mui/icons-material/Person";
+import CheckIcon from "@mui/icons-material/Check";
 import ButtonExitRoom from "../buttonExitRoom/buttonExitRoom";
 import style from "./loader.module.css";
 
@@ -48,6 +49,7 @@ const Loader = ({ game, setMyPosition, players, setPlayers }) => {
 
   return (
     <div className={style.containLoader}>
+      <h1 className={style.roomTitle}>Te estás uniendo a la sala N°{id}</h1>
       <ul className={style.background}>
         {Array.from({ length: 30 }).map((_, index) => (
           <li key={index}></li>
@@ -59,23 +61,37 @@ const Loader = ({ game, setMyPosition, players, setPlayers }) => {
       </p>
       <div className={style.playersAndButton}>
         <div className={style.PlayersReady}>
-          {playerList.map((player) => (
-            <PersonIcon
-              key={player.id}
-              sx={{ fontSize: 50 }}
-              alt="Current Player"
-              className={`${style.playerImage} ${
-                player.ready ? style.ready : ""
-              }`}
-            />
-          ))}
-          {!playerList.some((player) => player.idSocket === socket.id) && (
-            <PersonIcon
-              sx={{ fontSize: 50 }}
-              alt="Current Player"
-              className={`${style.playerImage} ${readyMe ? style.ready : ""}`}
-            />
+          {playerList.map((player) =>
+            player.ready ? (
+              <CheckIcon
+                key={player.id}
+                sx={{ fontSize: 50, color: "#ff904f" }}
+                alt="Current Player"
+                className={`${style.playerImage} ${style.ready}`}
+              />
+            ) : (
+              <PersonIcon
+                key={player.id}
+                sx={{ fontSize: 50 }}
+                alt="Current Player"
+                className={style.playerImage}
+              />
+            )
           )}
+          {!playerList.some((player) => player.idSocket === socket.id) &&
+            (readyMe ? (
+              <CheckIcon
+                sx={{ fontSize: 50, color: "#ff904f" }}
+                alt="Current Player"
+                className={`${style.playerImage} ${style.ready}`}
+              />
+            ) : (
+              <PersonIcon
+                sx={{ fontSize: 50 }}
+                alt="Current Player"
+                className={style.playerImage}
+              />
+            ))}
         </div>
         <button
           className={style.readyBtn}
