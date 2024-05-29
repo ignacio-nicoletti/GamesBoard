@@ -9,7 +9,10 @@ import avatar6 from "../../../../assets/berenjena/jugadores/avatar6.png";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 
-const DataPlayer = ({ player }) => {
+const DataPlayer = ({ players,myPosition }) => {
+
+  const player = players[myPosition - 1];
+
   const avatarMap = {
     avatar1: avatar1,
     avatar2: avatar2,

@@ -33,7 +33,7 @@ export const disconnectRoom = () => {
   socket.emit("disconnectRoom");
 };
 
-export const CreateGameRoom = (game, roomId, userName, maxUsers = 6,selectedAvatar) => {
+export const CreateGameRoom = (game, roomId, userName, maxUsers = 6, selectedAvatar) => {
   return new Promise((res, rej) => {
     const responses = {};
 
@@ -53,16 +53,16 @@ export const CreateGameRoom = (game, roomId, userName, maxUsers = 6,selectedAvat
     });
 
     function checkIfReadyToResolve() {
-      if (Object.keys(responses).length === 3) {
+      if (Object.keys(responses).length === 2) { // Changed from 3 to 2 to match events
         res(responses);
       }
     }
 
-    socket.emit("create_room", { game, roomId, userName, maxUsers,selectedAvatar });
+    socket.emit("create_room", { game, roomId, userName, maxUsers, selectedAvatar });
   });
 };
 
-export const joinGameRoom = (game, roomId, userName,selectedAvatar) => {
+export const joinGameRoom = (game, roomId, userName, selectedAvatar) => {
   return new Promise((resolve, reject) => {
     const responses = {};
 
@@ -77,16 +77,15 @@ export const joinGameRoom = (game, roomId, userName,selectedAvatar) => {
     });
 
     socket.once("room_join_error", (error) => {
-      console.log(error);
       reject(error);
     });
 
     function checkIfReadyToResolve() {
-      if (Object.keys(responses).length === 3) {
+      if (Object.keys(responses).length === 2) { // Changed from 3 to 2 to match events
         resolve(responses);
       }
     }
 
-    socket.emit("join_room", { game, roomId, userName,selectedAvatar });
+    socket.emit("join_room", { game, roomId, userName, selectedAvatar });
   });
 };

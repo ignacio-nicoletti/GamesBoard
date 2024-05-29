@@ -2,49 +2,38 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import style from "./joinRoom.module.css";
-import {
-  getAllRoomsInfo,
-  CreateGameRoom,
-  socket,
-  joinGameRoom,
-} from "../../../functions/SocketIO/sockets/sockets";
-
-// ASSETS
+import { getAllRoomsInfo, CreateGameRoom, socket, joinGameRoom } from "../../../functions/SocketIO/sockets/sockets";
 import avatar1 from "../../../assets/berenjena/jugadores/avatar1.png";
 import avatar2 from "../../../assets/berenjena/jugadores/avatar2.png";
 import avatar3 from "../../../assets/berenjena/jugadores/avatar3.png";
 import avatar4 from "../../../assets/berenjena/jugadores/avatar4.png";
 import avatar5 from "../../../assets/berenjena/jugadores/avatar5.png";
 import avatar6 from "../../../assets/berenjena/jugadores/avatar6.png";
-
 import imgRoom from "../../../assets/berenjena/jugadores/imgRoom.png";
 import logoBerenjena from "../../../assets/berenjena/home/logoBerenjena.png";
-
-// MATERIAL
 import AutocompleteExample from "../../../components/berenjena/autocomplete/autocomplete";
 import GroupIcon from "@mui/icons-material/Group";
 import EditIcon from "@mui/icons-material/Edit";
 
 const JoinRoom = () => {
-  const [rooms, setRooms] = useState([]); // mapeo de todas las salas
+  const [rooms, setRooms] = useState([]); 
   const [filteredRooms, setFilteredRooms] = useState([]);
-  const [game, setGame] = useState("Berenjena"); // Juego seleccionado
-  const [userName, setUserName] = useState(""); // mi nombre
-  const [roomId, setRoomId] = useState(""); // id de room
+  const [game, setGame] = useState("Berenjena");
+  const [userName, setUserName] = useState("");
+  const [roomId, setRoomId] = useState("");
   const [tempMaxUsers, setTempMaxUsers] = useState("");
   const [error, setError] = useState("");
-  const [maxUsers, setMaxUsers] = useState(6); // cantidad máxima de usuarios
-  const [selectedAvatar, setSelectedAvatar] = useState("avatar1"); // avatar seleccionado
-  const [showModal, setShowModal] = useState(true); // Mostrar modal al inicio
+  const [maxUsers, setMaxUsers] = useState(6); 
+  const [selectedAvatar, setSelectedAvatar] = useState("avatar1");
+  const [showModal, setShowModal] = useState(true);
   const navigate = useNavigate();
 
   const CreateRoom = async (e) => {
     e.preventDefault();
-
     try {
       if (roomId !== "" && userName !== "") {
         const response = await CreateGameRoom(game, roomId, userName, maxUsers, selectedAvatar);
-        navigate(`/berenjena/multiplayer/${roomId}`); // Navegar después de crear la sala
+        navigate(`/berenjena/multiplayer/${roomId}`);
       }
     } catch (error) {
       console.error(error);
@@ -64,7 +53,7 @@ const JoinRoom = () => {
     try {
       if (roomId !== "" && userName !== "") {
         const response = await joinGameRoom(game, roomId, userName, selectedAvatar);
-        navigate(`/berenjena/multiplayer/${roomId}`); // Navegar después de unirse a la sala
+        navigate(`/berenjena/multiplayer/${roomId}`);
       }
     } catch (error) {
       console.error(error);
@@ -101,12 +90,9 @@ const JoinRoom = () => {
 
   useEffect(() => {
     const handleRoomJoined = (data) => {
-      console.log(data);
-      navigate(`/berenjena/multiplayer/${data.roomId}`); // Navegar cuando se une a la sala
+      navigate(`/berenjena/multiplayer/${data.roomId}`);
     };
-
     socket.on("room_joined", handleRoomJoined);
-
     return () => {
       socket.off("room_joined", handleRoomJoined);
     };
@@ -126,9 +112,26 @@ const JoinRoom = () => {
       console.log(data);
     };
     socket.on("room_creation_error", handleRoomCreationError);
-
     return () => {
       socket.off("room_creation_error", handleRoomCreationError);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleRoomJoinError = (data) => {
+      Swal.fire({
+        title: "Error!",
+        text: data.error || "Room is full.",
+        icon: "error",
+        confirmButtonText: "OK",
+        customClass: {
+          container: "swal2-container",
+        },
+      });
+    };
+    socket.on("room_join_error", handleRoomJoinError);
+    return () => {
+      socket.off("room_join_error", handleRoomJoinError);
     };
   }, []);
 

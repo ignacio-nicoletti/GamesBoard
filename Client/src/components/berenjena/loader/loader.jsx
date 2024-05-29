@@ -19,9 +19,7 @@ const Loader = ({ game, setMyPosition, players, setPlayers }) => {
   useEffect(() => {
     const updatePlayerList = (data) => {
       setPlayerList(data);
-      const currentPlayer = data.find(
-        (player) => player.idSocket === socket.id
-      );
+      const currentPlayer = data.find((player) => player.idSocket === socket.id);
       if (currentPlayer) {
         setMyPosition(currentPlayer.position);
       }
@@ -41,11 +39,14 @@ const Loader = ({ game, setMyPosition, players, setPlayers }) => {
     socket.on("player_list", updatePlayerList);
     socket.on("player_ready_status", updatePlayerReadyStatus);
 
+    // Unirse a la sala
+    socket.emit("join_room", { game, roomId: id, userName: "Player", selectedAvatar: "defaultAvatar" });
+
     return () => {
       socket.off("player_list", updatePlayerList);
       socket.off("player_ready_status", updatePlayerReadyStatus);
     };
-  }, [setMyPosition, setPlayers]);
+  }, [game, id, setMyPosition, setPlayers,setPlayerList]);
 
   return (
     <div className={style.containLoader}>

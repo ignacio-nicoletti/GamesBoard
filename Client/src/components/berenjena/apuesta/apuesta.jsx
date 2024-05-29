@@ -47,11 +47,11 @@ const Apuesta = ({
                 <option
                   key={index}
                   value={index}
-                  // disabled={
-                  //   myPosition == round.obligado && index + round.betTotal === round.cardXRound
-                  //     ? true
-                  //     : false
-                  // }
+                  disabled={
+                    myPosition == round.obligado && index + round.betTotal === round.cardXRound
+                      ? true
+                      : false
+                  }
                 >
                   {index} cartas
                 </option>

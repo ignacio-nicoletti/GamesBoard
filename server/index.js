@@ -92,15 +92,15 @@ io.on("connection", (socket) => {
       position: room.users.length + 1,
       ready: false,
       avatar: selectedAvatar,
-      id: room.users.length + 1, //position
-      cardPerson: [], //cards
-      betP: 0, //num de cards apostadas
-      cardswins: 0, //cards ganadas
-      cardBet: [{ value: null, suit: "" }], //card apostada
-      myturnA: false, //boolean  //turno apuesta
-      myturnR: false, //boolean //turno ronda
-      cumplio: false, //boolean  //cumplio su apuesta
-      points: 0, //puntos
+      id: room.users.length + 1, // position
+      cardPerson: [], // cards
+      betP: 0, // num de cards apostadas
+      cardswins: 0, // cards ganadas
+      cardBet: [{ value: null, suit: "" }], // card apostada
+      myturnA: false, // boolean // turno apuesta
+      myturnR: false, // boolean // turno ronda
+      cumplio: false, // boolean // cumplio su apuesta
+      points: 0, // puntos
     };
     room.users.push(user);
 
@@ -133,15 +133,15 @@ io.on("connection", (socket) => {
         position: rooms[roomId].users.length + 1,
         ready: false,
         avatar: selectedAvatar,
-        id: rooms[roomId].users.length + 1, //position
-        cardPerson: [], //cards
-        betP: 0, //num de cards apostadas
-        cardswins: 0, //cards ganadas
-        cardBet: [{ value: null, suit: "" }], //card apostada
-        myturnA: false, //boolean  //turno apuesta
-        myturnR: false, //boolean //turno ronda
-        cumplio: false, //boolean  //cumplio su apuesta
-        points: 0, //puntos
+        id: rooms[roomId].users.length + 1, // position
+        cardPerson: [], // cards
+        betP: 0, // num de cards apostadas
+        cardswins: 0, // cards ganadas
+        cardBet: [{ value: null, suit: "" }], // card apostada
+        myturnA: false, // boolean // turno apuesta
+        myturnR: false, // boolean // turno ronda
+        cumplio: false, // boolean // cumplio su apuesta
+        points: 0, // puntos
       };
       rooms[roomId].users.push(user);
 
@@ -329,6 +329,34 @@ io.on("connection", (socket) => {
       io.to(`${game}-${roomId}`).emit("update_game_state", { round, players });
     }
   );
+
+  socket.on("tirar_carta", ({game, myPosition, value, suit, round, roomId }) => {
+    const room = games[roomId];
+    if (!room) return;
+
+    // Buscar al jugador que tiró la carta
+    const playerIndex = room.users.findIndex(
+      (user) => user.position === myPosition
+    );
+    if (playerIndex === -1) return;
+
+    // Verificar si es el turno del jugador durante la ronda
+    if (round.typeRound === "ronda" && myPosition === round.turnJugadorR) {
+      // Actualizar la carta tirada por el jugador
+      room.users[playerIndex].cardBet.push({ value, suit });
+
+      // Emitir un evento para informar a todos los jugadores sobre la carta tirada
+      io.to(`${game}-${roomId}`).emit("carta_tirada", {
+        myPosition,
+        value,
+        suit,
+        players: room.users,
+      });
+
+      // Devolver la lista actualizada de jugadores al cliente
+      socket.emit("updated_players", { players: room.users });
+    }
+  });
 });
 
 server.listen(3001, () => {

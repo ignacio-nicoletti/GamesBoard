@@ -1,6 +1,6 @@
 import styles from './result.module.css';
 
-const Result = ({Base,setShowResult}) => {
+const Result = ({ setShowResult, players, round}) => {
   const rows = 4;
   const columns = 7;
   const headers = [
@@ -12,13 +12,12 @@ const Result = ({Base,setShowResult}) => {
     'aaaaaaaaaaaaaaa',
     'aaaaaaaaaaaaaaa',
   ];
-  
-//ronda
-//nombre 
-//position
-//nombre 
-//nombre 
 
+  //ronda
+  //nombre
+  //position
+  //nombre
+  //nombre
 
   return (
     <div className={styles.ContainResult}>
@@ -34,7 +33,7 @@ const Result = ({Base,setShowResult}) => {
           stroke-linecap="round"
           stroke-linejoin="round"
           class="icon icon-tabler icons-tabler-outline icon-tabler-circle-x"
-          onClick={()=>setShowResult(false)}
+          onClick={() => setShowResult (false)}
         >
           <path stroke="none" d="M0 0h24v24H0z" fill="none" />
           <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
@@ -46,7 +45,7 @@ const Result = ({Base,setShowResult}) => {
 
           <thead>
             <tr>
-              {headers.map ((header, index) => <th key={index}>{header}</th>)}
+              {players.map ((header, index) => <th key={index}>{header}</th>)}
             </tr>
           </thead>
           <tbody>

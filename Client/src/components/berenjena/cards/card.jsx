@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './card.module.css';
 import basto from '../../../assets/berenjena/valores/basto.png';
 import copa from '../../../assets/berenjena/valores/copas.png';
 import espada from '../../../assets/berenjena/valores/espada.png';
 import oro from '../../../assets/berenjena/valores/oro.png';
+import { socket } from '../../../functions/SocketIO/sockets/sockets';
 
-const Cards = ({players, setPlayers, value, suit, round, setRound}) => {
+const Cards = ({ players, setPlayers, value, suit, round, setRound, myPosition }) => {
   let imgPalo = {
     oro: oro,
     espada: espada,
@@ -13,64 +14,48 @@ const Cards = ({players, setPlayers, value, suit, round, setRound}) => {
     copa: copa,
   };
 
-  const handlerclick = () => {
-    //   if (round.typeRound === 'ronda' && jugador.myturnR === true) {
-    //     filterCard = jugador.cardPersona.filter (
-    //       e => e.value !== value || e.psuitalo !== suit
-    //     );
-    //     setJugador ({
-    //       ...jugador,
-    //       cardApostada: [{value, suit}],
-    //       cardPersona: filterCard,
-    //     });
-    //     //tiro la card, la saco del mazo propio y la seteo en la apostada
-    //     if (
-    //       ronda.turnoJugadorR === 1 ||
-    //       ronda.turnoJugadorR === 2 ||
-    //       ronda.turnoJugadorR === 3
-    //     ) {
-    //       setRonda ({
-    //         ...ronda,
-    //         AnteultimaCardApostada: ronda.ultimaCardApostada,
-    //         ultimaCardApostada: [{value, suit, id: jugador.id}],
-    //         turnoJugadorR: ronda.turnoJugadorR + 1,
-    //         cantQueTiraron: ronda.cantQueTiraron + 1,
-    //       }); //setea la card apostada en la ultima y lo que habia en ultima pasa a ser anteultima
-    //     } else {
-    //       setRonda ({
-    //         ...ronda,
-    //         turnoJugadorR: 1,
-    //         AnteultimaCardApostada: ronda.ultimaCardApostada,
-    //         ultimaCardApostada: [{value, suit, id: jugador.id}],
-    //         cantQueTiraron: ronda.cantQueTiraron + 1,
-    //       });
-    //     }
-    //   }
-    //   //cambio de turno al que me sigue y seteo laultima card con el id y paso la ult a la anteult
+  const [cartaTirada, setCartaTirada] = useState(null);
+const game="Berenjena"
+  useEffect(() => {
+    // Escuchar el evento del servidor que indica que se ha tirado una carta
+    socket.on('carta_tirada', ({ myPosition, value, suit }) => {
+      // Actualizar el estado con la carta tirada
+ 
+    });
+
+    // Limpiar el listener del evento cuando el componente se desmonta
+    return () => {
+      socket.off('carta_tirada');
+    };
+  }, []);
+
+  const handlerClick = () => {
+    // Verificar si es el turno del jugador para tirar una carta durante la ronda
+    if (round && round.typeRound === 'ronda' && myPosition === round.turnJugadorR) {
+      // Emitir evento al backend indicando que el jugador ha tirado una carta
+      console.log("emitido");
+      socket.emit('tirar_carta', {game, myPosition, value, suit, round, roomId: round.roomId,players });
+    }
   };
 
   return (
     <div className={styles.spanishDeck}>
-      <div className={styles.valueContain} onClick={() => handlerclick ()}>
-
-        <p style={{display: 'flex', alignSelf: 'flex-end'}}>{value}</p>
+      <div className={styles.valueContain} onClick={() => handlerClick()}>
+        <p style={{ display: 'flex', alignSelf: 'flex-end' }}>{value}</p>
         <img
           src={imgPalo[suit]}
           alt="logoCard"
           width={20}
           height={20}
-          style={{display: 'flex', alignSelf: 'center', margin: 0}}
+          style={{ display: 'flex', alignSelf: 'center', margin: 0 }}
         />
-        <p
-          style={{
-            display: 'flex',
-            alignSelf: 'flex-start',
-            margin: 0,
-          }}
-        >
-          {value}
-        </p>
+        <p style={{ display: 'flex', alignSelf: 'flex-start', margin: 0 }}>{value}</p>
       </div>
+      {cartaTirada && (
+        <div>
+          <p>{`Carta tirada por jugador ${cartaTirada.myPosition}: ${cartaTirada.value} de ${cartaTirada.suit}`}</p>
+        </div>
+      )}
     </div>
   );
 };

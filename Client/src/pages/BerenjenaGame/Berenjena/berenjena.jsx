@@ -24,6 +24,8 @@ import ButtonExitRoom
   from '../../../components/berenjena/buttonExitRoom/buttonExitRoom.jsx';
 import {socket} from '../../../functions/SocketIO/sockets/sockets';
 import {useParams} from 'react-router-dom';
+import MyCards from '../../../components/berenjena/myCards/myCards.jsx';
+
 const GameBerenjena = () => {
   const [loader, setLoader] = useState (true);
   const [game, setGame] = useState ('Berenjena'); // Juego seleccionado
@@ -53,7 +55,7 @@ const GameBerenjena = () => {
   });
 
   const [Base, setBase] = useState ([]); //base del resultado xronda
-  
+
   // const setTurnoRound = () => {
   //   let turno = ronda.CardGanadoraxRonda[0].id;
 
@@ -340,6 +342,16 @@ const GameBerenjena = () => {
 
   const {id} = useParams ();
 
+//manejar todo por round y por players 
+//dentro de round.roomid guardar max jugadores, numero de id,
+//y game asi pasar a donde necesite game solo round
+//logica de tirar las cards 
+//error en joinroom testear bien string y filtrado 
+
+
+
+
+
   useEffect (
     () => {
       const handleStartGame = data => {
@@ -352,7 +364,6 @@ const GameBerenjena = () => {
           roomId: data.room,
           users: data.cantUser,
         });
-        // Reseteamos la distribución de cartas para la nueva ronda
       };
 
       socket.on ('start_game', handleStartGame);
@@ -366,13 +377,12 @@ const GameBerenjena = () => {
 
   useEffect (
     () => {
-      if (round.typeRound === 'Bet' ) {
+      if (round.typeRound === 'Bet') {
         let roomId = id;
         distribute (game, round, roomId, setPlayers, players);
-        // Marcar que las cartas han sido distribuidas
       }
     },
-    [round ]
+    [round]
   );
 
   // GuardarEnBase ();
@@ -512,22 +522,6 @@ const GameBerenjena = () => {
   //   [ronda.typeRound]
   // );
 
-  const renderPlayerCards = player => {
-    if (player) {
-      return player.cardPerson.map ((card, index) => (
-        <Cards
-          key={index}
-          value={card.value}
-          suit={card.suit}
-          players={players}
-          setPlayers={setPlayers} // Esto puede variar dependiendo del jugador
-          setRound={setRound}
-          round={round}
-        />
-      ));
-    }
-  };
-  // console.log(players);
   return (
     <div className={style.contain}>
 
@@ -585,51 +579,13 @@ const GameBerenjena = () => {
 
           </div>}
       <div />
-      {/* cartas en el centro de la pantalla */}
+
       <div className={style.CardPropias}>
-        {myPosition === 1
-          ? renderPlayerCards (players[0])
-          : myPosition === 2
-              ? renderPlayerCards (players[1])
-              : myPosition === 3
-                  ? renderPlayerCards (players[2])
-                  : myPosition === 4
-                      ? renderPlayerCards (players[3])
-                      : myPosition === 5
-                          ? renderPlayerCards (players[4])
-                          : myPosition === 6
-                              ? renderPlayerCards (players[5])
-                              : ''}
+        {/* este css se puede borrar y usar el css del propio componente */}
+        <MyCards myPosition={myPosition} players={players} />
       </div>
-      {/* cartas en el centro de la pantalla */}
 
-      {/* <div className={style.CardPropiasApost}>
-        {jugador1.cardApostada[0].valor &&
-          jugador1.cardApostada.map ((card, index) => (
-            <Cards
-              key={index}
-              valor={card.valor}
-              palo={card.palo}
-              jugador={jugador1}
-            />
-          ))}
-      </div> */}
-
-      <DataPlayer
-        player={
-          myPosition === 1
-            ? players[0]
-            : myPosition === 2
-                ? players[1]
-                : myPosition === 3
-                    ? players[2]
-                    : myPosition === 4
-                        ? players[3]
-                        : myPosition === 5
-                            ? players[4]
-                            : myPosition === 6 ? players[5] : null
-        }
-      />
+      <DataPlayer myPosition={myPosition} players={players} />
 
       {round.typeRound === 'Bet'
         ? <Apuesta
@@ -642,11 +598,15 @@ const GameBerenjena = () => {
             game={game}
           />
         : ''}
-       {/* <Result Base={Base} setShowResult={setShowResult} /> */}
 
       <DataGame round={round} />
-      {showResult === true?""
-        : ''}
+      {showResult === true ? '' : ''}
+      {/* <Result
+        Base={Base}
+        setShowResult={setShowResult}
+        players={players}
+        round={round}
+      /> */}
       <ButtonExitRoom />
 
       <div className={style.resultado} onClick={() => setShowResult (true)}>
