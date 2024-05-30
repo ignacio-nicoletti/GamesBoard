@@ -37,16 +37,17 @@ const GameBerenjena = () => {
   const [round, setRound] = useState ({
     users: null, //usuarios conectados
     vuelta: 0, //num de vuelta (4 rondas =1 vuelta)
-    numRound: 1, //num de ronda
+    numRounds: 0, //num de ronda
+    hands:0,//igual a cant de cards repartidas
     cardXRound: 1, //cant de cartas que se reparten
     typeRound: '', //apuesta o ronda
     turnJugadorA: 1, //1j 2j 3j 4j apuesta
     turnJugadorR: 1, //1j 2j 3j 4j ronda
     obligado: null, //numero de jugador obligado
     betTotal: 0, //suma de la apuesta de todos
-    cardWinxRound: {value: null, suit: '', id: ''}, //card ganada en la ronda
-    lastCardBet: {value: null, suit: '', id: ''}, //ultima card apostada
-    beforeLastCardBet: {value: null, suit: '', id: ''}, //anteultima card apostada
+    cardWinxRound: {}, //card ganada en la ronda    {value: null, suit: '', id: ''}
+    lastCardBet: {}, //ultima card apostada
+    beforeLastCardBet: {}, //anteultima card apostada
     ganadorRonda: null,
     cantQueApostaron: 0,
     cantQueTiraron: 0,
@@ -179,13 +180,13 @@ const GameBerenjena = () => {
         : ''}
 
       <DataGame round={round} />
-      {showResult === true ? '' : ''}
-      {/* <Result
-        Base={Base}
-        setShowResult={setShowResult}
-        players={players}
-        round={round}
-      /> */}
+      {showResult === true ? 
+       <Result
+       setShowResult={setShowResult}
+       players={players}
+       round={round}
+       /> 
+        : ''}
       <ButtonExitRoom />
 
       <div className={style.resultado} onClick={() => setShowResult (true)}>

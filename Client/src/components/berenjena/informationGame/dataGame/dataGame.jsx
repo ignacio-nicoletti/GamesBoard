@@ -15,7 +15,7 @@ const DataGame=({round})=>{
 
                 {round?.cardWinxRound.suit}
               </p>
-              <p>Ronda: {round?.numeroRonda}</p>
+              <p>hand: {round?.hands}</p>
               <p>
                 turno: jugador
                 {round?.typeRound === 'Bet'

@@ -44,11 +44,11 @@ const Result = ({ setShowResult, players, round}) => {
         <table>
 
           <thead>
-            <tr>
-              {players.map ((header, index) => <th key={index}>{header}</th>)}
-            </tr>
+            {/* <tr>
+              {players&&players.map ((header, index) => <th key={index}>{header}</th>)}
+            </tr> */}
           </thead>
-          <tbody>
+          {/* <tbody>
             {Array.from ({length: rows}).map ((_, rowIndex) => (
               <tr key={rowIndex}>
                 {Array.from ({length: columns}).map ((_, colIndex) => (
@@ -56,7 +56,7 @@ const Result = ({ setShowResult, players, round}) => {
                 ))}
               </tr>
             ))}
-          </tbody>
+          </tbody> */}
         </table>
 
       </div>

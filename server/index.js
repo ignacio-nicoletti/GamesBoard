@@ -95,7 +95,7 @@ io.on("connection", (socket) => {
       id: room.users.length + 1, // position
       cardPerson: [], // cards
       betP: 0, // num de cards apostadas
-      cardswins: 0, // cards ganadas
+      cardsWins: 0, // cards ganadas
       cardBet: {}, // card apostada
       myturnA: false, // boolean // turno apuesta
       myturnR: false, // boolean // turno ronda
@@ -136,7 +136,7 @@ io.on("connection", (socket) => {
         id: rooms[roomId].users.length + 1, // position
         cardPerson: [], // cards
         betP: 0, // num de cards apostadas
-        cardswins: 0, // cards ganadas
+        cardsWins: 0, // cards ganadas
         cardBet: {}, // card apostada
         myturnA: false, // boolean // turno apuesta
         myturnR: false, // boolean // turno ronda
@@ -340,13 +340,13 @@ io.on("connection", (socket) => {
   });
 
   socket.on("tirar_carta", ({ round, players, myPosition, value, suit }) => {
-    //-----------------errores---------------------------
+    //-----------------Errores---------------------------
     if (!round || !round.roomId || !round.roomId.game || !round.roomId.roomId) {
       console.error("Invalid round or roomId object:", round);
       socket.emit("error", { error: "Invalid round or roomId object" });
       return;
     }
-
+  
     const game = round.roomId.game;
     const roomId = round.roomId.roomId;
     const room = games[game] && games[game][roomId];
@@ -354,7 +354,7 @@ io.on("connection", (socket) => {
       console.error("Room not found:", roomId);
       return;
     }
-
+  
     const playerIndex = room.users.findIndex(
       (user) => user.position === myPosition
     );
@@ -362,29 +362,34 @@ io.on("connection", (socket) => {
       console.error("Player not found in the room:", myPosition);
       return;
     }
-    //-----------------errores-----------------
-
-    //-----------------Saber que carta es mayor-----------------
+    //-----------------Errores-----------------
+  
     if (round.typeRound === "ronda" && myPosition === round.turnJugadorR) {
-      const card = { value, suit };
+      //-----------------Saber qué carta es mayor-----------------
+      const card = { value, suit, id: playerIndex + 1 };
       room.users[playerIndex].cardBet = card;
-
-      round.beforeLastCardBet = round.lastCardBet;
-      round.lastCardBet = card;
-
-      round.cardWinxRound =
-        round.beforeLastCardBet.value <= round.lastCardBet
-          ? round.lastCardBet
-          : round.beforeLastCardBet;
-      //-----------------Saber que carta es mayor-----------------
-
+  
+      if (round.cantQueTiraron === 0) {
+        // Si es la primera vez que tira
+        round.lastCardBet = card;
+        round.cardWinxRound = card;
+      } else {
+        round.beforeLastCardBet = round.lastCardBet;
+        round.lastCardBet = card;
+        round.cardWinxRound =
+          round.beforeLastCardBet.value <= round.lastCardBet.value
+            ? round.lastCardBet
+            : round.beforeLastCardBet;
+      }
+      //-----------------Saber qué carta es mayor-----------------
+  
       //-----------------Actualizar jugador-----------------
-      const updatedPlayers = players.map((player) => {
+      let updatedPlayers = players.map((player) => {
         if (player.position === myPosition) {
           return {
             ...player,
             cardPerson: player.cardPerson.filter(
-              (card) => !(card.value === value && card.suit === suit)
+              (c) => !(c.value === value && c.suit === suit)
             ),
             cardBet: card, // Asignar la carta a cardBet
           };
@@ -392,17 +397,41 @@ io.on("connection", (socket) => {
         return player;
       });
       //-----------------Actualizar jugador-----------------
-
-      //-----------------Manejo de turnos-----------------
+  
+      //-----------------Manejo de turnos y Reset-----------------
       round.cantQueTiraron += 1;
       round.turnJugadorR = (round.turnJugadorR % players.length) + 1;
-
+  
       if (round.cantQueTiraron === players.length) {
+        round.cantQueTiraron = 0;
+        round.hands += 1;
+        round.turnJugadorR = round.cardWinxRound.id;
+  
+        updatedPlayers = updatedPlayers.map((player) => {
+          if (player.id === round.cardWinxRound.id) {
+            return {
+              ...player,
+              cardsWins: (player.cardsWins || 0) + 1,
+              cardBet: {}
+            };
+          }
+          return {
+            ...player,
+            cardBet: {}, // Asignar la carta a cardBet
+          };
+        });
+  
+        round.beforeLastCardBet = {};
+        round.lastCardBet = {};
+        round.cardWinxRound = {};
+      }
+  
+      if (round.hands === round.cardXRound) {
         round.typeRound = "Bet";
         round.obligado = (round.obligado % players.length) + 1;
         round.turnJugadorA = (round.obligado % players.length) + 1; // Cambiar el turno al siguiente jugador
         round.turnJugadorR = (round.obligado % players.length) + 1;
-        round.cantQueTiraron = 0; // Reiniciar contador
+        round.cantQueTiraron = 0;
         round.cantQueApostaron = 0;
         round.cardXRound = round.cardXRound === 7 ? 1 : round.cardXRound + 2;
         round.beforeLastCardBet = {};
@@ -410,8 +439,19 @@ io.on("connection", (socket) => {
         round.cardWinxRound = {};
         round.vuelta = round.vuelta + 1;
         round.betTotal = 0;
+        round.hands = 0;
+  
+        updatedPlayers = updatedPlayers.map((player) => {
+          return {
+            ...player,
+            cardBet: {}, // Asignar la carta a cardBet
+            cardsWins: 0,
+            betP:0
+          };
+        });
       }
-
+      //-----------------Manejo de turnos y Reset-----------------
+  
       // Emitir un evento para informar a todos los jugadores sobre la carta tirada
       io.to(`${game}-${roomId}`).emit("carta_tirada", {
         players: updatedPlayers,
@@ -424,6 +464,7 @@ io.on("connection", (socket) => {
       });
     }
   });
+  
 });
 
 server.listen(3001, () => {

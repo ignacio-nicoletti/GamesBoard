@@ -14,7 +14,6 @@ const MyCards = ({myPosition, players, setPlayers, setRound, round}) => {
       myPosition === round.turnJugadorR
     ) {
       // Emitir evento al backend indicando que el jugador ha tirado una carta
-      console.log ('apostado', myPosition);
       socket.emit ('tirar_carta', {
         round,
         players,

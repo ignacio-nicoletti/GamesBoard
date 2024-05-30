@@ -43,7 +43,7 @@ const DataPlayer = ({ players,myPosition }) => {
             </tr>
             <tr>
               <td>Ganadas</td>
-              <td>{player?.cardswins}</td>
+              <td>{player?.cardsWins}</td>
             </tr>
             <tr>
               <td>Puntos</td>
