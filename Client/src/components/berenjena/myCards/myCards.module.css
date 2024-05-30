@@ -1,0 +1,18 @@
+.MyCardsContainer {
+  display: flex;
+  position: absolute;
+  gap: 10px;
+  bottom: 2.5%;
+  left: 0;
+  width: 100%;
+  justify-content: center;
+  z-index: 2;
+}
+.MyCards {
+  display: flex;
+  cursor: pointer;
+}
+.MyCardBet {
+  position: absolute;
+  bottom: 125%;
+}

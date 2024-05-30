@@ -6,20 +6,19 @@ const DataGame=({round})=>{
         <div className={style.infoPartida}>
               <p>tipo: {round?.typeRound} </p>
               <p>Obligado: jugador{round?.obligado}</p>
-              <p>Cartas Repartidas: {round?.cardXRound} </p>
+       
               <p>Apuesta total: {round?.betTotal}</p>
               <p>
                 Carta Ganadora:
 
-                {' ' + round?.cardWinxRound[0].valor + ' '}
+                {' ' + round?.cardWinxRound.value + ' '}
 
-                {round?.cardWinxRound[0].palo}
+                {round?.cardWinxRound.suit}
               </p>
-              <p>Vuelta: {round?.vuelta}</p>
               <p>Ronda: {round?.numeroRonda}</p>
               <p>
                 turno: jugador
-                {round?.typeRound === 'apuesta'
+                {round?.typeRound === 'Bet'
                   ? round?.turnJugadorA
                   : round?.turnJugadorR}
               </p>

@@ -40,26 +40,6 @@
 }
 /* ---mesa--- */
 
-.CardPropias {
-  display: flex;
-  flex-direction: row;
-  position: absolute;
-  gap: 10px;
-  bottom: 2.5%;
-  left: 0;
-  width: 100%;
-  justify-content: center;
-  z-index: 1;
-}
-
-.CardPropias:hover {
-  cursor: pointer;
-}
-
-.CardPropiasApost {
-  position: absolute;
-  bottom: 20%;
-}
 
 /* alineacion de jugadores en la mesa  */
 .tableroJugadores {

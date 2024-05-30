@@ -6,10 +6,8 @@ const Apuesta = ({
   players,
   setPlayers,
   round,
-  roomId,
   setRound,
   myPosition,
-  game,
 }) => {
   const [bet, setBet] = useState (0);
 
@@ -18,7 +16,7 @@ const Apuesta = ({
   };
 
   const handleSubmit = () => {
-    socket.emit ('BetPlayer', {game, roomId, round, players, bet, myPosition});
+    socket.emit ('BetPlayer', { round, players, bet, myPosition});
   };
 
   useEffect (
