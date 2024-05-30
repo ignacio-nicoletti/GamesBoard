@@ -36,7 +36,6 @@ const GameBerenjena = () => {
 
   const [round, setRound] = useState ({
     users: null, //usuarios conectados
-    vuelta: 0, //num de vuelta (4 rondas =1 vuelta)
     numRounds: 0, //num de ronda
     hands:0,//igual a cant de cards repartidas
     cardXRound: 1, //cant de cartas que se reparten
@@ -101,7 +100,7 @@ const GameBerenjena = () => {
         distribute (round, setPlayers, players);
       }
     },
-    [round.vuelta]
+    []
   );
 
   return (

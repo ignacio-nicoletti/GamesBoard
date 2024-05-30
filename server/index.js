@@ -346,7 +346,7 @@ io.on("connection", (socket) => {
       socket.emit("error", { error: "Invalid round or roomId object" });
       return;
     }
-  
+
     const game = round.roomId.game;
     const roomId = round.roomId.roomId;
     const room = games[game] && games[game][roomId];
@@ -354,7 +354,7 @@ io.on("connection", (socket) => {
       console.error("Room not found:", roomId);
       return;
     }
-  
+
     const playerIndex = room.users.findIndex(
       (user) => user.position === myPosition
     );
@@ -363,14 +363,13 @@ io.on("connection", (socket) => {
       return;
     }
     //-----------------Errores-----------------
-  
+
     if (round.typeRound === "ronda" && myPosition === round.turnJugadorR) {
       //-----------------Saber qué carta es mayor-----------------
       const card = { value, suit, id: playerIndex + 1 };
       room.users[playerIndex].cardBet = card;
-  
+
       if (round.cantQueTiraron === 0) {
-        // Si es la primera vez que tira
         round.lastCardBet = card;
         round.cardWinxRound = card;
       } else {
@@ -382,7 +381,7 @@ io.on("connection", (socket) => {
             : round.beforeLastCardBet;
       }
       //-----------------Saber qué carta es mayor-----------------
-  
+
       //-----------------Actualizar jugador-----------------
       let updatedPlayers = players.map((player) => {
         if (player.position === myPosition) {
@@ -397,22 +396,23 @@ io.on("connection", (socket) => {
         return player;
       });
       //-----------------Actualizar jugador-----------------
-  
+
       //-----------------Manejo de turnos y Reset-----------------
       round.cantQueTiraron += 1;
       round.turnJugadorR = (round.turnJugadorR % players.length) + 1;
-  
+      //-----------------cambio de mano-----------------
       if (round.cantQueTiraron === players.length) {
         round.cantQueTiraron = 0;
         round.hands += 1;
         round.turnJugadorR = round.cardWinxRound.id;
-  
+
         updatedPlayers = updatedPlayers.map((player) => {
           if (player.id === round.cardWinxRound.id) {
             return {
               ...player,
               cardsWins: (player.cardsWins || 0) + 1,
-              cardBet: {}
+              cardBet: {},
+              cumplio: (player.betP === player.cardsWins ? true : false),
             };
           }
           return {
@@ -420,12 +420,13 @@ io.on("connection", (socket) => {
             cardBet: {}, // Asignar la carta a cardBet
           };
         });
-  
+
         round.beforeLastCardBet = {};
         round.lastCardBet = {};
         round.cardWinxRound = {};
       }
-  
+      //-----------------cambio de mano-----------------
+      //-----------------cambio de ronda-----------------
       if (round.hands === round.cardXRound) {
         round.typeRound = "Bet";
         round.obligado = (round.obligado % players.length) + 1;
@@ -437,22 +438,21 @@ io.on("connection", (socket) => {
         round.beforeLastCardBet = {};
         round.lastCardBet = {};
         round.cardWinxRound = {};
-        round.vuelta = round.vuelta + 1;
         round.betTotal = 0;
         round.hands = 0;
-  
+
         updatedPlayers = updatedPlayers.map((player) => {
           return {
             ...player,
-            cardBet: {}, // Asignar la carta a cardBet
+            cardBet: {},
             cardsWins: 0,
-            betP:0
+            betP: 0,
           };
         });
       }
+      //-----------------cambio de ronda-----------------
       //-----------------Manejo de turnos y Reset-----------------
-  
-      // Emitir un evento para informar a todos los jugadores sobre la carta tirada
+
       io.to(`${game}-${roomId}`).emit("carta_tirada", {
         players: updatedPlayers,
         round,
@@ -464,7 +464,6 @@ io.on("connection", (socket) => {
       });
     }
   });
-  
 });
 
 server.listen(3001, () => {

@@ -25,7 +25,7 @@ const DataPlayer = ({ players,myPosition }) => {
   let playerAvatar = avatarMap[player?.avatar];
 
   // Determinar si se cumplió la condición
-  const isFulfilled = player?.betP === player?.cardswins;
+  const isFulfilled = player?.cumplio;
 
   return (
     <div className={style.infoPropia}>
