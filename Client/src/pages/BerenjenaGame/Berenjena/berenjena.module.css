@@ -1,8 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
 /* ---mesa--- */
 .contain {
-  /* max-width:1200px;
-  max-height:720px; */
   width: 100%;
   height: 100vh;
   padding: 0;
@@ -15,33 +13,31 @@
   background-image: url("../../../../src/assets/fondoo.png");
   background-repeat: no-repeat;
   background-size: cover;
+  position: relative;
 }
 
 .contain::before {
-  content: ""; /* Necesario para que el elemento pseudo sea visible */
-  position: absolute; /* Posición absoluta en relación con el contenedor */
-  width: 60%; /* Ancho del borde exterior */
-  height: 60%; /* Altura del borde exterior */
-  border: 10px solid #000; /* Borde exterior negro */
-  border-radius: 50%; /* Borde redondeado para imitar la forma de la mesa */
-  top: 20%; /* Posicionamiento para centrar el borde exterior verticalmente */
-  left: 20%; /* Posicionamiento para centrar el borde exterior horizontalmente */
+  content: ""; 
+  position: absolute; 
+  width: 60%; 
+  height: 60%; 
+  border: 10px solid #000; 
+  border-radius: 50%; 
+  top: 20%; 
+  left: 20%; 
 }
 
 .contain::after {
-  content: ""; /* Necesario para que el elemento pseudo sea visible */
-  position: absolute; /* Posición absoluta en relación con el contenedor */
-  width: 50%; /* Ancho del borde interior */
-  height: 50%; /* Altura del borde interior */
-  border: 10px solid #fff; /* Borde interior blanco */
-  border-radius: 50%; /* Borde redondeado para imitar la forma de la mesa */
-  top: 25%; /* Posicionamiento para centrar el borde interior verticalmente */
-  left: 25%; /* Posicionamiento para centrar el borde interior horizontalmente */
+  content: ""; 
+  position: absolute; 
+  width: 50%; 
+  height: 50%; 
+  border: 10px solid #fff; 
+  border-radius: 50%; 
+  top: 25%; 
+  left: 25%; 
 }
-/* ---mesa--- */
 
-
-/* alineacion de jugadores en la mesa  */
 .tableroJugadores {
   display: flex;
   justify-content: space-between;
@@ -55,14 +51,14 @@
 .jugador2 {
   position: absolute;
   display: flex;
-  left: 2%;
   top: 40%;
+  right: 2%;
 }
 
 .jugador3 {
   position: absolute;
   display: flex;
-  left: 15%;
+  right: 15%;
   top: 10%;
 }
 
@@ -78,17 +74,16 @@
 .jugador5 {
   position: absolute;
   display: flex;
-  right: 15%;
+  left: 15%;
   top: 10%;
 }
 
 .jugador6 {
   position: absolute;
   display: flex;
+  left: 2%;
   top: 40%;
-  right: 2%;
 }
-/* alineacion de jugadores en la mesa  */
 
 .resultado {
   position: absolute;
@@ -99,5 +94,5 @@
   padding-inline: 1rem;
   border-radius: 10px;
   color: white;
-z-index: 999;
+  z-index: 999;
 }
