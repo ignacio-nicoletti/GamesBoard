@@ -368,15 +368,17 @@ io.on("connection", (socket) => {
       //-----------------Saber qué carta es mayor-----------------
       const card = { value, suit, id: playerIndex + 1 };
       room.users[playerIndex].cardBet = card;
-
+      
       if (round.cantQueTiraron === 0) {
         round.lastCardBet = card;
         round.cardWinxRound = card;
       } else {
         round.beforeLastCardBet = round.lastCardBet;
         round.lastCardBet = card;
+      
+        // Comparar solo los valores de las cartas
         round.cardWinxRound =
-          round.beforeLastCardBet.value <= round.lastCardBet.value
+          round.lastCardBet.value >= round.beforeLastCardBet.value
             ? round.lastCardBet
             : round.beforeLastCardBet;
       }
@@ -407,19 +409,24 @@ io.on("connection", (socket) => {
         round.turnJugadorR = round.cardWinxRound.id;
 
         updatedPlayers = updatedPlayers.map((player) => {
+          const cumplio = (player.betP = player.cardsWins);
           if (player.id === round.cardWinxRound.id) {
             return {
               ...player,
               cardsWins: (player.cardsWins || 0) + 1,
               cardBet: {},
-              cumplio: (player.betP === player.cardsWins ? true : false),
+              
             };
           }
+
           return {
             ...player,
-            cardBet: {}, // Asignar la carta a cardBet
+            cardBet: {},
+            cardsWins: 0,
+            cumplio
           };
         });
+        // Verificar si los jugadores han cumplido y actualizar puntos
 
         round.beforeLastCardBet = {};
         round.lastCardBet = {};
@@ -442,11 +449,18 @@ io.on("connection", (socket) => {
         round.hands = 0;
 
         updatedPlayers = updatedPlayers.map((player) => {
+          const cumplio = (player.betP === player.cardsWins);
+          const points = cumplio
+            ? player.points + 5 + player.betP
+            : player.points;
+
           return {
             ...player,
             cardBet: {},
-            cardsWins: 0,
+            // cumplio,
+            points,
             betP: 0,
+            cardsWins: 0,
           };
         });
       }

@@ -43,7 +43,7 @@ const Loader = ({ game, setMyPosition, setPlayers }) => {
       socket.off("player_list", updatePlayerList);
       socket.off("player_ready_status", updatePlayerReadyStatus);
     };
-  }, [setPlayers,playerList,readyMe,setMyPosition]);
+  }, [playerList,readyMe]);
 
   return (
     <div className={style.containLoader}>

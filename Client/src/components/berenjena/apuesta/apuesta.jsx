@@ -11,9 +11,6 @@ const Apuesta = ({
 }) => {
   const [bet, setBet] = useState (0);
 
-  const apostar = event => {
-    setBet (event.target.value);
-  };
 
   const handleSubmit = () => {
     socket.emit ('BetPlayer', { round, players, bet, myPosition});
@@ -30,14 +27,14 @@ const Apuesta = ({
         socket.off ('update_game_state');
       };
     },
-    [setRound, setPlayers]
+    []
   );
   return (
     <div>
       {round.turnJugadorA === myPosition
         ? <div className={style.contain}>
             <p>jugador {round.turnJugadorA}</p>
-            <select name="select" onChange={event => apostar (event)}>
+            <select name="select" onClick={event =>  setBet(event.target.value)}>
               <option value={'Elige tu apuesta'} disabled={true}>
                 {' '}Elige tu apuesta{' '}
               </option>

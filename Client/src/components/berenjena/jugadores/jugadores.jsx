@@ -10,7 +10,7 @@ import avatar4 from "../../../assets/berenjena/jugadores/avatar4.png";
 import avatar5 from "../../../assets/berenjena/jugadores/avatar5.png";
 import avatar6 from "../../../assets/berenjena/jugadores/avatar6.png";
 
-const Jugadores = ({player, setPlayers, setRonda, ronda}) => {
+const Jugadores = ({player}) => {
   const avatarMap = {
     avatar1: avatar1,
     avatar2: avatar2,
@@ -23,13 +23,11 @@ const Jugadores = ({player, setPlayers, setRonda, ronda}) => {
   let playerAvatar = avatarMap[player?.avatar] // Seleccionar el avatar correcto
 
   // if (jugador.id === 4) {
-  //   estiloJugador = styles.AcomodarCard4;
-  //   divAlinearCards = styles.card4;
-  //   cardApost = styles.cardApost4;
+
   // }
 
   return (
-    <div className={estiloJugador}>
+    <div className={""}>
       <div className={styles.divJugador}>
 
         <div className={styles.avatar}>
@@ -43,19 +41,19 @@ const Jugadores = ({player, setPlayers, setRonda, ronda}) => {
 
       <div>
 
-        {/* <div className={divAlinearCards}>
-          {players.cardApostada[0].valor &&
-            players.cardApostada.map ((card, index) => (
-              <div className={cardApost}>
+        <div className={""}>
+          {player.cardBet.value &&
+           
+              <div className={""}>
                 <Cards
-                  key={index}
-                  valor={card.value}
-                  palo={card.suit}
-                  players={players}
+                
+                  value={player.cardBet.value}
+                  suit={player.cardBet.suit}
+                
                 />
               </div>
-            ))}
-        </div> */}
+            }
+        </div>
 
       </div>
 

@@ -1,9 +1,6 @@
 import {useEffect, useState} from 'react';
 import style from './berenjena.module.css';
-
 import Jugadores from '../../../components/berenjena/jugadores/jugadores';
-import Cards from '../../../components/berenjena/cards/card';
-
 import Loader from '../../../components/berenjena/loader/loader';
 import DataGame
   from '../../../components/berenjena/informationGame/dataGame/dataGame';
@@ -11,19 +8,11 @@ import DataPlayer
   from '../../../components/berenjena/informationGame/dataPlayer/dataPlayer';
 import Result
   from '../../../components/berenjena/informationGame/Results/result';
-
-import {
-  AsignarMayor,
-  distribute,
-  generarObligado,
-  turno,
-} from '../../../functions/logica/logica.js';
-
+import {distribute} from '../../../functions/logica/logica.js';
 import Apuesta from '../../../components/berenjena/apuesta/apuesta';
 import ButtonExitRoom
   from '../../../components/berenjena/buttonExitRoom/buttonExitRoom.jsx';
 import {socket} from '../../../functions/SocketIO/sockets/sockets';
-import {useParams} from 'react-router-dom';
 import MyCards from '../../../components/berenjena/myCards/myCards.jsx';
 
 const GameBerenjena = () => {
@@ -37,7 +26,7 @@ const GameBerenjena = () => {
   const [round, setRound] = useState ({
     users: null, //usuarios conectados
     numRounds: 0, //num de ronda
-    hands:0,//igual a cant de cards repartidas
+    hands: 0, //igual a cant de cards repartidas
     cardXRound: 1, //cant de cartas que se reparten
     typeRound: '', //apuesta o ronda
     turnJugadorA: 1, //1j 2j 3j 4j apuesta
@@ -56,43 +45,35 @@ const GameBerenjena = () => {
 
   const [Base, setBase] = useState ([]); //base del resultado xronda
 
-  // `jugador${i + 1}`
-
-  const {id} = useParams ();
-
-
   //avisos: Obligado; turno de quien
-
+  //el select apuesta si no clickeo me pone por default
   //error en joinroom testear bien string y filtrado
 
-  useEffect (
-    () => {
-      const handleStartGame = data => {
-        setLoader (prevLoader => !prevLoader);
-        setRound ({
-          ...round,
-          typeRound: 'Bet',
-          turnJugadorA: data.nextTurn + 1,
-          obligado: data.userObligado + 1,
-          roomId: {
-            gameStarted: data.room.gameStarted,
-            maxUsers: data.roomcantUser,
-            roomId: data.roomId,
-            game: data.game,
-          },
-          users: data.cantUser,
-          vuelta :round.vuelta + 1
-        });
-      };
+  useEffect (() => {
+    const handleStartGame = data => {
+      setLoader (prevLoader => !prevLoader);
+      setRound ({
+        ...round,
+        typeRound: 'Bet',
+        turnJugadorA: data.nextTurn + 1,
+        obligado: data.userObligado + 1,
+        roomId: {
+          gameStarted: data.room.gameStarted,
+          maxUsers: data.roomcantUser,
+          roomId: data.roomId,
+          game: data.game,
+        },
+        users: data.cantUser,
+        vuelta: round.vuelta + 1,
+      });
+    };
 
-      socket.on ('start_game', handleStartGame);
+    socket.on ('start_game', handleStartGame);
 
-      return () => {
-        socket.off ('start_game', handleStartGame);
-      };
-    },
-    []
-  );
+    return () => {
+      socket.off ('start_game', handleStartGame);
+    };
+  }, []);
 
   useEffect (
     () => {
@@ -100,7 +81,7 @@ const GameBerenjena = () => {
         distribute (round, setPlayers, players);
       }
     },
-    []
+    [round.typeRound]
   );
 
   return (
@@ -115,44 +96,19 @@ const GameBerenjena = () => {
         : <div className={style.tableroJugadores}>
 
             <div className={style.jugador2}>
-              <Jugadores
-                player={players[1]}
-                setPlayers={setPlayers}
-                setRound={setRound}
-                round={round}
-              />
+              <Jugadores player={players[1]} />
             </div>
             <div className={style.jugador3}>
-              <Jugadores
-                player={players[1]}
-                setPlayerss={setPlayers}
-                setRound={setRound}
-                round={round}
-              />
+              <Jugadores player={players[1]} />
             </div>
             <div className={style.jugador4}>
-              <Jugadores
-                player={players[1]}
-                setPlayers={setPlayers}
-                setRound={setRound}
-                round={round}
-              />
+              <Jugadores player={players[1]} />
             </div>
             <div className={style.jugador5}>
-              <Jugadores
-                player={players[1]}
-                setPlayers={setPlayers}
-                setRound={setRound}
-                round={round}
-              />
+              <Jugadores player={players[1]} />
             </div>
             <div className={style.jugador6}>
-              <Jugadores
-                player={players[1]}
-                setPlayers={setPlayers}
-                setRound={setRound}
-                round={round}
-              />
+              <Jugadores player={players[1]} />
             </div>
 
           </div>}
@@ -179,12 +135,12 @@ const GameBerenjena = () => {
         : ''}
 
       <DataGame round={round} />
-      {showResult === true ? 
-       <Result
-       setShowResult={setShowResult}
-       players={players}
-       round={round}
-       /> 
+      {showResult === true
+        ? <Result
+            setShowResult={setShowResult}
+            players={players}
+            round={round}
+          />
         : ''}
       <ButtonExitRoom />
 
