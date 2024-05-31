@@ -49,6 +49,10 @@ const GameBerenjena = () => {
   //el select apuesta si no clickeo me pone por default
   //error en joinroom testear bien string y filtrado
 
+
+// css: berenjena, jugadores ,card
+
+
   useEffect (() => {
     const handleStartGame = data => {
       setLoader (prevLoader => !prevLoader);
