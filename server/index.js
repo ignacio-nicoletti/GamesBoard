@@ -368,15 +368,13 @@ io.on("connection", (socket) => {
       //-----------------Saber qué carta es mayor-----------------
       const card = { value, suit, id: playerIndex + 1 };
       room.users[playerIndex].cardBet = card;
-      
+
       if (round.cantQueTiraron === 0) {
         round.lastCardBet = card;
         round.cardWinxRound = card;
       } else {
         round.beforeLastCardBet = round.lastCardBet;
         round.lastCardBet = card;
-      
-        // Comparar solo los valores de las cartas
         round.cardWinxRound =
           round.lastCardBet.value >= round.beforeLastCardBet.value
             ? round.lastCardBet
@@ -384,7 +382,7 @@ io.on("connection", (socket) => {
       }
       //-----------------Saber qué carta es mayor-----------------
 
-      //-----------------Actualizar jugador-----------------
+      //-----------------Actualizar apuesta de carta jugador-----------------
       let updatedPlayers = players.map((player) => {
         if (player.position === myPosition) {
           return {
@@ -397,7 +395,7 @@ io.on("connection", (socket) => {
         }
         return player;
       });
-      //-----------------Actualizar jugador-----------------
+      //-----------------Actualizar apuesta de carta jugador-----------------
 
       //-----------------Manejo de turnos y Reset-----------------
       round.cantQueTiraron += 1;
@@ -407,33 +405,21 @@ io.on("connection", (socket) => {
         round.cantQueTiraron = 0;
         round.hands += 1;
         round.turnJugadorR = round.cardWinxRound.id;
-
         updatedPlayers = updatedPlayers.map((player) => {
-          const cumplio = (player.betP = player.cardsWins);
-          if (player.id === round.cardWinxRound.id) {
-            return {
-              ...player,
-              cardsWins: (player.cardsWins || 0) + 1,
-              cardBet: {},
-              
-            };
+          if (round.cardWinxRound.id === player.id) {
+            return { ...player, cardsWins: player.cardsWins + 1 };
           }
-
           return {
             ...player,
             cardBet: {},
-            cardsWins: 0,
-            cumplio
           };
         });
-        // Verificar si los jugadores han cumplido y actualizar puntos
 
         round.beforeLastCardBet = {};
         round.lastCardBet = {};
         round.cardWinxRound = {};
       }
-      //-----------------cambio de mano-----------------
-      //-----------------cambio de ronda-----------------
+
       if (round.hands === round.cardXRound) {
         round.typeRound = "Bet";
         round.obligado = (round.obligado % players.length) + 1;
@@ -448,8 +434,8 @@ io.on("connection", (socket) => {
         round.betTotal = 0;
         round.hands = 0;
 
-        updatedPlayers = updatedPlayers.map((player) => {
-          const cumplio = (player.betP === player.cardsWins);
+        updatedPlayers = players.map((player) => {
+          const cumplio = player.betP === player.cardsWins ? true : false;
           const points = cumplio
             ? player.points + 5 + player.betP
             : player.points;
@@ -457,13 +443,14 @@ io.on("connection", (socket) => {
           return {
             ...player,
             cardBet: {},
-            // cumplio,
             points,
             betP: 0,
             cardsWins: 0,
+            cumplio
           };
         });
       }
+
       //-----------------cambio de ronda-----------------
       //-----------------Manejo de turnos y Reset-----------------
 

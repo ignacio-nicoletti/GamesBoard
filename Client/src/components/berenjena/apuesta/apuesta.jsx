@@ -11,11 +11,14 @@ const Apuesta = ({
 }) => {
   const [bet, setBet] = useState (0);
 
-
+//preparar el temporizador con useEffect y sino apuesta socket 
   const handleSubmit = () => {
     socket.emit ('BetPlayer', { round, players, bet, myPosition});
   };
 
+
+
+  
   useEffect (
     () => {
       socket.on ('update_game_state', ({round, players}) => {
