@@ -19,12 +19,9 @@ const Jugadores = ({player}) => {
     avatar5: avatar5,
     avatar6: avatar6,
   }
-  let estiloJugador;
+
   let playerAvatar = avatarMap[player?.avatar] // Seleccionar el avatar correcto
 
-  // if (jugador.id === 4) {
-
-  // }
 
   return (
     <div className={""}>

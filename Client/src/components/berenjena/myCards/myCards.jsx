@@ -29,6 +29,7 @@ const MyCards = ({myPosition, players, setPlayers, setRound, round}) => {
       socket.on ('carta_tirada', ({players, round}) => {
         setPlayers (players);
         setRound (round);
+        console.log(players);
       });
 
       return () => {

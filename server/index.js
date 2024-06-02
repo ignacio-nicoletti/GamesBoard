@@ -435,18 +435,15 @@ io.on("connection", (socket) => {
         round.hands = 0;
 
         updatedPlayers = players.map((player) => {
-          const cumplio = player.betP === player.cardsWins ? true : false;
-          const points = cumplio
-            ? player.points + 5 + player.betP
-            : player.points;
+          // const Ppoints = Pcumplio ? player.points + 5 + player.betP : player.points;
 
           return {
             ...player,
             cardBet: {},
-            points,
+            // points: Ppoints,
             betP: 0,
             cardsWins: 0,
-            cumplio
+            cumplio: player.betP === player.cardsWins,
           };
         });
       }

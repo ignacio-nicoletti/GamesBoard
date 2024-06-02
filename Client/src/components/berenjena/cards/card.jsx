@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import styles from './card.module.css';
 import basto from '../../../assets/berenjena/valores/basto.png';
 import copa from '../../../assets/berenjena/valores/copas.png';
