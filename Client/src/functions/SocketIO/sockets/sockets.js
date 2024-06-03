@@ -32,7 +32,6 @@ export const getAllRoomsInfo = (game) => {
 export const disconnectRoom = () => {
   socket.emit("disconnectRoom");
 };
-
 export const CreateGameRoom = (game, roomId, userName, maxUsers = 6, selectedAvatar) => {
   return new Promise((res, rej) => {
     const responses = {};
@@ -53,7 +52,7 @@ export const CreateGameRoom = (game, roomId, userName, maxUsers = 6, selectedAva
     });
 
     function checkIfReadyToResolve() {
-      if (Object.keys(responses).length === 2) { // Changed from 3 to 2 to match events
+      if (Object.keys(responses).length === 2) { // Asegúrate de que esto coincida con el número de eventos esperados
         res(responses);
       }
     }
@@ -76,12 +75,12 @@ export const joinGameRoom = (game, roomId, userName, selectedAvatar) => {
       checkIfReadyToResolve();
     });
 
-    socket.once("room_join_error", (error) => {
+    socket.once("room_join_error", ({ error }) => {
       reject(error);
     });
 
     function checkIfReadyToResolve() {
-      if (Object.keys(responses).length === 2) { // Changed from 3 to 2 to match events
+      if (Object.keys(responses).length === 2) { // Asegúrate de que esto coincida con el número de eventos esperados
         resolve(responses);
       }
     }
@@ -89,3 +88,4 @@ export const joinGameRoom = (game, roomId, userName, selectedAvatar) => {
     socket.emit("join_room", { game, roomId, userName, selectedAvatar });
   });
 };
+

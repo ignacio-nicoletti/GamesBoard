@@ -1,6 +1,6 @@
 import style from "./dataGame.module.css"
 const DataGame=({round})=>{
-
+// console.log(round);
  
     return(
         <div className={style.infoPartida}>
@@ -11,9 +11,9 @@ const DataGame=({round})=>{
               <p>
                 Carta Ganadora:
 
-                {' ' + round?.cardWinxRound.value + ' '}
+                {' ' + round?.cardWinxRound?.value + ' '}
 
-                {round?.cardWinxRound.suit}
+                {round?.cardWinxRound?.suit}
               </p>
               <p>hand: {round?.hands}</p>
               <p>

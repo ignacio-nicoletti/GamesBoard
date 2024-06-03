@@ -30,7 +30,7 @@ const permanentRooms = {
 function createRooms(numberOfRooms) {
   const rooms = {};
   for (let i = 1; i <= numberOfRooms; i++) {
-    rooms[i] = { users: [], gameStarted: false };
+    rooms[i] = { users: [], gameStarted: false, round: {} };
   }
   return rooms;
 }
@@ -52,6 +52,81 @@ io.on("connection", (socket) => {
       socket.emit("error", { error: "Invalid game" });
     }
   });
+
+  socket.on(
+    "create_room",
+    ({ game, roomId, userName, maxUsers = 6, selectedAvatar }) => {
+      const rooms = games[game];
+      if (!rooms) {
+        socket.emit("error", { error: "Invalid game" });
+        return;
+      }
+  
+      if (rooms[roomId]) {
+        socket.emit("room_creation_error", { error: "Room already exists" });
+        return;
+      }
+  
+      rooms[roomId] = { users: [], gameStarted: false, maxUsers };
+  
+      const user = {
+        idSocket: socket.id,
+        userName,
+        roomId,
+        position: rooms[roomId].users.length + 1,
+        ready: false,
+        avatar: selectedAvatar,
+        id: rooms[roomId].users.length + 1, // position
+        cardPerson: [], // cards
+        betP: 0, // num de cards apostadas
+        cardsWins: 0, // cards ganadas
+        cardBet: {}, // card apostada
+        myturnA: false, // boolean // turno apuesta
+        myturnR: false, // boolean // turno ronda
+        cumplio: false, // boolean // cumplio su apuesta
+        points: 0, // puntos
+      };
+  
+      const round = {
+        users: null, //usuarios conectados
+        numRounds: 0, //num de ronda
+        hands: 0, //igual a cant de cards repartidas
+        cardXRound: 1, //cant de cartas que se reparten
+        typeRound: "Bet", //apuesta o ronda
+        turnJugadorA: 1, //1j 2j 3j 4j apuesta
+        turnJugadorR: 1, //1j 2j 3j 4j ronda
+        obligado: null, //numero de jugador obligado
+        betTotal: 0, //suma de la apuesta de todos
+        cardWinxRound: {}, //card ganada en la ronda    {value: null, suit: '', id: ''}
+        lastCardBet: {}, //ultima card apostada
+        beforeLastCardBet: {}, //anteultima card apostada
+        ganadorRonda: null,
+        cantQueApostaron: 0,
+        cantQueTiraron: 0,
+        roomId: { gameId: game, roomId: roomId }, // Guarda la data correctamente
+      };
+  
+      // Actualizar el objeto round
+  
+      rooms[roomId].users.push(user);
+      rooms[roomId].round = round;
+  
+      console.log(
+        `Room ${roomId} created by ${userName} in game ${game} with max ${maxUsers} users`
+      );
+      socket.join(`${game}-${roomId}`);
+      socket.emit("room_created", {
+        roomId,
+        position: user.position,
+        userName,
+        maxUsers,
+        round,
+      });
+  
+      io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId]);
+    }
+  );
+  
 
   socket.on("join_room", ({ game, roomId, userName, selectedAvatar }) => {
     const rooms = games[game];
@@ -102,63 +177,23 @@ io.on("connection", (socket) => {
       cumplio: false, // boolean // cumplio su apuesta
       points: 0, // puntos
     };
+
     room.users.push(user);
 
     console.log(`User ${userName} joined room ${roomId} in game ${game}`);
     socket.join(`${game}-${roomId}`);
-    socket.emit("room_joined", { roomId, position: user.position, userName });
-    io.to(`${game}-${roomId}`).emit("player_list", room.users);
+
+    // Emitir el evento "room_joined" solo al usuario que se une
+    socket.emit("room_joined", {
+      roomId,
+      position: user.position,
+      userName,
+      round: room.round,
+    });
+
+    // Emitir el evento "player_list" a todos los usuarios en la sala
+    io.to(`${game}-${roomId}`).emit("player_list", room);
   });
-
-  socket.on(
-    "create_room",
-    ({ game, roomId, userName, maxUsers = 6, selectedAvatar }) => {
-      const rooms = games[game];
-      if (!rooms) {
-        socket.emit("error", { error: "Invalid game" });
-        return;
-      }
-
-      if (rooms[roomId]) {
-        socket.emit("room_creation_error", { error: "Room already exists" });
-        return;
-      }
-
-      rooms[roomId] = { users: [], gameStarted: false, maxUsers };
-
-      const user = {
-        idSocket: socket.id,
-        userName,
-        roomId,
-        position: rooms[roomId].users.length + 1,
-        ready: false,
-        avatar: selectedAvatar,
-        id: rooms[roomId].users.length + 1, // position
-        cardPerson: [], // cards
-        betP: 0, // num de cards apostadas
-        cardsWins: 0, // cards ganadas
-        cardBet: {}, // card apostada
-        myturnA: false, // boolean // turno apuesta
-        myturnR: false, // boolean // turno ronda
-        cumplio: false, // boolean // cumplio su apuesta
-        points: 0, // puntos
-      };
-      rooms[roomId].users.push(user);
-
-      console.log(
-        `Room ${roomId} created by ${userName} in game ${game} with max ${maxUsers} users`
-      );
-      socket.join(`${game}-${roomId}`);
-      socket.emit("room_created", {
-        roomId,
-        position: user.position,
-        userName,
-        maxUsers,
-      });
-
-      io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId].users);
-    }
-  );
 
   socket.on("disconnect", () => {
     Object.keys(games).forEach((game) => {
@@ -234,7 +269,7 @@ io.on("connection", (socket) => {
 
       // Emitir el estado de los jugadores listos a todos los usuarios en la sala
       io.to(`${game}-${roomId}`).emit("player_ready_status", {
-        id: user.id,
+        idSocket: socket.id,
         ready: true,
       });
 
@@ -243,41 +278,42 @@ io.on("connection", (socket) => {
       if (allReady && room.users.length >= 2) {
         // Marcar que el juego ha comenzado
         room.gameStarted = true;
+
         const userObligado = Math.floor(Math.random() * room.users.length);
         const nextTurn = (userObligado + 1) % room.users.length;
+
+        // Actualizar el objeto round
+        room.round.obligado = userObligado + 1;
+        room.round.turnJugadorA = nextTurn + 1;
+        room.round.vuelta = (room.round.vuelta || 0) + 1; // Incrementar la vuelta
+        room.round.users = room.users.length;
+
         // Emitir el evento de inicio del juego a todos los usuarios en la sala
-        io.to(`${game}-${roomId}`).emit("start_game", {
-          userObligado,
-          nextTurn,
-          room,
-          cantUser: room.users.length,
-          roomId: roomId,
-          game,
-        });
+        io.to(`${game}-${roomId}`).emit("start_game", room.round);
       }
     }
   });
 
-  socket.on("distribute", ({ round, players }) => {
-    if (!round || !round.roomId || !round.roomId.game || !round.roomId.roomId) {
-      console.error("Invalid round or roomId object:", round);
-      socket.emit("error", { error: "Invalid round or roomId object" });
-      return;
-    }
 
-    const game = round.roomId.game;
+  socket.on("distribute", ({ round, players }) => {
+    // if (!round || !round.roomId || !round.roomId.game || !round.roomId.roomId) {
+    //   console.error("Invalid round or roomId object:", round);
+    //   socket.emit("error", { error: "Invalid round or roomId object" });
+    //   return;
+    // }
     const roomId = round.roomId.roomId;
+   
 
     try {
-      let deck = distribute(); // Function to get the deck
-      let cartasMezcladas = shuffle(deck); // Function to shuffle the deck
+      let deck = distribute(); // Obtener el mazo de cartas
+      let shuffledCards = shuffle(deck); // Mezclar el mazo de cartas
 
       const numPlayers = players.length;
       const cardsPerPlayer = round.cardXRound;
 
       const totalCardsToDistribute = numPlayers * cardsPerPlayer;
 
-      if (cartasMezcladas.length < totalCardsToDistribute) {
+      if (shuffledCards.length < totalCardsToDistribute) {
         console.error("Not enough cards to distribute.");
         socket.emit("error", { error: "Not enough cards to distribute" });
         return;
@@ -286,14 +322,14 @@ io.on("connection", (socket) => {
       let distributedCards = {};
 
       for (let i = 0; i < numPlayers; i++) {
-        distributedCards[`jugador${i + 1}`] = [];
+        distributedCards[`player${i + 1}`] = [];
 
         for (let j = 0; j < cardsPerPlayer; j++) {
-          const card = cartasMezcladas.pop();
-          distributedCards[`jugador${i + 1}`].push(card);
+          const card = shuffledCards.pop();
+          distributedCards[`player${i + 1}`].push(card);
         }
       }
-      io.to(`${round.roomId.game}-${roomId}`).emit(
+      io.to(`${round.roomId.gameId}-${roomId}`).emit(
         "distribute",
         distributedCards
       );
@@ -306,9 +342,8 @@ io.on("connection", (socket) => {
   socket.on("BetPlayer", ({ round, players, bet, myPosition }) => {
     // Correctly accessing the room ID
     const roomId = round.roomId.roomId;
-    const room = games[round.roomId.game] && games[round.roomId.game][roomId];
-    if (!room) return;
-
+    const room = games[round.roomId.gameId] && games[round.roomId.gameId][roomId];
+    // if (!room) return;
     // Actualizar la apuesta del jugador
     const playerIndex = players.findIndex(
       (player) => player.position === myPosition
@@ -333,7 +368,7 @@ io.on("connection", (socket) => {
       round.turnJugadorA = nextTurn;
     }
 
-    io.to(`${round.roomId.game}-${roomId}`).emit("update_game_state", {
+    io.to(`${round.roomId.gameId}-${roomId}`).emit("update_game_state", {
       round,
       players,
     });
@@ -341,13 +376,13 @@ io.on("connection", (socket) => {
 
   socket.on("tirar_carta", ({ round, players, myPosition, value, suit }) => {
     //-----------------Errores---------------------------
-    if (!round || !round.roomId || !round.roomId.game || !round.roomId.roomId) {
-      console.error("Invalid round or roomId object:", round);
-      socket.emit("error", { error: "Invalid round or roomId object" });
-      return;
-    }
+    // if (!round || !round.roomId || !round.roomId.game || !round.roomId.roomId) {
+    //   console.error("Invalid round or roomId object:", round);
+    //   socket.emit("error", { error: "Invalid round or roomId object" });
+    //   return;
+    // }
 
-    const game = round.roomId.game;
+    const game = round.roomId.gameId;
     const roomId = round.roomId.roomId;
     const room = games[game] && games[game][roomId];
     if (!room) {
@@ -419,7 +454,8 @@ io.on("connection", (socket) => {
         round.lastCardBet = {};
         round.cardWinxRound = {};
       }
-
+      //-----------------cambio de mano-----------------
+      //-----------------cambio de ronda-----------------
       if (round.hands === round.cardXRound) {
         updatedPlayers = updatedPlayers.map((player) => {
           let points;

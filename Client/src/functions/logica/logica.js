@@ -4,18 +4,18 @@ export const distribute = (round, setPlayers, players) => {
   socket.emit("distribute", { round, players });
 
   socket.on("distribute", (data) => {
+ 
     setPlayers((prevPlayers) =>
       prevPlayers.map((player, index) => {
         const playerIndex = index + 1;
         return {
           ...player,
-          cardPerson: data[`jugador${playerIndex}`] || [],
+          cardPerson: data[`player${playerIndex}`] || [],
         };
       })
     );
   });
 };
-
 
 const comprobarMasGrande = (array, ronda) => {
   let mayor;

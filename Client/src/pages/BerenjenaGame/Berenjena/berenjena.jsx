@@ -18,46 +18,14 @@ const GameBerenjena = () => {
   const [myPosition, setMyPosition] = useState(1);
 
   const [players, setPlayers] = useState([]);
-
-  const [round, setRound] = useState({
-    users: null, //usuarios conectados
-    numRounds: 0, //num de ronda
-    hands: 0, //igual a cant de cards repartidas
-    cardXRound: 1, //cant de cartas que se reparten
-    typeRound: '', //apuesta o ronda
-    turnJugadorA: 1, //1j 2j 3j 4j apuesta
-    turnJugadorR: 1, //1j 2j 3j 4j ronda
-    obligado: null, //numero de jugador obligado
-    betTotal: 0, //suma de la apuesta de todos
-    cardWinxRound: {}, //card ganada en la ronda    {value: null, suit: '', id: ''}
-    lastCardBet: {}, //ultima card apostada
-    beforeLastCardBet: {}, //anteultima card apostada
-    ganadorRonda: null,
-    cantQueApostaron: 0,
-    cantQueTiraron: 0,
-    roomId: null,
-    timer: '',
-  });
+  const [round, setRound] = useState({});
 
   const [Base, setBase] = useState([]); //base del resultado xronda
 
   useEffect(() => {
     const handleStartGame = data => {
+      setRound(data)
       setLoader(prevLoader => !prevLoader);
-      setRound({
-        ...round,
-        typeRound: 'Bet',
-        turnJugadorA: data.nextTurn + 1,
-        obligado: data.userObligado + 1,
-        roomId: {
-          gameStarted: data.room.gameStarted,
-          maxUsers: data.roomcantUser,
-          roomId: data.roomId,
-          game: data.game,
-        },
-        users: data.cantUser,
-        vuelta: round.vuelta + 1,
-      });
     };
 
     socket.on('start_game', handleStartGame);
@@ -68,10 +36,10 @@ const GameBerenjena = () => {
   }, []);
 
   useEffect(() => {
-    if (round.typeRound === 'Bet') {
+    if (round && round?.typeRound === 'Bet') {
       distribute(round, setPlayers, players);
     }
-  }, [round.typeRound]);
+  }, [round?.typeRound]);
 
   const renderPlayers = () => {
     const positions = ['jugador2', 'jugador3', 'jugador4', 'jugador5', 'jugador6'];
@@ -92,20 +60,21 @@ const GameBerenjena = () => {
           game={game}
           setMyPosition={setMyPosition}
           setPlayers={setPlayers}
+          setRound={setRound}
         />
       ) : (
         <div className={style.tableroJugadores}>
           {renderPlayers()}
         </div>
       )}
-      <MyCards
+     <MyCards
         myPosition={myPosition}
         players={players}
         setPlayers={setPlayers}
         setRound={setRound}
         round={round}
-      />
-      <DataPlayer myPosition={myPosition} players={players} />
+      /> 
+      <DataPlayer myPosition={myPosition} players={players} /> 
       {round.typeRound === 'Bet' && (
         <Apuesta
           players={players}
@@ -122,7 +91,7 @@ const GameBerenjena = () => {
           players={players}
           round={round}
         />
-      )}
+      )} 
       <ButtonExitRoom />
       <div className={style.resultado} onClick={() => setShowResult(true)}>
         <p>Resultados</p>
