@@ -421,6 +421,21 @@ io.on("connection", (socket) => {
       }
 
       if (round.hands === round.cardXRound) {
+        updatedPlayers = updatedPlayers.map((player) => {
+          let points;
+          if (Number(player.betP) === Number(player.cardsWins)) {
+            points = Number(player.points) + 5 + Number(player.betP);
+          }
+          return {
+            ...player,
+            cardBet: {},
+            cumplio: Number(player.betP) === Number(player.cardsWins),
+            points,
+            betP: 0,
+            cardsWins: 0,
+          };
+        });
+
         round.typeRound = "Bet";
         round.obligado = (round.obligado % players.length) + 1;
         round.turnJugadorA = (round.obligado % players.length) + 1; // Cambiar el turno al siguiente jugador
@@ -433,19 +448,6 @@ io.on("connection", (socket) => {
         round.cardWinxRound = {};
         round.betTotal = 0;
         round.hands = 0;
-
-        updatedPlayers = players.map((player) => {
-          // const Ppoints = Pcumplio ? player.points + 5 + player.betP : player.points;
-
-          return {
-            ...player,
-            cardBet: {},
-            // points: Ppoints,
-            betP: 0,
-            cardsWins: 0,
-            cumplio: player.betP === player.cardsWins,
-          };
-        });
       }
 
       //-----------------cambio de ronda-----------------
