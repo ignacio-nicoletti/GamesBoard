@@ -84,6 +84,7 @@ const GameBerenjena = () => {
         setRound={setRound}
         round={round}
         setTimmer={setTimmer}
+        timmer={timmer}
         
       /> 
       <DataPlayer myPosition={myPosition} players={players} timmer={timmer}  round={round} /> 

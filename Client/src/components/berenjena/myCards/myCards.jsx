@@ -10,6 +10,7 @@ const MyCards = ({
   setRound,
   round,
   setTimmer,
+  timmer,
 }) => {
   const player = players[myPosition - 1];
 
@@ -21,7 +22,7 @@ const MyCards = ({
       myPosition === round.turnJugadorR
     ) {
       // Emitir evento al backend indicando que el jugador ha tirado una carta
-      setTimmer(30)
+      setTimmer (30);
       socket.emit ('tirar_carta', {
         round,
         players,
@@ -31,20 +32,37 @@ const MyCards = ({
       });
     }
   };
-  
+
   useEffect (
     () => {
       socket.on ('carta_tirada', ({players, round}) => {
         setPlayers (players);
         setRound (round);
       });
-      
-    
+
       return () => {
         socket.off ('carta_tirada');
       };
     },
     [players, round]
+  );
+
+  useEffect (
+    () => {
+      // if (timmer === 0) {
+      //   let value;
+      //   let suit;
+
+      //   socket.emit ('tirar_carta', {
+      //     round,
+      //     players,
+      //     myPosition,
+      //     value,
+      //     suit,
+      //   });
+      // }
+    },
+    [timmer, round, players, myPosition]
   );
 
   return (
