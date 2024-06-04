@@ -27,11 +27,11 @@ export const getAllRoomsInfo = (game) => {
     });
   });
 };
-
 //se desconecta de la sala
 export const disconnectRoom = () => {
   socket.emit("disconnectRoom");
 };
+
 export const CreateGameRoom = (game, roomId, userName, maxUsers = 6, selectedAvatar) => {
   return new Promise((res, rej) => {
     const responses = {};
@@ -89,3 +89,19 @@ export const joinGameRoom = (game, roomId, userName, selectedAvatar) => {
   });
 };
 
+export const distribute = (round, setPlayers, players) => {
+  socket.emit("distribute", { round, players });
+
+  socket.on("distribute", (data) => {
+ 
+    setPlayers((prevPlayers) =>
+      prevPlayers.map((player, index) => {
+        const playerIndex = index + 1;
+        return {
+          ...player,
+          cardPerson: data[`player${playerIndex}`] || [],
+        };
+      })
+    );
+  });
+};

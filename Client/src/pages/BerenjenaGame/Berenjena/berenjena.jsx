@@ -5,10 +5,9 @@ import Loader from '../../../components/berenjena/loader/loader';
 import DataGame from '../../../components/berenjena/informationGame/dataGame/dataGame';
 import DataPlayer from '../../../components/berenjena/informationGame/dataPlayer/dataPlayer';
 import Result from '../../../components/berenjena/informationGame/Results/result';
-import { distribute } from '../../../functions/logica/logica.js';
 import Apuesta from '../../../components/berenjena/apuesta/apuesta';
 import ButtonExitRoom from '../../../components/berenjena/buttonExitRoom/buttonExitRoom.jsx';
-import { socket } from '../../../functions/SocketIO/sockets/sockets';
+import { distribute, socket } from '../../../functions/SocketIO/sockets/sockets';
 import MyCards from '../../../components/berenjena/myCards/myCards.jsx';
 
 const GameBerenjena = () => {

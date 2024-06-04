@@ -38,6 +38,8 @@ function createRooms(numberOfRooms) {
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id} to server`);
 
+  //chequear errores de room
+
   socket.on("get_all_rooms_info", ({ game }) => {
     const rooms = games[game];
     if (rooms) {
@@ -61,14 +63,14 @@ io.on("connection", (socket) => {
         socket.emit("error", { error: "Invalid game" });
         return;
       }
-  
+
       if (rooms[roomId]) {
         socket.emit("room_creation_error", { error: "Room already exists" });
         return;
       }
-  
+
       rooms[roomId] = { users: [], gameStarted: false, maxUsers };
-  
+
       const user = {
         idSocket: socket.id,
         userName,
@@ -86,7 +88,7 @@ io.on("connection", (socket) => {
         cumplio: false, // boolean // cumplio su apuesta
         points: 0, // puntos
       };
-  
+
       const round = {
         users: null, //usuarios conectados
         numRounds: 0, //num de ronda
@@ -105,12 +107,12 @@ io.on("connection", (socket) => {
         cantQueTiraron: 0,
         roomId: { gameId: game, roomId: roomId }, // Guarda la data correctamente
       };
-  
+
       // Actualizar el objeto round
-  
+
       rooms[roomId].users.push(user);
       rooms[roomId].round = round;
-  
+
       console.log(
         `Room ${roomId} created by ${userName} in game ${game} with max ${maxUsers} users`
       );
@@ -122,11 +124,10 @@ io.on("connection", (socket) => {
         maxUsers,
         round,
       });
-  
+
       io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId]);
     }
   );
-  
 
   socket.on("join_room", ({ game, roomId, userName, selectedAvatar }) => {
     const rooms = games[game];
@@ -294,7 +295,6 @@ io.on("connection", (socket) => {
     }
   });
 
-
   socket.on("distribute", ({ round, players }) => {
     // if (!round || !round.roomId || !round.roomId.game || !round.roomId.roomId) {
     //   console.error("Invalid round or roomId object:", round);
@@ -302,7 +302,6 @@ io.on("connection", (socket) => {
     //   return;
     // }
     const roomId = round.roomId.roomId;
-   
 
     try {
       let deck = distribute(); // Obtener el mazo de cartas
@@ -342,7 +341,8 @@ io.on("connection", (socket) => {
   socket.on("BetPlayer", ({ round, players, bet, myPosition }) => {
     // Correctly accessing the room ID
     const roomId = round.roomId.roomId;
-    const room = games[round.roomId.gameId] && games[round.roomId.gameId][roomId];
+    const room =
+      games[round.roomId.gameId] && games[round.roomId.gameId][roomId];
     // if (!room) return;
     // Actualizar la apuesta del jugador
     const playerIndex = players.findIndex(
@@ -455,6 +455,7 @@ io.on("connection", (socket) => {
         round.cardWinxRound = {};
       }
       //-----------------cambio de mano-----------------
+
       //-----------------cambio de ronda-----------------
       if (round.hands === round.cardXRound) {
         updatedPlayers = updatedPlayers.map((player) => {
@@ -485,7 +486,6 @@ io.on("connection", (socket) => {
         round.betTotal = 0;
         round.hands = 0;
       }
-
       //-----------------cambio de ronda-----------------
       //-----------------Manejo de turnos y Reset-----------------
 
