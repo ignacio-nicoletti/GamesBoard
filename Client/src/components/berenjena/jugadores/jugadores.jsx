@@ -10,7 +10,8 @@ import avatar4 from "../../../assets/berenjena/jugadores/avatar4.png";
 import avatar5 from "../../../assets/berenjena/jugadores/avatar5.png";
 import avatar6 from "../../../assets/berenjena/jugadores/avatar6.png";
 
-const Jugadores = ({player}) => {
+const Jugadores = ({player,round,
+  timmer}) => {
   const avatarMap = {
     avatar1: avatar1,
     avatar2: avatar2,
@@ -33,6 +34,8 @@ const Jugadores = ({player}) => {
         </div>
         <div className={styles.cards}>
           <img src={cardsIcon} alt="" />
+          {round.turnJugadorR===player.position? 
+          <p>timmer:{timmer}</p>:""}
         </div>
       </div>
 

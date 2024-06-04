@@ -21,7 +21,6 @@ const Loader = ({ game, setMyPosition, setPlayers,setRound }) => {
       setPlayerList(data.users);
       setPlayers(data.users);
       setRound(data.round)
-      console.log(data.round);
       const currentPlayer = data.users.find(
         (player) => player.idSocket === socket.id
       );

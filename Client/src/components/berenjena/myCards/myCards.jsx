@@ -1,9 +1,16 @@
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import Cards from '../cards/card';
 import styles from './myCards.module.css';
 import {socket} from '../../../functions/SocketIO/sockets/sockets';
 
-const MyCards = ({myPosition, players, setPlayers, setRound, round}) => {
+const MyCards = ({
+  myPosition,
+  players,
+  setPlayers,
+  setRound,
+  round,
+  setTimmer,
+}) => {
   const player = players[myPosition - 1];
 
   const handlerClick = (suit, value) => {
@@ -14,6 +21,7 @@ const MyCards = ({myPosition, players, setPlayers, setRound, round}) => {
       myPosition === round.turnJugadorR
     ) {
       // Emitir evento al backend indicando que el jugador ha tirado una carta
+      setTimmer(30)
       socket.emit ('tirar_carta', {
         round,
         players,
@@ -23,15 +31,15 @@ const MyCards = ({myPosition, players, setPlayers, setRound, round}) => {
       });
     }
   };
-
+  
   useEffect (
     () => {
       socket.on ('carta_tirada', ({players, round}) => {
         setPlayers (players);
         setRound (round);
-
       });
-
+      
+    
       return () => {
         socket.off ('carta_tirada');
       };

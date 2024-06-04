@@ -14,12 +14,22 @@ const GameBerenjena = () => {
   const [loader, setLoader] = useState(true);
   const [game, setGame] = useState('Berenjena'); // Juego seleccionado
   const [showResult, setShowResult] = useState(false);
-  const [myPosition, setMyPosition] = useState(1);
+  
+  const [timmer, setTimmer] = useState (30);
 
+  const [myPosition, setMyPosition] = useState(1);
   const [players, setPlayers] = useState([]);
   const [round, setRound] = useState({});
-
   const [Base, setBase] = useState([]); //base del resultado xronda
+
+  useEffect (() => {
+      const time = setInterval (() => {
+        setTimmer (prevTime => prevTime - 1);
+      }, 1000);
+      return () => clearInterval (time);
+  }, [round.turnJugadorR,round.typeRound]);
+
+
 
   useEffect(() => {
     const handleStartGame = data => {
@@ -47,7 +57,7 @@ const GameBerenjena = () => {
 
     return reorderedPlayers.slice(0, positions.length).map((player, index) => (
       <div className={style[positions[index]]} key={index}>
-        <Jugadores player={player} />
+        <Jugadores player={player}  round={round} timmer={timmer}/>
       </div>
     ));
   };
@@ -72,8 +82,10 @@ const GameBerenjena = () => {
         setPlayers={setPlayers}
         setRound={setRound}
         round={round}
+        setTimmer={setTimmer}
+        
       /> 
-      <DataPlayer myPosition={myPosition} players={players} /> 
+      <DataPlayer myPosition={myPosition} players={players} timmer={timmer}  round={round} /> 
       {round.typeRound === 'Bet' && (
         <Apuesta
           players={players}
