@@ -23,6 +23,7 @@ const GameBerenjena = () => {
   const [Base, setBase] = useState([]); //base del resultado xronda
 
   useEffect (() => {
+    setTimmer(30)
       const time = setInterval (() => {
         setTimmer (prevTime => prevTime - 1);
       }, 1000);

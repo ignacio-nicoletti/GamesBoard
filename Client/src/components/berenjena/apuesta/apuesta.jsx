@@ -11,6 +11,7 @@ const Apuesta = ({players, setPlayers, round, setRound, myPosition}) => {
   };
 
   useEffect (() => {
+    setTimeLeft(30)
     const timer = setInterval (() => {
       setTimeLeft (prevTime => prevTime - 1);
     }, 1000);
