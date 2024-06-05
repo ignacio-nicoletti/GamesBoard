@@ -42,13 +42,13 @@ const Jugadores = ({player,round,
       <div>
 
         <div className={""}>
-          {player.cardBet.value &&
+          {player?.cardBet.value &&
            
               <div className={""}>
                 <Cards
                 
-                  value={player.cardBet.value}
-                  suit={player.cardBet.suit}
+                  value={player?.cardBet.value}
+                  suit={player?.cardBet.suit}
                 
                 />
               </div>

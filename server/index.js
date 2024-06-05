@@ -13,13 +13,6 @@ const io = new Server(server, {
   cors: { origin: "http://localhost:3000", methods: ["GET", "POST"] },
 });
 
-const games = {
-  Berenjena: createRooms(10),
-  Poker: createRooms(10),
-  Truco: createRooms(10),
-  Generala: createRooms(10),
-};
-
 const permanentRooms = {
   Berenjena: createRooms(10),
   Poker: createRooms(10),
@@ -30,7 +23,7 @@ const permanentRooms = {
 function createRooms(numberOfRooms) {
   const rooms = {};
   for (let i = 1; i <= numberOfRooms; i++) {
-    rooms[i] = { users: [], gameStarted: false, round: {} };
+    rooms[i] = { users: [], gameStarted: false, round: {},result:[] };
   }
   return rooms;
 }
@@ -41,7 +34,7 @@ io.on("connection", (socket) => {
   //chequear errores de room
 
   socket.on("get_all_rooms_info", ({ game }) => {
-    const rooms = games[game];
+    const rooms = permanentRooms[game];
     if (rooms) {
       const allRoomsInfo = Object.keys(rooms).map((roomId) => ({
         roomId: Number(roomId),
@@ -58,7 +51,7 @@ io.on("connection", (socket) => {
   socket.on(
     "create_room",
     ({ game, roomId, userName, maxUsers = 6, selectedAvatar }) => {
-      const rooms = games[game];
+      const rooms = permanentRooms[game];
       if (!rooms) {
         socket.emit("error", { error: "Invalid game" });
         return;
@@ -128,7 +121,7 @@ io.on("connection", (socket) => {
   );
 
   socket.on("join_room", ({ game, roomId, userName, selectedAvatar }) => {
-    const rooms = games[game];
+    const rooms = permanentRooms[game];
     if (!rooms) {
       socket.emit("error", { error: "Invalid game" });
       return;
@@ -195,8 +188,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    Object.keys(games).forEach((game) => {
-      Object.values(games[game]).forEach((room) => {
+    Object.keys(permanentRooms).forEach((game) => {
+      Object.values(permanentRooms[game]).forEach((room) => {
         const index = room.users.findIndex(
           (user) => user.idSocket === socket.id
         );
@@ -207,8 +200,8 @@ io.on("connection", (socket) => {
       });
     });
 
-    for (const game in games) {
-      const rooms = games[game];
+    for (const game in permanentRooms) {
+      const rooms = permanentRooms[game];
       for (const roomId in rooms) {
         const userIndex = rooms[roomId].users.findIndex(
           (user) => user.idSocket === socket.id
@@ -231,8 +224,8 @@ io.on("connection", (socket) => {
 
   socket.on("disconnectRoom", () => {
     let roomDisconnected = false;
-    for (const game in games) {
-      const rooms = games[game];
+    for (const game in permanentRooms) {
+      const rooms = permanentRooms[game];
       for (const roomId in rooms) {
         const userIndex = rooms[roomId].users.findIndex(
           (user) => user.idSocket === socket.id
@@ -257,7 +250,7 @@ io.on("connection", (socket) => {
 
   socket.on("player_ready", ({ game, roomId }) => {
     // Verificar que el juego y la sala existen
-    const room = games[game] && games[game][roomId];
+    const room = permanentRooms[game] && permanentRooms[game][roomId];
     if (!room) return;
 
     // Buscar el usuario en la sala
@@ -342,8 +335,8 @@ io.on("connection", (socket) => {
   socket.on("BetPlayer", ({ round, players, bet, myPosition }) => {
     // Correctly accessing the room ID
     const roomId = round.roomId.roomId;
-    const game =
-      games[round.roomId.gameId] && games[round.roomId.gameId][roomId];
+    // const game =
+    //   games[round.roomId.gameId] && games[round.roomId.gameId][roomId];
     // if (!room) return;
     // Actualizar la apuesta del jugador
     const playerIndex = players.findIndex(
@@ -369,7 +362,7 @@ io.on("connection", (socket) => {
       round.turnJugadorA = nextTurn;
     }
 
-    io.to(`${game}-${roomId}`).emit("update_game_state", {
+    io.to(`${round.roomId.gameId}-${roomId}`).emit("update_game_state", {
       round,
       players,
     });
@@ -390,7 +383,7 @@ io.on("connection", (socket) => {
 
     const game = round.roomId.gameId;
     const roomId = round.roomId.roomId;
-    const room = games[game] && games[game][roomId];
+    const room = permanentRooms[game] && permanentRooms[game][roomId];
     if (!room) {
       console.error("Room not found:", roomId);
       return;
@@ -494,7 +487,7 @@ io.on("connection", (socket) => {
       }
       //-----------------cambio de ronda-----------------
       //-----------------Manejo de turnos y Reset-----------------
-      console.log(room[roomId].result);
+      console.log(permanentRooms[game][roomId].result);
       io.to(`${game}-${roomId}`).emit("carta_tirada", {
         players: updatedPlayers,
         round,
