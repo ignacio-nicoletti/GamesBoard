@@ -222,6 +222,9 @@ io.on("connection", (socket) => {
     }
   });
 
+  //evaluar casos de desconexion 
+  //averiguar si la persona que se desconecta puede volver a entrar ene se lugar
+
   socket.on("disconnectRoom", () => {
     let roomDisconnected = false;
     for (const game in permanentRooms) {
@@ -231,12 +234,14 @@ io.on("connection", (socket) => {
           (user) => user.idSocket === socket.id
         );
         if (userIndex !== -1) {
+          // Eliminar al usuario de la sala
           rooms[roomId].users.splice(userIndex, 1);
-          io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId].users);
-          if (
-            rooms[roomId].users.length === 0 &&
-            !permanentRooms[game][roomId]
-          ) {
+  
+          if (rooms[roomId].users.length > 0) {
+            // Si aún quedan jugadores, actualizar la lista de jugadores en la sala
+            io.to(`${game}-${roomId}`).emit("disconnectRoom", rooms[roomId].users);
+          } else {
+            // Si no quedan jugadores, eliminar la sala
             delete rooms[roomId];
             roomDisconnected = true;
             console.log(`User ${socket.id} Disconnected from room =>${roomId}`);
@@ -247,6 +252,7 @@ io.on("connection", (socket) => {
       if (roomDisconnected) break; // Salir del bucle exterior si se desconectó de una sala
     }
   });
+  
 
   socket.on("player_ready", ({ game, roomId }) => {
     // Verificar que el juego y la sala existen

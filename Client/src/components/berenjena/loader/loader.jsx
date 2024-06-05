@@ -19,14 +19,16 @@ const Loader = ({game, setMyPosition, setPlayers, setRound}) => {
   useEffect (
     () => {
       const updatePlayerList = data => {
-        setPlayerList (data.users);
-        setPlayers (data.users);
-        setRound (data.round);
-        const currentPlayer = data.users.find (
-          player => player.idSocket === socket.id
-        );
-        if (currentPlayer) {
-          setMyPosition (currentPlayer.position);
+        if (data && data.users) {
+          setPlayerList (data.users);
+          setPlayers (data.users);
+          setRound (data.round);
+          const currentPlayer = data.users.find (
+            player => player.idSocket === socket.id
+          );
+          if (currentPlayer) {
+            setMyPosition (currentPlayer.position);
+          }
         }
       };
 
@@ -43,13 +45,15 @@ const Loader = ({game, setMyPosition, setPlayers, setRound}) => {
 
       socket.on ('player_list', updatePlayerList);
       socket.on ('player_ready_status', updatePlayerReadyStatus);
+      socket.on ('disconnectRoom', data => setPlayerList (data));
 
       return () => {
         socket.off ('player_list', updatePlayerList);
         socket.off ('player_ready_status', updatePlayerReadyStatus);
+        socket.on ('disconnectRoom', data => setPlayerList (data));
       };
     },
-    [setMyPosition, setPlayers, readyMe, playerList]
+    [setMyPosition, setPlayers, playerList]
   );
 
   return (
