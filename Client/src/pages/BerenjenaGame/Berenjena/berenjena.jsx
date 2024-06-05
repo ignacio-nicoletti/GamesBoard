@@ -112,4 +112,4 @@ const GameBerenjena = () => {
     </div>
   );
 };
-export default GameBerenjena;
+export default GameBerenjena;

@@ -49,20 +49,24 @@ const MyCards = ({
 
   useEffect (
     () => {
-      // if (timmer === 0) {
-      //   let value;
-      //   let suit;
+      if (timmer === 0) {
+        const randomIndex = Math.floor (
+          Math.random () * player.cardPerson.length
+        );
+        const randomCard = player.cardPerson[randomIndex];
 
-      //   socket.emit ('tirar_carta', {
-      //     round,
-      //     players,
-      //     myPosition,
-      //     value,
-      //     suit,
-      //   });
-      // }
+        randomCard &&
+          socket.emit ('tirar_carta', {
+            round,
+            players,
+            myPosition,
+            value: randomCard.value,
+            suit: randomCard.suit,
+          });
+          setTimmer (30);
+      }
     },
-    [timmer, round, players, myPosition]
+    [timmer]
   );
 
   return (

@@ -69,7 +69,7 @@ io.on("connection", (socket) => {
         return;
       }
 
-      rooms[roomId] = { users: [], gameStarted: false, maxUsers };
+      rooms[roomId] = { users: [], gameStarted: false, maxUsers, results: [] };
 
       const user = {
         idSocket: socket.id,
@@ -107,8 +107,6 @@ io.on("connection", (socket) => {
         cantQueTiraron: 0,
         roomId: { gameId: game, roomId: roomId }, // Guarda la data correctamente
       };
-
-      // Actualizar el objeto round
 
       rooms[roomId].users.push(user);
       rooms[roomId].round = round;
@@ -296,12 +294,18 @@ io.on("connection", (socket) => {
   });
 
   socket.on("distribute", ({ round, players }) => {
-    // if (!round || !round.roomId || !round.roomId.game || !round.roomId.roomId) {
-    //   console.error("Invalid round or roomId object:", round);
-    //   socket.emit("error", { error: "Invalid round or roomId object" });
-    //   return;
-    // }
+    if (
+      !round ||
+      !round.roomId ||
+      !round.roomId.gameId ||
+      !round.roomId.roomId
+    ) {
+      console.error("Invalid round or roomId object:", round);
+      socket.emit("error", { error: "Invalid round or roomId object" });
+      return;
+    }
     const roomId = round.roomId.roomId;
+    const game = round.roomId.gameId;
 
     try {
       let deck = distribute(); // Obtener el mazo de cartas
@@ -328,10 +332,7 @@ io.on("connection", (socket) => {
           distributedCards[`player${i + 1}`].push(card);
         }
       }
-      io.to(`${round.roomId.gameId}-${roomId}`).emit(
-        "distribute",
-        distributedCards
-      );
+      io.to(`${game}-${roomId}`).emit("distribute", distributedCards);
     } catch (error) {
       console.error("Error in distribute function:", error);
       socket.emit("error", { error: "Error in distribute function" });
@@ -341,7 +342,7 @@ io.on("connection", (socket) => {
   socket.on("BetPlayer", ({ round, players, bet, myPosition }) => {
     // Correctly accessing the room ID
     const roomId = round.roomId.roomId;
-    const room =
+    const game =
       games[round.roomId.gameId] && games[round.roomId.gameId][roomId];
     // if (!room) return;
     // Actualizar la apuesta del jugador
@@ -368,19 +369,24 @@ io.on("connection", (socket) => {
       round.turnJugadorA = nextTurn;
     }
 
-    io.to(`${round.roomId.gameId}-${roomId}`).emit("update_game_state", {
+    io.to(`${game}-${roomId}`).emit("update_game_state", {
       round,
       players,
     });
   });
 
   socket.on("tirar_carta", ({ round, players, myPosition, value, suit }) => {
-    //-----------------Errores---------------------------
-    // if (!round || !round.roomId || !round.roomId.game || !round.roomId.roomId) {
-    //   console.error("Invalid round or roomId object:", round);
-    //   socket.emit("error", { error: "Invalid round or roomId object" });
-    //   return;
-    // }
+    // -----------------Errores---------------------------
+    if (
+      !round ||
+      !round.roomId ||
+      !round.roomId.gameId ||
+      !round.roomId.roomId
+    ) {
+      console.error("Invalid round or roomId object:", round);
+      socket.emit("error", { error: "Invalid round or roomId object" });
+      return;
+    }
 
     const game = round.roomId.gameId;
     const roomId = round.roomId.roomId;
@@ -488,7 +494,7 @@ io.on("connection", (socket) => {
       }
       //-----------------cambio de ronda-----------------
       //-----------------Manejo de turnos y Reset-----------------
-
+      console.log(room[roomId].result);
       io.to(`${game}-${roomId}`).emit("carta_tirada", {
         players: updatedPlayers,
         round,
