@@ -16,8 +16,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #ff904f00;
-  backdrop-filter: blur(2px);
+  background-color: #dadada;
   padding: 20px;
   border-radius: 50%;
   border: 5px solid transparent;
@@ -47,8 +46,9 @@
   margin: 5px 0;
 }
 
-.pTime{
+.pTime {
   font-style: italic !important;
+  font-size: 1.2rem;
 }
 
 .betContainer button {
@@ -67,7 +67,8 @@
 .betContainer button:hover {
   background-color: #ff904f;
   cursor: pointer;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
+    rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
 }
 
 .betContainer button:active {

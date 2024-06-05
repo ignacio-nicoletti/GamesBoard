@@ -104,7 +104,7 @@ const Apuesta = ({ players, setPlayers, round, setRound, myPosition }) => {
         {round.turnJugadorA === myPosition ? (
           <div className={style.betContainer}>
             <div className={style.loader}></div>
-            <p>{timeLeft} segundos</p>
+            <p className={style.pTime}>{timeLeft} seconds left</p>
             <p>Jugador {round.turnJugadorA}</p>
             <FormControl sx={{ m: 1, minWidth: 120 }}>
               <InputLabel id="bet-select-label"></InputLabel>
