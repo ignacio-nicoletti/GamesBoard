@@ -1,10 +1,10 @@
-import { Link } from "react-router-dom";
-import style from "./buttonExitRoom.module.css";
-import { disconnectRoom } from "../../../functions/SocketIO/sockets/sockets";
+import {Link} from 'react-router-dom';
+import style from './buttonExitRoom.module.css';
+import {disconnectRoom} from '../../../functions/SocketIO/sockets/sockets';
 
 const ButtonExitRoom = () => {
   const handlerExitRoom = () => {
-    disconnectRoom();
+    disconnectRoom ();
   };
 
   return (

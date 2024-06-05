@@ -38,20 +38,13 @@ const JoinRoom = () => {
     e.preventDefault ();
     try {
       if (roomId !== '' && userName !== '') {
-        const response = await CreateGameRoom (
-          game,
-          roomId,
-          userName,
-          maxUsers,
-          selectedAvatar
-        );
+        await CreateGameRoom (game, roomId, userName, maxUsers, selectedAvatar);
         navigate (`/berenjena/multiplayer/${roomId}`);
       }
     } catch (error) {
-      console.error (error);
       Swal.fire ({
         title: 'Error!',
-        text: error.message || 'An error occurred while creating the room.',
+        text: error || 'An error occurred while creating the room.',
         icon: 'error',
         confirmButtonText: 'OK',
         customClass: {
@@ -64,19 +57,14 @@ const JoinRoom = () => {
   const handlerJoinRoom = async roomId => {
     try {
       if (roomId !== '' && userName !== '') {
-        const response = await joinGameRoom (
-          game,
-          roomId,
-          userName,
-          selectedAvatar
-        );
+        await joinGameRoom (game, roomId, userName, selectedAvatar);
         navigate (`/berenjena/multiplayer/${roomId}`);
       }
     } catch (error) {
       console.error (error);
       Swal.fire ({
         title: 'Error!',
-        text: error.message || 'Room is full.',
+        text: error || 'Room is full.',
         icon: 'error',
         confirmButtonText: 'OK',
         customClass: {
