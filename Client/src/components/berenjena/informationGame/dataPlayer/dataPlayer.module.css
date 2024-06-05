@@ -3,16 +3,15 @@
   height: auto;
   position: absolute;
   bottom: 2.5%;
-  left: 5%;
+  left: 2%;
   z-index: 1;
   text-align: center;
   border-radius: 10px;
   padding: 1rem;
   color: #ff904f;
   display: flex;
+  flex-direction: column;
   gap: 1rem;
-  background-color: #2c2c2c;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .avatar img {
@@ -44,6 +43,7 @@
   border-collapse: collapse;
   background-color: #3b3b3b;
   color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .table_component th {
@@ -64,13 +64,11 @@
   background-color: #444;
 }
 
-
 .fulfilled {
   color: #00ff00 !important;
   display: flex;
   align-items: center;
   justify-content: center;
-
 }
 
 .notFulfilled {

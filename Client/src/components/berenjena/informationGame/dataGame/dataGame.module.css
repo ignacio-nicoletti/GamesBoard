@@ -1,22 +1,44 @@
 /* --------info partida */
 .infoPartida {
-    width: 10%;
-    height: auto;
-    background-color: orange;
-    position: absolute;
-    border: solid black 3px;
-    border-radius: 10px;
-    top: 3%;
-    left: 2%;
-    padding: 1%;
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    align-items: start;
-    z-index: 1;
-    font-size: 1.1rem;
+  width: auto;
+  height: auto;
+  background-color: #2c2c2c;
+  color: #ff904f;
+  position: absolute;
+  border-radius: 10px;
+  top: 3%;
+  left: 2%;
+  padding: 1%;
+  gap: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: start;
+  z-index: 1;
+  font-size: 1.1rem;
+  border: 2px solid #ff904f;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.infoPartida p {
+  margin: 0;
+}
+
+.dataValue {
+  color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .infoPartida {
+    padding: 15px;
+    font-size: 1rem;
   }
-  .infoPartida p {
-    margin: 0;
+}
+
+@media (max-width: 480px) {
+  .infoPartida {
+    padding: 10px;
+    font-size: 0.9rem;
   }
-  /* --------info partida */
+}
+/* --------info partida */

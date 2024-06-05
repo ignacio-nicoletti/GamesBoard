@@ -78,19 +78,19 @@
 
 @keyframes loader-color {
   0% {
-    border-color: #008000; /* Dark Green */
+    border-color: #008000; 
   }
   25% {
-    border-color: #32cd32; /* Lime Green */
+    border-color: #32cd32; 
   }
   50% {
-    border-color: #ff4500; /* Orange Red */
+    border-color: #ff4500; 
   }
   75% {
-    border-color: #dc143c; /* Crimson */
+    border-color: #dc143c; 
   }
   100% {
-    border-color: #ff0000; /* Red */
+    border-color: #ff0000; 
   }
 }
 
