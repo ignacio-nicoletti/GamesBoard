@@ -23,7 +23,7 @@ const permanentRooms = {
 function createRooms(numberOfRooms) {
   const rooms = {};
   for (let i = 1; i <= numberOfRooms; i++) {
-    rooms[i] = { users: [], gameStarted: false, round: {},result:[] };
+    rooms[i] = { users: [], gameStarted: false, round: {},results:[] };
   }
   return rooms;
 }
@@ -118,7 +118,8 @@ io.on("connection", (socket) => {
 
       io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId]);
     }
-  );
+);
+
 
   socket.on("join_room", ({ game, roomId, userName, selectedAvatar }) => {
     const rooms = permanentRooms[game];
@@ -253,44 +254,43 @@ io.on("connection", (socket) => {
     }
   });
   
-
   socket.on("player_ready", ({ game, roomId }) => {
-    // Verificar que el juego y la sala existen
     const room = permanentRooms[game] && permanentRooms[game][roomId];
     if (!room) return;
 
-    // Buscar el usuario en la sala
     const user = room.users.find((u) => u.idSocket === socket.id);
     if (user) {
-      // Marcar al usuario como listo
-      user.ready = true;
+        user.ready = true;
+        io.to(`${game}-${roomId}`).emit("player_ready_status", {
+            idSocket: socket.id,
+            ready: true,
+        });
 
-      // Emitir el estado de los jugadores listos a todos los usuarios en la sala
-      io.to(`${game}-${roomId}`).emit("player_ready_status", {
-        idSocket: socket.id,
-        ready: true,
-      });
+        const allReady = room.users.every((u) => u.ready);
+        if (allReady && room.users.length >= 2) {
+            room.gameStarted = true;
+            const userObligado = Math.floor(Math.random() * room.users.length);
+            const nextTurn = (userObligado + 1) % room.users.length;
 
-      // Verificar si todos los jugadores están listos y si hay al menos dos jugadores en la sala
-      const allReady = room.users.every((u) => u.ready);
-      if (allReady && room.users.length >= 2) {
-        // Marcar que el juego ha comenzado
-        room.gameStarted = true;
+            // Actualizar el objeto round
+            room.round.obligado = userObligado + 1;
+            room.round.turnJugadorA = nextTurn + 1;
+            room.round.numRounds = (room.round.numRounds || 0) + 1; // Incrementar la ronda
+            room.round.users = room.users.length;
 
-        const userObligado = Math.floor(Math.random() * room.users.length);
-        const nextTurn = (userObligado + 1) % room.users.length;
+            // Inicializar la ronda actual en results
+            const currentRound = { ...room.round, players: [...room.users] };
+            room.results.push(currentRound);
 
-        // Actualizar el objeto round
-        room.round.obligado = userObligado + 1;
-        room.round.turnJugadorA = nextTurn + 1;
-        room.round.vuelta = (room.round.vuelta || 0) + 1; // Incrementar la vuelta
-        room.round.users = room.users.length;
-
-        // Emitir el evento de inicio del juego a todos los usuarios en la sala
-        io.to(`${game}-${roomId}`).emit("start_game", room.round);
-      }
+            // Emitir el evento de inicio del juego a todos los usuarios en la sala
+            io.to(`${game}-${roomId}`).emit("start_game", {
+                round: room.round,
+                users: room.users,
+                results: room.results
+            });
+        }
     }
-  });
+});
 
   socket.on("distribute", ({ round, players }) => {
     if (
@@ -339,17 +339,36 @@ io.on("connection", (socket) => {
   });
 
   socket.on("BetPlayer", ({ round, players, bet, myPosition }) => {
-    // Correctly accessing the room ID
+    // Correctamente accediendo al room ID
     const roomId = round.roomId.roomId;
-    // const game =
-    //   games[round.roomId.gameId] && games[round.roomId.gameId][roomId];
-    // if (!room) return;
+
+    const room = permanentRooms[round.roomId.gameId] && permanentRooms[round.roomId.gameId][round.roomId.roomId];
+    if (!room) return;
+
     // Actualizar la apuesta del jugador
     const playerIndex = players.findIndex(
-      (player) => player.position === myPosition
+        (player) => player.position === myPosition
     );
     if (playerIndex !== -1) {
-      players[playerIndex].betP = bet;
+        players[playerIndex].betP = bet;
+    }
+
+    // Encontrar la ronda actual en results
+    let currentRound = room.results.find(r => r.numRounds === round.numRounds);
+
+    if (!currentRound) {
+        // Si la ronda actual no existe en results, agregarla
+        currentRound = { ...round, players: players.map(player => ({ ...player })) };
+        room.results.push(currentRound);
+    } else {
+        // Actualizar las apuestas en la ronda actual
+        const currentRoundPlayerIndex = currentRound.players.findIndex(
+            (player) => player.position === myPosition
+        );
+
+        if (currentRoundPlayerIndex !== -1) {
+            currentRound.players[currentRoundPlayerIndex].betP = bet;
+        }
     }
 
     // Determinar el siguiente jugador en turno
@@ -359,81 +378,79 @@ io.on("connection", (socket) => {
     round.betTotal = Number(round.betTotal) + Number(bet);
 
     if (round.cantQueApostaron === players.length) {
-      // Cambiar de ronda
-      round.typeRound = "ronda";
-      round.turnJugadorR = (round.obligado % players.length) + 1;
-      round.cantQueApostaron = 0;
+        // Cambiar de ronda
+        round.typeRound = "ronda";
+        round.turnJugadorR = (round.obligado % players.length) + 1;
+        round.cantQueApostaron = 0;
     } else {
-      // Continuar con la ronda de apuestas
-      round.turnJugadorA = nextTurn;
+        // Continuar con la ronda de apuestas
+        round.turnJugadorA = nextTurn;
     }
 
+    // Emitir el estado actualizado del juego
     io.to(`${round.roomId.gameId}-${roomId}`).emit("update_game_state", {
-      round,
-      players,
+        round,
+        players,
+        results: room.results
     });
-  });
+});
 
-  socket.on("tirar_carta", ({ round, players, myPosition, value, suit }) => {
-    // -----------------Errores---------------------------
-    if (
-      !round ||
-      !round.roomId ||
-      !round.roomId.gameId ||
-      !round.roomId.roomId
-    ) {
+
+socket.on("tirar_carta", ({ round, players, myPosition, value, suit }) => {
+  // -----------------Errores---------------------------
+  if (!round || !round.roomId || !round.roomId.gameId || !round.roomId.roomId) {
       console.error("Invalid round or roomId object:", round);
       socket.emit("error", { error: "Invalid round or roomId object" });
       return;
-    }
+  }
 
-    const game = round.roomId.gameId;
-    const roomId = round.roomId.roomId;
-    const room = permanentRooms[game] && permanentRooms[game][roomId];
-    if (!room) {
+  const game = round.roomId.gameId;
+  const roomId = round.roomId.roomId;
+  const room = permanentRooms[game] && permanentRooms[game][roomId];
+  if (!room) {
       console.error("Room not found:", roomId);
       return;
-    }
+  }
 
-    const playerIndex = room.users.findIndex(
+  const playerIndex = room.users.findIndex(
       (user) => user.position === myPosition
-    );
-    if (playerIndex === -1) {
+  );
+  if (playerIndex === -1) {
       console.error("Player not found in the room:", myPosition);
       return;
-    }
-    //-----------------Errores-----------------
+  }
+  //-----------------Errores-----------------
 
-    if (round.typeRound === "ronda" && myPosition === round.turnJugadorR) {
+  if (round.typeRound === "ronda" && myPosition === round.turnJugadorR) {
       //-----------------Saber qué carta es mayor-----------------
       const card = { value, suit, id: playerIndex + 1 };
       room.users[playerIndex].cardBet = card;
 
       if (round.cantQueTiraron === 0) {
-        round.lastCardBet = card;
-        round.cardWinxRound = card;
+          round.lastCardBet = card;
+          round.cardWinxRound = card;
       } else {
-        round.beforeLastCardBet = round.lastCardBet;
-        round.lastCardBet = card;
-        round.cardWinxRound =
-          round.lastCardBet.value >= round.beforeLastCardBet.value
-            ? round.lastCardBet
-            : round.beforeLastCardBet;
+          round.beforeLastCardBet = round.lastCardBet;
+          round.lastCardBet = card;
+          round.cardWinxRound =
+              round.lastCardBet.value >= round.beforeLastCardBet.value
+                  ? round.lastCardBet
+                  : round.beforeLastCardBet;
       }
       //-----------------Saber qué carta es mayor-----------------
 
       //-----------------Actualizar apuesta de carta jugador-----------------
       let updatedPlayers = players.map((player) => {
-        if (player.position === myPosition) {
-          return {
-            ...player,
-            cardPerson: player.cardPerson.filter(
-              (c) => !(c.value === value && c.suit === suit)
-            ),
-            cardBet: card, // Asignar la carta a cardBet
-          };
-        }
-        return player;
+          if (player.position === myPosition) {
+              return {
+                  ...player,
+                  cardPerson: player.cardPerson.filter(
+                      (c) => !(c.value === value && c.suit === suit)
+                  ),
+                  cardBet: card, // Asignar la carta a cardBet
+              };
+          }
+          return player;
       });
       //-----------------Actualizar apuesta de carta jugador-----------------
 
@@ -442,70 +459,86 @@ io.on("connection", (socket) => {
       round.turnJugadorR = (round.turnJugadorR % players.length) + 1;
       //-----------------cambio de mano-----------------
       if (round.cantQueTiraron === players.length) {
-        round.cantQueTiraron = 0;
-        round.hands += 1;
-        round.turnJugadorR = round.cardWinxRound.id;
-        updatedPlayers = updatedPlayers.map((player) => {
-          if (round.cardWinxRound.id === player.id) {
-            return { ...player, cardsWins: player.cardsWins + 1 };
-          }
-          return {
-            ...player,
-            cardBet: {},
-          };
-        });
+          round.cantQueTiraron = 0;
+          round.hands += 1;
+          round.turnJugadorR = round.cardWinxRound.id;
+          updatedPlayers = updatedPlayers.map((player) => {
+              if (round.cardWinxRound.id === player.id) {
+                  return { ...player, cardsWins: player.cardsWins + 1 };
+              }
+              return {
+                  ...player,
+                  cardBet: {},
+              };
+          });
 
-        round.beforeLastCardBet = {};
-        round.lastCardBet = {};
-        round.cardWinxRound = {};
+          round.beforeLastCardBet = {};
+          round.lastCardBet = {};
+          round.cardWinxRound = {};
       }
       //-----------------cambio de mano-----------------
 
       //-----------------cambio de ronda-----------------
       if (round.hands === round.cardXRound) {
-        updatedPlayers = updatedPlayers.map((player) => {
-          let points;
-          if (Number(player.betP) === Number(player.cardsWins)) {
-            points = Number(player.points) + 5 + Number(player.betP);
-          }
-          return {
-            ...player,
-            cardBet: {},
-            cumplio: Number(player.betP) === Number(player.cardsWins),
-            points,
-            betP: 0,
-            cardsWins: 0,
-          };
-        });
+          updatedPlayers = updatedPlayers.map((player) => {
+              let points = player.points;
+              if (Number(player.betP) === Number(player.cardsWins)) {
+                  points = Number(player.points) + 5 + Number(player.betP);
+              }
+              return {
+                  ...player,
+                  cardBet: {},
+                  cumplio: Number(player.betP) === Number(player.cardsWins),
+                  points,
+                  betP: 0,
+                  cardsWins: 0,
+              };
+          });
 
-        round.typeRound = "Bet";
-        round.obligado = (round.obligado % players.length) + 1;
-        round.turnJugadorA = (round.obligado % players.length) + 1; // Cambiar el turno al siguiente jugador
-        round.turnJugadorR = (round.obligado % players.length) + 1;
-        round.cantQueTiraron = 0;
-        round.cantQueApostaron = 0;
-        round.cardXRound = round.cardXRound === 7 ? 1 : round.cardXRound + 2;
-        round.beforeLastCardBet = {};
-        round.lastCardBet = {};
-        round.cardWinxRound = {};
-        round.betTotal = 0;
-        round.hands = 0;
+          // Actualizar results con la ronda completada
+          let currentRound = room.results.find(r => r.numRounds === round.numRounds);
+          if (currentRound) {
+              currentRound.players = updatedPlayers;
+          } else {
+              room.results.push({ ...round, players: updatedPlayers });
+          }
+
+          // Configurar nueva ronda
+          round.typeRound = "Bet";
+          round.obligado = (round.obligado % players.length) + 1;
+          round.turnJugadorA = (round.obligado % players.length) + 1; // Cambiar el turno al siguiente jugador
+          round.turnJugadorR = (round.obligado % players.length) + 1;
+          round.cantQueTiraron = 0;
+          round.cantQueApostaron = 0;
+          round.cardXRound = round.cardXRound === 7 ? 1 : round.cardXRound + 2;
+          round.beforeLastCardBet = {};
+          round.lastCardBet = {};
+          round.cardWinxRound = {};
+          round.betTotal = 0;
+          round.hands = 0;
+          round.numRounds += 1;
+
+          // Inicializar nueva ronda en results
+          room.results.push({ ...round, players: [...updatedPlayers] });
       }
       //-----------------cambio de ronda-----------------
+
       //-----------------Manejo de turnos y Reset-----------------
-      console.log(permanentRooms[game][roomId].result);
+      
       io.to(`${game}-${roomId}`).emit("carta_tirada", {
-        players: updatedPlayers,
-        round,
+          players: updatedPlayers,
+          round,
+          results: room.results
       });
-    } else {
+  } else {
       console.error("It's not the player's turn or invalid round type.");
       socket.emit("error", {
-        error: "It's not your turn or invalid round type",
+          error: "It's not your turn or invalid round type",
       });
-    }
-  });
+  }
 });
+});
+
 
 server.listen(3001, () => {
   console.log("Server listening on port 3001");

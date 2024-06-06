@@ -8,7 +8,8 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
-const Apuesta = ({ players, setPlayers, round, setRound, myPosition }) => {
+const Apuesta = ({ players, setPlayers, round, setRound, myPosition,results,
+  setResults }) => {
   const [bet, setBet] = useState("");
   const [timeLeft, setTimeLeft] = useState(30);
 
@@ -42,10 +43,11 @@ const Apuesta = ({ players, setPlayers, round, setRound, myPosition }) => {
   }, [timeLeft, round, players, myPosition]);
 
   useEffect(() => {
-    socket.on("update_game_state", ({ round, players }) => {
+    socket.on("update_game_state", ({ round, players,results }) => {
       setTimeLeft(30);
       setRound(round);
       setPlayers(players);
+      setResults(results)
     });
 
     return () => {

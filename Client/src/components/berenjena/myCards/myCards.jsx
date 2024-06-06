@@ -10,7 +10,9 @@ const MyCards = ({
   setRound,
   round,
   setTimmerPlayer,
-        timmerPlayer
+        timmerPlayer,
+        results,
+  setResults 
 }) => {
   const player = players[myPosition - 1];
 
@@ -35,9 +37,10 @@ const MyCards = ({
 
   useEffect (
     () => {
-      socket.on ('carta_tirada', ({players, round}) => {
+      socket.on ('carta_tirada', ({players, round,results}) => {
         setPlayers (players);
         setRound (round);
+        setResults(results)
       });
 
       return () => {

@@ -1,6 +1,6 @@
 import styles from './result.module.css';
 
-const Result = ({ setShowResult, players, round}) => {
+const Result = ({ setShowResult, players, round,results}) => {
   const rows = 4;
   const columns = 7;
   const headers = [
