@@ -51,9 +51,9 @@ const MyCards = ({
     () => {
       if (timmer === 0) {
         const randomIndex = Math.floor (
-          Math.random () * player.cardPerson.length
+          Math.random () * player?.cardPerson.length
         );
-        const randomCard = player.cardPerson[randomIndex];
+        const randomCard = player?.cardPerson[randomIndex];
 
         randomCard &&
           socket.emit ('tirar_carta', {

@@ -36,6 +36,7 @@ const Apuesta = ({ players, setPlayers, round, setRound, myPosition }) => {
         availableBets[Math.floor(Math.random() * availableBets.length)];
 
       socket.emit("BetPlayer", { round, players, bet: randomBet, myPosition });
+      setTimeLeft(30);
     }
   }, [timeLeft, round, players, myPosition]);
 

@@ -53,7 +53,7 @@ const Loader = ({game, setMyPosition, setPlayers, setRound}) => {
         socket.on ('disconnectRoom', data => setPlayerList (data));
       };
     },
-    [setMyPosition, setPlayers, playerList]
+    [setMyPosition, setPlayers, playerList,readyMe]
   );
 
   return (
