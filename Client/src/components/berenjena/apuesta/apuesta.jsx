@@ -14,6 +14,7 @@ const Apuesta = ({ players, setPlayers, round, setRound, myPosition }) => {
 
   const handleSubmit = () => {
     socket.emit("BetPlayer", { round, players, bet, myPosition });
+    setTimeLeft(30);
   };
 
   useEffect(() => {
