@@ -24,21 +24,25 @@ const GameBerenjena = () => {
   const [timmerPlayer, setTimmerPlayer] = useState (30);
   const [timmerBetweenRound, setTimmerBetweenRound] = useState (30);
 
+
+  //timmer para tirar la carta entre jugadores
   useEffect (() => {
     setTimmerPlayer(30)
-      const time = setInterval (() => {
-        setTimmerPlayer (prevTime => prevTime - 1);
-      }, 1000);
-      return () => clearInterval (time);
+    const time = setInterval (() => {
+      setTimmerPlayer (prevTime => prevTime - 1);
+    }, 1000);
+    return () => clearInterval (time);
   }, [round.turnJugadorR,round.typeRound]);
-
-  useEffect (() => {
-    setTimmerBetweenRound(30)
-      const time = setInterval (() => {
-        setTimmerBetweenRound (prevTime => prevTime - 1);
-      }, 1000);
-      return () => clearInterval (time);
+  //timmer para tirar la carta entre jugadores
+ //timmer entre rondas
+ useEffect (() => {
+   setTimmerBetweenRound(30)
+   const time = setInterval (() => {
+     setTimmerBetweenRound (prevTime => prevTime - 1);
+    }, 1000);
+    return () => clearInterval (time);
   }, [round.turnJugadorR,round.typeRound]);
+  //timmer entre rondas
 
 
 
