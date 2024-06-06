@@ -15,17 +15,27 @@ const GameBerenjena = () => {
   const [game, setGame] = useState('Berenjena'); // Juego seleccionado
   const [showResult, setShowResult] = useState(false);
   
-  const [timmer, setTimmer] = useState (30);
-
+  
   const [myPosition, setMyPosition] = useState(1);
   const [players, setPlayers] = useState([]);
   const [round, setRound] = useState({});
   const [Base, setBase] = useState([]); //base del resultado xronda
+  
+  const [timmerPlayer, setTimmerPlayer] = useState (30);
+  const [timmerBetweenRound, setTimmerBetweenRound] = useState (30);
 
   useEffect (() => {
-    setTimmer(30)
+    setTimmerPlayer(30)
       const time = setInterval (() => {
-        setTimmer (prevTime => prevTime - 1);
+        setTimmerPlayer (prevTime => prevTime - 1);
+      }, 1000);
+      return () => clearInterval (time);
+  }, [round.turnJugadorR,round.typeRound]);
+
+  useEffect (() => {
+    setTimmerBetweenRound(30)
+      const time = setInterval (() => {
+        setTimmerBetweenRound (prevTime => prevTime - 1);
       }, 1000);
       return () => clearInterval (time);
   }, [round.turnJugadorR,round.typeRound]);
@@ -47,6 +57,7 @@ const GameBerenjena = () => {
 
   useEffect(() => {
     if (round && round?.typeRound === 'Bet') {
+      setTimmerBetweenRound(30)
       distribute(round, setPlayers, players);
     }
   }, [round?.typeRound]);
@@ -58,7 +69,8 @@ const GameBerenjena = () => {
 
     return reorderedPlayers.slice(0, positions.length).map((player, index) => (
       <div className={style[positions[index]]} key={index}>
-        <Jugadores player={player}  round={round} timmer={timmer}/>
+        <Jugadores player={player}  round={round} 
+        timmerPlayer={timmerPlayer}/>
       </div>
     ));
   };
@@ -83,11 +95,11 @@ const GameBerenjena = () => {
         setPlayers={setPlayers}
         setRound={setRound}
         round={round}
-        setTimmer={setTimmer}
-        timmer={timmer}
+        setTimmerPlayer={setTimmerPlayer}
+        timmerPlayer={timmerPlayer}
         
       /> 
-      <DataPlayer myPosition={myPosition} players={players} timmer={timmer}  round={round} /> 
+      <DataPlayer myPosition={myPosition} players={players} timmerPlayer={timmerPlayer}  round={round} /> 
       {round.typeRound === 'Bet' && (
         <Apuesta
           players={players}

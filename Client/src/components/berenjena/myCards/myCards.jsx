@@ -9,8 +9,8 @@ const MyCards = ({
   setPlayers,
   setRound,
   round,
-  setTimmer,
-  timmer,
+  setTimmerPlayer,
+        timmerPlayer
 }) => {
   const player = players[myPosition - 1];
 
@@ -22,7 +22,7 @@ const MyCards = ({
       myPosition === round.turnJugadorR
     ) {
       // Emitir evento al backend indicando que el jugador ha tirado una carta
-      setTimmer (30);
+      setTimmerPlayer (30);
       socket.emit ('tirar_carta', {
         round,
         players,
@@ -49,7 +49,7 @@ const MyCards = ({
 
   useEffect (
     () => {
-      if (timmer === 0) {
+      if (timmerPlayer === 0) {
         const randomIndex = Math.floor (
           Math.random () * player?.cardPerson.length
         );
@@ -63,10 +63,10 @@ const MyCards = ({
             value: randomCard.value,
             suit: randomCard.suit,
           });
-          setTimmer (30);
+          setTimmerPlayer (30);
       }
     },
-    [timmer]
+    [timmerPlayer]
   );
 
   return (
