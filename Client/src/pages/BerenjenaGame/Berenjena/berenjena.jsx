@@ -26,6 +26,7 @@ const GameBerenjena = () => {
 
   const [timmerPlayer, setTimmerPlayer] = useState(30);
   const [timmerBetweenRound, setTimmerBetweenRound] = useState(3);
+  const [showBetweenRound, setShowBetweenRound] = useState(false);
 
   //timmer para tirar la carta entre jugadores
   useEffect(() => {
@@ -35,46 +36,44 @@ const GameBerenjena = () => {
     }, 1000);
     return () => clearInterval(time);
   }, [round.typeRound]);
-  //timmer para tirar la carta entre jugadores
-  //timmer entre rondas
-  useEffect(() => {
-    setTimmerBetweenRound(3); // Inicias con el valor deseado
-    const time = setInterval(() => {
-      setTimmerBetweenRound((prevTime) => {
-        if (prevTime > 0) {
-          return prevTime - 1; // Restas 1 si el valor es mayor que 0
-        } else {
-          clearInterval(time); // Si llega a 0, detienes el intervalo
-          return 0; // Devuelves 0 para evitar valores negativos
-        }
-      });
-    }, 1000);
-    return () => clearInterval(time);
-  }, [round.typeRound]);
 
   //timmer entre rondas
+  useEffect(() => {
+    if (showBetweenRound) {
+      setTimmerBetweenRound(3); // Inicias con el valor deseado
+      const time = setInterval(() => {
+        setTimmerBetweenRound((prevTime) => {
+          if (prevTime > 0) {
+            return prevTime - 1; // Restas 1 si el valor es mayor que 0
+          } else {
+            clearInterval(time); // Si llega a 0, detienes el intervalo
+            setShowBetweenRound(false); // Ocultas el temporizador entre rondas
+            return 0; // Devuelves 0 para evitar valores negativos
+          }
+        });
+      }, 1000);
+      return () => clearInterval(time);
+    }
+  }, [showBetweenRound]);
 
   useEffect(() => {
     const handleStartGame = (data) => {
       setRound(data.round);
       setResults(data.results);
       setLoader((prevLoader) => !prevLoader);
-      setTimmerBetweenRound(3);
     };
 
     socket.on("start_game", handleStartGame);
 
     return () => {
-      socket.off ('start_game', handleStartGame);
-      socket.emit ('disconnect');
-   
+      socket.off("start_game", handleStartGame);
     };
   }, []);
 
   useEffect(() => {
     if (round && round.typeRound === "Bet") {
       distribute(round, setPlayers, players);
-      setTimmerBetweenRound(3);
+      setShowBetweenRound(false);
     }
   }, [round.typeRound]);
 
@@ -114,9 +113,8 @@ const GameBerenjena = () => {
         <div className={style.tableroJugadores}>{renderPlayers()}</div>
       )}
 
-      {timmerBetweenRound !== 0 && (
-        <BeetweenRound timmerBetweenRound={timmerBetweenRound} />
-      )}
+      {showBetweenRound && <BeetweenRound timmerBetweenRound={timmerBetweenRound} />}
+
       <MyCards
         myPosition={myPosition}
         players={players}
@@ -135,7 +133,7 @@ const GameBerenjena = () => {
         timmerPlayer={timmerPlayer}
         round={round}
       />
-      {round.typeRound === "Bet" && timmerBetweenRound === 0 && (
+      {round.typeRound === "Bet" && timmerPlayer === 0 && (
         <Apuesta
           players={players}
           setPlayers={setPlayers}
@@ -144,6 +142,7 @@ const GameBerenjena = () => {
           myPosition={myPosition}
           results={results}
           setResults={setResults}
+          onApuestaEnd={() => setShowBetweenRound(true)}
         />
       )}
 
