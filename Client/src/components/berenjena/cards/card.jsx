@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './card.module.css';
 import basto from '../../../assets/berenjena/valores/basto.png';
-import copa from '../../../assets/berenjena/valores/copas.png';
+import copa from '../../../assets/berenjena/valores/copa.png';
 import espada from '../../../assets/berenjena/valores/espada.png';
 import oro from '../../../assets/berenjena/valores/oro.png';
 
@@ -15,18 +15,16 @@ const Cards = ({value, suit}) => {
 
   return (
     <div className={styles.spanishDeck}>
-      <div className={styles.valueContain}>
-        <p style={{display: 'flex', alignSelf: 'flex-end'}}>{value}</p>
-        <img
-          src={imgPalo[suit]}
-          alt="logoCard"
-          width={20}
-          height={20}
-          style={{display: 'flex', alignSelf: 'center', margin: 0}}
-        />
-        <p style={{display: 'flex', alignSelf: 'flex-start', margin: 0}}>
-          {value}
-        </p>
+      <div className={styles.topRight}>
+        <p className={styles.cardValue}>{value}</p>
+      </div>
+      <img
+        src={imgPalo[suit]}
+        alt="logoCard"
+        className={styles.cardImage}
+      />
+      <div className={styles.bottomLeft}>
+        <p className={styles.cardValue}>{value}</p>
       </div>
     </div>
   );

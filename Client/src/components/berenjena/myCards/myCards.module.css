@@ -8,11 +8,29 @@
   justify-content: center;
   z-index: 1;
 }
+
 .MyCards {
   display: flex;
   cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
+.MyCards:hover {
+  transform: scale(1.05);
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
+    rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+}
+
 .MyCardBet {
   position: absolute;
   bottom: 125%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 5px solid #ff6347;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.MyCardBet:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }

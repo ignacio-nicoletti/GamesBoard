@@ -10,8 +10,8 @@ const MyCards = ({
   setRound,
   round,
   setTimmerPlayer,
-        timmerPlayer,
-        results,
+  timmerPlayer,
+  results,
   setResults 
 }) => {
   const player = players[myPosition - 1];
@@ -24,8 +24,8 @@ const MyCards = ({
       myPosition === round.turnJugadorR
     ) {
       // Emitir evento al backend indicando que el jugador ha tirado una carta
-      setTimmerPlayer (30);
-      socket.emit ('tirar_carta', {
+      setTimmerPlayer(30);
+      socket.emit('tirar_carta', {
         round,
         players,
         myPosition,
@@ -35,63 +35,59 @@ const MyCards = ({
     }
   };
 
-  useEffect (
-    () => {
-      socket.on ('carta_tirada', ({players, round,results}) => {
-        setPlayers (players);
-        setRound (round);
-        setResults(results)
-      });
+  useEffect(() => {
+    socket.on('carta_tirada', ({players, round, results}) => {
+      setPlayers(players);
+      setRound(round);
+      setResults(results);
+    });
 
-      return () => {
-        socket.off ('carta_tirada');
-      };
-    },
-    [players, round]
-  );
+    return () => {
+      socket.off('carta_tirada');
+    };
+  }, [players, round]);
 
-  useEffect (
-    () => {
-      if (timmerPlayer === 0) {
-        const randomIndex = Math.floor (
-          Math.random () * player?.cardPerson.length
-        );
-        const randomCard = player?.cardPerson[randomIndex];
+  useEffect(() => {
+    if (timmerPlayer === 0) {
+      const randomIndex = Math.floor(
+        Math.random() * player?.cardPerson.length
+      );
+      const randomCard = player?.cardPerson[randomIndex];
 
-        randomCard &&
-          socket.emit ('tirar_carta', {
-            round,
-            players,
-            myPosition,
-            value: randomCard.value,
-            suit: randomCard.suit,
-          });
-          setTimmerPlayer (30);
-      }
-    },
-    [timmerPlayer]
-  );
+      randomCard &&
+        socket.emit('tirar_carta', {
+          round,
+          players,
+          myPosition,
+          value: randomCard.value,
+          suit: randomCard.suit,
+        });
+      setTimmerPlayer(30);
+    }
+  }, [timmerPlayer]);
 
   return (
     <div className={styles.MyCardsContainer}>
       {/* Renderizar cartas de cardPerson si existen */}
       {player &&
         player.cardPerson &&
-        player.cardPerson.map ((card, index) => (
+        player.cardPerson.map((card, index) => (
           <div
             key={index}
-            onClick={() => handlerClick (card.suit, card.value)}
+            onClick={() => handlerClick(card.suit, card.value)}
             className={styles.MyCards}
           >
             <Cards value={card.value} suit={card.suit} />
           </div>
         ))}
       {/* Mostrar la carta apostada solo si existe */}
-      {player && player.cardBet.value
-        ? <div style={{background: 'red'}} className={styles.MyCardBet}>
-            <Cards value={player.cardBet.value} suit={player.cardBet.suit} />
-          </div>
-        : ''}
+      {player && player.cardBet.value ? (
+        <div className={styles.MyCardBet}>
+          <Cards value={player.cardBet.value} suit={player.cardBet.suit} />
+        </div>
+      ) : (
+        ''
+      )}
     </div>
   );
 };
