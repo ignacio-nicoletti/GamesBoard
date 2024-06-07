@@ -11,11 +11,15 @@ export const connectSocket = () => {
       resolve(socket);
     });
 
-    socket.on("disconnect", () => {
+    socket.on("disconnectServer", () => {
       console.log("Desconectado del servidor");
       disconnectRoom();
     });
   });
+};
+
+export const disconnectRoom = () => {
+  socket.emit("disconnectRoom");
 };
 
 // Función para solicitar la información de todas las salas
@@ -28,9 +32,7 @@ export const getAllRoomsInfo = (game) => {
   });
 };
 //se desconecta de la sala
-export const disconnectRoom = () => {
-  socket.emit("disconnectRoom");
-};
+
 
 export const CreateGameRoom = (game, roomId, userName, maxUsers = 6, selectedAvatar) => {
   return new Promise((res, rej) => {

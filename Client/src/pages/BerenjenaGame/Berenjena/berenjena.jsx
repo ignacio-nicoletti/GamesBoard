@@ -73,6 +73,8 @@ const GameBerenjena = () => {
 
     return () => {
       socket.off ('start_game', handleStartGame);
+      socket.emit ('disconnect');
+   
     };
   }, []);
 
