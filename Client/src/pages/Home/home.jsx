@@ -3,7 +3,7 @@ import styles from "./home.module.css";
 import PokerImg from "../../assets/homeFirst/pokerImg.png";
 import BerenjenaImg from "../../assets/homeFirst/berenjenaImg.png";
 import { useEffect } from "react";
-import { connectSocket } from "../../functions/SocketIO/sockets/sockets";
+import { connectSocket, socket } from "../../functions/SocketIO/sockets/sockets";
 
 const Home = () => {
   useEffect(() => {
@@ -12,6 +12,10 @@ const Home = () => {
     };
 
     initializeSocket();
+    return()=>{  socket.on("disconnectServer", () => {
+      console.log("Desconectado del servidor");
+     
+    })}
   }, []);
 
   return (

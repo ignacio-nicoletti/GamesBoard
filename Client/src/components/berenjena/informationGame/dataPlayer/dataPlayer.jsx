@@ -51,7 +51,7 @@ const DataPlayer = ({ players,myPosition,timmerPlayer,round }) => {
             </tr>
             <tr>
               <td>Ronda</td>
-              <td>{player?.round}</td>
+              <td>{round?.numRounds}</td>
             </tr>
             <tr>
               <td>Cumplió</td>
