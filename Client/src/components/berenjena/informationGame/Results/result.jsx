@@ -1,23 +1,15 @@
+import React from 'react';
 import styles from './result.module.css';
 
-const Result = ({ setShowResult, players, round,results}) => {
-  const rows = 4;
-  const columns = 7;
+const Result = ({ setShowResult, players, round, results }) => {
   const headers = [
     'Ronda',
-    'aaaaaaaaaaaaaaa',
-    'aaaaaaaaaaaaaaa',
-    'aaaaaaaaaaaaaaa',
-    'aaaaaaaaaaaaaaa',
-    'aaaaaaaaaaaaaaa',
-    'aaaaaaaaaaaaaaa',
+    'Jugador',
+    'Apuesta',
+    'Cartas Ganadas',
+    'Puntos',
+    'Cumplió Apuesta'
   ];
-
-  //ronda
-  //nombre
-  //position
-  //nombre
-  //nombre
 
   return (
     <div className={styles.ContainResult}>
@@ -29,11 +21,11 @@ const Result = ({ setShowResult, players, round,results}) => {
           viewBox="0 0 24 24"
           fill="none"
           stroke="#ff904f"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="icon icon-tabler icons-tabler-outline icon-tabler-circle-x"
-          onClick={() => setShowResult (false)}
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="icon icon-tabler icon-tabler-circle-x"
+          onClick={() => setShowResult(false)}
         >
           <path stroke="none" d="M0 0h24v24H0z" fill="none" />
           <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
@@ -42,23 +34,30 @@ const Result = ({ setShowResult, players, round,results}) => {
       </div>
       <div className={styles.table_component} role="region" tabIndex="0">
         <table>
-
           <thead>
-            {/* <tr>
-              {players&&players.map ((header, index) => <th key={index}>{header}</th>)}
-            </tr> */}
+            <tr>
+              {headers.map((header, index) => (
+                <th key={index}>{header}</th>
+              ))}
+            </tr>
           </thead>
-          {/* <tbody>
-            {Array.from ({length: rows}).map ((_, rowIndex) => (
-              <tr key={rowIndex}>
-                {Array.from ({length: columns}).map ((_, colIndex) => (
-                  <td key={colIndex} />
-                ))}
-              </tr>
+          <tbody>
+            {results.map((result, roundIndex) => (
+              result.players.map((player, playerIndex) => (
+                <tr key={`${roundIndex}-${playerIndex}`}>
+                  {playerIndex === 0 && (
+                    <td rowSpan={result.players.length}>{result.numRounds}</td>
+                  )}
+                  <td>{player.userName}</td>
+                  <td>{player.betP}</td>
+                  <td>{player.cardsWins}</td>
+                  <td>{player.points}</td>
+                  <td>{player.cumplio ? 'Sí' : 'No'}</td>
+                </tr>
+              ))
             ))}
-          </tbody> */}
+          </tbody>
         </table>
-
       </div>
     </div>
   );
