@@ -120,7 +120,6 @@ io.on("connection", (socket) => {
     }
 );
 
-
   socket.on("join_room", ({ game, roomId, userName, selectedAvatar }) => {
     const rooms = permanentRooms[game];
     if (!rooms) {
@@ -248,7 +247,8 @@ io.on("connection", (socket) => {
               delete rooms[roomId];
               console.log(`User ${socket.id} Disconnected from room => ${roomId}. Room deleted.`);
             } else {
-              // Si el índice de la sala es 10 o menor, solo dejar la sala vacía
+              // Si el índice de la sala es 10 o menor, solo dejar la sala vacía y restaurar sus propiedades
+              rooms[roomId] = { users: [], gameStarted: false, round: {}, results: [] };
               console.log(`User ${socket.id} Disconnected from room => ${roomId}. Room left empty.`);
             }
             roomDisconnected = true;
@@ -401,7 +401,6 @@ io.on("connection", (socket) => {
         results: room.results
     });
 });
-
 
 socket.on("tirar_carta", ({ round, players, myPosition, value, suit }) => {
   // -----------------Errores---------------------------
