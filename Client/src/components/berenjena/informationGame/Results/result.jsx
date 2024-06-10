@@ -1,61 +1,53 @@
-import React from 'react';
-import styles from './result.module.css';
+import React from "react";
+import styles from "./result.module.css";
+import { IoCloseCircleOutline } from "react-icons/io5";
 
-const Result = ({ setShowResult, players, round, results }) => {
-  const headers = [
-    'Ronda',
-    'Jugador',
-    'Apuesta',
-    'Cartas Ganadas',
-    'Puntos',
-    'Cumplió Apuesta'
-  ];
+const Result = ({ setShowResult, results }) => {
+  const players = results[0].players.map((player) => player.userName);
 
   return (
-    <div className={styles.ContainResult}>
-      <div className={styles.closeResult}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="48"
-          height="48"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#ff904f"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="icon icon-tabler icon-tabler-circle-x"
-          onClick={() => setShowResult(false)}
-        >
-          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-          <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-          <path d="M10 10l4 4m0 -4l-4 4" />
-        </svg>
+    <div className={styles.containResult}>
+      <div className={styles.closeResult} onClick={() => setShowResult(false)}>
+        <IoCloseCircleOutline size={48} color="#ff904f" />
       </div>
-      <div className={styles.table_component} role="region" tabIndex="0">
+      <div className={styles.tableComponent} role="region" tabIndex="0">
         <table>
           <thead>
             <tr>
-              {headers.map((header, index) => (
-                <th key={index}>{header}</th>
+              <th>Ronda</th>
+              {players.map((player, index) => (
+                <th key={index} colSpan="2">
+                  {player}
+                </th>
               ))}
             </tr>
           </thead>
           <tbody>
             {results.map((result, roundIndex) => (
-              result.players.map((player, playerIndex) => (
-                <tr key={`${roundIndex}-${playerIndex}`}>
-                  {playerIndex === 0 && (
-                    <td rowSpan={result.players.length}>{result.numRounds}</td>
-                  )}
-                  <td>{player.userName}</td>
-                  <td>{player.betP}</td>
-                  <td>{player.cardsWins}</td>
-                  <td>{player.points}</td>
-                  <td>{player.cumplio ? 'Sí' : 'No'}</td>
-                </tr>
-              ))
+              <tr key={roundIndex}>
+                <td>{result.numRounds}</td>
+                {result.players.map((player, playerIndex) => (
+                  <React.Fragment key={playerIndex}>
+                    <td className={styles.points}>{player.points}</td>
+                    <td
+                      className={`${styles.bet} ${
+                        player.cumplio ? styles.success : styles.fail
+                      }`}
+                    >
+                      {player.betP}
+                    </td>
+                  </React.Fragment>
+                ))}
+              </tr>
             ))}
+            <tr>
+              <td>Total</td>
+              {results[0].players.map((player, playerIndex) => (
+                <React.Fragment key={playerIndex}>
+                  <td colSpan="2">{player.total}</td>
+                </React.Fragment>
+              ))}
+            </tr>
           </tbody>
         </table>
       </div>

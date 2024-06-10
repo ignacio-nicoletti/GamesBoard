@@ -1,53 +1,107 @@
-.ContainResult {
-  position: absolute;
+.containResult {
+  position: fixed;
   width: 100%;
   height: 100vh;
   top: 0;
   left: 0;
   backdrop-filter: blur(10px);
-  z-index: 1;
+  z-index: 1000;
   display: flex;
-  flex-direction: row-reverse;
-  align-items: start;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: rgba(0, 0, 0, 0.5);
 }
-.table_component {
-  padding-top: 5rem;
+
+.tableComponent {
   overflow: auto;
-  font-size: 1.3rem;
+  width: 70%;
+  max-width: 1200px;
+  margin: auto;
 }
 
-.table_component table {
-  border: 2px solid #dededf;
-  height: 100%;
-  width: auto;
-  table-layout: fixed;
+.tableComponent table {
+  width: 100%;
   border-collapse: collapse;
-  border-spacing: 1px;
+  table-layout: fixed;
   text-align: center;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
-.table_component caption {
-  caption-side: top;
-  text-align: left;
+.tableComponent th,
+.tableComponent td {
+  padding: 0.5rem;
+  font-size: 1.2rem;
+  border: 1px solid #dededf;
 }
 
-.table_component th {
-  border: 2px solid #dededf;
+.tableComponent th {
+  font-size: 1.2rem;
   background-color: #ff904f;
-  color: #ffffff;
-  padding: 8px;
+  color: #fff;
+  font-weight: lighter;
+  position: relative;
 }
 
-.table_component td {
-  border: 2px solid #dededf;
-  color: #000000;
-  padding: 1.2rem;
+.tableComponent th:first-child {
+  border-top-left-radius: 10px;
+}
+
+.tableComponent th:last-child {
+  border-top-right-radius: 10px;
+}
+
+.tableComponent td {
+  color: #000;
+  background-color: #f9f9f9;
+  position: relative;
+}
+
+.tableComponent tbody tr:nth-child(even) td {
+  background-color: #f1f1f1;
 }
 
 .closeResult {
-  display: flex;
-  justify-content: end;
-  margin-top: 2rem;
+  align-self: flex-end;
+  margin: 1rem;
   cursor: pointer;
+}
+
+.closeResult svg {
+  transition: transform 0.2s;
+}
+
+.closeResult svg:hover {
+  transform: scale(1.1);
+}
+
+.points {
+  font-weight: bold;
+}
+
+.bet {
+  position: relative;
+}
+
+.success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.fail {
+  background-color: #f8d7da;
+  color: #721c24;
+  text-decoration: line-through;
+}
+
+.fail::after {
+  content: "X";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: red;
 }
