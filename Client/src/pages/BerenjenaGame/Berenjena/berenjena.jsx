@@ -68,6 +68,7 @@ const GameBerenjena = () => {
       setRound (data.round);
       setResults (data.results);
       setLoader (prevLoader => !prevLoader);
+      setShowBetweenRound (true);
     };
 
     socket.on ('start_game', handleStartGame);
