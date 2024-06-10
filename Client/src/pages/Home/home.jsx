@@ -9,6 +9,9 @@ import {
 } from "../../functions/SocketIO/sockets/sockets";
 import Login from "../../components/berenjena/login/login";
 
+
+
+// si estoy logeado se salga el login signup y aparezca la cuenta baierta y cerrar sesion
 const Home = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [isLogin, setIsLogin] = useState(true);

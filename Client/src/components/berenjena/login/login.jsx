@@ -1,24 +1,44 @@
-import React, { useState } from "react";
-import styles from "./login.module.css";
-import CloseIcon from "@mui/icons-material/Close";
+import React, {useState} from 'react';
+import styles from './login.module.css';
+import CloseIcon from '@mui/icons-material/Close';
 
-const Login = ({ isLogin, onClose }) => {
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    password: "",
+import Cookies from 'js-cookie';
+import InstanceOfAxios from '../../../utils/intanceAxios';
+
+const Login = ({isLogin, onClose}) => {
+  const [formData, setFormData] = useState ({
+    userName: '',
+    email: '',
+    password: '',
   });
 
-  const handleChange = (e) => {
-    setFormData({
+  const handleChange = e => {
+    setFormData ({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Datos del formulario:", formData);
+  const handleSubmit = async e => {
+    e.preventDefault ();
+    if (isLogin) {
+      const data = {email: formData.email, password: formData.password};
+      await InstanceOfAxios ('/login', 'POST', data).then (data => {
+        Cookies.remove ('cookieToken');
+        document.cookie =
+          encodeURIComponent ('cookieToken') +
+          '=' +
+          encodeURIComponent (data.token);
+      });
+    } else if (!isLogin) {
+      await InstanceOfAxios ('/register', 'POST', formData).then (data => {
+        Cookies.remove ('cookieToken');
+        document.cookie =
+          encodeURIComponent ('cookieToken') +
+          '=' +
+          encodeURIComponent (data.token);
+      });
+    }
   };
 
   return (
@@ -27,18 +47,17 @@ const Login = ({ isLogin, onClose }) => {
         <button className={styles.closeButton} onClick={onClose}>
           <CloseIcon />
         </button>
-        <h2>{isLogin ? "Iniciar Sesión" : "Registrarse"}</h2>
+        <h2>{isLogin ? 'Iniciar Sesión' : 'Registrarse'}</h2>
         <form onSubmit={handleSubmit}>
-          {!isLogin && (
+          {!isLogin &&
             <input
               type="text"
-              name="username"
+              name="userName"
               placeholder="Nombre de Usuario"
-              value={formData.username}
+              value={formData.userName}
               onChange={handleChange}
               required
-            />
-          )}
+            />}
           <input
             type="email"
             name="email"
@@ -56,7 +75,7 @@ const Login = ({ isLogin, onClose }) => {
             required
           />
           <button className={styles.submitBtn} type="submit">
-            {isLogin ? "Iniciar Sesión" : "Registrarse"}
+            {isLogin ? 'Iniciar Sesión' : 'Registrarse'}
           </button>
         </form>
       </div>

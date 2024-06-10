@@ -2,6 +2,10 @@ import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
+import morgan from "morgan";
+import "./src/dataBase/connectDB.js";
+import AuthRoute from "./src/routes/auth.routes.js"
+
 import { distribute, shuffle } from "./functions/functions.js"; // Asegúrate de que estas funciones estén definidas en el archivo adecuado
 
 const app = express();
@@ -23,7 +27,13 @@ const permanentRooms = {
 function createRooms(numberOfRooms) {
   const rooms = {};
   for (let i = 1; i <= numberOfRooms; i++) {
-    rooms[i] = { users: [], gameStarted: false, round: {}, results: [] };
+    rooms[i] = {
+      users: [],
+      disconnectedUsers: [],
+      gameStarted: false,
+      maxUsers: 6,
+      results: [],
+    };
   }
   return rooms;
 }
@@ -62,7 +72,13 @@ io.on("connection", (socket) => {
         return;
       }
 
-      rooms[roomId] = { users: [], gameStarted: false, maxUsers, results: [] };
+      rooms[roomId] = {
+        users: [],
+        disconnectedUsers: [],
+        gameStarted: false,
+        maxUsers,
+        results: [],
+      };
 
       const user = {
         idSocket: socket.id,
@@ -140,15 +156,34 @@ io.on("connection", (socket) => {
       return;
     }
 
+    const disconnectedUserIndex = room.disconnectedUsers.findIndex(
+      (user) => user.userName === userName
+    );
+
+    if (disconnectedUserIndex !== -1) {
+      const user = room.disconnectedUsers.splice(disconnectedUserIndex, 1)[0];
+      user.idSocket = socket.id;
+      room.users.push(user);
+      console.log(`User ${userName} rejoined room ${roomId} in game ${game}`);
+      socket.join(`${game}-${roomId}`);
+
+      // Emit the event "room_joined" only to the user joining
+      socket.emit("room_joined", {
+        roomId,
+        position: user.position,
+        userName,
+        round: room.round,
+      });
+
+      // Emit the event "player_list" to all users in the room
+      io.to(`${game}-${roomId}`).emit("player_list", room);
+      return;
+    }
+
     if (room.gameStarted) {
       socket.emit("room_join_error", {
         error: "Game already started, cannot join",
       });
-      return;
-    }
-
-    if (room.users.some((user) => user.idSocket === socket.id)) {
-      socket.emit("room_join_error", { error: "User already in the room" });
       return;
     }
 
@@ -175,7 +210,7 @@ io.on("connection", (socket) => {
     console.log(`User ${userName} joined room ${roomId} in game ${game}`);
     socket.join(`${game}-${roomId}`);
 
-    // Emitir el evento "room_joined" solo al usuario que se une
+    // Emit the event "room_joined" only to the user joining
     socket.emit("room_joined", {
       roomId,
       position: user.position,
@@ -183,12 +218,12 @@ io.on("connection", (socket) => {
       round: room.round,
     });
 
-    // Emitir el evento "player_list" a todos los usuarios en la sala
+    // Emit the event "player_list" to all users in the room
     io.to(`${game}-${roomId}`).emit("player_list", room);
   });
 
+  // Manejo de desconexión del servidor
   socket.on("disconnectServer", () => {
-    // Manejar la desconexión del usuario del servidor y eliminarlo de las salas
     Object.keys(permanentRooms).forEach((game) => {
       const rooms = permanentRooms[game];
       Object.keys(rooms).forEach((roomId) => {
@@ -197,22 +232,28 @@ io.on("connection", (socket) => {
           (user) => user.idSocket === socket.id
         );
         if (userIndex !== -1) {
-          // Eliminar al usuario de la sala
-          room.users.splice(userIndex, 1);
-          // Emitir la lista actualizada de jugadores
+          const [disconnectedUser] = room.users.splice(userIndex, 1);
+          room.disconnectedUsers.push(disconnectedUser);
           io.to(`${game}-${roomId}`).emit("player_list", room.users);
-  
-          // Verificar si la sala está dentro de las primeras 10 creadas
-          const roomIndex = parseInt(roomId, 10); // Suponiendo que roomId es un string que representa un número
+
           if (room.users.length === 0) {
+            const roomIndex = parseInt(roomId, 10);
             if (roomIndex > 10) {
-              // Si el índice de la sala es mayor a 10, eliminar la sala
               delete rooms[roomId];
-              console.log(`User ${socket.id} Disconnected from room => ${roomId}. Room deleted.`);
+              console.log(
+                `User ${socket.id} Disconnected from room => ${roomId}. Room deleted.`
+              );
             } else {
-              // Si el índice de la sala es 10 o menor, solo dejar la sala vacía
-              rooms[roomId] = { users: [], gameStarted: false, round: {}, results: [] };
-              console.log(`User ${socket.id} Disconnected from room => ${roomId}. Room left empty.`);
+              rooms[roomId] = {
+                users: [],
+                disconnectedUsers: [],
+                gameStarted: false,
+                round: {},
+                results: [],
+              };
+              console.log(
+                `User ${socket.id} Disconnected from room => ${roomId}. Room left empty.`
+              );
             }
           }
         }
@@ -220,9 +261,9 @@ io.on("connection", (socket) => {
     });
     console.log(`User ${socket.id} was disconnected from the server.`);
   });
-  
+
+  // Manejo de desconexión de la sala
   socket.on("disconnectRoom", () => {
-    // Manejar la desconexión específica de una sala
     Object.keys(permanentRooms).forEach((game) => {
       const rooms = permanentRooms[game];
       Object.keys(rooms).forEach((roomId) => {
@@ -231,34 +272,35 @@ io.on("connection", (socket) => {
           (user) => user.idSocket === socket.id
         );
         if (userIndex !== -1) {
-          // Eliminar al usuario de la sala
-          room.users.splice(userIndex, 1);
-  
+          const [disconnectedUser] = room.users.splice(userIndex, 1);
+          room.disconnectedUsers.push(disconnectedUser);
+
           if (room.users.length > 0) {
-            // Si aún quedan jugadores, actualizar la lista de jugadores en la sala
             io.to(`${game}-${roomId}`).emit("player_list", room.users);
           } else {
-            // Verificar si la sala está dentro de las primeras 10 creadas
-            const roomIndex = parseInt(roomId, 10); // Suponiendo que roomId es un string que representa un número
+            const roomIndex = parseInt(roomId, 10);
             if (roomIndex > 10) {
-              // Si el índice de la sala es mayor a 10, eliminar la sala
               delete rooms[roomId];
-              console.log(`User ${socket.id} Disconnected from room => ${roomId}. Room deleted.`);
+              console.log(
+                `User ${socket.id} Disconnected from room => ${roomId}. Room deleted.`
+              );
             } else {
-              // Si el índice de la sala es 10 o menor, solo dejar la sala vacía y restaurar sus propiedades
               rooms[roomId] = {
                 users: [],
+                disconnectedUsers: [],
                 gameStarted: false,
                 round: {},
                 results: [],
               };
-              console.log(`User ${socket.id} Disconnected from room => ${roomId}. Room left empty.`);
+              console.log(
+                `User ${socket.id} Disconnected from room => ${roomId}. Room left empty.`
+              );
             }
           }
         }
       });
     });
-  }); 
+  });
 
   socket.on("player_ready", ({ game, roomId }) => {
     const room = permanentRooms[game] && permanentRooms[game][roomId];
@@ -550,6 +592,14 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(3001, () => {
-  console.log("Server listening on port 3001");
+
+app.use(morgan("dev"));
+app.use(express.json());
+
+app.use("/",AuthRoute)
+
+
+const port = process.env.PORT || 3001;
+server.listen(port, () => {
+  console.log("Server listening on port", port);
 });
