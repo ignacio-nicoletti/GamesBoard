@@ -33,6 +33,7 @@ const JoinRoom = () => {
   const [showModal, setShowModal] = useState(true);
   const [isFormValid, setIsFormValid] = useState(false); // Nuevo estado
   const navigate = useNavigate();
+  const [timmerRooms, setTimmerRooms] = useState(5); // Nuevo estado
 
   const CreateRoom = async (e) => {
     e.preventDefault();
@@ -74,14 +75,26 @@ const JoinRoom = () => {
     }
   };
 
+  const initializeSocket = async () => {
+    const roomsInfo = await getAllRoomsInfo(game);
+    setRooms(roomsInfo);
+    setFilteredRooms(roomsInfo);
+  };
   useEffect(() => {
-    const initializeSocket = async () => {
-      const roomsInfo = await getAllRoomsInfo(game);
-      setRooms(roomsInfo);
-      setFilteredRooms(roomsInfo);
-    };
     initializeSocket();
   }, [game]);
+
+  useEffect(() => {
+    const time = setInterval(() => {
+      setTimmerRooms((prevTime) => prevTime - 1);
+    }, 1000);
+    if(timmerRooms===0){
+      initializeSocket();
+      setTimmerRooms(5);
+    }
+    return () => clearInterval(time);
+  }, [timmerRooms]);
+
 
   useEffect(() => {
     const handlePlayerList = (playerList) => {
