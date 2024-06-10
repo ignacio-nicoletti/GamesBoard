@@ -536,9 +536,6 @@ io.on("connection", (socket) => {
         round.betTotal = 0;
         round.hands = 0;
         round.numRounds += 1;
-
-        // Inicializar nueva ronda en results
-        // room.results.push({ ...round, players: [...updatedPlayers] });
       }
       //-----------------cambio de ronda-----------------
 
