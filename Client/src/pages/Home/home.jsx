@@ -7,7 +7,7 @@ import {
   connectSocket,
   socket,
 } from "../../functions/SocketIO/sockets/sockets";
-import Login from "../../components/login/login";
+import Login from "../../components/berenjena/login/login";
 
 const Home = () => {
   const [isModalOpen, setModalOpen] = useState(false);

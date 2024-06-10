@@ -13,7 +13,7 @@ import ButtonExitRoom
   from '../../../components/berenjena/buttonExitRoom/buttonExitRoom.jsx';
 import {distribute, socket} from '../../../functions/SocketIO/sockets/sockets';
 import MyCards from '../../../components/berenjena/myCards/myCards.jsx';
-import BeetweenRound from '../../../components/beetweenRound/beetweenRound';
+import BeetweenRound from '../../../components/berenjena/beetweenRound/beetweenRound';
 
 const GameBerenjena = () => {
   const [loader, setLoader] = useState (true);
