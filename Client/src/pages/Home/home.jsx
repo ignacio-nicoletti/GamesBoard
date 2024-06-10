@@ -2,24 +2,48 @@ import { Link } from "react-router-dom";
 import styles from "./home.module.css";
 import PokerImg from "../../assets/homeFirst/pokerImg.png";
 import BerenjenaImg from "../../assets/homeFirst/berenjenaImg.png";
-import { useEffect } from "react";
-import { connectSocket, socket } from "../../functions/SocketIO/sockets/sockets";
+import { useEffect, useState } from "react";
+import {
+  connectSocket,
+  socket,
+} from "../../functions/SocketIO/sockets/sockets";
+import Login from "../../components/login/login";
 
 const Home = () => {
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
+
   useEffect(() => {
     const initializeSocket = async () => {
       await connectSocket();
     };
 
     initializeSocket();
-    return()=>{  socket.on("disconnectServer", () => {
-      console.log("Desconectado del servidor");
-     
-    })}
+    return () => {
+      socket.on("disconnectServer", () => {
+        console.log("Desconectado del servidor");
+      });
+    };
   }, []);
+
+  const toggleModal = (isLogin) => {
+    setIsLogin(isLogin);
+    setModalOpen(!isModalOpen);
+  };
 
   return (
     <div className={styles.contain}>
+      <div className={styles.header}>
+        <button className={styles.authButton} onClick={() => toggleModal(true)}>
+          Log In
+        </button>
+        <button
+          className={styles.authButton}
+          onClick={() => toggleModal(false)}
+        >
+          Sing up
+        </button>
+      </div>
       <div className={styles.containOption}>
         <h1>Place Your Bets</h1>
         <p className={styles.description}>
@@ -42,6 +66,9 @@ const Home = () => {
           </Link>
         </div>
       </div>
+      {isModalOpen && (
+        <Login isLogin={isLogin} onClose={() => setModalOpen(false)} />
+      )}
     </div>
   );
 };
