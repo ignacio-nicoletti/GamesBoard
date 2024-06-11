@@ -34,7 +34,7 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
- 
+
   let player;
   let emaillower = email.toLowerCase();
   try {
@@ -50,8 +50,12 @@ export const login = async (req, res) => {
     if (!respuestaPassword) {
       return res.status(401).json({ error: "Contraseña incorrecta" });
     }
-
-    const { token, expiresIn } = generateToken(player.id);
+    let dataToken = {
+      id: player.id,
+      userName: player.userName,
+      email: player.email,
+    };
+    const { token, expiresIn } = generateToken(dataToken);
     generateRefreshToken(player.id, res);
     return res.status(200).json({ token, expiresIn, rol: player.Rol });
   } catch (error) {

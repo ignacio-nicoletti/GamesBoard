@@ -11,8 +11,6 @@ const Home = () => {
   const [isModalOpen, setModalOpen] = useState (false);
   const [isLogin, setIsLogin] = useState (true);
 
- 
-
   const toggleModal = isLogin => {
     setIsLogin (isLogin);
     setModalOpen (!isModalOpen);

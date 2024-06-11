@@ -19,6 +19,8 @@ import logoBerenjena from "../../../assets/berenjena/home/logoBerenjena.png";
 import AutocompleteExample from "../../../components/berenjena/autocomplete/autocomplete";
 import GroupIcon from "@mui/icons-material/Group";
 import EditIcon from "@mui/icons-material/Edit";
+import { GetDecodedCookie } from '../../../utils/DecodedCookie';
+import { DecodedToken } from "../../../utils/DecodedToken";
 
 const JoinRoom = () => {
   const [rooms, setRooms] = useState([]);
@@ -31,70 +33,33 @@ const JoinRoom = () => {
   const [maxUsers, setMaxUsers] = useState(6);
   const [selectedAvatar, setSelectedAvatar] = useState("avatar1");
   const [showModal, setShowModal] = useState(true);
-  const [isFormValid, setIsFormValid] = useState(false); // Nuevo estado
+  const [isFormValid, setIsFormValid] = useState(false);
   const navigate = useNavigate();
-  const [timmerRooms, setTimmerRooms] = useState(5); // Nuevo estado
+  const [timmerRooms, setTimmerRooms] = useState(5);
 
-  const CreateRoom = async (e) => {
-    e.preventDefault();
-    try {
-      if (roomId !== "" && userName !== "") {
-        await CreateGameRoom(game, roomId, userName, maxUsers, selectedAvatar);
-        navigate(`/berenjena/multiplayer/${roomId}`);
-      }
-    } catch (error) {
-      Swal.fire({
-        title: "Error!",
-        text: error || "An error occurred while creating the room.",
-        icon: "error",
-        confirmButtonText: "OK",
-        customClass: {
-          container: "swal2-container",
-        },
-      });
-    }
-  };
-
-  const handlerJoinRoom = async (roomId) => {
-    try {
-      if (roomId !== "" && userName !== "") {
-        await joinGameRoom(game, roomId, userName, selectedAvatar);
-        navigate(`/berenjena/multiplayer/${roomId}`);
-      }
-    } catch (error) {
-      console.error(error);
-      Swal.fire({
-        title: "Error!",
-        text: error || "Room is full.",
-        icon: "error",
-        confirmButtonText: "OK",
-        customClass: {
-          container: "swal2-container",
-        },
-      });
-    }
-  };
-
-  const initializeSocket = async () => {
-    const roomsInfo = await getAllRoomsInfo(game);
-    setRooms(roomsInfo);
-    setFilteredRooms(roomsInfo);
-  };
   useEffect(() => {
-    // initializeSocket();
-  }, [game]);
+    const token = GetDecodedCookie("cookieToken");
+    console.log(token);
+    if (token) {
+      const data = DecodedToken(token);
+    console.log(data);
+
+        setUserName(data.userName);
+    
+    }
+    initializeSocket();
+  }, []);
 
   useEffect(() => {
     const time = setInterval(() => {
       setTimmerRooms((prevTime) => prevTime - 1);
     }, 1000);
-    if(timmerRooms===0){
+    if (timmerRooms === 0) {
       initializeSocket();
       setTimmerRooms(5);
     }
     return () => clearInterval(time);
   }, [timmerRooms]);
-
 
   useEffect(() => {
     const handlePlayerList = (playerList) => {
@@ -154,13 +119,58 @@ const JoinRoom = () => {
   }, []);
 
   useEffect(() => {
-    // Verificar si el formulario es válido
     if (roomId && tempMaxUsers && !error) {
       setIsFormValid(true);
     } else {
       setIsFormValid(false);
     }
   }, [roomId, tempMaxUsers, error]);
+
+  const CreateRoom = async (e) => {
+    e.preventDefault();
+    try {
+      if (roomId !== "" && userName !== "") {
+        await CreateGameRoom(game, roomId, userName, maxUsers, selectedAvatar);
+        navigate(`/berenjena/multiplayer/${roomId}`);
+      }
+    } catch (error) {
+      Swal.fire({
+        title: "Error!",
+        text: error || "An error occurred while creating the room.",
+        icon: "error",
+        confirmButtonText: "OK",
+        customClass: {
+          container: "swal2-container",
+        },
+      });
+    }
+  };
+
+  const handlerJoinRoom = async (roomId) => {
+    try {
+      if (roomId !== "" && userName !== "") {
+        await joinGameRoom(game, roomId, userName, selectedAvatar);
+        navigate(`/berenjena/multiplayer/${roomId}`);
+      }
+    } catch (error) {
+      console.error(error);
+      Swal.fire({
+        title: "Error!",
+        text: error || "Room is full.",
+        icon: "error",
+        confirmButtonText: "OK",
+        customClass: {
+          container: "swal2-container",
+        },
+      });
+    }
+  };
+
+  const initializeSocket = async () => {
+    const roomsInfo = await getAllRoomsInfo(game);
+    setRooms(roomsInfo);
+    setFilteredRooms(roomsInfo);
+  };
 
   const avatars = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6];
 
@@ -299,7 +309,7 @@ const JoinRoom = () => {
               <button
                 className={style.createButton}
                 onClick={CreateRoom}
-                disabled={!isFormValid} // Deshabilitar botón si el formulario no es válido
+                disabled={!isFormValid}
               >
                 Create
               </button>
@@ -327,7 +337,6 @@ const JoinRoom = () => {
                 <div key={el.roomId} className={style.DivRoom}>
                   <div className={style.textRoom}>
                     <p>Room {el.roomId}</p>
-
                     <p className={style.groupIcon}>
                       <GroupIcon />
                       {el.users.length}/{el.maxUsers || 6}

@@ -1,12 +1,24 @@
-import jwt from 'jsonwebtoken';
 export function DecodedToken(token) {
   try {
-    const decodedToken = jwt.decode(token);
-    if (!decodedToken) {
-      throw new Error('Token no válido');
-    }
-    return { success: true, id: decodedToken.value };
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      window
+        .atob(base64)
+        .split("")
+        .map(function (c) {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join("")
+    );
+    const decodedToken = JSON.parse(jsonPayload);
+    return {
+      success: true,
+      id: decodedToken.value.id,
+      userName: decodedToken.value.userName,
+      email:decodedToken.value.email
+    };
   } catch (error) {
-    return { success: false, error: error.message };
+    return { success: false, error };
   }
 }
