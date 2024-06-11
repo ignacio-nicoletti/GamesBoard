@@ -2,10 +2,12 @@ import { io } from "socket.io-client";
 
 const URL = "http://localhost:3001";
 // Se conecta al servidor
-export const socket = io(URL, { forceNew: true });
+export const socket = io("http://localhost:3001", { autoConnect: false });
 
 export const connectSocket = () => {
   return new Promise((resolve) => {
+    socket.connect();
+
     socket.on("connect", () => {
       console.log("Conectado al servidor");
       resolve(socket);
@@ -13,7 +15,7 @@ export const connectSocket = () => {
 
     socket.on("disconnectServer", () => {
       console.log("Desconectado del servidor");
-      disconnectRoom();
+      socket.disconnect();
     });
   });
 };
@@ -32,7 +34,6 @@ export const getAllRoomsInfo = (game) => {
   });
 };
 //se desconecta de la sala
-
 
 export const CreateGameRoom = (game, roomId, userName, maxUsers = 6, selectedAvatar) => {
   return new Promise((res, rej) => {

@@ -1,9 +1,12 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import styles from './login.module.css';
 import CloseIcon from '@mui/icons-material/Close';
-
 import Cookies from 'js-cookie';
 import InstanceOfAxios from '../../../utils/intanceAxios';
+import {GetDecodedCookie} from '../../../utils/DecodedCookie';
+import {
+  connectSocket,
+} from '../../../functions/SocketIO/sockets/sockets';
 
 const Login = ({isLogin, onClose}) => {
   const [formData, setFormData] = useState ({
@@ -29,6 +32,7 @@ const Login = ({isLogin, onClose}) => {
           encodeURIComponent ('cookieToken') +
           '=' +
           encodeURIComponent (data.token);
+        initializeSocket (); // Conectar el socket después de iniciar sesión
       });
     } else if (!isLogin) {
       await InstanceOfAxios ('/register', 'POST', formData).then (data => {
@@ -39,6 +43,11 @@ const Login = ({isLogin, onClose}) => {
           encodeURIComponent (data.token);
       });
     }
+    onClose (); // Cerrar el modal después del login o registro
+  };
+
+  const initializeSocket = async () => {
+    await connectSocket ();
   };
 
   return (

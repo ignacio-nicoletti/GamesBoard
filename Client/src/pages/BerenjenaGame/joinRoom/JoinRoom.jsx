@@ -81,7 +81,7 @@ const JoinRoom = () => {
     setFilteredRooms(roomsInfo);
   };
   useEffect(() => {
-    initializeSocket();
+    // initializeSocket();
   }, [game]);
 
   useEffect(() => {
