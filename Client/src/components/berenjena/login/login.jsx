@@ -1,52 +1,51 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState } from 'react';
 import styles from './login.module.css';
 import CloseIcon from '@mui/icons-material/Close';
 import Cookies from 'js-cookie';
 import InstanceOfAxios from '../../../utils/intanceAxios';
 
-import {connectSocket} from '../../../functions/SocketIO/sockets/sockets';
+import { socketConnect } from '../../../functions/SocketIO/sockets/sockets';
 
-const Login = ({isLogin, onClose}) => {
-  const [formData, setFormData] = useState ({
+const Login = ({ isLogin, onClose }) => {
+  const [formData, setFormData] = useState({
     userName: '',
     email: '',
     password: '',
   });
 
   const handleChange = e => {
-    setFormData ({
+    setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
 
   const handleSubmit = async e => {
-    e.preventDefault ();
+    e.preventDefault();
     if (isLogin) {
-      const data = {email: formData.email, password: formData.password};
-      await InstanceOfAxios ('/login', 'POST', data).then (data => {
-        Cookies.remove ('cookieToken');
+      const data = { email: formData.email, password: formData.password };
+      await InstanceOfAxios('/login', 'POST', data).then(data => {
+        Cookies.remove('cookieToken');
         document.cookie =
-          encodeURIComponent ('cookieToken') +
+          encodeURIComponent('cookieToken') +
           '=' +
-          encodeURIComponent (data.token);
-         
-        initializeSocket (); // Conectar el socket después de iniciar sesión
+          encodeURIComponent(data.token);
+        initializeSocket();  // Conectar el socket después de iniciar sesión
       });
     } else if (!isLogin) {
-      await InstanceOfAxios ('/register', 'POST', formData).then (data => {
-        Cookies.remove ('cookieToken');
+      await InstanceOfAxios('/register', 'POST', formData).then(data => {
+        Cookies.remove('cookieToken');
         document.cookie =
-          encodeURIComponent ('cookieToken') +
+          encodeURIComponent('cookieToken') +
           '=' +
-          encodeURIComponent (data.token);
+          encodeURIComponent(data.token);
+        onClose(); // Cerrar el modal después del registro
       });
     }
-    onClose (); // Cerrar el modal después del login o registro
   };
 
-  const initializeSocket = async () => {
-    await connectSocket ();
+  const initializeSocket = () => {
+    socketConnect();
   };
 
   return (
@@ -57,7 +56,7 @@ const Login = ({isLogin, onClose}) => {
         </button>
         <h2>{isLogin ? 'Iniciar Sesión' : 'Registrarse'}</h2>
         <form onSubmit={handleSubmit}>
-          {!isLogin &&
+          {!isLogin && (
             <input
               type="text"
               name="userName"
@@ -65,7 +64,8 @@ const Login = ({isLogin, onClose}) => {
               value={formData.userName}
               onChange={handleChange}
               required
-            />}
+            />
+          )}
           <input
             type="email"
             name="email"

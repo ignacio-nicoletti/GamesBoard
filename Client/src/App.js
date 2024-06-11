@@ -8,6 +8,8 @@ import GameBerenjena from "./pages/BerenjenaGame/Berenjena/berenjena";
 import JoinRoom from "./pages/BerenjenaGame/joinRoom/JoinRoom";
 
 import PokerMenu from "./pages/PokerGame/pokerMenu/pokerMenu";
+import { useEffect, useState } from "react";
+import { socketConnect } from "./functions/SocketIO/sockets/sockets";
 
 function App() {
   return (

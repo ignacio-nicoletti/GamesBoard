@@ -40,9 +40,8 @@ function createRooms(numberOfRooms) {
 
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id} to server`);
-
   //chequear errores de room
-
+  
   socket.on("get_all_rooms_info", ({ game }) => {
     const rooms = permanentRooms[game];
     if (rooms) {

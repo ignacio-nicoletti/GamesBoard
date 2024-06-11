@@ -1,13 +1,21 @@
 import { io } from "socket.io-client";
+import { GetDecodedCookie } from "../../../utils/DecodedCookie";
 
 const URL = "http://localhost:3001";
 // Se conecta al servidor
-export const socket = io("http://localhost:3001", { autoConnect: false });
+
+export let socket = io(URL, { autoConnect: false });
+
+export const socketConnect = () => {
+  const token = GetDecodedCookie("cookieToken");
+  if (token) {
+    socket.connect();
+  }
+  connectSocket();
+};
 
 export const connectSocket = () => {
   return new Promise((resolve) => {
-    socket.connect();
-
     socket.on("connect", () => {
       console.log("Conectado al servidor");
       resolve(socket);
@@ -15,7 +23,7 @@ export const connectSocket = () => {
 
     socket.on("disconnectServer", () => {
       console.log("Desconectado del servidor");
-      socket.disconnect();
+      disconnectRoom();
     });
   });
 };
@@ -35,7 +43,13 @@ export const getAllRoomsInfo = (game) => {
 };
 //se desconecta de la sala
 
-export const CreateGameRoom = (game, roomId, userName, maxUsers = 6, selectedAvatar) => {
+export const CreateGameRoom = (
+  game,
+  roomId,
+  userName,
+  maxUsers = 6,
+  selectedAvatar
+) => {
   return new Promise((res, rej) => {
     const responses = {};
 
@@ -55,12 +69,19 @@ export const CreateGameRoom = (game, roomId, userName, maxUsers = 6, selectedAva
     });
 
     function checkIfReadyToResolve() {
-      if (Object.keys(responses).length === 2) { // Asegúrate de que esto coincida con el número de eventos esperados
+      if (Object.keys(responses).length === 2) {
+        // Asegúrate de que esto coincida con el número de eventos esperados
         res(responses);
       }
     }
 
-    socket.emit("create_room", { game, roomId, userName, maxUsers, selectedAvatar });
+    socket.emit("create_room", {
+      game,
+      roomId,
+      userName,
+      maxUsers,
+      selectedAvatar,
+    });
   });
 };
 
@@ -83,7 +104,8 @@ export const joinGameRoom = (game, roomId, userName, selectedAvatar) => {
     });
 
     function checkIfReadyToResolve() {
-      if (Object.keys(responses).length === 2) { // Asegúrate de que esto coincida con el número de eventos esperados
+      if (Object.keys(responses).length === 2) {
+        // Asegúrate de que esto coincida con el número de eventos esperados
         resolve(responses);
       }
     }
@@ -96,7 +118,6 @@ export const distribute = (round, setPlayers, players) => {
   socket.emit("distribute", { round, players });
 
   socket.on("distribute", (data) => {
- 
     setPlayers((prevPlayers) =>
       prevPlayers.map((player, index) => {
         const playerIndex = index + 1;
