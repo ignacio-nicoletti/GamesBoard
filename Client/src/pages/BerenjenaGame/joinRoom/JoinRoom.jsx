@@ -39,18 +39,77 @@ const JoinRoom = () => {
   const [timmerRooms, setTimmerRooms] = useState(5);
   const [infoUser, setInfoUser] = useState({});
 
+const  handlerCreateRoom = async (e) => {
+    e.preventDefault();
+    try {
+      if (roomId !== '' && userName !== '') {
+      await CreateGameRoom(game, roomId, userName, maxUsers, selectedAvatar,infoUser);
+       navigate(`/berenjena/multiplayer/${roomId}`);
+      }
+    } catch (error) {
+      Swal.fire({
+        title: 'Error!',
+        text: error || 'An error occurred while creating the room.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+        customClass: {
+          container: 'swal2-container',
+        },
+      });
+    }
+  };
+
+  const handlerJoinRoom = async (roomId) => {
+    try {
+      if (roomId !== '' && userName !== '') {
+    await joinGameRoom(game, roomId, userName, selectedAvatar,infoUser);
+        navigate(`/berenjena/multiplayer/${roomId}`);
+      }
+    } catch (error) {
+      console.error(error);
+      Swal.fire({
+        title: 'Error!',
+        text: error || 'Room is full.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+        customClass: {
+          container: 'swal2-container',
+        },
+      });
+    }
+  }
+
+  const initializeRooms = async () => {
+    try {
+      const roomsInfo = await getAllRoomsInfo(game);
+      setRooms(roomsInfo);
+      setFilteredRooms(roomsInfo);
+    } catch (error) {
+      console.error('Error initializing rooms:', error);
+      Swal.fire({
+        title: 'Error!',
+        text: error.message || 'An error occurred while fetching rooms.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+        customClass: {
+          container: 'swal2-container',
+        },
+      });
+    }
+  };
+
+// me setea el nombre si inico sesion 
   useEffect(() => {
     const token = GetDecodedCookie('cookieToken');
     if (token) {
-      // socketConnect()
       const data = DecodedToken(token);
       setUserName(data.userName);
       setInfoUser(data)
-
     }
   }, [game]);
-
+// actualiza las rooms cada 5s
   useEffect(() => {
+    initializeRooms();
     const time = setInterval(() => {
       setTimmerRooms((prevTime) => prevTime - 1);
     }, 1000);
@@ -94,12 +153,7 @@ const JoinRoom = () => {
       });
     };
     socket.on('room_creation_error', handleRoomCreationError);
-    return () => {
-      socket.off('room_creation_error', handleRoomCreationError);
-    };
-  }, []);
 
-  useEffect(() => {
     const handleRoomJoinError = (data) => {
       Swal.fire({
         title: 'Error!',
@@ -112,10 +166,13 @@ const JoinRoom = () => {
       });
     };
     socket.on('room_join_error', handleRoomJoinError);
+
     return () => {
+      socket.off('room_creation_error', handleRoomCreationError);
       socket.off('room_join_error', handleRoomJoinError);
     };
   }, []);
+
 
   useEffect(() => {
     if (roomId && tempMaxUsers && !error) {
@@ -125,64 +182,6 @@ const JoinRoom = () => {
     }
   }, [roomId, tempMaxUsers, error]);
 
-  const CreateRoom = async (e) => {
-    e.preventDefault();
-    try {
-      if (roomId !== '' && userName !== '') {
-        await CreateGameRoom(game, roomId, userName, maxUsers, selectedAvatar,infoUser);
-        navigate(`/berenjena/multiplayer/${roomId}`);
-      }
-    } catch (error) {
-      Swal.fire({
-        title: 'Error!',
-        text: error || 'An error occurred while creating the room.',
-        icon: 'error',
-        confirmButtonText: 'OK',
-        customClass: {
-          container: 'swal2-container',
-        },
-      });
-    }
-  };
-
-  const handlerJoinRoom = async (roomId) => {
-    try {
-      if (roomId !== '' && userName !== '') {
-        await joinGameRoom(game, roomId, userName, selectedAvatar);
-        navigate(`/berenjena/multiplayer/${roomId}`);
-      }
-    } catch (error) {
-      console.error(error);
-      Swal.fire({
-        title: 'Error!',
-        text: error || 'Room is full.',
-        icon: 'error',
-        confirmButtonText: 'OK',
-        customClass: {
-          container: 'swal2-container',
-        },
-      });
-    }
-  };
-
-  const initializeRooms = async () => {
-    try {
-      const roomsInfo = await getAllRoomsInfo(game);
-      setRooms(roomsInfo);
-      setFilteredRooms(roomsInfo);
-    } catch (error) {
-      console.error('Error initializing rooms:', error);
-      Swal.fire({
-        title: 'Error!',
-        text: error.message || 'An error occurred while fetching rooms.',
-        icon: 'error',
-        confirmButtonText: 'OK',
-        customClass: {
-          container: 'swal2-container',
-        },
-      });
-    }
-  };
 
   const avatars = [
     avatar1,
@@ -326,7 +325,7 @@ const JoinRoom = () => {
                 </div>}
               <button
                 className={style.createButton}
-                onClick={CreateRoom}
+                onClick={ handlerCreateRoom}
                 disabled={!isFormValid}
               >
                 Create
