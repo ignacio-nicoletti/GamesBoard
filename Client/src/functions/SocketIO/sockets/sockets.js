@@ -21,12 +21,16 @@ export const connectSocket = () => {
       resolve(socket);
     });
 
-    socket.on("disconnectServer", () => {
-      console.log("Desconectado del servidor");
-      disconnectRoom();
-    });
   });
 };
+
+export const disconnectServer=()=>{
+  socket.on("disconnectServer", () => {
+    console.log("Desconectado del servidor");
+    disconnectRoom();
+  });
+  
+}
 
 export const disconnectRoom = () => {
   socket.emit("disconnectRoom");
@@ -48,8 +52,10 @@ export const CreateGameRoom = (
   roomId,
   userName,
   maxUsers = 6,
-  selectedAvatar
+  selectedAvatar,
+  infoUser
 ) => {
+
   return new Promise((res, rej) => {
     const responses = {};
 
@@ -81,6 +87,7 @@ export const CreateGameRoom = (
       userName,
       maxUsers,
       selectedAvatar,
+      email:infoUser.email
     });
   });
 };

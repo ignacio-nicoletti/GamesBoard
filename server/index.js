@@ -59,18 +59,18 @@ io.on("connection", (socket) => {
 
   socket.on(
     "create_room",
-    ({ game, roomId, userName, maxUsers = 6, selectedAvatar }) => {
+    ({ game, roomId, userName, maxUsers = 6, selectedAvatar, email }) => {
       const rooms = permanentRooms[game];
       if (!rooms) {
         socket.emit("error", { error: "Invalid game" });
         return;
       }
-
+  
       if (rooms[roomId]) {
         socket.emit("room_creation_error", { error: "Room already exists" });
         return;
       }
-
+  
       rooms[roomId] = {
         users: [],
         disconnectedUsers: [],
@@ -78,11 +78,12 @@ io.on("connection", (socket) => {
         maxUsers,
         results: [],
       };
-
+  
       const user = {
         idSocket: socket.id,
         userName,
         roomId,
+        email,
         position: rooms[roomId].users.length + 1,
         ready: false,
         avatar: selectedAvatar,
@@ -96,7 +97,7 @@ io.on("connection", (socket) => {
         cumplio: false, // boolean // cumplio su apuesta
         points: 0, // puntos
       };
-
+  
       const round = {
         users: null, //usuarios conectados
         numRounds: 0, //num de ronda
@@ -115,10 +116,10 @@ io.on("connection", (socket) => {
         cantQueTiraron: 0,
         roomId: { gameId: game, roomId: roomId }, // Guarda la data correctamente
       };
-
+  
       rooms[roomId].users.push(user);
       rooms[roomId].round = round;
-
+  
       console.log(
         `Room ${roomId} created by ${userName} in game ${game} with max ${maxUsers} users`
       );
@@ -130,10 +131,11 @@ io.on("connection", (socket) => {
         maxUsers,
         round,
       });
-
+  
       io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId]);
     }
   );
+  
 
   socket.on("join_room", ({ game, roomId, userName, selectedAvatar }) => {
     const rooms = permanentRooms[game];

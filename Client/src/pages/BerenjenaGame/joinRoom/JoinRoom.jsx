@@ -12,8 +12,7 @@ import {
   CreateGameRoom,
   socket,
   joinGameRoom,
-  connectSocket,
-
+  socketConnect,
 } from '../../../functions/SocketIO/sockets/sockets';
 import avatar1 from '../../../assets/berenjena/jugadores/avatar1.png';
 import avatar2 from '../../../assets/berenjena/jugadores/avatar2.png';
@@ -30,23 +29,25 @@ const JoinRoom = () => {
   const [game, setGame] = useState('Berenjena');
   const [userName, setUserName] = useState('');
   const [roomId, setRoomId] = useState('');
-  const [tempMaxUsers, setTempMaxUsers] = useState('');
-  const [error, setError] = useState('');
+  const [tempMaxUsers, setTempMaxUsers] = useState('');//temp max o maxusers
   const [maxUsers, setMaxUsers] = useState(6);
+  const [error, setError] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState('avatar1');
   const [showModal, setShowModal] = useState(true);
   const [isFormValid, setIsFormValid] = useState(false);
   const navigate = useNavigate();
   const [timmerRooms, setTimmerRooms] = useState(5);
+  const [infoUser, setInfoUser] = useState({});
 
   useEffect(() => {
     const token = GetDecodedCookie('cookieToken');
     if (token) {
+      socketConnect()
       const data = DecodedToken(token);
       setUserName(data.userName);
+      setInfoUser(data)
 
     }
-
   }, [game]);
 
   useEffect(() => {
@@ -54,7 +55,7 @@ const JoinRoom = () => {
       setTimmerRooms((prevTime) => prevTime - 1);
     }, 1000);
     if (timmerRooms === 0) {
-      initializeSocket();
+      initializeRooms();
       setTimmerRooms(5);
     }
     return () => clearInterval(time);
@@ -91,7 +92,6 @@ const JoinRoom = () => {
           container: 'swal2-container',
         },
       });
-      console.log(data);
     };
     socket.on('room_creation_error', handleRoomCreationError);
     return () => {
@@ -129,7 +129,7 @@ const JoinRoom = () => {
     e.preventDefault();
     try {
       if (roomId !== '' && userName !== '') {
-        await CreateGameRoom(game, roomId, userName, maxUsers, selectedAvatar);
+        await CreateGameRoom(game, roomId, userName, maxUsers, selectedAvatar,infoUser);
         navigate(`/berenjena/multiplayer/${roomId}`);
       }
     } catch (error) {
@@ -165,9 +165,8 @@ const JoinRoom = () => {
     }
   };
 
-  const initializeSocket = async () => {
+  const initializeRooms = async () => {
     try {
-    
       const roomsInfo = await getAllRoomsInfo(game);
       setRooms(roomsInfo);
       setFilteredRooms(roomsInfo);
@@ -197,7 +196,7 @@ const JoinRoom = () => {
   const handleSubmit = () => {
     if (userName && selectedAvatar) {
       setShowModal(false);
-      initializeSocket()
+      initializeRooms()
     } else {
       Swal.fire({
         title: 'Error!',
