@@ -10,11 +10,24 @@ const Loader = ({ game, setMyPosition, setPlayers, setRound }) => {
   const [readyMe, setReadyMe] = useState(false);
   const [playerList, setPlayerList] = useState([]);
   const { id } = useParams();
-
+  const [timmerRooms, setTimmerRooms] = useState(2);
   const handleReady = () => {
     setReadyMe(true);
     socket.emit('player_ready', { game, roomId: id });
   };
+
+
+  useEffect(() => {
+
+    const time = setInterval(() => {
+      setTimmerRooms((prevTime) => prevTime - 1);
+    }, 1000);
+    if (timmerRooms === 0) {
+     
+      setTimmerRooms(2);
+    }
+    return () => clearInterval(time);
+  }, [timmerRooms]);
 
   useEffect(() => {
     const updatePlayerList = (data) => {
@@ -50,7 +63,7 @@ const Loader = ({ game, setMyPosition, setPlayers, setRound }) => {
       socket.off('player_ready_status', updatePlayerReadyStatus);
       socket.off('disconnectRoom', (data) => setPlayerList(data));
     };
-  }, [setMyPosition, setPlayers, setRound]);
+  }, [setMyPosition, setPlayers, setRound,timmerRooms,playerList]);
 
   return (
     <div className={style.containLoader}>
@@ -64,7 +77,7 @@ const Loader = ({ game, setMyPosition, setPlayers, setRound }) => {
       </p>
       <div className={style.playersAndButton}>
         <div className={style.PlayersReady}>
-          {playerList.map((player) =>
+          {playerList&& playerList.map((player) =>
             player.ready ? (
               <CheckIcon
                 key={player.idSocket}

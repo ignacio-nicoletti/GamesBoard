@@ -171,7 +171,7 @@ const GameBerenjena = () => {
           round={round}
           results={results}
         />}
-      <ButtonExitRoom />
+      <ButtonExitRoom game={game}/>
       <div className={style.resultado} onClick={() => setShowResult (true)}>
         <p>Resultados</p>
       </div>

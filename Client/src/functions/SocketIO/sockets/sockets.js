@@ -4,7 +4,7 @@ import { GetDecodedCookie } from "../../../utils/DecodedCookie";
 const URL = "http://localhost:3001";
 // Se conecta al servidor
 
-export let socket = io(URL, { autoConnect: false });
+export let socket = io(URL, { autoConnect: true });
 
 // export const socketConnect = () => {
 //   const token = GetDecodedCookie("cookieToken");
@@ -33,8 +33,8 @@ export const disconnectServer=()=>{
   
 }
 
-export const disconnectRoom = () => {
-  socket.emit("disconnectRoom");
+export const disconnectRoom =  (game, roomId) => {
+  socket.emit("disconnectRoom", { game, roomId });
 };
 
 // Función para solicitar la información de todas las salas
@@ -93,7 +93,7 @@ export const CreateGameRoom = (
   });
 };
 
-export const joinGameRoom = (game, roomId, userName, selectedAvatar) => {
+export const joinGameRoom = (game, roomId, userName, selectedAvatar,infoUser) => {
   return new Promise((resolve, reject) => {
     const responses = {};
 
@@ -118,7 +118,7 @@ export const joinGameRoom = (game, roomId, userName, selectedAvatar) => {
       }
     }
 
-    socket.emit("join_room", { game, roomId, userName, selectedAvatar });
+    socket.emit("join_room", { game, roomId, userName, selectedAvatar,email:infoUser.email });
   });
 };
 

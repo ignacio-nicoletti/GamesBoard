@@ -1,10 +1,24 @@
-import {Link} from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {Link, useParams} from 'react-router-dom';
 import style from './buttonExitRoom.module.css';
 import {disconnectRoom} from '../../../functions/SocketIO/sockets/sockets';
 
-const ButtonExitRoom = () => {
+const ButtonExitRoom = ({game}) => {
+  const {id} = useParams ();
+  const [roomId, setRoomId] = useState (id);
+  
+  useEffect (
+    () => {
+      return () => {
+        disconnectRoom (game, roomId);
+      };
+    },
+    [game, roomId]
+  );
+
   const handlerExitRoom = () => {
-    disconnectRoom ();
+    setRoomId(id)
+    disconnectRoom (game, roomId);
   };
 
   return (
