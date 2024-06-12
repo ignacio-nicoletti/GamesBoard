@@ -42,7 +42,7 @@ const JoinRoom = () => {
   useEffect(() => {
     const token = GetDecodedCookie('cookieToken');
     if (token) {
-      socketConnect()
+      // socketConnect()
       const data = DecodedToken(token);
       setUserName(data.userName);
       setInfoUser(data)

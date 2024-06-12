@@ -6,16 +6,17 @@ const URL = "http://localhost:3001";
 
 export let socket = io(URL, { autoConnect: false });
 
-export const socketConnect = () => {
-  const token = GetDecodedCookie("cookieToken");
-  if (token) {
-    socket.connect();
-  }
-  connectSocket();
-};
+// export const socketConnect = () => {
+//   const token = GetDecodedCookie("cookieToken");
+//   if (token) {
+//     socket.connect();
+//   }
+//   connectSocket();
+// };
 
 export const connectSocket = () => {
   return new Promise((resolve) => {
+    socket.connect();
     socket.on("connect", () => {
       console.log("Conectado al servidor");
       resolve(socket);

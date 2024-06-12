@@ -45,7 +45,7 @@ const Login = ({ isLogin, onClose }) => {
   };
 
   const initializeSocket = () => {
-    socketConnect();
+    // socketConnect();
   };
 
   return (
