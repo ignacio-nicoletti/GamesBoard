@@ -5,6 +5,7 @@ import cors from "cors";
 import morgan from "morgan";
 import "./src/dataBase/connectDB.js";
 import AuthRoute from "./src/routes/auth.routes.js";
+import userRoutes from "./src/routes/user.routes.js"
 
 import { distribute, shuffle } from "./functions/functions.js"; // Asegúrate de que estas funciones estén definidas en el archivo adecuado
 
@@ -619,6 +620,7 @@ app.use(morgan("dev"));
 app.use(express.json());
 
 app.use("/", AuthRoute);
+app.use("/user",userRoutes)
 
 const port = process.env.PORT || 3001;
 server.listen(port, () => {

@@ -39,13 +39,27 @@ const JoinRoom = () => {
   const navigate = useNavigate ();
   const [timmerRooms, setTimmerRooms] = useState (5);
   const [infoUser, setInfoUser] = useState ({});
+  const token = GetDecodedCookie ('cookieToken');
+
+  useEffect (() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await InstanceOfAxios (`/user/${infoUser.id}`, 'GET');
+        setUserName (response.player.userName);
+      } catch (error) {
+        console.error ('Error fetching products:', error);
+      }
+    };
+    if (token) {
+      fetchProducts ();
+    }
+  }, []);
 
   const handlerCreateRoom = async e => {
     e.preventDefault ();
     try {
       if (roomId !== '' && userName !== '') {
-    
-        const res=await CreateGameRoom (
+        const res = await CreateGameRoom (
           game,
           roomId,
           userName,
@@ -53,11 +67,10 @@ const JoinRoom = () => {
           selectedAvatar,
           infoUser
         );
-        res&&
-        navigate (`/berenjena/multiplayer/${res.roomCreated.roomId}`);
+        res && navigate (`/berenjena/multiplayer/${res.roomCreated.roomId}`);
       }
     } catch (error) {
-      console.log(error);
+      console.log (error);
       Swal.fire ({
         title: 'Error!',
         text: error || 'An error occurred while creating the room.',
@@ -117,7 +130,7 @@ const JoinRoom = () => {
   };
 
   // me setea el nombre si inicio sesion
-  const token = GetDecodedCookie ('cookieToken');
+
   useEffect (() => {
     if (token) {
       const data = DecodedToken (token);
@@ -192,14 +205,16 @@ const JoinRoom = () => {
 
   const avatars = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6];
 
-  const handleSubmit = async() => {
+  const handleSubmit = async () => {
     if (userName && selectedAvatar) {
       setShowModal (false);
-     if(token){
-
-       await InstanceOfAxios(`/user/${infoUser.id}`, "PUT")     ;
+      if (token) {
+        await InstanceOfAxios (`/user/${infoUser.id}`, 'PUT', {
+          userName,
+          selectedAvatar,
+        }).then (data => setUserName (data.player.userName));
       }
-       initializeRooms ();
+      initializeRooms ();
     } else {
       Swal.fire ({
         title: 'Error!',
