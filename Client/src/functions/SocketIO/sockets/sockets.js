@@ -56,7 +56,6 @@ export const CreateGameRoom = (
   selectedAvatar,
   infoUser
 ) => {
-
   return new Promise((res, rej) => {
     const responses = {};
 
@@ -88,10 +87,11 @@ export const CreateGameRoom = (
       userName,
       maxUsers,
       selectedAvatar,
-      email:infoUser.email
+      email: infoUser.email
     });
   });
 };
+
 
 export const joinGameRoom = (game, roomId, userName, selectedAvatar,infoUser) => {
   return new Promise((resolve, reject) => {

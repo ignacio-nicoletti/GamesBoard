@@ -4,7 +4,7 @@ import { Server } from "socket.io";
 import cors from "cors";
 import morgan from "morgan";
 import "./src/dataBase/connectDB.js";
-import AuthRoute from "./src/routes/auth.routes.js"
+import AuthRoute from "./src/routes/auth.routes.js";
 
 import { distribute, shuffle } from "./functions/functions.js"; // Asegúrate de que estas funciones estén definidas en el archivo adecuado
 
@@ -41,7 +41,7 @@ function createRooms(numberOfRooms) {
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id} to server`);
   //chequear errores de room
-  
+
   socket.on("get_all_rooms_info", ({ game }) => {
     const rooms = permanentRooms[game];
     if (rooms) {
@@ -62,67 +62,33 @@ io.on("connection", (socket) => {
     ({ game, roomId, userName, maxUsers = 6, selectedAvatar, email }) => {
       const rooms = permanentRooms[game];
       if (!rooms) {
-        socket.emit("error", { error: "Invalid game" });
+        socket.emit("room_creation_error", { error: "Invalid game" });
         return;
       }
-  
+
       if (rooms[roomId]) {
-        const existingUser = rooms[roomId].users.find(user => user.email === email);
-        const disconnectedUserIndex = rooms[roomId].disconnectedUsers.findIndex(user => user.email === email);
-  
-        if (existingUser) {
-          // Si el usuario ya existe en la sala, actualizar el idSocket y volver a conectarlo
-          existingUser.idSocket = socket.id;
-          socket.join(`${game}-${roomId}`);
-          socket.emit("room_reconnected", {
-            roomId,
-            position: existingUser.position,
-            userName: existingUser.userName,
-            maxUsers,
-            round: rooms[roomId].round,
-          });
-  
-          io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId]);
-          return;
-        } else if (disconnectedUserIndex !== -1) {
-          // Si el usuario estaba desconectado, volver a añadirlo a la sala
-          const [reconnectingUser] = rooms[roomId].disconnectedUsers.splice(disconnectedUserIndex, 1);
-          reconnectingUser.idSocket = socket.id;
-          rooms[roomId].users.push(reconnectingUser);
-  
-          socket.join(`${game}-${roomId}`);
-          socket.emit("room_reconnected", {
-            roomId,
-            position: reconnectingUser.position,
-            userName: reconnectingUser.userName,
-            maxUsers,
-            round: rooms[roomId].round,
-          });
-  
-          io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId]);
-          return;
-        }
-      } else {
-        // Si la sala no existe, crear una nueva sala
-        rooms[roomId] = {
-          users: [],
-          disconnectedUsers: [],
-          gameStarted: false,
-          maxUsers,
-          results: [],
-        };
+        socket.emit("room_creation_error", { error: "Room already exists" });
+        return;
       }
-  
+
+      rooms[roomId] = {
+        users: [],
+        disconnectedUsers: [],
+        gameStarted: false,
+        maxUsers,
+        results: [],
+      };
+
       const user = {
         idSocket: socket.id,
         userName,
         roomId,
         email,
-        position: rooms[roomId].users.length + 1,
+        position: 1,
         ready: false,
-        connect:true,
+        connect: true,
         avatar: selectedAvatar,
-        id: rooms[roomId].users.length + 1, // position
+        id: 1, // position
         cardPerson: [], // cards
         betP: 0, // num de cards apostadas
         cardsWins: 0, // cards ganadas
@@ -132,7 +98,7 @@ io.on("connection", (socket) => {
         cumplio: false, // boolean // cumplio su apuesta
         points: 0, // puntos
       };
-  
+
       const round = {
         users: null, //usuarios conectados
         numRounds: 0, //num de ronda
@@ -151,10 +117,10 @@ io.on("connection", (socket) => {
         cantQueTiraron: 0,
         roomId: { gameId: game, roomId: roomId }, // Guarda la data correctamente
       };
-  
+
       rooms[roomId].users.push(user);
       rooms[roomId].round = round;
-  
+
       console.log(
         `Room ${roomId} created by ${userName} in game ${game} with max ${maxUsers} users`
       );
@@ -166,11 +132,14 @@ io.on("connection", (socket) => {
         maxUsers,
         round,
       });
-  
-      io.to(`${game}-${roomId}`).emit("player_list", rooms[roomId]);
+
+      io.to(`${game}-${roomId}`).emit("player_list", {
+        users: rooms[roomId].users,
+        round:rooms[roomId].round
+      });
     }
   );
-  
+
   socket.on("join_room", ({ game, roomId, userName, selectedAvatar, email }) => {
     const rooms = permanentRooms[game];
     if (!rooms) {
@@ -191,33 +160,33 @@ io.on("connection", (socket) => {
       return;
     }
   
-    // Buscar en la lista de usuarios desconectados por email
     const disconnectedUserIndex = room.disconnectedUsers.findIndex(
-      (user) => user.email === email
+      (user) => user.email === email || user.userName === userName
     );
   
     if (disconnectedUserIndex !== -1) {
       const user = room.disconnectedUsers.splice(disconnectedUserIndex, 1)[0];
       user.idSocket = socket.id;
-      user.connect = true; // Update the connection status
+      user.connect = true;
       room.users.push(user);
       console.log(`User ${userName} rejoined room ${roomId} in game ${game}`);
       socket.join(`${game}-${roomId}`);
   
-      // Emitir el evento "room_joined" solo al usuario que se une
       socket.emit("room_joined", {
         roomId,
         position: user.position,
         userName,
         round: room.round,
+        users: room.users, // Asegúrate de enviar la lista de usuarios aquí también
       });
   
-      // Emitir el evento "player_list" a todos los usuarios en la sala
-      io.to(`${game}-${roomId}`).emit("player_list", room);
+      io.to(`${game}-${roomId}`).emit("player_list", {
+        users: room.users,
+        round: room.round
+      });
       return;
     }
   
-    // Si el juego ya empezó, no permitir la entrada de nuevos usuarios
     if (room.gameStarted) {
       socket.emit("room_join_error", {
         error: "Game already started, cannot join",
@@ -232,17 +201,17 @@ io.on("connection", (socket) => {
       email,
       position: room.users.length + 1,
       ready: false,
-      connect: true, // Connection status
+      connect: true,
       avatar: selectedAvatar,
-      id: room.users.length + 1, // position
-      cardPerson: [], // cards
-      betP: 0, // num de cards apostadas
-      cardsWins: 0, // cards ganadas
-      cardBet: {}, // card apostada
-      myturnA: false, // boolean // turno apuesta
-      myturnR: false, // boolean // turno ronda
-      cumplio: false, // boolean // cumplio su apuesta
-      points: 0, // puntos
+      id: room.users.length + 1,
+      cardPerson: [],
+      betP: 0,
+      cardsWins: 0,
+      cardBet: {},
+      myturnA: false,
+      myturnR: false,
+      cumplio: false,
+      points: 0,
     };
   
     room.users.push(user);
@@ -250,113 +219,71 @@ io.on("connection", (socket) => {
     console.log(`User ${userName} joined room ${roomId} in game ${game}`);
     socket.join(`${game}-${roomId}`);
   
-    // Emitir el evento "room_joined" solo al usuario que se une
     socket.emit("room_joined", {
       roomId,
       position: user.position,
       userName,
+      // Asegúrate de enviar la lista de usuarios aquí también
+    });
+  
+    io.to(`${game}-${roomId}`).emit("player_list", {
+      users: room.users,
       round: room.round,
     });
-  
-    // Emitir el evento "player_list" a todos los usuarios en la sala
-    io.to(`${game}-${roomId}`).emit("player_list", room);
-  });
-  
-  
-
-  // Manejo de desconexión del servidor
-  socket.on("disconnectServer", () => {
-    Object.keys(permanentRooms).forEach((game) => {
-      const rooms = permanentRooms[game];
-      Object.keys(rooms).forEach((roomId) => {
-        const room = rooms[roomId];
-        const userIndex = room.users.findIndex(
-          (user) => user.idSocket === socket.id
-        );
-        if (userIndex !== -1) {
-          const [disconnectedUser] = room.users.splice(userIndex, 1);
-          room.disconnectedUsers.push(disconnectedUser);
-          io.to(`${game}-${roomId}`).emit("player_list", room.users);
-
-          if (room.users.length === 0) {
-            const roomIndex = parseInt(roomId, 10);
-            if (roomIndex > 10) {
-              delete rooms[roomId];
-              console.log(
-                `User ${socket.id} Disconnected from room => ${roomId}. Room deleted.`
-              );
-            } else {
-              rooms[roomId] = {
-                users: [],
-                disconnectedUsers: [],
-                gameStarted: false,
-                round: {},
-                results: [],
-              };
-              console.log(
-                `User ${socket.id} Disconnected from room => ${roomId}. Room left empty.`
-              );
-            }
-          }
-        }
-      });
-    });
-    console.log(`User ${socket.id} was disconnected from the server.`);
   });
 
   // Manejo de desconexión de la sala
   socket.on("disconnectRoom", (data) => {
     const { game, roomId } = data;
     console.log(roomId);
-  
+
     if (!game || !roomId) {
-      console.log('Los parámetros game o roomId son indefinidos.');
+      console.log("Los parámetros game o roomId son indefinidos.");
       return;
     }
-  
+
     if (!permanentRooms[game] || !permanentRooms[game][roomId]) {
       console.log(`Sala no encontrada: ${roomId} en el juego: ${game}`);
       return;
     }
-  
+
     const room = permanentRooms[game][roomId];
     const userIndex = room.users.findIndex(
       (user) => user.idSocket === socket.id
-      );
+    );
+
     if (userIndex !== -1) {
-      const [disconnectedUser] = room.users.splice(userIndex, 1);
-      disconnectedUser.connect = false;
-      room.disconnectedUsers.push(disconnectedUser);
-      socket.emit("player_list", room.users);
-      if (room.users.length > 0) {
+      const disconnectedUser = room.users[userIndex];
+      if (room.gameStarted) {
+        // Si el juego ya comenzó y un usuario se desconecta,
+        // el usuario permanece en la sala pero se marca como desconectado
+        disconnectedUser.connect = false;
+        room.disconnectedUsers.push(disconnectedUser);
         io.to(`${game}-${roomId}`).emit("player_list", room.users);
-        console.log(`Actualizando la lista de jugadores en la sala: ${roomId}`);
       } else {
-        const roomIndex = parseInt(roomId, 10);
-        if (roomIndex > 10) {
+        // Si el juego no ha comenzado, el usuario se elimina de la sala
+        room.users.splice(userIndex, 1);
+        io.to(`${game}-${roomId}`).emit("player_list", room.users);
+        if (room.users.length === 0) {
+          // Si la sala queda vacía, se elimina la sala
           delete permanentRooms[game][roomId];
           console.log(
             `Usuario ${socket.id} desconectado de la sala ${roomId}. Sala eliminada.`
           );
         } else {
-          permanentRooms[game][roomId] = {
-            users: [],
-            disconnectedUsers: room.disconnectedUsers,
-            gameStarted: false,
-            round: {},
-            results: [],
-          };
+          // Si hay otros usuarios en la sala, se mantiene la sala
           console.log(
-            `Usuario ${socket.id} desconectado de la sala ${roomId}. Sala vacía.`
+            `Usuario ${socket.id} desconectado de la sala ${roomId}.`
           );
         }
       }
     } else {
       console.log(`Usuario no encontrado en la sala: ${roomId}`);
     }
+
+    // Envía la lista actualizada a todos los usuarios en la sala
+    io.to(`${game}-${roomId}`).emit("player_list", room.users);
   });
-  
-  
 
   socket.on("player_ready", ({ game, roomId }) => {
     const room = permanentRooms[game] && permanentRooms[game][roomId];
@@ -646,14 +573,52 @@ io.on("connection", (socket) => {
       });
     }
   });
-});
 
+  // Manejo de desconexión del servidor
+  socket.on("disconnectServer", () => {
+    Object.keys(permanentRooms).forEach((game) => {
+      const rooms = permanentRooms[game];
+      Object.keys(rooms).forEach((roomId) => {
+        const room = rooms[roomId];
+        const userIndex = room.users.findIndex(
+          (user) => user.idSocket === socket.id
+        );
+        if (userIndex !== -1) {
+          const [disconnectedUser] = room.users.splice(userIndex, 1);
+          room.disconnectedUsers.push(disconnectedUser);
+          io.to(`${game}-${roomId}`).emit("player_list", room.users);
+
+          if (room.users.length === 0) {
+            const roomIndex = parseInt(roomId, 10);
+            if (roomIndex > 10) {
+              delete rooms[roomId];
+              console.log(
+                `User ${socket.id} Disconnected from room => ${roomId}. Room deleted.`
+              );
+            } else {
+              rooms[roomId] = {
+                users: [],
+                disconnectedUsers: [],
+                gameStarted: false,
+                round: {},
+                results: [],
+              };
+              console.log(
+                `User ${socket.id} Disconnected from room => ${roomId}. Room left empty.`
+              );
+            }
+          }
+        }
+      });
+    });
+    console.log(`User ${socket.id} was disconnected from the server.`);
+  });
+});
 
 app.use(morgan("dev"));
 app.use(express.json());
 
-app.use("/",AuthRoute)
-
+app.use("/", AuthRoute);
 
 const port = process.env.PORT || 3001;
 server.listen(port, () => {

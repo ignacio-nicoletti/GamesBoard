@@ -13,7 +13,8 @@ import ButtonExitRoom
   from '../../../components/berenjena/buttonExitRoom/buttonExitRoom.jsx';
 import {distribute, socket} from '../../../functions/SocketIO/sockets/sockets';
 import MyCards from '../../../components/berenjena/myCards/myCards.jsx';
-import BeetweenRound from '../../../components/berenjena/beetweenRound/beetweenRound';
+import BeetweenRound
+  from '../../../components/berenjena/beetweenRound/beetweenRound';
 
 const GameBerenjena = () => {
   const [loader, setLoader] = useState (true);
@@ -28,6 +29,7 @@ const GameBerenjena = () => {
   const [timmerPlayer, setTimmerPlayer] = useState (30); //timmer para jugador
   const [timmerBetweenRound, setTimmerBetweenRound] = useState (5); //timmer entre rondas
   const [showBetweenRound, setShowBetweenRound] = useState (true);
+  const [playerListGame, setPlayerListGame] = useState ([]);
 
   //timmer para tirar la carta entre jugadores
   useEffect (
@@ -38,7 +40,7 @@ const GameBerenjena = () => {
       }, 1000);
       return () => clearInterval (time);
     },
-    [round.typeRound]
+    [round]
   );
 
   //timmer entre rondas
@@ -171,7 +173,7 @@ const GameBerenjena = () => {
           round={round}
           results={results}
         />}
-      <ButtonExitRoom game={game}/>
+      <ButtonExitRoom game={game} />
       <div className={style.resultado} onClick={() => setShowResult (true)}>
         <p>Resultados</p>
       </div>

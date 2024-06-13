@@ -10,66 +10,56 @@ const Loader = ({ game, setMyPosition, setPlayers, setRound }) => {
   const [readyMe, setReadyMe] = useState(false);
   const [playerList, setPlayerList] = useState([]);
   const { id } = useParams();
-  const [timmerRooms, setTimmerRooms] = useState(2);
+
   const handleReady = () => {
     setReadyMe(true);
     socket.emit('player_ready', { game, roomId: id });
   };
 
-
-  useEffect(() => {
-
-    const time = setInterval(() => {
-      setTimmerRooms((prevTime) => prevTime - 1);
-    }, 1000);
-    if (timmerRooms === 0) {
-     
-      setTimmerRooms(2);
-    }
-    return () => clearInterval(time);
-  }, [timmerRooms]);
-
-  useEffect(() => {
-    const updatePlayerList = (data) => {
-      if (data && data.users) {
-        setPlayerList(data.users);
-        setPlayers(data.users);
-        setRound(data.round);
-        const currentPlayer = data.users.find(
-          (player) => player.idSocket === socket.id
-        );
-        if (currentPlayer) {
-          setMyPosition(currentPlayer.position);
-        }
-      }
-    };
-
-    const updatePlayerReadyStatus = (playerReadyStatus) => {
-      setPlayerList((prevList) =>
-        prevList.map((player) =>
-          player.idSocket === playerReadyStatus.idSocket
-            ? { ...player, ready: playerReadyStatus.ready }
-            : player
-        )
+  const updatePlayerList = (data) => {
+    console.log(data);
+    if (data && data.users) {
+      setPlayerList(data.users);
+      setPlayers(data.users);
+      setRound(data.round);
+      const currentPlayer = data.users.find(
+        (player) => player.idSocket === socket.id
       );
-    };
+      if (currentPlayer) {
+        setMyPosition(currentPlayer.position);
+      }
+    }
+  };
 
+  const updatePlayerReadyStatus = (playerReadyStatus) => {
+    setPlayerList((prevList) =>
+      prevList.map((player) =>
+        player.idSocket === playerReadyStatus.idSocket
+          ? { ...player, ready: playerReadyStatus.ready }
+          : player
+      )
+    );
+  };
+
+  useEffect(() => {
+    socket.on('room_joined', updatePlayerList);
     socket.on('player_list', updatePlayerList);
     socket.on('player_ready_status', updatePlayerReadyStatus);
-    socket.on('disconnectRoom', (data) => setPlayerList(data));
 
     return () => {
+      socket.off('room_joined', updatePlayerList);
       socket.off('player_list', updatePlayerList);
       socket.off('player_ready_status', updatePlayerReadyStatus);
-      socket.off('disconnectRoom', (data) => setPlayerList(data));
     };
-  }, [setMyPosition, setPlayers, setRound,timmerRooms,playerList]);
+  }, [setMyPosition, setPlayers, setRound]);
 
   return (
     <div className={style.containLoader}>
       <h1 className={style.roomTitle}>Te estás uniendo a la sala N°{id}</h1>
       <ul className={style.background}>
-        {Array.from({ length: 30 }).map((_, index) => <li key={index} />)}
+        {Array.from({ length: 30 }).map((_, index) => (
+          <li key={index} />
+        ))}
       </ul>
       <div className={style.loader} />
       <p className={style.preGameMessage}>
@@ -77,7 +67,7 @@ const Loader = ({ game, setMyPosition, setPlayers, setRound }) => {
       </p>
       <div className={style.playersAndButton}>
         <div className={style.PlayersReady}>
-          {playerList&& playerList.map((player) =>
+          {playerList.length>0&&playerList.map((player) =>
             player.ready ? (
               <CheckIcon
                 key={player.idSocket}
