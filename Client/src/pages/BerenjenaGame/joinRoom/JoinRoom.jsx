@@ -94,6 +94,7 @@ const JoinRoom = () => {
           selectedAvatar,
           infoUser
         );
+        console.log(res);
         res && navigate (`/berenjena/multiplayer/${res.roomJoined.roomId}`);
       }
     } catch (error) {

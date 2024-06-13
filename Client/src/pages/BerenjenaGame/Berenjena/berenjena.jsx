@@ -29,7 +29,6 @@ const GameBerenjena = () => {
   const [timmerPlayer, setTimmerPlayer] = useState (30); //timmer para jugador
   const [timmerBetweenRound, setTimmerBetweenRound] = useState (5); //timmer entre rondas
   const [showBetweenRound, setShowBetweenRound] = useState (true);
-  const [playerListGame, setPlayerListGame] = useState ([]);
 
   //timmer para tirar la carta entre jugadores
   useEffect (
@@ -74,6 +73,7 @@ const GameBerenjena = () => {
     };
 
     socket.on ('start_game', handleStartGame);
+   
 
     return () => {
       socket.off ('start_game', handleStartGame);

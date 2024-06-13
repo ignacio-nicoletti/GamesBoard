@@ -173,19 +173,19 @@ io.on("connection", (socket) => {
       console.log(`User ${userName} rejoined room ${roomId} in game ${game}`);
       socket.join(`${game}-${roomId}`);
   
-      socket.emit("room_joined", {
-        roomId,
-        position: user.position,
-        userName,
-        round: room.round,
-        users: room.users, // Asegúrate de enviar la lista de usuarios aquí también
-      });
+      // socket.emit("room_joined", {
+      //   roomId,
+      //   position: user.position,
+      //   userName,
+      //   round: room.round,
+      //   users: room.users,
+      // });
   
-      io.to(`${game}-${roomId}`).emit("player_list", {
-        users: room.users,
-        round: room.round
-      });
-      return;
+      // io.to(`${game}-${roomId}`).emit("player_list", {
+      //   users: room.users,
+      //   round: room.round
+      // });
+      // return;
     }
   
     if (room.gameStarted) {
@@ -200,19 +200,19 @@ io.on("connection", (socket) => {
       userName,
       roomId,
       email,
-      position: room.users.length + 1,
+      position:room.users.length + 1,
       ready: false,
       connect: true,
       avatar: selectedAvatar,
-      id: room.users.length + 1,
-      cardPerson: [],
-      betP: 0,
-      cardsWins: 0,
-      cardBet: {},
-      myturnA: false,
-      myturnR: false,
-      cumplio: false,
-      points: 0,
+      id: 1, // position
+      cardPerson: [], // cards
+      betP: 0, // num de cards apostadas
+      cardsWins: 0, // cards ganadas
+      cardBet: {}, // card apostada
+      myturnA: false, // boolean // turno apuesta
+      myturnR: false, // boolean // turno ronda
+      cumplio: false, // boolean // cumplio su apuesta
+      points: 0, // puntos
     };
   
     room.users.push(user);
@@ -224,7 +224,8 @@ io.on("connection", (socket) => {
       roomId,
       position: user.position,
       userName,
-      // Asegúrate de enviar la lista de usuarios aquí también
+      users: room.users,
+      round: room.round,
     });
   
     io.to(`${game}-${roomId}`).emit("player_list", {
@@ -232,7 +233,18 @@ io.on("connection", (socket) => {
       round: room.round,
     });
   });
+  
+  socket.on("roomRefresh", ({ game, roomId }) => {
+    console.log(game, roomId);
+    const rooms = permanentRooms[game];
+    const room = rooms[roomId];
+    io.to(`${game}-${roomId}`).emit("roomRefresh", {
+      users: room.users,
+      round: room.round,
+      position:room.users.length,
+    });
 
+  })
   // Manejo de desconexión de la sala
   socket.on("disconnectRoom", (data) => {
     const { game, roomId } = data;
