@@ -42,16 +42,17 @@ const JoinRoom = () => {
   const token = GetDecodedCookie ('cookieToken');
 
   useEffect (() => {
-    const fetchProducts = async () => {
+    const fetchPlayer = async () => {
       try {
-        const response = await InstanceOfAxios (`/user/${infoUser.id}`, 'GET');
+        const data = DecodedToken (token);
+        const response = await InstanceOfAxios (`/user/${infoUser.id||data.id}`, 'GET');
         setUserName (response.player.userName);
       } catch (error) {
         console.error ('Error fetching products:', error);
       }
     };
     if (token) {
-      fetchProducts ();
+      fetchPlayer ();
     }
   }, []);
 
@@ -94,7 +95,6 @@ const JoinRoom = () => {
           selectedAvatar,
           infoUser
         );
-        console.log(res);
         res && navigate (`/berenjena/multiplayer/${res.roomJoined.roomId}`);
       }
     } catch (error) {

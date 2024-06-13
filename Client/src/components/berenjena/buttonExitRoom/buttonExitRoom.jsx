@@ -10,7 +10,7 @@ const ButtonExitRoom = ({game}) => {
   useEffect (
     () => {
       return () => {
-        disconnectRoom (game, roomId);
+        // disconnectRoom (game, roomId);
       };
     },
     [game, roomId]
@@ -24,7 +24,7 @@ const ButtonExitRoom = ({game}) => {
   return (
     <div className={style.container}>
       <Link
-        to="/berenjena"
+        to="/berenjena/joinRoom"
         onClick={handlerExitRoom}
         className={style.ButtonExitRoom}
       >
