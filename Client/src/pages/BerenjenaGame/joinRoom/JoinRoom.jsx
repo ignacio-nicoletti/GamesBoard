@@ -117,8 +117,8 @@ const JoinRoom = () => {
   };
 
   // me setea el nombre si inicio sesion
+  const token = GetDecodedCookie ('cookieToken');
   useEffect (() => {
-    const token = GetDecodedCookie ('cookieToken');
     if (token) {
       const data = DecodedToken (token);
       setUserName (data.userName);
@@ -195,7 +195,10 @@ const JoinRoom = () => {
   const handleSubmit = async() => {
     if (userName && selectedAvatar) {
       setShowModal (false);
-      // await InstanceOfAxios("/login", "PUT")     ;
+     if(token){
+
+       await InstanceOfAxios(`/user/${infoUser.id}`, "PUT")     ;
+      }
        initializeRooms ();
     } else {
       Swal.fire ({
