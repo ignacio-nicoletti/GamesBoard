@@ -21,18 +21,15 @@ export const connectSocket = () => {
       console.log("Conectado al servidor");
       resolve(socket);
     });
-
   });
 };
 
-export const disconnectServer=()=>{
+export const disconnectServer = () => {
   socket.on("disconnectServer", () => {
     console.log("Desconectado del servidor");
     disconnectRoom();
   });
-  
-}
-
+};
 
 // Función para solicitar la información de todas las salas
 export const getAllRoomsInfo = (game) => {
@@ -84,12 +81,18 @@ export const CreateGameRoom = (
       userName,
       maxUsers,
       selectedAvatar,
-      email: infoUser.email
+      email: infoUser.email,
     });
   });
 };
 
-export const joinGameRoom = (game, roomId, userName, selectedAvatar,infoUser) => {
+export const joinGameRoom = (
+  game,
+  roomId,
+  userName,
+  selectedAvatar,
+  infoUser
+) => {
   return new Promise((resolve, reject) => {
     const responses = {};
 
@@ -114,14 +117,20 @@ export const joinGameRoom = (game, roomId, userName, selectedAvatar,infoUser) =>
       }
     }
 
-    socket.emit("join_room", { game, roomId, userName, selectedAvatar,email:infoUser.email });
+    socket.emit("join_room", {
+      game,
+      roomId,
+      userName,
+      selectedAvatar,
+      email: infoUser.email,
+    });
   });
 };
 
-export const disconnectRoom =  (game, roomId) => {
+export const disconnectRoom = (game, roomId) => {
   socket.emit("disconnectRoom", { game, roomId });
-};
 
+};
 
 export const distribute = (round, setPlayers, players) => {
   socket.emit("distribute", { round, players });
