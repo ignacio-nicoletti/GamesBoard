@@ -10,6 +10,7 @@ import ButtonExitRoom from '../../../components/berenjena/buttonExitRoom/buttonE
 import { distribute, socket } from '../../../functions/SocketIO/sockets/sockets';
 import MyCards from '../../../components/berenjena/myCards/myCards.jsx';
 import BeetweenRound from '../../../components/berenjena/beetweenRound/beetweenRound';
+import { useParams } from 'react-router-dom';
 
 const GameBerenjena = () => {
   const [loader, setLoader] = useState(true);
@@ -24,15 +25,17 @@ const GameBerenjena = () => {
   const [timmerPlayer, setTimmerPlayer] = useState(30); // timmer para jugador
   const [timmerBetweenRound, setTimmerBetweenRound] = useState(5); // timmer entre rondas
   const [showBetweenRound, setShowBetweenRound] = useState(true);
-console.log(myPosition);
+
   // Timmer para tirar la carta entre jugadores
+
+
   useEffect(() => {
     setTimmerPlayer(30);
     const time = setInterval(() => {
       setTimmerPlayer(prevTime => prevTime - 1);
     }, 1000);
     return () => clearInterval(time);
-  }, [round]);
+  }, []);
 
   // Timmer entre rondas
   useEffect(() => {

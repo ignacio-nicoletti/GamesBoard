@@ -305,6 +305,11 @@ io.on("connection", (socket) => {
           console.log(
             `Usuario ${socket.id} desconectado de la sala ${roomId}.`
           );
+          io.to(`${game}-${roomId}`).emit("roomRefresh", {
+            users: room.users,
+            round: room.round,
+            position: room.users.length,
+          });
         }
       }
     } else {

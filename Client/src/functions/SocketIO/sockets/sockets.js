@@ -1,18 +1,10 @@
 import { io } from "socket.io-client";
-import { GetDecodedCookie } from "../../../utils/DecodedCookie";
 
 const URL = "http://localhost:3001";
 // Se conecta al servidor
 
 export let socket = io(URL, { autoConnect: true });
 
-// export const socketConnect = () => {
-//   const token = GetDecodedCookie("cookieToken");
-//   if (token) {
-//     socket.connect();
-//   }
-//   connectSocket();
-// };
 
 export const connectSocket = () => {
   return new Promise((resolve) => {
@@ -30,7 +22,6 @@ export const disconnectServer = () => {
     disconnectRoom();
   });
 };
-
 // Función para solicitar la información de todas las salas
 export const getAllRoomsInfo = (game) => {
   return new Promise((resolve) => {
@@ -41,7 +32,6 @@ export const getAllRoomsInfo = (game) => {
   });
 };
 //se desconecta de la sala
-
 export const CreateGameRoom = (
   game,
   roomId,
