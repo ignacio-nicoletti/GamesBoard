@@ -6,11 +6,10 @@ import CheckIcon from '@mui/icons-material/Check';
 import ButtonExitRoom from '../buttonExitRoom/buttonExitRoom';
 import style from './loader.module.css';
 
-const Loader = ({game, setMyPosition, setPlayers, setRound}) => {
+const Loader = ({game, setPlayers, setRound, myPlayer, setMyPlayer}) => {
   const [readyMe, setReadyMe] = useState (false);
   const [playerList, setPlayerList] = useState ([]);
   const {id} = useParams ();
-
   const handleReady = () => {
     setReadyMe (true);
     socket.emit ('player_ready', {game, roomId: id});
@@ -21,7 +20,12 @@ const Loader = ({game, setMyPosition, setPlayers, setRound}) => {
       setPlayerList (data.users);
       setPlayers (data.users);
       setRound (data.round);
-      setMyPosition (data.position);
+      const myUpdatedInfo = data.users.find (
+        player => player.idSocket === socket.id
+      );
+      if (myUpdatedInfo) {
+        setMyPlayer ({...myPlayer, position:myUpdatedInfo.position});
+      }
     }
   };
 
@@ -38,20 +42,24 @@ const Loader = ({game, setMyPosition, setPlayers, setRound}) => {
 
   useEffect (
     () => {
+      socket.on ('room_created', updatePlayerList);
+      socket.on ('room_joined', updatePlayerList);
+
       socket.emit ('roomRefresh', {game, roomId: id});
       socket.on ('roomRefresh', updatePlayerList);
-      socket.on ('room_joined', updatePlayerList);
+
       socket.on ('player_list', updatePlayerList);
       socket.on ('player_ready_status', updatePlayerReadyStatus);
 
       return () => {
-        socket.off ('roomRefresh', updatePlayerList);
+        socket.off ('room_created', updatePlayerList);
         socket.off ('room_joined', updatePlayerList);
+        socket.off ('roomRefresh', updatePlayerList);
         socket.off ('player_list', updatePlayerList);
         socket.off ('player_ready_status', updatePlayerReadyStatus);
       };
     },
-    [game, id, setMyPosition, setPlayers, setRound]
+    [game, id]
   );
 
   return (
@@ -64,6 +72,7 @@ const Loader = ({game, setMyPosition, setPlayers, setRound}) => {
       <p className={style.preGameMessage}>
         Esperando que todos los jugadores estén listos para comenzar.
       </p>
+      <p>{myPlayer.position}</p>
       <div className={style.playersAndButton}>
         <div className={style.PlayersReady}>
           {playerList.length > 0 &&

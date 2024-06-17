@@ -68,6 +68,7 @@ const JoinRoom = () => {
           selectedAvatar,
           infoUser
         );
+   
         res && navigate (`/berenjena/multiplayer/${res.roomCreated.roomId}`);
       }
     } catch (error) {
@@ -95,6 +96,7 @@ const JoinRoom = () => {
           selectedAvatar,
           infoUser
         );
+  
         res && navigate (`/berenjena/multiplayer/${res.roomJoined.roomId}`);
       }
     } catch (error) {

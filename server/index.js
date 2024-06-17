@@ -128,7 +128,12 @@ io.on("connection", (socket) => {
       socket.join(`${game}-${roomId}`);
       socket.emit("room_created", {
         roomId,
-        position: user.position,
+        myInfo: {
+          idSocket: user.idSocket,
+          userName: user.userName,
+          email: user.email,
+          position: user.position,
+        },
         userName,
         maxUsers,
         round,
@@ -175,19 +180,24 @@ io.on("connection", (socket) => {
         console.log(`User ${userName} rejoined room ${roomId} in game ${game}`);
         socket.join(`${game}-${roomId}`);
 
-        // socket.emit("room_joined", {
-        //   roomId,
-        //   position: user.position,
-        //   userName,
-        //   round: room.round,
-        //   users: room.users,
-        // });
+        socket.emit("room_joined", {
+          roomId,
+          position: user.position,
+          userName,
+          round: room.round,
+          users: room.users,
+        });
 
-        // io.to(`${game}-${roomId}`).emit("player_list", {
-        //   users: room.users,
-        //   round: room.round
-        // });
-        // return;
+        io.to(`${game}-${roomId}`).emit("player_list", {
+          users: room.users,
+          round: room.round,
+        });
+        io.to(`${game}-${roomId}`).emit("roomRefresh", {
+          users: room.users,
+          round: room.round,
+          room: room,
+        });
+        return;
       }
 
       if (room.gameStarted) {
@@ -224,7 +234,12 @@ io.on("connection", (socket) => {
 
       socket.emit("room_joined", {
         roomId,
-        position: user.position,
+        myInfo: {
+          idSocket: user.idSocket,
+          userName: user.userName,
+          email: user.email,
+          position: user.position,
+        },
         userName,
         users: room.users,
         round: room.round,
@@ -236,24 +251,27 @@ io.on("connection", (socket) => {
       });
     }
   );
+  
   socket.on("roomRefresh", ({ game, roomId }) => {
     if (!game || !roomId) {
       return;
     }
-    
-    const room = permanentRooms[game] ? permanentRooms[game][roomId] : undefined;
-    
+
+    const room = permanentRooms[game]
+      ? permanentRooms[game][roomId]
+      : undefined;
+
     if (!room) {
       return;
     }
-    
+
     io.to(`${game}-${roomId}`).emit("roomRefresh", {
       users: room.users,
       round: room.round,
-      position: room.users.length,
+      room: room,
     });
   });
-  
+
   // Manejo de desconexión de la sala
   socket.on("disconnectRoom", (data) => {
     const { game, roomId } = data;
@@ -279,6 +297,7 @@ io.on("connection", (socket) => {
         // Si el juego ya comenzó y un usuario se desconecta,
         // el usuario permanece en la sala pero se marca como desconectado
         disconnectedUser.connect = false;
+        room.disconnectedUsers.push(disconnectedUser);
         io.to(`${game}-${roomId}`).emit("player_list", room.users);
         console.log(
           `Usuario ${socket.id} desconectado de la sala ${roomId}. Marcado como desconectado.`
@@ -286,6 +305,12 @@ io.on("connection", (socket) => {
       } else {
         // Si el juego no ha comenzado, el usuario se elimina de la sala
         room.users.splice(userIndex, 1);
+
+        // Actualizar las posiciones de los usuarios restantes
+        room.users.forEach((user, index) => {
+          user.position = index + 1;
+        });
+
         if (room.users.length === 0) {
           if (roomId <= 10) {
             // Si la sala es una de las primeras 10 creadas (permanente), se vacía y resetea
@@ -305,12 +330,10 @@ io.on("connection", (socket) => {
           console.log(
             `Usuario ${socket.id} desconectado de la sala ${roomId}.`
           );
-          io.to(`${game}-${roomId}`).emit("roomRefresh", {
-            users: room.users,
-            round: room.round,
-            position: room.users.length,
-          });
         }
+
+        // Enviar posiciones actualizadas a todos los usuarios
+        io.to(`${game}-${roomId}`).emit("player_list", room.users);
       }
     } else {
       console.log(`Usuario no encontrado en la sala: ${roomId}`);
@@ -319,6 +342,7 @@ io.on("connection", (socket) => {
     // Envía la lista actualizada a todos los usuarios en la sala
     io.to(`${game}-${roomId}`).emit("player_list", room.users);
   });
+  // Manejo de desconexión de la sala
 
   socket.on("player_ready", ({ game, roomId }) => {
     const room = permanentRooms[game] && permanentRooms[game][roomId];
