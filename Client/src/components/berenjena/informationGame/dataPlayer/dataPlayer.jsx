@@ -81,7 +81,7 @@ const DataPlayer = ({ players,myPosition,timmerPlayer,round }) => {
           {player?.userName ? player.userName : "Jugador"}
         </span>
         {
-          round.typeRound==="ronda"&& round.turnJugadorR===myPosition?
+          round?.typeRound==="ronda"&& round?.turnJugadorR===myPosition?
           
           <p>tiempo para tirar :{timmerPlayer}seg</p>:""}
       </div>

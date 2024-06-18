@@ -5,7 +5,7 @@ import cors from "cors";
 import morgan from "morgan";
 import "./src/dataBase/connectDB.js";
 import AuthRoute from "./src/routes/auth.routes.js";
-import userRoutes from "./src/routes/user.routes.js"
+import userRoutes from "./src/routes/user.routes.js";
 
 import { distribute, shuffle } from "./functions/functions.js"; // Asegúrate de que estas funciones estén definidas en el archivo adecuado
 
@@ -84,7 +84,7 @@ io.on("connection", (socket) => {
         idSocket: socket.id,
         userName,
         roomId,
-        email,
+        email: email ? email : "invitado",
         position: 1,
         ready: false,
         connect: true,
@@ -128,7 +128,12 @@ io.on("connection", (socket) => {
       socket.join(`${game}-${roomId}`);
       socket.emit("room_created", {
         roomId,
-        position: user.position,
+        myInfo: {
+          idSocket: user.idSocket,
+          userName: user.userName,
+          email: user.email,
+          position: user.position,
+        },
         userName,
         maxUsers,
         round,
@@ -136,107 +141,143 @@ io.on("connection", (socket) => {
 
       io.to(`${game}-${roomId}`).emit("player_list", {
         users: rooms[roomId].users,
-        round:rooms[roomId].round
+        round: rooms[roomId].round,
       });
     }
   );
 
-  socket.on("join_room", ({ game, roomId, userName, selectedAvatar, email }) => {
-    const rooms = permanentRooms[game];
-    if (!rooms) {
-      socket.emit("error", { error: "Invalid game" });
-      return;
-    }
-  
-    if (!rooms[roomId]) {
-      socket.emit("room_join_error", { error: "Room does not exist" });
-      return;
-    }
-  
-    const room = rooms[roomId];
-    const maxUsers = room.maxUsers || 6;
-  
-    if (room.users.length >= maxUsers) {
-      socket.emit("room_join_error", { error: "Room is full" });
-      return;
-    }
-  
-    const disconnectedUserIndex = room.disconnectedUsers.findIndex(
-      (user) => user.email === email || user.userName === userName
-    );
-  
-    if (disconnectedUserIndex !== -1) {
-      const user = room.disconnectedUsers.splice(disconnectedUserIndex, 1)[0];
-      user.idSocket = socket.id;
-      user.connect = true;
+  socket.on(
+    "join_room",
+    ({ game, roomId, userName, selectedAvatar, email }) => {
+      const rooms = permanentRooms[game];
+      if (!rooms) {
+        socket.emit("error", { error: "Invalid game" });
+        return;
+      }
+
+      if (!rooms[roomId]) {
+        socket.emit("room_join_error", { error: "Room does not exist" });
+        return;
+      }
+
+      const room = rooms[roomId];
+      const maxUsers = room.maxUsers || 6;
+
+      if (room.users.length >= maxUsers) {
+        socket.emit("room_join_error", { error: "Room is full" });
+        return;
+      }
+      const disconnectedUserIndex =
+        email===undefined
+          ? room.disconnectedUsers.findIndex(
+              (user) => user.userName === userName
+            )
+          : room.disconnectedUsers.findIndex((user) => user.email === email);
+
+   
+      if (disconnectedUserIndex !== -1) {
+        const user = room.disconnectedUsers.splice(disconnectedUserIndex, 1)[0];
+        user.idSocket = socket.id;
+        user.connect = true;
+        room.users.push(user);
+        console.log(`User ${userName} rejoined room ${roomId} in game ${game}`);
+        socket.join(`${game}-${roomId}`);
+
+        socket.emit("room_joined", {
+          roomId,
+          position: user.position,
+          userName,
+          round: room.round,
+          users: room.users,
+        });
+
+        io.to(`${game}-${roomId}`).emit("player_list", {
+          users: room.users,
+          round: room.round,
+        });
+        io.to(`${game}-${roomId}`).emit("roomRefresh", {
+          users: room.users,
+          round: room.round,
+          room: room,
+        });
+        return;
+      }
+
+      if (room.gameStarted) {
+        socket.emit("room_join_error", {
+          error: "Game already started, cannot join",
+        });
+        return;
+      }
+
+      const user = {
+        idSocket: socket.id,
+        userName,
+        roomId,
+        email: email ? email : "invitado",
+        position: room.users.length + 1,
+        ready: false,
+        connect: true,
+        avatar: selectedAvatar,
+        id: 1, // position
+        cardPerson: [], // cards
+        betP: 0, // num de cards apostadas
+        cardsWins: 0, // cards ganadas
+        cardBet: {}, // card apostada
+        myturnA: false, // boolean // turno apuesta
+        myturnR: false, // boolean // turno ronda
+        cumplio: false, // boolean // cumplio su apuesta
+        points: 0, // puntos
+      };
+
       room.users.push(user);
-      console.log(`User ${userName} rejoined room ${roomId} in game ${game}`);
+
+      console.log(`User ${userName} joined room ${roomId} in game ${game}`);
       socket.join(`${game}-${roomId}`);
-  
+
       socket.emit("room_joined", {
         roomId,
-        position: user.position,
+        myInfo: {
+          idSocket: user.idSocket,
+          userName: user.userName,
+          email: user.email,
+          position: user.position,
+        },
         userName,
+        users: room.users,
         round: room.round,
-        users: room.users, // Asegúrate de enviar la lista de usuarios aquí también
       });
-  
+
       io.to(`${game}-${roomId}`).emit("player_list", {
         users: room.users,
-        round: room.round
+        round: room.round,
       });
+    }
+  );
+
+  socket.on("roomRefresh", ({ game, roomId }) => {
+    if (!game || !roomId) {
       return;
     }
-  
-    if (room.gameStarted) {
-      socket.emit("room_join_error", {
-        error: "Game already started, cannot join",
-      });
+
+    const room = permanentRooms[game]
+      ? permanentRooms[game][roomId]
+      : undefined;
+
+    if (!room) {
       return;
     }
-  
-    const user = {
-      idSocket: socket.id,
-      userName,
-      roomId,
-      email,
-      position: room.users.length + 1,
-      ready: false,
-      connect: true,
-      avatar: selectedAvatar,
-      id: room.users.length + 1,
-      cardPerson: [],
-      betP: 0,
-      cardsWins: 0,
-      cardBet: {},
-      myturnA: false,
-      myturnR: false,
-      cumplio: false,
-      points: 0,
-    };
-  
-    room.users.push(user);
-  
-    console.log(`User ${userName} joined room ${roomId} in game ${game}`);
-    socket.join(`${game}-${roomId}`);
-  
-    socket.emit("room_joined", {
-      roomId,
-      position: user.position,
-      userName,
-      // Asegúrate de enviar la lista de usuarios aquí también
-    });
-  
-    io.to(`${game}-${roomId}`).emit("player_list", {
+
+    io.to(`${game}-${roomId}`).emit("roomRefresh", {
       users: room.users,
       round: room.round,
+      room: room,
     });
   });
 
   // Manejo de desconexión de la sala
   socket.on("disconnectRoom", (data) => {
     const { game, roomId } = data;
-    console.log(roomId);
 
     if (!game || !roomId) {
       console.log("Los parámetros game o roomId son indefinidos.");
@@ -255,28 +296,49 @@ io.on("connection", (socket) => {
 
     if (userIndex !== -1) {
       const disconnectedUser = room.users[userIndex];
+
       if (room.gameStarted) {
         // Si el juego ya comenzó y un usuario se desconecta,
         // el usuario permanece en la sala pero se marca como desconectado
         disconnectedUser.connect = false;
         room.disconnectedUsers.push(disconnectedUser);
+        room.users.splice(userIndex, 1); // Eliminar el usuario de la lista de usuarios activos
         io.to(`${game}-${roomId}`).emit("player_list", room.users);
+        console.log(
+          `Usuario ${socket.id} desconectado de la sala ${roomId}. Marcado como desconectado.`
+        );
       } else {
         // Si el juego no ha comenzado, el usuario se elimina de la sala
         room.users.splice(userIndex, 1);
-        io.to(`${game}-${roomId}`).emit("player_list", room.users);
+
+        // Actualizar las posiciones de los usuarios restantes
+        room.users.forEach((user, index) => {
+          user.position = index + 1;
+        });
+
         if (room.users.length === 0) {
-          // Si la sala queda vacía, se elimina la sala
-          delete permanentRooms[game][roomId];
-          console.log(
-            `Usuario ${socket.id} desconectado de la sala ${roomId}. Sala eliminada.`
-          );
+          if (roomId <= 10) {
+            // Si la sala es una de las primeras 10 creadas (permanente), se vacía y resetea
+            room.gameStarted = false;
+            room.disconnectedUsers = [];
+            console.log(`Sala permanente ${roomId} vaciada y reseteada.`);
+          } else {
+            // Si la sala no es permanente, se elimina
+            delete permanentRooms[game][roomId];
+            console.log(
+              `Usuario ${socket.id} desconectado de la sala ${roomId}. Sala eliminada.`
+            );
+          }
         } else {
           // Si hay otros usuarios en la sala, se mantiene la sala
+          io.to(`${game}-${roomId}`).emit("player_list", room.users);
           console.log(
             `Usuario ${socket.id} desconectado de la sala ${roomId}.`
           );
         }
+
+        // Enviar posiciones actualizadas a todos los usuarios
+        io.to(`${game}-${roomId}`).emit("player_list", room.users);
       }
     } else {
       console.log(`Usuario no encontrado en la sala: ${roomId}`);
@@ -285,6 +347,7 @@ io.on("connection", (socket) => {
     // Envía la lista actualizada a todos los usuarios en la sala
     io.to(`${game}-${roomId}`).emit("player_list", room.users);
   });
+  // Manejo de desconexión de la sala
 
   socket.on("player_ready", ({ game, roomId }) => {
     const room = permanentRooms[game] && permanentRooms[game][roomId];
@@ -319,6 +382,7 @@ io.on("connection", (socket) => {
           round: room.round,
           users: room.users,
           results: room.results,
+          room: room,
         });
       }
     }
@@ -620,7 +684,7 @@ app.use(morgan("dev"));
 app.use(express.json());
 
 app.use("/", AuthRoute);
-app.use("/user",userRoutes)
+app.use("/user", userRoutes);
 
 const port = process.env.PORT || 3001;
 server.listen(port, () => {

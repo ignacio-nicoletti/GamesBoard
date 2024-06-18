@@ -22,8 +22,6 @@ const Jugadores = ({player,round,
   }
 
   let playerAvatar = avatarMap[player?.avatar] // Seleccionar el avatar correcto
-
-
   return (
     <div className={""}>
       <div className={styles.divJugador}>
@@ -36,6 +34,7 @@ const Jugadores = ({player,round,
           <img src={cardsIcon} alt="" />
           {round.turnJugadorR===player.position? 
           <p>timmer:{timmer}</p>:""}
+          <p>{player.connect===true?"conectado":"desconectado"}</p>
         </div>
       </div>
 

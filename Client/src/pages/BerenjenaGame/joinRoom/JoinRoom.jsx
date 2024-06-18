@@ -40,6 +40,39 @@ const JoinRoom = () => {
 
   const handlerCreateRoom = async (e) => {
     e.preventDefault();
+  const [rooms, setRooms] = useState ([]);
+  const [filteredRooms, setFilteredRooms] = useState ([]);
+  const [game, setGame] = useState ('Berenjena');
+  const [userName, setUserName] = useState ('');
+  const [roomId, setRoomId] = useState ('');
+  const [tempMaxUsers, setTempMaxUsers] = useState (''); // temp max o maxusers
+  const [maxUsers, setMaxUsers] = useState (6);
+  const [error, setError] = useState ('');
+  const [selectedAvatar, setSelectedAvatar] = useState ('avatar1');
+  const [showModal, setShowModal] = useState (true);
+  const [isFormValid, setIsFormValid] = useState (false);
+  const navigate = useNavigate ();
+  const [timmerRooms, setTimmerRooms] = useState (5);
+  const [infoUser, setInfoUser] = useState ({});
+  const token = GetDecodedCookie ('cookieToken');
+
+  useEffect (() => {
+    const fetchPlayer = async () => {
+      try {
+        const data = DecodedToken (token);
+        const response = await InstanceOfAxios (`/user/${infoUser.id||data.id}`, 'GET');
+        setUserName (response.player.userName);
+      } catch (error) {
+        console.error ('Error fetching products:', error);
+      }
+    };
+    if (token) {
+      fetchPlayer ();
+    }
+  }, []);
+
+  const handlerCreateRoom = async e => {
+    e.preventDefault ();
     try {
       if (roomId !== "" && userName !== "") {
         await CreateGameRoom(
@@ -50,7 +83,8 @@ const JoinRoom = () => {
           selectedAvatar,
           infoUser
         );
-        navigate(`/berenjena/multiplayer/${roomId}`);
+   
+        res && navigate (`/berenjena/multiplayer/${res.roomCreated.roomId}`);
       }
     } catch (error) {
       Swal.fire({
@@ -67,9 +101,17 @@ const JoinRoom = () => {
 
   const handlerJoinRoom = async (roomId) => {
     try {
-      if (roomId !== "" && userName !== "") {
-        await joinGameRoom(game, roomId, userName, selectedAvatar, infoUser);
-        navigate(`/berenjena/multiplayer/${roomId}`);
+      setRoomId (roomId);
+      if (roomId !== '' && userName !== '') {
+        const res = await joinGameRoom (
+          game,
+          roomId,
+          userName,
+          selectedAvatar,
+          infoUser
+        );
+  
+        res && navigate (`/berenjena/multiplayer/${res.roomJoined.roomId}`);
       }
     } catch (error) {
       console.error(error);
