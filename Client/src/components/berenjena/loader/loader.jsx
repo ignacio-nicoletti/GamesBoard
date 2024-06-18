@@ -26,7 +26,7 @@ const Loader = ({game, setPlayers, setRound, myPlayer, setMyPlayer,setLoader}) =
       if (myUpdatedInfo) {
         setMyPlayer ({...myPlayer, position:myUpdatedInfo.position});
       }
-      if(data&&data.room.gameStarted===true){
+      if(data&&data?.room?.gameStarted===true){
         setLoader(false)
       }
     }
