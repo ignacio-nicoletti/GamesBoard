@@ -39,7 +39,6 @@ const GameBerenjena = () => {
     if (data && data.users) {
       setPlayers (data.users);
       setRound (data.round);
-  
     }
   };
 
