@@ -6,7 +6,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import ButtonExitRoom from '../buttonExitRoom/buttonExitRoom';
 import style from './loader.module.css';
 
-const Loader = ({game, setPlayers, setRound, myPlayer, setMyPlayer}) => {
+const Loader = ({game, setPlayers, setRound, myPlayer, setMyPlayer,setLoader}) => {
   const [readyMe, setReadyMe] = useState (false);
   const [playerList, setPlayerList] = useState ([]);
   const {id} = useParams ();
@@ -25,6 +25,9 @@ const Loader = ({game, setPlayers, setRound, myPlayer, setMyPlayer}) => {
       );
       if (myUpdatedInfo) {
         setMyPlayer ({...myPlayer, position:myUpdatedInfo.position});
+      }
+      if(data&&data.room.gameStarted===true){
+        setLoader(false)
       }
     }
   };

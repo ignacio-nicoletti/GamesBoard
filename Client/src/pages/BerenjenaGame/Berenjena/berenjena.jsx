@@ -35,12 +35,12 @@ const GameBerenjena = () => {
   // Timmer para tirar la carta entre jugadores
 
   const updatePlayerList = data => {
-    // console.log(data);
-    // if (data && data.users) {
-    //   setPlayers (data.users);
-    //   setRound (data.round);
-    //   setMyPosition (data.position);
-    // }
+    console.log(data);
+    if (data && data.users) {
+      setPlayers (data.users);
+      setRound (data.round);
+  
+    }
   };
 
   //revisar flujo de salir y volver a unirse a la room 
@@ -49,8 +49,8 @@ const GameBerenjena = () => {
   useEffect (
     () => {
       socket.on ('roomRefresh', updatePlayerList);
-
       setLoader(true)
+     
       return () => {
         socket.off ('roomRefresh', updatePlayerList);
       };
@@ -144,12 +144,12 @@ const GameBerenjena = () => {
     <div className={style.contain}>
       {loader
         ? <Loader
-      
             game={game}
             setPlayers={setPlayers}
             setRound={setRound}
             myPlayer={myPlayer}
             setMyPlayer={setMyPlayer}
+            setLoader={setLoader}
             
           />
         : <div className={style.tableroJugadores}>{renderPlayers ()}</div>}

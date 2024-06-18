@@ -84,7 +84,7 @@ io.on("connection", (socket) => {
         idSocket: socket.id,
         userName,
         roomId,
-        email,
+        email: email ? email : "invitado",
         position: 1,
         ready: false,
         connect: true,
@@ -167,11 +167,14 @@ io.on("connection", (socket) => {
         socket.emit("room_join_error", { error: "Room is full" });
         return;
       }
+      const disconnectedUserIndex =
+        email===undefined
+          ? room.disconnectedUsers.findIndex(
+              (user) => user.userName === userName
+            )
+          : room.disconnectedUsers.findIndex((user) => user.email === email);
 
-      const disconnectedUserIndex = room.disconnectedUsers.findIndex(
-        (user) => user.email === email || user.userName === userName
-      );
-
+   
       if (disconnectedUserIndex !== -1) {
         const user = room.disconnectedUsers.splice(disconnectedUserIndex, 1)[0];
         user.idSocket = socket.id;
@@ -211,7 +214,7 @@ io.on("connection", (socket) => {
         idSocket: socket.id,
         userName,
         roomId,
-        email,
+        email: email ? email : "invitado",
         position: room.users.length + 1,
         ready: false,
         connect: true,
@@ -274,76 +277,76 @@ io.on("connection", (socket) => {
 
   // Manejo de desconexión de la sala
   socket.on("disconnectRoom", (data) => {
-  const { game, roomId } = data;
+    const { game, roomId } = data;
 
-  if (!game || !roomId) {
-    console.log("Los parámetros game o roomId son indefinidos.");
-    return;
-  }
+    if (!game || !roomId) {
+      console.log("Los parámetros game o roomId son indefinidos.");
+      return;
+    }
 
-  if (!permanentRooms[game] || !permanentRooms[game][roomId]) {
-    console.log(`Sala no encontrada: ${roomId} en el juego: ${game}`);
-    return;
-  }
+    if (!permanentRooms[game] || !permanentRooms[game][roomId]) {
+      console.log(`Sala no encontrada: ${roomId} en el juego: ${game}`);
+      return;
+    }
 
-  const room = permanentRooms[game][roomId];
-  const userIndex = room.users.findIndex(
-    (user) => user.idSocket === socket.id
-  );
+    const room = permanentRooms[game][roomId];
+    const userIndex = room.users.findIndex(
+      (user) => user.idSocket === socket.id
+    );
 
-  if (userIndex !== -1) {
-    const disconnectedUser = room.users[userIndex];
+    if (userIndex !== -1) {
+      const disconnectedUser = room.users[userIndex];
 
-    if (room.gameStarted) {
-      // Si el juego ya comenzó y un usuario se desconecta,
-      // el usuario permanece en la sala pero se marca como desconectado
-      disconnectedUser.connect = false;
-      room.disconnectedUsers.push(disconnectedUser);
-      room.users.splice(userIndex, 1); // Eliminar el usuario de la lista de usuarios activos
-      io.to(`${game}-${roomId}`).emit("player_list", room.users);
-      console.log(
-        `Usuario ${socket.id} desconectado de la sala ${roomId}. Marcado como desconectado.`
-      );
-    } else {
-      // Si el juego no ha comenzado, el usuario se elimina de la sala
-      room.users.splice(userIndex, 1);
-
-      // Actualizar las posiciones de los usuarios restantes
-      room.users.forEach((user, index) => {
-        user.position = index + 1;
-      });
-
-      if (room.users.length === 0) {
-        if (roomId <= 10) {
-          // Si la sala es una de las primeras 10 creadas (permanente), se vacía y resetea
-          room.gameStarted = false;
-          room.disconnectedUsers = [];
-          console.log(`Sala permanente ${roomId} vaciada y reseteada.`);
-        } else {
-          // Si la sala no es permanente, se elimina
-          delete permanentRooms[game][roomId];
-          console.log(
-            `Usuario ${socket.id} desconectado de la sala ${roomId}. Sala eliminada.`
-          );
-        }
-      } else {
-        // Si hay otros usuarios en la sala, se mantiene la sala
+      if (room.gameStarted) {
+        // Si el juego ya comenzó y un usuario se desconecta,
+        // el usuario permanece en la sala pero se marca como desconectado
+        disconnectedUser.connect = false;
+        room.disconnectedUsers.push(disconnectedUser);
+        room.users.splice(userIndex, 1); // Eliminar el usuario de la lista de usuarios activos
         io.to(`${game}-${roomId}`).emit("player_list", room.users);
         console.log(
-          `Usuario ${socket.id} desconectado de la sala ${roomId}.`
+          `Usuario ${socket.id} desconectado de la sala ${roomId}. Marcado como desconectado.`
         );
+      } else {
+        // Si el juego no ha comenzado, el usuario se elimina de la sala
+        room.users.splice(userIndex, 1);
+
+        // Actualizar las posiciones de los usuarios restantes
+        room.users.forEach((user, index) => {
+          user.position = index + 1;
+        });
+
+        if (room.users.length === 0) {
+          if (roomId <= 10) {
+            // Si la sala es una de las primeras 10 creadas (permanente), se vacía y resetea
+            room.gameStarted = false;
+            room.disconnectedUsers = [];
+            console.log(`Sala permanente ${roomId} vaciada y reseteada.`);
+          } else {
+            // Si la sala no es permanente, se elimina
+            delete permanentRooms[game][roomId];
+            console.log(
+              `Usuario ${socket.id} desconectado de la sala ${roomId}. Sala eliminada.`
+            );
+          }
+        } else {
+          // Si hay otros usuarios en la sala, se mantiene la sala
+          io.to(`${game}-${roomId}`).emit("player_list", room.users);
+          console.log(
+            `Usuario ${socket.id} desconectado de la sala ${roomId}.`
+          );
+        }
+
+        // Enviar posiciones actualizadas a todos los usuarios
+        io.to(`${game}-${roomId}`).emit("player_list", room.users);
       }
-
-      // Enviar posiciones actualizadas a todos los usuarios
-      io.to(`${game}-${roomId}`).emit("player_list", room.users);
+    } else {
+      console.log(`Usuario no encontrado en la sala: ${roomId}`);
     }
-  } else {
-    console.log(`Usuario no encontrado en la sala: ${roomId}`);
-  }
 
-  // Envía la lista actualizada a todos los usuarios en la sala
-  io.to(`${game}-${roomId}`).emit("player_list", room.users);
-});
+    // Envía la lista actualizada a todos los usuarios en la sala
+    io.to(`${game}-${roomId}`).emit("player_list", room.users);
+  });
   // Manejo de desconexión de la sala
 
   socket.on("player_ready", ({ game, roomId }) => {
@@ -376,10 +379,10 @@ io.on("connection", (socket) => {
 
         // Emitir el evento de inicio del juego a todos los usuarios en la sala
         io.to(`${game}-${roomId}`).emit("start_game", {
-          round:room.round,
+          round: room.round,
           users: room.users,
           results: room.results,
-          room:room
+          room: room,
         });
       }
     }
