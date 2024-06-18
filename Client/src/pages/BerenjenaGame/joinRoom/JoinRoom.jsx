@@ -1,65 +1,48 @@
-import React, {useState, useEffect} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
-import Swal from 'sweetalert2';
-import style from './joinRoom.module.css';
-import AutocompleteExample
-  from '../../../components/berenjena/autocomplete/autocomplete';
-import GroupIcon from '@mui/icons-material/Group';
-import EditIcon from '@mui/icons-material/Edit';
-import {GetDecodedCookie} from '../../../utils/DecodedCookie';
-import {DecodedToken} from '../../../utils/DecodedToken';
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+import style from "./joinRoom.module.css";
+import AutocompleteExample from "../../../components/berenjena/autocomplete/autocomplete";
+import GroupIcon from "@mui/icons-material/Group";
+import EditIcon from "@mui/icons-material/Edit";
+import { GetDecodedCookie } from "../../../utils/DecodedCookie";
+import { DecodedToken } from "../../../utils/DecodedToken";
 import {
   getAllRoomsInfo,
   CreateGameRoom,
   joinGameRoom,
   socket,
-} from '../../../functions/SocketIO/sockets/sockets';
-import avatar1 from '../../../assets/berenjena/jugadores/avatar1.png';
-import avatar2 from '../../../assets/berenjena/jugadores/avatar2.png';
-import avatar3 from '../../../assets/berenjena/jugadores/avatar3.png';
-import avatar4 from '../../../assets/berenjena/jugadores/avatar4.png';
-import avatar5 from '../../../assets/berenjena/jugadores/avatar5.png';
-import avatar6 from '../../../assets/berenjena/jugadores/avatar6.png';
-import imgRoom from '../../../assets/berenjena/jugadores/imgRoom.png';
-import logoBerenjena from '../../../assets/berenjena/home/logoBerenjena.png';
-import InstanceOfAxios from '../../../utils/intanceAxios';
+} from "../../../functions/SocketIO/sockets/sockets";
+import avatar1 from "../../../assets/berenjena/jugadores/avatar1.png";
+import avatar2 from "../../../assets/berenjena/jugadores/avatar2.png";
+import avatar3 from "../../../assets/berenjena/jugadores/avatar3.png";
+import avatar4 from "../../../assets/berenjena/jugadores/avatar4.png";
+import avatar5 from "../../../assets/berenjena/jugadores/avatar5.png";
+import avatar6 from "../../../assets/berenjena/jugadores/avatar6.png";
+import imgRoom from "../../../assets/berenjena/jugadores/imgRoom.png";
+import logoBerenjena from "../../../assets/berenjena/home/logoBerenjena.png";
 
 const JoinRoom = () => {
-  const [rooms, setRooms] = useState ([]);
-  const [filteredRooms, setFilteredRooms] = useState ([]);
-  const [game, setGame] = useState ('Berenjena');
-  const [userName, setUserName] = useState ('');
-  const [roomId, setRoomId] = useState ('');
-  const [tempMaxUsers, setTempMaxUsers] = useState (''); // temp max o maxusers
-  const [maxUsers, setMaxUsers] = useState (6);
-  const [error, setError] = useState ('');
-  const [selectedAvatar, setSelectedAvatar] = useState ('avatar1');
-  const [showModal, setShowModal] = useState (true);
-  const [isFormValid, setIsFormValid] = useState (false);
-  const navigate = useNavigate ();
-  const [timmerRooms, setTimmerRooms] = useState (5);
-  const [infoUser, setInfoUser] = useState ({});
-  const token = GetDecodedCookie ('cookieToken');
+  const [rooms, setRooms] = useState([]);
+  const [filteredRooms, setFilteredRooms] = useState([]);
+  const [game, setGame] = useState("Berenjena");
+  const [userName, setUserName] = useState("");
+  const [roomId, setRoomId] = useState("");
+  const [tempMaxUsers, setTempMaxUsers] = useState(""); // temp max o maxusers
+  const [maxUsers, setMaxUsers] = useState(6);
+  const [error, setError] = useState("");
+  const [selectedAvatar, setSelectedAvatar] = useState("avatar1");
+  const [showModal, setShowModal] = useState(true);
+  const [isFormValid, setIsFormValid] = useState(false);
+  const navigate = useNavigate();
+  const [timmerRooms, setTimmerRooms] = useState(5);
+  const [infoUser, setInfoUser] = useState({});
 
-  useEffect (() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await InstanceOfAxios (`/user/${infoUser.id}`, 'GET');
-        setUserName (response.player.userName);
-      } catch (error) {
-        console.error ('Error fetching products:', error);
-      }
-    };
-    if (token) {
-      fetchProducts ();
-    }
-  }, []);
-
-  const handlerCreateRoom = async e => {
-    e.preventDefault ();
+  const handlerCreateRoom = async (e) => {
+    e.preventDefault();
     try {
-      if (roomId !== '' && userName !== '') {
-        const res = await CreateGameRoom (
+      if (roomId !== "" && userName !== "") {
+        await CreateGameRoom(
           game,
           roomId,
           userName,
@@ -67,44 +50,36 @@ const JoinRoom = () => {
           selectedAvatar,
           infoUser
         );
-        res && navigate (`/berenjena/multiplayer/${res.roomCreated.roomId}`);
+        navigate(`/berenjena/multiplayer/${roomId}`);
       }
     } catch (error) {
-      console.log (error);
-      Swal.fire ({
-        title: 'Error!',
-        text: error || 'An error occurred while creating the room.',
-        icon: 'error',
-        confirmButtonText: 'OK',
+      Swal.fire({
+        title: "Error!",
+        text: error || "An error occurred while creating the room.",
+        icon: "error",
+        confirmButtonText: "OK",
         customClass: {
-          container: 'swal2-container',
+          container: "swal2-container",
         },
       });
     }
   };
 
-  const handlerJoinRoom = async roomId => {
+  const handlerJoinRoom = async (roomId) => {
     try {
-      setRoomId (roomId);
-      if (roomId !== '' && userName !== '') {
-        const res = await joinGameRoom (
-          game,
-          roomId,
-          userName,
-          selectedAvatar,
-          infoUser
-        );
-        res && navigate (`/berenjena/multiplayer/${res.roomJoined.roomId}`);
+      if (roomId !== "" && userName !== "") {
+        await joinGameRoom(game, roomId, userName, selectedAvatar, infoUser);
+        navigate(`/berenjena/multiplayer/${roomId}`);
       }
     } catch (error) {
-      console.error (error);
-      Swal.fire ({
-        title: 'Error!',
-        text: error || 'Room is full.',
-        icon: 'error',
-        confirmButtonText: 'OK',
+      console.error(error);
+      Swal.fire({
+        title: "Error!",
+        text: error || "Room is full.",
+        icon: "error",
+        confirmButtonText: "OK",
         customClass: {
-          container: 'swal2-container',
+          container: "swal2-container",
         },
       });
     }
@@ -112,154 +87,162 @@ const JoinRoom = () => {
 
   const initializeRooms = async () => {
     try {
-      const roomsInfo = await getAllRoomsInfo (game);
-      setRooms (roomsInfo);
-      setFilteredRooms (roomsInfo);
+      const roomsInfo = await getAllRoomsInfo(game);
+      setRooms(roomsInfo);
+      setFilteredRooms(roomsInfo);
     } catch (error) {
-      console.error ('Error initializing rooms:', error);
-      Swal.fire ({
-        title: 'Error!',
-        text: error.message || 'An error occurred while fetching rooms.',
-        icon: 'error',
-        confirmButtonText: 'OK',
+      console.error("Error initializing rooms:", error);
+      Swal.fire({
+        title: "Error!",
+        text: error.message || "An error occurred while fetching rooms.",
+        icon: "error",
+        confirmButtonText: "OK",
         customClass: {
-          container: 'swal2-container',
+          container: "swal2-container",
         },
       });
     }
   };
 
-  // me setea el nombre si inicio sesion
-
-  useEffect (() => {
+  // me setea el nombre si inico sesion
+  useEffect(() => {
+    const token = GetDecodedCookie("cookieToken");
     if (token) {
-      const data = DecodedToken (token);
-      setUserName (data.userName);
-      setSelectedAvatar (data.selectedAvatar || 'avatar1'); // Ajuste aquí para obtener el avatar del token
-      setInfoUser (data);
+      const data = DecodedToken(token);
+      setUserName(data.userName);
+      setSelectedAvatar(data.selectedAvatar || "avatar1"); // Ajuste aquí para obtener el avatar del token
+      setInfoUser(data);
       if (data.userName) {
-        setShowModal (false);
+        setShowModal(false);
       }
     }
   }, []);
 
   // actualiza las rooms cada 5s
-  useEffect (
-    () => {
-      initializeRooms ();
-      const time = setInterval (() => {
-        setTimmerRooms (prevTime => prevTime - 1);
-      }, 1000);
-      if (timmerRooms === 0) {
-        initializeRooms ();
-        setTimmerRooms (5);
-      }
-      return () => clearInterval (time);
-    },
-    [timmerRooms]
-  );
+  useEffect(() => {
+    initializeRooms();
+    const time = setInterval(() => {
+      setTimmerRooms((prevTime) => prevTime - 1);
+    }, 1000);
+    if (timmerRooms === 0) {
+      initializeRooms();
+      setTimmerRooms(5);
+    }
+    return () => clearInterval(time);
+  }, [timmerRooms]);
 
-  useEffect (() => {
-    const handleRoomCreationError = data => {
-      Swal.fire ({
-        title: 'Error!',
-        text: data.message || 'An error occurred while creating the room.',
-        icon: 'error',
-        confirmButtonText: 'OK',
+  useEffect(() => {
+    const handlePlayerList = (playerList) => {
+      navigate(`/berenjena/multiplayer/${playerList.round.roomId}`);
+    };
+    socket.on("player_list", handlePlayerList);
+    return () => {
+      socket.off("player_list", handlePlayerList);
+    };
+  }, [navigate]);
+
+  useEffect(() => {
+    const handleRoomJoined = (data) => {
+      navigate(`/berenjena/multiplayer/${data.round.roomId}`);
+    };
+    socket.on("room_joined", handleRoomJoined);
+    return () => {
+      socket.off("room_joined", handleRoomJoined);
+    };
+  }, [navigate]);
+
+  useEffect(() => {
+    const handleRoomCreationError = (data) => {
+      Swal.fire({
+        title: "Error!",
+        text: data.message || "An error occurred while creating the room.",
+        icon: "error",
+        confirmButtonText: "OK",
         customClass: {
-          container: 'swal2-container',
+          container: "swal2-container",
         },
       });
     };
-    socket.on ('room_creation_error', handleRoomCreationError);
+    socket.on("room_creation_error", handleRoomCreationError);
 
-    const handleRoomJoinError = data => {
-      Swal.fire ({
-        title: 'Error!',
-        text: data.error || 'Room is full.',
-        icon: 'error',
-        confirmButtonText: 'OK',
+    const handleRoomJoinError = (data) => {
+      Swal.fire({
+        title: "Error!",
+        text: data.error || "Room is full.",
+        icon: "error",
+        confirmButtonText: "OK",
         customClass: {
-          container: 'swal2-container',
+          container: "swal2-container",
         },
       });
     };
-    socket.on ('room_join_error', handleRoomJoinError);
+    socket.on("room_join_error", handleRoomJoinError);
 
     return () => {
-      socket.off ('room_creation_error', handleRoomCreationError);
-      socket.off ('room_join_error', handleRoomJoinError);
+      socket.off("room_creation_error", handleRoomCreationError);
+      socket.off("room_join_error", handleRoomJoinError);
     };
   }, []);
 
-  useEffect (
-    () => {
-      if (roomId && tempMaxUsers && !error) {
-        setIsFormValid (true);
-      } else {
-        setIsFormValid (false);
-      }
-    },
-    [roomId, tempMaxUsers, error]
-  );
+  useEffect(() => {
+    if (roomId && tempMaxUsers && !error) {
+      setIsFormValid(true);
+    } else {
+      setIsFormValid(false);
+    }
+  }, [roomId, tempMaxUsers, error]);
 
   const avatars = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6];
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (userName && selectedAvatar) {
-      setShowModal (false);
-      if (token) {
-        await InstanceOfAxios (`/user/${infoUser.id}`, 'PUT', {
-          userName,
-          selectedAvatar,
-        }).then (data => setUserName (data.player.userName));
-      }
-      initializeRooms ();
+      setShowModal(false);
+      initializeRooms();
     } else {
-      Swal.fire ({
-        title: 'Error!',
-        text: 'Please enter your name and select an avatar to continue.',
-        icon: 'error',
-        confirmButtonText: 'OK',
+      Swal.fire({
+        title: "Error!",
+        text: "Please enter your name and select an avatar to continue.",
+        icon: "error",
+        confirmButtonText: "OK",
         customClass: {
-          container: 'swal2-container',
+          container: "swal2-container",
         },
       });
     }
   };
 
   const handleEditProfile = () => {
-    setShowModal (true);
+    setShowModal(true);
   };
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     const value = e.target.value;
-    if (['2', '3', '4', '5', '6'].includes (value)) {
-      setTempMaxUsers (value);
-      setError ('');
+    if (["2", "3", "4", "5", "6"].includes(value)) {
+      setTempMaxUsers(value);
+      setError("");
     } else {
-      setTempMaxUsers ('');
-      setError ('Please enter a value between 2 and 6');
+      setTempMaxUsers("");
+      setError("Please enter a value between 2 and 6");
     }
   };
 
-  const handleBlur = e => {
-    const value = parseInt (e.target.value, 10);
-    if (isNaN (value) || value < 2 || value > 6) {
-      setError ('Please enter a value between 2 and 6');
+  const handleBlur = (e) => {
+    const value = parseInt(e.target.value, 10);
+    if (isNaN(value) || value < 2 || value > 6) {
+      setError("Please enter a value between 2 and 6");
     } else {
-      setMaxUsers (value);
-      setError ('');
+      setMaxUsers(value);
+      setError("");
     }
   };
 
-  const handleFilter = filteredRooms => {
-    setFilteredRooms (filteredRooms);
+  const handleFilter = (filteredRooms) => {
+    setFilteredRooms(filteredRooms);
   };
 
   return (
     <div className={style.containRoom}>
-      {showModal &&
+      {showModal && (
         <div className={style.modalOverlay}>
           <div className={style.modal}>
             <div className={style.modalContent}>
@@ -270,14 +253,14 @@ const JoinRoom = () => {
                   type="text"
                   placeholder="Type your name here..."
                   value={userName}
-                  onChange={e => setUserName (e.target.value)}
+                  onChange={(e) => setUserName(e.target.value)}
                   maxLength={15}
                 />
               </div>
               <div className={style.DivAvatars}>
                 <p>Choose your Avatar</p>
                 <div className={style.DivAvatarsGrid}>
-                  {avatars.map ((avatar, index) => (
+                  {avatars.map((avatar, index) => (
                     <img
                       key={index}
                       src={avatar}
@@ -285,9 +268,9 @@ const JoinRoom = () => {
                       className={
                         selectedAvatar === `avatar${index + 1}`
                           ? style.selectedAvatar
-                          : ''
+                          : ""
                       }
-                      onClick={() => setSelectedAvatar (`avatar${index + 1}`)}
+                      onClick={() => setSelectedAvatar(`avatar${index + 1}`)}
                     />
                   ))}
                 </div>
@@ -295,8 +278,9 @@ const JoinRoom = () => {
               <button onClick={handleSubmit}>Save</button>
             </div>
           </div>
-        </div>}
-      {!showModal &&
+        </div>
+      )}
+      {!showModal && (
         <>
           <div className={style.sideBar}>
             <div className={style.DivButtonBack}>
@@ -306,7 +290,7 @@ const JoinRoom = () => {
               <img
                 src={
                   avatars[
-                    parseInt (selectedAvatar.replace ('avatar', ''), 10) - 1
+                    parseInt(selectedAvatar.replace("avatar", ""), 10) - 1
                   ]
                 }
                 alt="Selected Avatar"
@@ -324,7 +308,7 @@ const JoinRoom = () => {
                 placeholder="room number... "
                 value={roomId}
                 required
-                onChange={e => setRoomId (e.target.value)}
+                onChange={(e) => setRoomId(e.target.value)}
                 className={style.inputPlaceholder}
               />
               <input
@@ -338,10 +322,11 @@ const JoinRoom = () => {
                 required
                 className={style.inputPlaceholder}
               />
-              {error &&
+              {error && (
                 <div className={style.errorMsgContainer}>
                   <p className={style.errorMsg}>{error}</p>
-                </div>}
+                </div>
+              )}
               <button
                 className={style.createButton}
                 onClick={handlerCreateRoom}
@@ -369,7 +354,7 @@ const JoinRoom = () => {
               </div>
             </div>
             <div className={style.roomsContainer}>
-              {filteredRooms.map (el => (
+              {filteredRooms.map((el) => (
                 <div key={el.roomId} className={style.DivRoom}>
                   <div className={style.textRoom}>
                     <p>Room {el.roomId}</p>
@@ -381,7 +366,7 @@ const JoinRoom = () => {
                   <img src={imgRoom} alt="" className={style.imgRoom} />
                   <button
                     onClick={() => {
-                      handlerJoinRoom (el.roomId);
+                      handlerJoinRoom(el.roomId);
                     }}
                   >
                     Join
@@ -390,7 +375,8 @@ const JoinRoom = () => {
               ))}
             </div>
           </div>
-        </>}
+        </>
+      )}
     </div>
   );
 };
