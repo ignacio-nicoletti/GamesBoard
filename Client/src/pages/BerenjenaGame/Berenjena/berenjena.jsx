@@ -18,13 +18,14 @@ import BeetweenRound
 import {useParams} from 'react-router-dom';
 
 const GameBerenjena = () => {
-  const [loader, setLoader] = useState (true);
+  const [loader, setLoader] = useState (false);
   const [game] = useState ('Berenjena'); // Juego seleccionado
   const [showResult, setShowResult] = useState (false);
 
   const [myPlayer, setMyPlayer] = useState ({});
   const [players, setPlayers] = useState ([]);
   const [round, setRound] = useState ({});
+  const [room, setRoom] = useState ({});
   const [results, setResults] = useState ([]); // base del resultado xronda
 
   const [timmerPlayer, setTimmerPlayer] = useState (30); // timmer para jugador
@@ -41,10 +42,15 @@ const GameBerenjena = () => {
     //   setMyPosition (data.position);
     // }
   };
+
+  //revisar flujo de salir y volver a unirse a la room 
+  //si se sale actualizar users y la vez agregar en disconect 
+//pensar como sigue el juego si sale uno 
   useEffect (
     () => {
       socket.on ('roomRefresh', updatePlayerList);
 
+      setLoader(true)
       return () => {
         socket.off ('roomRefresh', updatePlayerList);
       };
@@ -85,6 +91,7 @@ const GameBerenjena = () => {
       setResults (data.results);
       setLoader (prevLoader => !prevLoader);
       setShowBetweenRound (true);
+      setRoom(data.room)
     };
 
     socket.on ('start_game', handleStartGame);
@@ -137,6 +144,7 @@ const GameBerenjena = () => {
     <div className={style.contain}>
       {loader
         ? <Loader
+      
             game={game}
             setPlayers={setPlayers}
             setRound={setRound}
