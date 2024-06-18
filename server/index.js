@@ -154,35 +154,27 @@ io.on("connection", (socket) => {
         socket.emit("error", { error: "Invalid game" });
         return;
       }
-
+  
       if (!rooms[roomId]) {
         socket.emit("room_join_error", { error: "Room does not exist" });
         return;
       }
-
+  
       const room = rooms[roomId];
       const maxUsers = room.maxUsers || 6;
-
-      if (room.users.length >= maxUsers) {
-        socket.emit("room_join_error", { error: "Room is full" });
-        return;
-      }
-      const disconnectedUserIndex =
-        email===undefined
-          ? room.disconnectedUsers.findIndex(
-              (user) => user.userName === userName
-            )
-          : room.disconnectedUsers.findIndex((user) => user.email === email);
-
-   
+  
+      const disconnectedUserIndex = email
+        ? room.disconnectedUsers.findIndex((user) => user.email === email)
+        : room.disconnectedUsers.findIndex((user) => user.userName === userName);
+  
       if (disconnectedUserIndex !== -1) {
         const user = room.disconnectedUsers.splice(disconnectedUserIndex, 1)[0];
         user.idSocket = socket.id;
         user.connect = true;
-        room.users.push(user);
+      
         console.log(`User ${userName} rejoined room ${roomId} in game ${game}`);
         socket.join(`${game}-${roomId}`);
-
+  
         socket.emit("room_joined", {
           roomId,
           position: user.position,
@@ -190,7 +182,7 @@ io.on("connection", (socket) => {
           round: room.round,
           users: room.users,
         });
-
+  
         io.to(`${game}-${roomId}`).emit("player_list", {
           users: room.users,
           round: room.round,
@@ -202,19 +194,24 @@ io.on("connection", (socket) => {
         });
         return;
       }
-
+  
+      if (room.users.length >= maxUsers) {
+        socket.emit("room_join_error", { error: "Room is full" });
+        return;
+      }
+  
       if (room.gameStarted) {
         socket.emit("room_join_error", {
           error: "Game already started, cannot join",
         });
         return;
       }
-
+  
       const user = {
         idSocket: socket.id,
         userName,
         roomId,
-        email: email ? email : "invitado",
+        email: email || "invitado",
         position: room.users.length + 1,
         ready: false,
         connect: true,
@@ -229,12 +226,12 @@ io.on("connection", (socket) => {
         cumplio: false, // boolean // cumplio su apuesta
         points: 0, // puntos
       };
-
+  
       room.users.push(user);
-
+  
       console.log(`User ${userName} joined room ${roomId} in game ${game}`);
       socket.join(`${game}-${roomId}`);
-
+  
       socket.emit("room_joined", {
         roomId,
         myInfo: {
@@ -247,13 +244,14 @@ io.on("connection", (socket) => {
         users: room.users,
         round: room.round,
       });
-
+  
       io.to(`${game}-${roomId}`).emit("player_list", {
         users: room.users,
         round: room.round,
       });
     }
   );
+  
 
   socket.on("roomRefresh", ({ game, roomId }) => {
     if (!game || !roomId) {
@@ -302,8 +300,12 @@ io.on("connection", (socket) => {
         // el usuario permanece en la sala pero se marca como desconectado
         disconnectedUser.connect = false;
         room.disconnectedUsers.push(disconnectedUser);
-        room.users.splice(userIndex, 1); // Eliminar el usuario de la lista de usuarios activos
-        io.to(`${game}-${roomId}`).emit("player_list", room.users);
+        // room.users.splice(userIndex, 1); // Eliminar el usuario de la lista de usuarios activos
+        io.to(`${game}-${roomId}`).emit("roomRefresh", {
+          users: room.users,
+          round: room.round,
+          room: room,
+        });
         console.log(
           `Usuario ${socket.id} desconectado de la sala ${roomId}. Marcado como desconectado.`
         );
@@ -345,7 +347,7 @@ io.on("connection", (socket) => {
     }
 
     // Envía la lista actualizada a todos los usuarios en la sala
-    io.to(`${game}-${roomId}`).emit("player_list", room.users);
+    // io.to(`${game}-${roomId}`).emit("player_list", room.users);
   });
   // Manejo de desconexión de la sala
 
