@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect} from 'react';
 import Cards from '../cards/card';
 import styles from './myCards.module.css';
 import {socket} from '../../../functions/SocketIO/sockets/sockets';
@@ -13,7 +13,6 @@ const MyCards = ({
   timmerPlayer,
   results,
   setResults ,
-  showBetweenRound
 }) => {
   const player = players[myPosition - 1];
 
