@@ -11,7 +11,7 @@ import avatar5 from "../../../assets/berenjena/jugadores/avatar5.png";
 import avatar6 from "../../../assets/berenjena/jugadores/avatar6.png";
 
 const Jugadores = ({player,round,
-  timmer}) => {
+  timmerPlayer}) => {
   const avatarMap = {
     avatar1: avatar1,
     avatar2: avatar2,
@@ -33,7 +33,7 @@ const Jugadores = ({player,round,
         <div className={styles.cards}>
           <img src={cardsIcon} alt="" />
           {round.turnJugadorR===player.position? 
-          <p>timmer:{timmer}</p>:""}
+          <p>timmer:{timmerPlayer}</p>:""}
           <p>{player.connect===true?"conectado":"desconectado"}</p>
         </div>
       </div>

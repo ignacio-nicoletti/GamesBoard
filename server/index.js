@@ -105,7 +105,7 @@ io.on("connection", (socket) => {
         numRounds: 0, //num de ronda
         hands: 0, //igual a cant de cards repartidas
         cardXRound: 1, //cant de cartas que se reparten
-        typeRound: "Bet", //apuesta o ronda
+        typeRound: "waiting", //apuesta o ronda
         turnJugadorA: 1, //1j 2j 3j 4j apuesta
         turnJugadorR: 1, //1j 2j 3j 4j ronda
         obligado: null, //numero de jugador obligado
@@ -174,7 +174,7 @@ io.on("connection", (socket) => {
       
         console.log(`User ${userName} rejoined room ${roomId} in game ${game}`);
         socket.join(`${game}-${roomId}`);
-  
+        room.round.typeRound="ronda"
         socket.emit("room_joined", {
           roomId,
           position: user.position,
@@ -295,12 +295,14 @@ io.on("connection", (socket) => {
     if (userIndex !== -1) {
       const disconnectedUser = room.users[userIndex];
 
+      // Si el juego ya comenzó y un usuario se desconecta,
+      // el usuario permanece en la sala pero se marca como desconectado
       if (room.gameStarted) {
-        // Si el juego ya comenzó y un usuario se desconecta,
-        // el usuario permanece en la sala pero se marca como desconectado
         disconnectedUser.connect = false;
         room.disconnectedUsers.push(disconnectedUser);
-        // room.users.splice(userIndex, 1); // Eliminar el usuario de la lista de usuarios activos
+        if(room.users.length===2){
+          room.round.typeRound="waiting"
+        }
         io.to(`${game}-${roomId}`).emit("roomRefresh", {
           users: room.users,
           round: room.round,
@@ -312,8 +314,6 @@ io.on("connection", (socket) => {
       } else {
         // Si el juego no ha comenzado, el usuario se elimina de la sala
         room.users.splice(userIndex, 1);
-
-        // Actualizar las posiciones de los usuarios restantes
         room.users.forEach((user, index) => {
           user.position = index + 1;
         });

@@ -6,8 +6,6 @@ import avatar3 from "../../../../assets/berenjena/jugadores/avatar3.png";
 import avatar4 from "../../../../assets/berenjena/jugadores/avatar4.png";
 import avatar5 from "../../../../assets/berenjena/jugadores/avatar5.png";
 import avatar6 from "../../../../assets/berenjena/jugadores/avatar6.png";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import CancelIcon from "@mui/icons-material/Cancel";
 
 const DataPlayer = ({ players,myPosition,timmerPlayer,round }) => {
 
@@ -83,7 +81,7 @@ const DataPlayer = ({ players,myPosition,timmerPlayer,round }) => {
         {
           round?.typeRound==="ronda"&& round?.turnJugadorR===myPosition?
           
-          <p>tiempo para tirar :{timmerPlayer}seg</p>:""}
+          <p>tiempo para tirar: {timmerPlayer} seg</p>:""}
       </div>
     </div>
   );

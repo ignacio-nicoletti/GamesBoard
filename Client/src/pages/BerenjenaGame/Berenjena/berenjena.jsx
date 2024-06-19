@@ -13,9 +13,8 @@ import ButtonExitRoom
   from '../../../components/berenjena/buttonExitRoom/buttonExitRoom.jsx';
 import {distribute, socket} from '../../../functions/SocketIO/sockets/sockets';
 import MyCards from '../../../components/berenjena/myCards/myCards.jsx';
-import BeetweenRound
-  from '../../../components/berenjena/beetweenRound/beetweenRound';
-import {useParams} from 'react-router-dom';
+import TimmerComponent
+  from '../../../components/berenjena/timmerComponent/timmerComponent';
 
 const GameBerenjena = () => {
   const [loader, setLoader] = useState (false);
@@ -28,87 +27,83 @@ const GameBerenjena = () => {
   const [room, setRoom] = useState ({});
   const [results, setResults] = useState ([]); // base del resultado xronda
 
-  const [timmerPlayer, setTimmerPlayer] = useState (30); // timmer para jugador
-  const [timmerBetweenRound, setTimmerBetweenRound] = useState (5); // timmer entre rondas
-  const [showBetweenRound, setShowBetweenRound] = useState (true);
+  const [showTimmer, setShowTimmer] = useState (false);
+  const [timmerTicks, setTimmerTicks] = useState (null);
+  const [timmerPlayer, setTimmerPlayer] = useState (30);
 
-  // Timmer para tirar la carta entre jugadores
-
-  const updatePlayerList = data => {
-    console.log(data);
-    if (data && data.users) {
-      setPlayers (data.users);
-      setRound (data.round);
-    }
-  };
-
-  //revisar flujo de salir y volver a unirse a la room 
-  //si se sale actualizar users y la vez agregar en disconect 
-//pensar como sigue el juego si sale uno 
+  //desconexion de jugador
   useEffect (
     () => {
+      const updatePlayerList = data => {
+        if (data && data.users) {
+          setPlayers (data.users);
+          setRound (data.round);
+        }
+      };
       socket.on ('roomRefresh', updatePlayerList);
-      setLoader(true)
-     
+      setLoader (true);
       return () => {
         socket.off ('roomRefresh', updatePlayerList);
       };
     },
     [game, setMyPlayer, setPlayers, setRound]
   );
+  //desconexion de jugador
 
-  useEffect (() => {
-    setTimmerPlayer (30);
-    const time = setInterval (() => {
-      setTimmerPlayer (prevTime => prevTime - 1);
-    }, 1000);
-    return () => clearInterval (time);
-  }, []);
-
-  // Timmer entre rondas
-  useEffect (() => {
-    if (showBetweenRound) {
-      setTimmerBetweenRound (5); // Inicias con el valor deseado
-      const time = setInterval (() => {
-        setTimmerBetweenRound (prevTime => {
-          if (prevTime > 0) {
-            return prevTime - 1;
-          } else {
-            clearInterval (time);
-            setShowBetweenRound (false);
-            return 0;
-          }
-        });
-      }, 1000);
-      return () => clearInterval (time);
-    }
-  }, []);
-
+  //start-game
   useEffect (() => {
     const handleStartGame = data => {
-      setRound (data.round);
+      setRound (data.round); //establece typeRound en waiting
       setResults (data.results);
-      setLoader (prevLoader => !prevLoader);
-      setShowBetweenRound (true);
-      setRoom(data.room)
+      setRoom (data.room);
+      setLoader (false);
+      setShowTimmer (true);
+      setTimmerTicks (5);
     };
-
     socket.on ('start_game', handleStartGame);
-
     return () => {
       socket.off ('start_game', handleStartGame);
     };
   }, []);
+  //start-game
+
+  //timmer
+  useEffect (() => {
+    setTimmerPlayer (30);
+    const time = setInterval (() => {
+      setTimmerPlayer (prevTime => {
+        if (prevTime > 0) {
+          return prevTime - 1;
+        } else {
+          clearInterval (time);
+
+          return 0;
+        }
+      });
+    }, 1000);
+    return () => clearInterval (time);
+  }, []);
+  //timmer
 
   useEffect (
     () => {
-      if (round && round.typeRound === 'Bet') {
-        distribute (round, setPlayers, players);
-        setShowBetweenRound (true);
+      if (round && round.typeRound === 'waiting') {
+        console.log ('esperando jugadores');
       }
     },
     [round.typeRound]
   );
+  
+  //repartir cards
+  useEffect (
+    () => {
+      if (round && round.typeRound === 'Bet') {
+        distribute (round, setPlayers, players);
+      }
+    },
+    [round.typeRound]
+  );
+  //repartir cards
 
   const renderPlayers = () => {
     const positions = [
@@ -149,12 +144,30 @@ const GameBerenjena = () => {
             myPlayer={myPlayer}
             setMyPlayer={setMyPlayer}
             setLoader={setLoader}
-            
           />
         : <div className={style.tableroJugadores}>{renderPlayers ()}</div>}
 
-      {showBetweenRound === true
-        ? <BeetweenRound timmerBetweenRound={timmerBetweenRound} />
+      {round.typeRound === 'Bet' &&
+        <Apuesta
+          players={players}
+          setPlayers={setPlayers}
+          round={round}
+          setRound={setRound}
+          myPosition={myPlayer.position}
+          results={results}
+          setResults={setResults}
+          onApuestaEnd={() => setShowTimmer (true)}
+        />}
+
+      {round.typeRound === 'waiting'
+        ? <TimmerComponent
+            type={round.typeRound}
+            showTimmer={showTimmer}
+            setShowTimmer={setShowTimmer}
+            timmerTicks={timmerTicks}
+            setRound={setRound}
+            round={round}
+          />
         : ''}
 
       <MyCards
@@ -175,19 +188,6 @@ const GameBerenjena = () => {
         timmerPlayer={timmerPlayer}
         round={round}
       />
-      {round.typeRound === 'Bet' &&
-        showBetweenRound === false &&
-        timmerBetweenRound === 0 &&
-        <Apuesta
-          players={players}
-          setPlayers={setPlayers}
-          round={round}
-          setRound={setRound}
-          myPosition={myPlayer.position}
-          results={results}
-          setResults={setResults}
-          onApuestaEnd={() => setShowBetweenRound (true)}
-        />}
 
       {showResult &&
         <Result
