@@ -11,7 +11,6 @@ const MyCards = ({
   round,
   setTimmerPlayer,
   timmerPlayer,
-  results,
   setResults ,
 }) => {
   const player = players[myPosition - 1];

@@ -45,6 +45,7 @@ const Loader = ({game, setPlayers, setRound, myPlayer, setMyPlayer,setLoader}) =
 
   useEffect (
     () => {
+  
       socket.on ('room_created', updatePlayerList);
       socket.on ('room_joined', updatePlayerList);
 
@@ -63,6 +64,16 @@ const Loader = ({game, setPlayers, setRound, myPlayer, setMyPlayer,setLoader}) =
       };
     },
     [game, id]
+  );
+
+  useEffect (
+    () => {
+      socket.on ('roomRefresh', updatePlayerList);
+      return () => {
+        socket.off ('roomRefresh', updatePlayerList);
+      };
+    },
+    [game, setMyPlayer, setPlayers, setRound]
   );
 
   return (

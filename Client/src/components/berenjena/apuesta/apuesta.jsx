@@ -3,12 +3,11 @@ import style from "./apuesta.module.css";
 import { socket } from "../../../functions/SocketIO/sockets/sockets";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
-import FormHelperText from "@mui/material/FormHelperText";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
-const Apuesta = ({ players, setPlayers, round, setRound, myPosition,results,
+const Apuesta = ({ players, setPlayers, round, setRound, myPosition,
   setResults }) => {
   const [bet, setBet] = useState("");
   const [timeLeft, setTimeLeft] = useState(30);
@@ -43,11 +42,12 @@ const Apuesta = ({ players, setPlayers, round, setRound, myPosition,results,
   }, [timeLeft, round, players, myPosition]);
 
   useEffect(() => {
-    socket.on("update_game_state", ({ round, players,results }) => {
+    socket.on("update_game_state", (data) => {
+      console.log(data);
       setTimeLeft(30);
-      setRound(round);
-      setPlayers(players);
-      setResults(results)
+      setRound(data.round);
+      setPlayers(data.players);
+      setResults(data.results)
     });
 
     return () => {

@@ -154,27 +154,29 @@ io.on("connection", (socket) => {
         socket.emit("error", { error: "Invalid game" });
         return;
       }
-  
+
       if (!rooms[roomId]) {
         socket.emit("room_join_error", { error: "Room does not exist" });
         return;
       }
-  
+
       const room = rooms[roomId];
       const maxUsers = room.maxUsers || 6;
-  
+
       const disconnectedUserIndex = email
         ? room.disconnectedUsers.findIndex((user) => user.email === email)
-        : room.disconnectedUsers.findIndex((user) => user.userName === userName);
-  
+        : room.disconnectedUsers.findIndex(
+            (user) => user.userName === userName
+          );
+
       if (disconnectedUserIndex !== -1) {
         const user = room.disconnectedUsers.splice(disconnectedUserIndex, 1)[0];
         user.idSocket = socket.id;
         user.connect = true;
-      
+
         console.log(`User ${userName} rejoined room ${roomId} in game ${game}`);
         socket.join(`${game}-${roomId}`);
-        room.round.typeRound="ronda"
+        room.round.typeRound = "ronda";
         socket.emit("room_joined", {
           roomId,
           position: user.position,
@@ -182,31 +184,26 @@ io.on("connection", (socket) => {
           round: room.round,
           users: room.users,
         });
-  
+
         io.to(`${game}-${roomId}`).emit("player_list", {
           users: room.users,
           round: room.round,
         });
-        io.to(`${game}-${roomId}`).emit("roomRefresh", {
-          users: room.users,
-          round: room.round,
-          room: room,
-        });
         return;
       }
-  
+
       if (room.users.length >= maxUsers) {
         socket.emit("room_join_error", { error: "Room is full" });
         return;
       }
-  
+
       if (room.gameStarted) {
         socket.emit("room_join_error", {
           error: "Game already started, cannot join",
         });
         return;
       }
-  
+
       const user = {
         idSocket: socket.id,
         userName,
@@ -226,12 +223,12 @@ io.on("connection", (socket) => {
         cumplio: false, // boolean // cumplio su apuesta
         points: 0, // puntos
       };
-  
+
       room.users.push(user);
-  
+
       console.log(`User ${userName} joined room ${roomId} in game ${game}`);
       socket.join(`${game}-${roomId}`);
-  
+
       socket.emit("room_joined", {
         roomId,
         myInfo: {
@@ -244,14 +241,13 @@ io.on("connection", (socket) => {
         users: room.users,
         round: room.round,
       });
-  
+
       io.to(`${game}-${roomId}`).emit("player_list", {
         users: room.users,
         round: room.round,
       });
     }
   );
-  
 
   socket.on("roomRefresh", ({ game, roomId }) => {
     if (!game || !roomId) {
@@ -270,6 +266,7 @@ io.on("connection", (socket) => {
       users: room.users,
       round: room.round,
       room: room,
+      results: room.results,
     });
   });
 
@@ -300,8 +297,8 @@ io.on("connection", (socket) => {
       if (room.gameStarted) {
         disconnectedUser.connect = false;
         room.disconnectedUsers.push(disconnectedUser);
-        if(room.users.length===2){
-          room.round.typeRound="waiting"
+        if (room.users.length === 2) {
+          room.round.typeRound = "waiting";
         }
         io.to(`${game}-${roomId}`).emit("roomRefresh", {
           users: room.users,
@@ -376,7 +373,24 @@ io.on("connection", (socket) => {
         room.round.users = room.users.length;
 
         // Inicializar la ronda actual en results
-        const currentRound = { ...room.round, players: [...room.users] };
+        const currentRound = {
+          round: {
+            numRounds: room.round.numRounds,
+            cardXRound: room.round.cardXRound,
+            obligado: room.round.obligado,
+            cardWinxRound: room.round.cardWinxRound,
+            ganadorRonda: room.round.ganadorRonda,
+          },
+          players: room.users.map((user) => ({
+            userName: user.userName,
+            email: user.email,
+            betP: user.betP,
+            cardsWins: user.cardsWins,
+            cumplio: user.cumplio,
+            points: user.points,
+          })),
+        };
+
         room.results.push(currentRound);
 
         // Emitir el evento de inicio del juego a todos los usuarios en la sala
@@ -445,7 +459,7 @@ io.on("connection", (socket) => {
       permanentRooms[round.roomId.gameId][round.roomId.roomId];
     if (!room) return;
 
-    // Actualizar la apuesta del jugador
+    // Actualizar la apuesta del jugador en players
     const playerIndex = players.findIndex(
       (player) => player.position === myPosition
     );
@@ -461,8 +475,15 @@ io.on("connection", (socket) => {
     if (!currentRound) {
       // Si la ronda actual no existe en results, agregarla
       currentRound = {
-        ...round,
-        players: players.map((player) => ({ ...player })),
+        round,
+        players: players.map((player) => ({
+          userName: player.userName,
+          position: player.position,
+          betP: player.betP,
+          cardsWins: player.cardsWins,
+          cumplio: player.cumplio,
+          points: player.points,
+        })),
       };
       room.results.push(currentRound);
     } else {
@@ -479,7 +500,7 @@ io.on("connection", (socket) => {
     // Determinar el siguiente jugador en turno
     let nextTurn = (round.turnJugadorA % players.length) + 1;
 
-    round.cantQueApostaron = round.cantQueApostaron + 1;
+    round.cantQueApostaron += 1;
     round.betTotal = Number(round.betTotal) + Number(bet);
 
     if (round.cantQueApostaron === players.length) {
@@ -611,7 +632,7 @@ io.on("connection", (socket) => {
         if (currentRound) {
           currentRound.players = updatedPlayers;
         } else {
-          room.results.push({ ...round, players: updatedPlayers });
+          room.results.push({ round: currentRound, players: updatedPlayers });
         }
 
         // Configurar nueva ronda
@@ -636,6 +657,12 @@ io.on("connection", (socket) => {
       io.to(`${game}-${roomId}`).emit("carta_tirada", {
         players: updatedPlayers,
         round,
+        results: room.results,
+      });
+      io.to(`${game}-${roomId}`).emit("roomRefresh", {
+        users: room.users,
+        round: room.round,
+        room: room,
         results: room.results,
       });
     }

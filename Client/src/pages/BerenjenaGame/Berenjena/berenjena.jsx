@@ -31,27 +31,11 @@ const GameBerenjena = () => {
   const [timmerTicks, setTimmerTicks] = useState (null);
   const [timmerPlayer, setTimmerPlayer] = useState (30);
 
-  //desconexion de jugador
-  useEffect (
-    () => {
-      const updatePlayerList = data => {
-        if (data && data.users) {
-          setPlayers (data.users);
-          setRound (data.round);
-        }
-      };
-      socket.on ('roomRefresh', updatePlayerList);
-      setLoader (true);
-      return () => {
-        socket.off ('roomRefresh', updatePlayerList);
-      };
-    },
-    [game, setMyPlayer, setPlayers, setRound]
-  );
-  //desconexion de jugador
+
 
   //start-game
   useEffect (() => {
+    setLoader (true);
     const handleStartGame = data => {
       setRound (data.round); //establece typeRound en waiting
       setResults (data.results);
@@ -69,20 +53,22 @@ const GameBerenjena = () => {
 
   //timmer
   useEffect (() => {
-    setTimmerPlayer (30);
-    const time = setInterval (() => {
+    if(round.typeRound==="ronda"){
+      setTimmerPlayer (30);
+      const time = setInterval (() => {
       setTimmerPlayer (prevTime => {
         if (prevTime > 0) {
           return prevTime - 1;
         } else {
           clearInterval (time);
-
+          
           return 0;
         }
       });
     }, 1000);
     return () => clearInterval (time);
-  }, []);
+  }
+  }, [round.typeRound,round.turnJugadorR]);
   //timmer
 
   useEffect (
@@ -159,7 +145,7 @@ const GameBerenjena = () => {
           onApuestaEnd={() => setShowTimmer (true)}
         />}
 
-      {round.typeRound === 'waiting'
+      {room.gameStarted && round.typeRound === 'waiting'
         ? <TimmerComponent
             type={round.typeRound}
             showTimmer={showTimmer}
@@ -178,7 +164,6 @@ const GameBerenjena = () => {
         round={round}
         setTimmerPlayer={setTimmerPlayer}
         timmerPlayer={timmerPlayer}
-        results={results}
         setResults={setResults}
       />
 
