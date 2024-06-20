@@ -7,13 +7,12 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
-const Apuesta = ({ players, setPlayers, round, setRound, myPosition,
-  setResults }) => {
+const Apuesta = ({ setPlayers, round, setRound, myPosition, setResults }) => {
   const [bet, setBet] = useState("");
   const [timeLeft, setTimeLeft] = useState(30);
 
   const handleSubmit = () => {
-    socket.emit("BetPlayer", { round, players, bet, myPosition });
+    socket.emit("BetPlayer", { round, bet, myPosition });
     setTimeLeft(30);
   };
 
@@ -36,24 +35,23 @@ const Apuesta = ({ players, setPlayers, round, setRound, myPosition,
       const randomBet =
         availableBets[Math.floor(Math.random() * availableBets.length)];
 
-      socket.emit("BetPlayer", { round, players, bet: randomBet, myPosition });
+      socket.emit("BetPlayer", { round, bet: randomBet, myPosition });
       setTimeLeft(30);
     }
-  }, [timeLeft, round, players, myPosition]);
+  }, [timeLeft, round, myPosition]);
 
   useEffect(() => {
     socket.on("update_game_state", (data) => {
-      console.log(data);
       setTimeLeft(30);
       setRound(data.round);
       setPlayers(data.players);
-      setResults(data.results)
+      setResults(data.results);
     });
 
     return () => {
       socket.off("update_game_state");
     };
-  }, [setRound, setPlayers]);
+  }, [setRound, setPlayers, setResults]);
 
   const handleChange = (event) => {
     setBet(event.target.value);

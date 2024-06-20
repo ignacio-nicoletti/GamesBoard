@@ -25,7 +25,7 @@ console.log(results);
           <tbody>
             {results.map((result, roundIndex) => (
               <tr key={roundIndex}>
-                <td>{result.numRounds}</td>
+                <td>{roundIndex+1}</td>
                 {result.players.map((player, playerIndex) => (
                   <React.Fragment key={playerIndex}>
                     <td className={styles.points}>{player.points}</td>

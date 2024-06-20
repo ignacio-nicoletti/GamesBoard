@@ -135,12 +135,10 @@ const GameBerenjena = () => {
 
       {round.typeRound === 'Bet' &&
         <Apuesta
-          players={players}
           setPlayers={setPlayers}
           round={round}
           setRound={setRound}
           myPosition={myPlayer.position}
-          results={results}
           setResults={setResults}
           onApuestaEnd={() => setShowTimmer (true)}
         />}
