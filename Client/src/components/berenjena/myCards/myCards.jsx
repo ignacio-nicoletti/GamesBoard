@@ -12,6 +12,7 @@ const MyCards = ({
   setTimmerPlayer,
   timmerPlayer,
   setResults ,
+  dataRoom
 }) => {
   const player = players[myPosition - 1];
 
@@ -25,18 +26,16 @@ const MyCards = ({
       // Emitir evento al backend indicando que el jugador ha tirado una carta
       setTimmerPlayer(30);
       socket.emit('tirar_carta', {
-        round,
-        players,
         myPosition,
         value,
         suit,
+        dataRoom
       });
     }
   };
 
   useEffect(() => {
     socket.on('carta_tirada', (data) => {
-      console.log(data.players);
       setPlayers(data.players);
       setRound(data.round);
       setResults(data.results);
@@ -45,7 +44,7 @@ const MyCards = ({
     return () => {
       socket.off('carta_tirada');
     };
-  }, [players, round]);
+  }, [round]);
 
   useEffect(() => {
     if (timmerPlayer === 0) {

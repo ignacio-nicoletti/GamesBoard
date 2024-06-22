@@ -167,6 +167,7 @@ const GameBerenjena = () => {
         setTimmerPlayer={setTimmerPlayer}
         timmerPlayer={timmerPlayer}
         setResults={setResults}
+        dataRoom={dataRoom}
       />
 
       <DataPlayer
