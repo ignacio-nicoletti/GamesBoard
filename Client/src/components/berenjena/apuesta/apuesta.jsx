@@ -16,7 +16,6 @@ const Apuesta = ({ setPlayers, round, setRound, myPosition, setResults,dataRoom 
   };
 
   useEffect(() => {
-    setTimeLeft(30);
     if (timeLeft === 0) {
       const availableBets = [...Array(round.cardXRound + 1)]
         .map((_, index) => index)
