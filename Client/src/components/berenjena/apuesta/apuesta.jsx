@@ -7,20 +7,16 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
-const Apuesta = ({ setPlayers, round, setRound, myPosition, setResults }) => {
+const Apuesta = ({ setPlayers, round, setRound, myPosition, setResults,dataRoom }) => {
   const [bet, setBet] = useState("");
   const [timeLeft, setTimeLeft] = useState(30);
 
   const handleSubmit = () => {
-    socket.emit("BetPlayer", { round, bet, myPosition });
-    setTimeLeft(30);
+    socket.emit("BetPlayer", {bet, myPosition,dataRoom});
   };
 
   useEffect(() => {
     setTimeLeft(30);
-  }, [round]);
-
-  useEffect(() => {
     if (timeLeft === 0) {
       const availableBets = [...Array(round.cardXRound + 1)]
         .map((_, index) => index)
@@ -35,10 +31,10 @@ const Apuesta = ({ setPlayers, round, setRound, myPosition, setResults }) => {
       const randomBet =
         availableBets[Math.floor(Math.random() * availableBets.length)];
 
-      socket.emit("BetPlayer", { round, bet: randomBet, myPosition });
+      socket.emit("BetPlayer", {bet: randomBet, myPosition });
       setTimeLeft(30);
     }
-  }, [timeLeft, round, myPosition]);
+  }, [timeLeft, setRound, myPosition]);
 
   useEffect(() => {
     socket.on("update_game_state", (data) => {
@@ -63,7 +59,7 @@ const Apuesta = ({ setPlayers, round, setRound, myPosition, setResults }) => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [setPlayers]);
 
   const theme = createTheme({
     typography: {

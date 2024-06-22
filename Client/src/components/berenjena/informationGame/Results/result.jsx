@@ -4,7 +4,6 @@ import { IoCloseCircleOutline } from "react-icons/io5";
 
 const Result = ({ setShowResult, results }) => {
   const players = results[0].players.map((player) => player.userName);
-console.log(results);
   return (
     <div className={styles.containResult}>
       <div className={styles.closeResult} onClick={() => setShowResult(false)}>

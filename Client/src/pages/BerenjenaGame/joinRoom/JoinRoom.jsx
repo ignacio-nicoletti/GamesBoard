@@ -27,7 +27,6 @@ import InstanceOfAxios from '../../../utils/intanceAxios';
 const JoinRoom = () => {
   const [rooms, setRooms] = useState ([]);
   const [filteredRooms, setFilteredRooms] = useState ([]);
-  const [game, setGame] = useState ('Berenjena');
   const [userName, setUserName] = useState ('');
   const [roomId, setRoomId] = useState ('');
   const [tempMaxUsers, setTempMaxUsers] = useState (''); // temp max o maxusers
@@ -39,6 +38,7 @@ const JoinRoom = () => {
   const navigate = useNavigate ();
   const [timmerRooms, setTimmerRooms] = useState (5);
   const [infoUser, setInfoUser] = useState ({});
+  const [game] = useState ("Berenjena");
   const token = GetDecodedCookie ('cookieToken');
 
   useEffect (() => {
@@ -68,8 +68,7 @@ const JoinRoom = () => {
           selectedAvatar,
           infoUser
         );
-   
-        res && navigate (`/berenjena/multiplayer/${res.roomCreated.roomId}`);
+        res && navigate (`/berenjena/multiplayer/${res.roomCreated.room.roomId}`);
       }
     } catch (error) {
       console.log (error);
@@ -115,7 +114,7 @@ const JoinRoom = () => {
 
   const initializeRooms = async () => {
     try {
-      const roomsInfo = await getAllRoomsInfo (game);
+      const roomsInfo = await getAllRoomsInfo ("Berenjena");
       setRooms (roomsInfo);
       setFilteredRooms (roomsInfo);
     } catch (error) {
@@ -133,7 +132,6 @@ const JoinRoom = () => {
   };
 
   // me setea el nombre si inicio sesion
-
   useEffect (() => {
     if (token) {
       const data = DecodedToken (token);

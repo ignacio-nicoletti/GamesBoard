@@ -19,21 +19,24 @@ const io = new Server(server, {
 });
 
 const permanentRooms = {
-  Berenjena: createRooms(10),
-  Poker: createRooms(10),
-  Truco: createRooms(10),
-  Generala: createRooms(10),
+  Berenjena: createRooms(10, "Berenjena"),
+  Poker: createRooms(10, "Poker"),
+  Truco: createRooms(10, "Truco"),
+  Generala: createRooms(10, "Generala"),
 };
 
-function createRooms(numberOfRooms) {
+function createRooms(numberOfRooms, gameName) {
   const rooms = {};
   for (let i = 1; i <= numberOfRooms; i++) {
     rooms[i] = {
       users: [],
+      round:{},
       disconnectedUsers: [],
       gameStarted: false,
       maxUsers: 6,
+      roomId: i,
       results: [],
+      game: gameName, // Guardar el nombre del juego
     };
   }
   return rooms;
@@ -73,10 +76,13 @@ io.on("connection", (socket) => {
       }
 
       rooms[roomId] = {
-        users: [],
-        disconnectedUsers: [],
         gameStarted: false,
         maxUsers,
+        roomId: roomId,
+        game: game,
+        disconnectedUsers: [],
+        users: [],
+        round:{},
         results: [],
       };
 
@@ -84,7 +90,7 @@ io.on("connection", (socket) => {
         idSocket: socket.id,
         userName,
         roomId,
-        email: email ? email : "invitado",
+        email: email,
         position: 1,
         ready: false,
         connect: true,
@@ -120,23 +126,20 @@ io.on("connection", (socket) => {
       };
 
       rooms[roomId].users.push(user);
-      rooms[roomId].round = round;
+      rooms[roomId].round=round;
 
       console.log(
         `Room ${roomId} created by ${userName} in game ${game} with max ${maxUsers} users`
       );
       socket.join(`${game}-${roomId}`);
       socket.emit("room_created", {
-        roomId,
         myInfo: {
           idSocket: user.idSocket,
           userName: user.userName,
           email: user.email,
           position: user.position,
         },
-        userName,
-        maxUsers,
-        round,
+        room: rooms[roomId],
       });
 
       io.to(`${game}-${roomId}`).emit("player_list", {
@@ -178,12 +181,15 @@ io.on("connection", (socket) => {
         socket.join(`${game}-${roomId}`);
         room.round.typeRound = "ronda";
         socket.emit("room_joined", {
-          roomId,
-          position: user.position,
-          userName,
-          round: room.round,
-          users: room.users,
+          myInfo: {
+            idSocket: user.idSocket,
+            userName: user.userName,
+            email: user.email,
+            position: user.position,
+          },
+          room: rooms[roomId],
         });
+
 
         io.to(`${game}-${roomId}`).emit("player_list", {
           users: room.users,
@@ -237,9 +243,6 @@ io.on("connection", (socket) => {
           email: user.email,
           position: user.position,
         },
-        userName,
-        users: room.users,
-        round: room.round,
       });
 
       io.to(`${game}-${roomId}`).emit("player_list", {
@@ -249,20 +252,20 @@ io.on("connection", (socket) => {
     }
   );
 
-  socket.on("roomRefresh", ({ game, roomId }) => {
-    if (!game || !roomId) {
+  socket.on("roomRefresh", (dataRoom) => {
+    if (!dataRoom || !dataRoom.game || !dataRoom.roomId) {
       return;
     }
 
-    const room = permanentRooms[game]
-      ? permanentRooms[game][roomId]
+    const room = permanentRooms[dataRoom.game]
+      ? permanentRooms[dataRoom.game][dataRoom.roomId]
       : undefined;
 
     if (!room) {
       return;
     }
 
-    io.to(`${game}-${roomId}`).emit("roomRefresh", {
+    io.to(`${dataRoom.game}-${dataRoom.roomId}`).emit("roomRefresh", {
       users: room.users,
       round: room.round,
       room: room,
@@ -348,7 +351,9 @@ io.on("connection", (socket) => {
   });
   // Manejo de desconexión de la sala
 
-  socket.on("player_ready", ({ game, roomId }) => {
+  socket.on("player_ready", (dataRoom) => {
+    const game = dataRoom.game;
+    const roomId = dataRoom.roomId;
     const room = permanentRooms[game] && permanentRooms[game][roomId];
     if (!room) return;
 
@@ -404,47 +409,43 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("distribute", ({ round, players }) => {
-    if (
-      !round ||
-      !round.roomId ||
-      !round.roomId.gameId ||
-      !round.roomId.roomId
-    ) {
-      console.error("Invalid round or roomId object:", round);
+  socket.on("distribute", (dataRoom) => {
+    const { game, roomId, round } = dataRoom;
+  
+    // Verificar si round y roomId son válidos
+    if (!round || !roomId || !game) {
+      console.error("Invalid round or roomId object:", dataRoom);
       socket.emit("error", { error: "Invalid round or roomId object" });
       return;
     }
-    const roomId = round.roomId.roomId;
-    const game = round.roomId.gameId;
-
+  
     try {
       let deck = distribute(); // Obtener el mazo de cartas
       let shuffledCards = shuffle(deck); // Mezclar el mazo de cartas
-
+  
       const room = permanentRooms[game] && permanentRooms[game][roomId];
       if (!room) return;
-
+  
       const numPlayers = room.users.length;
       const cardsPerPlayer = round.cardXRound;
-
+  
       const totalCardsToDistribute = numPlayers * cardsPerPlayer;
-
+  
       if (shuffledCards.length < totalCardsToDistribute) {
         console.error("Not enough cards to distribute.");
         socket.emit("error", { error: "Not enough cards to distribute" });
         return;
       }
-
+  
       for (let i = 0; i < numPlayers; i++) {
         room.users[i].cardPerson = [];
-
+  
         for (let j = 0; j < cardsPerPlayer; j++) {
           const card = shuffledCards.pop();
           room.users[i].cardPerson.push(card);
         }
       }
-
+  
       // Emitir evento con usuarios actualizados
       io.to(`${game}-${roomId}`).emit("distribute", { users: room.users });
     } catch (error) {
@@ -452,83 +453,82 @@ io.on("connection", (socket) => {
       socket.emit("error", { error: "Error in distribute function" });
     }
   });
-
-
-  socket.on("BetPlayer", ({ round, bet, myPosition }) => {
-    // Correctamente accediendo al room ID
-    const roomId = round.roomId.roomId;
-
+  
+  socket.on("BetPlayer", ({ bet, myPosition, dataRoom }) => {
+    const roomId = dataRoom.roomId;
     const room =
-      permanentRooms[round.roomId.gameId] &&
-      permanentRooms[round.roomId.gameId][round.roomId.roomId];
+      permanentRooms[dataRoom.game] &&
+      permanentRooms[dataRoom.game][dataRoom.roomId];
+  
     if (!room) return;
-
+  
     // Actualizar la apuesta del jugador en room.users
-    const userIndex = room.users.findIndex(user => user.position === myPosition);
+    const userIndex = room.users.findIndex(
+      (user) => user.position === myPosition
+    );
+  
     if (userIndex !== -1) {
       room.users[userIndex].betP = bet;
     }
-
-    // Encontrar la ronda actual en results
-    let currentRound = room.results.find(
-      (r) => r.round?.numRounds === round.numRounds
+  
+    // Actualizar la ronda actual en room.results
+    let currentRoundIndex = room.results.findIndex(
+      (r) => r.round?.numRounds === room.round.numRounds
     );
-
-    if (!currentRound) {
-      // Si la ronda actual no existe en results, agregarla
-      currentRound = {
-        round: {
-          numRounds: round.numRounds,
-          cardXRound: round.cardXRound,
-          obligado: round.obligado,
-          cardWinxRound: round.cardWinxRound,
-          ganadorRonda: round.ganadorRonda,
-        },
-        players: room.users.map((user) => ({
-          userName: user.userName,
-          position: user.position,
-          betP: user.betP,
-          cardsWins: user.cardsWins,
-          cumplio: user.cumplio,
-          points: user.points,
-        })),
+  
+    const roundData = {
+      numRounds: room.round.numRounds,
+      cardXRound: room.round.cardXRound,
+      obligado: room.round.obligado,
+      cardWinxRound: room.round.cardWinxRound,
+      ganadorRonda: room.round.ganadorRonda,
+    };
+  
+    const playersData = room.users.map((user) => ({
+      userName: user.userName,
+      position: user.position,
+      betP: user.betP,
+      cardsWins: user.cardsWins,
+      cumplio: user.cumplio,
+      points: user.points,
+    }));
+  
+    if (currentRoundIndex !== -1) {
+      room.results[currentRoundIndex] = {
+        round: roundData,
+        players: playersData,
       };
-      room.results.push(currentRound);
     } else {
-      // Actualizar las apuestas en la ronda actual
-      const currentRoundPlayerIndex = currentRound.players.findIndex(
-        (player) => player.position === myPosition
-      );
-
-      if (currentRoundPlayerIndex !== -1) {
-        currentRound.players[currentRoundPlayerIndex].betP = bet;
-      }
+      room.results.push({
+        round: roundData,
+        players: playersData,
+      });
     }
-
+  
     // Determinar el siguiente jugador en turno
-    let nextTurn = (round.turnJugadorA % room.users.length) + 1;
-
-    round.cantQueApostaron += 1;
-    round.betTotal = Number(round.betTotal) + Number(bet);
-
-    if (round.cantQueApostaron === room.users.length) {
+    let nextTurn = (room.round.turnJugadorA % room.users.length) + 1;
+  
+    room.round.cantQueApostaron += 1;
+    room.round.betTotal = Number(room.round.betTotal) + Number(bet);
+  room.round.typeRound="Bet"
+    if (room.round.cantQueApostaron === room.users.length) {
       // Cambiar de ronda
-      round.typeRound = "ronda";
-      round.turnJugadorR = (round.obligado % room.users.length) + 1;
-      round.cantQueApostaron = 0;
+      room.round.typeRound = "ronda";
+      room.round.turnJugadorR = (room.round.obligado % room.users.length) + 1;
+      room.round.cantQueApostaron = 0;
     } else {
       // Continuar con la ronda de apuestas
-      round.turnJugadorA = nextTurn;
+      room.round.turnJugadorA = nextTurn;
     }
-
-    // Emitir el estado actualizado del juego
-    io.to(`${round.roomId.gameId}-${roomId}`).emit("update_game_state", {
-      round,
+  
+    // Emitir el estado actualizado del juego a todos los clientes en la sala
+    io.to(`${dataRoom.game}-${roomId}`).emit("update_game_state", {
+      round: room.round,
       players: room.users,
       results: room.results,
     });
   });
-
+  
 
   socket.on("tirar_carta", ({ round, players, myPosition, value, suit }) => {
     // -----------------Errores---------------------------
@@ -546,6 +546,7 @@ io.on("connection", (socket) => {
     const game = round.roomId.gameId;
     const roomId = round.roomId.roomId;
     const room = permanentRooms[game] && permanentRooms[game][roomId];
+
     if (!room) {
       console.error("Room not found:", roomId);
       return;
@@ -558,12 +559,12 @@ io.on("connection", (socket) => {
       console.error("Player not found in the room:", myPosition);
       return;
     }
+    const card = { value, suit, id: playerIndex + 1 };
+    room.users[playerIndex].cardBet = card;
     //-----------------Errores-----------------
 
     if (round.typeRound === "ronda" && myPosition === round.turnJugadorR) {
       //-----------------Saber qué carta es mayor-----------------
-      const card = { value, suit, id: playerIndex + 1 };
-      room.users[playerIndex].cardBet = card;
 
       if (round.cantQueTiraron === 0) {
         round.lastCardBet = card;
@@ -601,6 +602,7 @@ io.on("connection", (socket) => {
         round.cantQueTiraron = 0;
         round.hands += 1;
         round.turnJugadorR = round.cardWinxRound.id;
+
         updatedPlayers = updatedPlayers.map((player) => {
           if (round.cardWinxRound.id === player.id) {
             return { ...player, cardsWins: player.cardsWins + 1 };
@@ -634,18 +636,8 @@ io.on("connection", (socket) => {
           };
         });
 
-        // Actualizar results con la ronda completada
-        let currentRound = room.results.find(
-          (r) => r.numRounds === round.numRounds
-        );
-        if (currentRound) {
-          currentRound.players = updatedPlayers;
-        } else {
-          room.results.push({ round: currentRound, players: updatedPlayers });
-        }
-
         // Configurar nueva ronda
-        round.typeRound = "Bet";
+        round.typeRound = "waiting";
         round.obligado = (round.obligado % players.length) + 1;
         round.turnJugadorA = (round.obligado % players.length) + 1; // Cambiar el turno al siguiente jugador
         round.turnJugadorR = (round.obligado % players.length) + 1;
@@ -659,6 +651,31 @@ io.on("connection", (socket) => {
         round.hands = 0;
         round.numRounds += 1;
       }
+
+      // Actualizar results con la ronda completada
+      let currentRoundIndex = room.results.findIndex(
+        (r) => r.round?.numRounds === round.numRounds
+      );
+
+      if (currentRoundIndex !== -1) {
+        room.results[currentRoundIndex] = {
+          round: {
+            numRounds: round.numRounds,
+            cardXRound: round.cardXRound,
+            obligado: round.obligado,
+            cardWinxRound: round.cardWinxRound,
+            ganadorRonda: round.ganadorRonda,
+          },
+          players: room.users.map((user) => ({
+            userName: user.userName,
+            position: user.position,
+            betP: user.betP,
+            cardsWins: user.cardsWins,
+            cumplio: user.cumplio,
+            points: user.points,
+          })),
+        };
+      }
       //-----------------cambio de ronda-----------------
 
       //-----------------Manejo de turnos y Reset-----------------
@@ -666,12 +683,6 @@ io.on("connection", (socket) => {
       io.to(`${game}-${roomId}`).emit("carta_tirada", {
         players: updatedPlayers,
         round,
-        results: room.results,
-      });
-      io.to(`${game}-${roomId}`).emit("roomRefresh", {
-        users: room.users,
-        round: room.round,
-        room: room,
         results: room.results,
       });
     }

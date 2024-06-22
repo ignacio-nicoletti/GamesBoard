@@ -18,20 +18,17 @@ import TimmerComponent
 
 const GameBerenjena = () => {
   const [loader, setLoader] = useState (false);
-  const [game] = useState ('Berenjena'); // Juego seleccionado
   const [showResult, setShowResult] = useState (false);
-
   const [myPlayer, setMyPlayer] = useState ({});
+
   const [players, setPlayers] = useState ([]);
   const [round, setRound] = useState ({});
-  const [room, setRoom] = useState ({});
+  const [dataRoom, setDataRoom] = useState ({});
   const [results, setResults] = useState ([]); // base del resultado xronda
 
   const [showTimmer, setShowTimmer] = useState (false);
   const [timmerTicks, setTimmerTicks] = useState (null);
   const [timmerPlayer, setTimmerPlayer] = useState (30);
-
-
 
   //start-game
   useEffect (() => {
@@ -39,7 +36,9 @@ const GameBerenjena = () => {
     const handleStartGame = data => {
       setRound (data.round); //establece typeRound en waiting
       setResults (data.results);
-      setRoom (data.room);
+      setDataRoom (data.room);
+      setPlayers(data.users)
+      
       setLoader (false);
       setShowTimmer (true);
       setTimmerTicks (5);
@@ -50,6 +49,18 @@ const GameBerenjena = () => {
     };
   }, []);
   //start-game
+
+  //repartir cards
+  useEffect (
+    () => {
+      if (round && round.typeRound === 'Bet') {
+        distribute (dataRoom, setPlayers);
+      }
+    },
+    [round.typeRound]
+  );
+  //repartir cards
+
 
   //timmer
   useEffect (() => {
@@ -74,22 +85,13 @@ const GameBerenjena = () => {
   useEffect (
     () => {
       if (round && round.typeRound === 'waiting') {
-        console.log ('esperando jugadores');
+        // console.log ('esperando jugadores');
       }
     },
     [round.typeRound]
   );
   
-  //repartir cards
-  useEffect (
-    () => {
-      if (round && round.typeRound === 'Bet') {
-        distribute (round, setPlayers, players);
-      }
-    },
-    [round.typeRound]
-  );
-  //repartir cards
+
 
   const renderPlayers = () => {
     const positions = [
@@ -124,12 +126,13 @@ const GameBerenjena = () => {
     <div className={style.contain}>
       {loader
         ? <Loader
-            game={game}
             setPlayers={setPlayers}
             setRound={setRound}
             myPlayer={myPlayer}
             setMyPlayer={setMyPlayer}
             setLoader={setLoader}
+            setDataRoom={setDataRoom}
+            dataRoom={dataRoom}
           />
         : <div className={style.tableroJugadores}>{renderPlayers ()}</div>}
 
@@ -141,9 +144,10 @@ const GameBerenjena = () => {
           myPosition={myPlayer.position}
           setResults={setResults}
           onApuestaEnd={() => setShowTimmer (true)}
+          dataRoom={dataRoom}
         />}
 
-      {room.gameStarted && round.typeRound === 'waiting'
+      {dataRoom&&dataRoom.gameStarted && round.typeRound === 'waiting'
         ? <TimmerComponent
             type={round.typeRound}
             showTimmer={showTimmer}

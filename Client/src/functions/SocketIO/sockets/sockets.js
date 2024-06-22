@@ -39,6 +39,7 @@ export const CreateGameRoom = (
   selectedAvatar,
   infoUser
 ) => {
+
   return new Promise((res, rej) => {
     const responses = {};
 
@@ -70,7 +71,7 @@ export const CreateGameRoom = (
       userName,
       maxUsers,
       selectedAvatar,
-      email: infoUser.email,
+      email: infoUser.email?infoUser.email:"invitado",
     });
   });
 };
@@ -120,8 +121,8 @@ export const disconnectRoom = (game, roomId) => {
   socket.emit("disconnectRoom", { game, roomId });
 };
 
-export const distribute = (round, setPlayers, players) => {
-  socket.emit("distribute", { round, players });
+export const distribute = (dataRoom,setPlayers) => {
+  socket.emit("distribute", dataRoom);
   socket.on("distribute", (data) => {
     setPlayers(data.users);
   });

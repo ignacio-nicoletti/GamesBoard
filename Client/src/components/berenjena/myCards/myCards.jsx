@@ -35,10 +35,11 @@ const MyCards = ({
   };
 
   useEffect(() => {
-    socket.on('carta_tirada', ({players, round, results}) => {
-      setPlayers(players);
-      setRound(round);
-      setResults(results);
+    socket.on('carta_tirada', (data) => {
+      console.log(data.players);
+      setPlayers(data.players);
+      setRound(data.round);
+      setResults(data.results);
     });
 
     return () => {
