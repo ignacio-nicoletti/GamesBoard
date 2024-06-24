@@ -8,6 +8,7 @@ import AuthRoute from "./src/routes/auth.routes.js";
 import userRoutes from "./src/routes/user.routes.js";
 
 import { distribute, shuffle } from "./functions/functions.js"; // Asegúrate de que estas funciones estén definidas en el archivo adecuado
+import { Player } from "./src/models/players.js";
 
 const app = express();
 const server = http.createServer(app);
@@ -63,7 +64,7 @@ io.on("connection", (socket) => {
 
   socket.on(
     "create_room",
-    ({ game, roomId, userName, maxUsers = 6, selectedAvatar, email }) => {
+    async ({ game, roomId, userName, maxUsers = 6, selectedAvatar, email }) => {
       const rooms = permanentRooms[game];
       if (!rooms) {
         socket.emit("room_creation_error", { error: "Invalid game" });
@@ -86,8 +87,15 @@ io.on("connection", (socket) => {
         results: [],
       };
 
+      let idDB="-";
+      if (email !== "invitado") {
+        let player = await Player.findOne({ email: email });
+        idDB = player._id;
+      }
+
       const user = {
         idSocket: socket.id,
+        idDB,
         userName,
         roomId,
         email: email,
@@ -151,7 +159,7 @@ io.on("connection", (socket) => {
 
   socket.on(
     "join_room",
-    ({ game, roomId, userName, selectedAvatar, email }) => {
+    async ({ game, roomId, userName, selectedAvatar, email }) => {
       const rooms = permanentRooms[game];
       if (!rooms) {
         socket.emit("error", { error: "Invalid game" });
@@ -209,6 +217,13 @@ io.on("connection", (socket) => {
         return;
       }
 
+      let idDB="-";
+      if (email !== "invitado") {
+        let player = await Player.findOne({ email: email });
+        idDB = player.id;
+        console.log(player.id);
+      }
+
       const user = {
         idSocket: socket.id,
         userName,
@@ -226,7 +241,8 @@ io.on("connection", (socket) => {
         myturnA: false, // boolean // turno apuesta
         myturnR: false, // boolean // turno ronda
         cumplio: false, // boolean // cumplio su apuesta
-        points: 0, // puntos
+        points: 95, // puntos
+        idDB,
       };
 
       room.users.push(user);
@@ -291,62 +307,65 @@ io.on("connection", (socket) => {
       (user) => user.idSocket === socket.id
     );
 
-    if (userIndex !== -1) {
-      const disconnectedUser = room.users[userIndex];
-
-      // Si el juego ya comenzó y un usuario se desconecta,
-      // el usuario permanece en la sala pero se marca como desconectado
-      if (room.gameStarted) {
-        disconnectedUser.connect = false;
-        room.disconnectedUsers.push(disconnectedUser);
-        if (room.users.length === 2) {
-          room.round.typeRound = "waiting";
-        }
-        io.to(`${game}-${roomId}`).emit("roomRefresh", {
-          users: room.users,
-          round: room.round,
-          room: room,
-        });
-        console.log(
-          `Usuario ${socket.id} desconectado de la sala ${roomId}. Marcado como desconectado.`
-        );
-      } else {
-        // Si el juego no ha comenzado, el usuario se elimina de la sala
-        room.users.splice(userIndex, 1);
-        room.users.forEach((user, index) => {
-          user.position = index + 1;
-        });
-
-        if (room.users.length === 0) {
-          if (roomId <= 10) {
-            // Si la sala es una de las primeras 10 creadas (permanente), se vacía y resetea
-            room.gameStarted = false;
-            room.disconnectedUsers = [];
-            console.log(`Sala permanente ${roomId} vaciada y reseteada.`);
-          } else {
-            // Si la sala no es permanente, se elimina
-            delete permanentRooms[game][roomId];
-            console.log(
-              `Usuario ${socket.id} desconectado de la sala ${roomId}. Sala eliminada.`
-            );
-          }
-        } else {
-          // Si hay otros usuarios en la sala, se mantiene la sala
-          io.to(`${game}-${roomId}`).emit("player_list", room.users);
-          console.log(
-            `Usuario ${socket.id} desconectado de la sala ${roomId}.`
-          );
-        }
-
-        // Enviar posiciones actualizadas a todos los usuarios
-        io.to(`${game}-${roomId}`).emit("player_list", room.users);
-      }
-    } else {
+    if (userIndex === -1) {
       console.log(`Usuario no encontrado en la sala: ${roomId}`);
+      return;
     }
 
-    // Envía la lista actualizada a todos los usuarios en la sala
-    // io.to(`${game}-${roomId}`).emit("player_list", room.users);
+    const disconnectedUser = room.users[userIndex];
+
+    // Lógica para manejar la sala cuando está vacía
+    const handleEmptyRoom = () => {
+      if (roomId <= 10) {
+        // Si la sala es una de las primeras 10 creadas (permanente), se vacía y resetea
+        room.gameStarted = false;
+        room.disconnectedUsers = [];
+        console.log(`Sala permanente ${roomId} vaciada y reseteada.`);
+      } else {
+        // Si la sala no es permanente, se elimina
+        delete permanentRooms[game][roomId];
+        console.log(`Sala ${roomId} eliminada.`);
+      }
+    };
+
+    // Si el juego ya comenzó y un usuario se desconecta,
+    // el usuario permanece en la sala pero se marca como desconectado
+    if (room.gameStarted) {
+      disconnectedUser.connect = false;
+      room.disconnectedUsers.push(disconnectedUser);
+      if (room.users.length === 2) {
+        room.round.typeRound = "waiting";
+      }
+      io.to(`${game}-${roomId}`).emit("roomRefresh", {
+        users: room.users,
+        round: room.round,
+        room: room,
+      });
+      console.log(
+        `Usuario ${socket.id} desconectado de la sala ${roomId}. Marcado como desconectado.`
+      );
+
+      if (room.users.length === 0) {
+        handleEmptyRoom();
+      }
+    } else {
+      // Si el juego no ha comenzado, el usuario se elimina de la sala
+      room.users.splice(userIndex, 1);
+      room.users.forEach((user, index) => {
+        user.position = index + 1;
+      });
+
+      if (room.users.length === 0) {
+        handleEmptyRoom();
+      } else {
+        // Si hay otros usuarios en la sala, se mantiene la sala
+        io.to(`${game}-${roomId}`).emit("player_list", room.users);
+        console.log(`Usuario ${socket.id} desconectado de la sala ${roomId}.`);
+      }
+
+      // Enviar posiciones actualizadas a todos los usuarios
+      // io.to(`${game}-${roomId}`).emit("player_list", room.users);
+    }
   });
   // Manejo de desconexión de la sala
 
@@ -537,7 +556,7 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("tirar_carta", ({myPosition, value, suit, dataRoom }) => {
+  socket.on("tirar_carta", ({ myPosition, value, suit, dataRoom }) => {
     if (!dataRoom) return;
     const { game, roomId, round } = dataRoom;
     if (!round || !roomId || !game) {
@@ -545,27 +564,30 @@ io.on("connection", (socket) => {
       socket.emit("error", { error: "Invalid round or roomId object" });
       return;
     }
- 
+
     const room = permanentRooms[game] && permanentRooms[game][roomId];
-  
+
     if (!room) {
       console.error("Room not found:", roomId);
       return;
     }
-  
+
     const playerIndex = room.users.findIndex(
       (user) => user.position === myPosition
     );
-  
+
     if (playerIndex === -1) {
       console.error("Player not found in the room:", myPosition);
       return;
     }
-  
+
     const card = { value, suit, id: playerIndex + 1 };
     room.users[playerIndex].cardBet = card;
-  
-    if (room.round.typeRound === "ronda" && myPosition === room.round.turnJugadorR) {
+
+    if (
+      room.round.typeRound === "ronda" &&
+      myPosition === room.round.turnJugadorR
+    ) {
       // Determinar qué carta es mayor
       if (room.round.cantQueTiraron === 0) {
         room.round.lastCardBet = card;
@@ -578,31 +600,32 @@ io.on("connection", (socket) => {
             ? room.round.lastCardBet
             : room.round.beforeLastCardBet;
       }
-  
+
       // Actualizar apuesta de carta del jugador en room.users
       room.users[playerIndex].cardBet = card;
-  
+
       // Filtrar carta jugada de cardPerson del jugador
-      room.users[playerIndex].cardPerson = room.users[playerIndex].cardPerson.filter(
-        (c) => !(c.value === value && c.suit === suit)
-      );
-  
+      room.users[playerIndex].cardPerson = room.users[
+        playerIndex
+      ].cardPerson.filter((c) => !(c.value === value && c.suit === suit));
+
       // Manejo de turnos y reset
       room.round.cantQueTiraron += 1;
-      room.round.turnJugadorR = (room.round.turnJugadorR % room.users.length) + 1;
-  
+      room.round.turnJugadorR =
+        (room.round.turnJugadorR % room.users.length) + 1;
+
       if (room.round.cantQueTiraron === room.users.length) {
         room.round.cantQueTiraron = 0;
         room.round.hands += 1;
         room.round.turnJugadorR = room.round.cardWinxRound.id;
-  
+
         room.users.forEach((user, idx) => {
           if (room.round.cardWinxRound.id === idx + 1) {
             user.cardsWins += 1;
           }
           user.cardBet = {};
         });
-  
+
         // Cambio de ronda
         if (room.round.hands === room.round.cardXRound) {
           room.users.forEach((user) => {
@@ -616,15 +639,20 @@ io.on("connection", (socket) => {
             user.cardsWins = 0;
             user.cardBet = {};
           });
-  
+
+          // Verificar si algún jugador ha alcanzado 100 puntos
+
           // Configurar nueva ronda
           room.round.typeRound = "waiting";
           room.round.obligado = (room.round.obligado % room.users.length) + 1;
-          room.round.turnJugadorA = (room.round.obligado % room.users.length) + 1;
-          room.round.turnJugadorR = (room.round.obligado % room.users.length) + 1;
+          room.round.turnJugadorA =
+            (room.round.obligado % room.users.length) + 1;
+          room.round.turnJugadorR =
+            (room.round.obligado % room.users.length) + 1;
           room.round.cantQueTiraron = 0;
           room.round.cantQueApostaron = 0;
-          room.round.cardXRound = room.round.cardXRound === 7 ? 1 : room.round.cardXRound + 2;
+          room.round.cardXRound =
+            room.round.cardXRound === 7 ? 1 : room.round.cardXRound + 2;
           room.round.beforeLastCardBet = {};
           room.round.lastCardBet = {};
           room.round.cardWinxRound = {};
@@ -632,12 +660,12 @@ io.on("connection", (socket) => {
           room.round.hands = 0;
           room.round.numRounds += 1;
         }
-  
+
         // Actualizar results con la ronda completada
         const currentRoundIndex = room.results.findIndex(
           (r) => r.round?.numRounds === room.round.numRounds
         );
-  
+
         if (currentRoundIndex !== -1) {
           room.results[currentRoundIndex] = {
             round: {
@@ -657,7 +685,22 @@ io.on("connection", (socket) => {
             })),
           };
         }
-  
+
+        const winner = room.users.find((user) => user.points >= 100);
+        if (winner) {
+          console.log("Player", winner.id, "won the game");
+          room.round.typeRound = "EndGame";
+
+          io.to(`${game}-${roomId}`).emit("EndGame", {
+            players: room.users,
+            round: room.round,
+            results: room.results,
+            winner,
+          });
+
+          return; // Finaliza el juego
+        }
+
         io.to(`${game}-${roomId}`).emit("carta_tirada", {
           players: room.users,
           round: room.round,
@@ -673,7 +716,6 @@ io.on("connection", (socket) => {
       }
     }
   });
-  
 
   // Manejo de desconexión del servidor
   socket.on("disconnectServer", () => {

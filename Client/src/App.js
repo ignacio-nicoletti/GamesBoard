@@ -8,8 +8,6 @@ import GameBerenjena from "./pages/BerenjenaGame/Berenjena/berenjena";
 import JoinRoom from "./pages/BerenjenaGame/joinRoom/JoinRoom";
 
 import PokerMenu from "./pages/PokerGame/pokerMenu/pokerMenu";
-import { useEffect, useState } from "react";
-import { socketConnect } from "./functions/SocketIO/sockets/sockets";
 
 function App() {
   return (
@@ -20,7 +18,7 @@ function App() {
         {/* BERENJENA */}
         <Route path="/berenjena" element={<PagePrimaryBerenjena />} />
         <Route path="/berenjena/rules" element={<RulesOfBerenjena />} />
-        <Route path="/berenjena/joinRoom" element={<JoinRoom />} />
+        <Route path="/berenjena/joinRoom" element={<JoinRoom/>}/>
         <Route path="/berenjena/multiplayer/:id" element={<GameBerenjena />} />
         <Route path="/gameberenjenaIA" element={<GameBerenjena />} />
 

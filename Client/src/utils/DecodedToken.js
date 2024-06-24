@@ -16,7 +16,8 @@ export function DecodedToken(token) {
       success: true,
       id: decodedToken.value.id,
       userName: decodedToken.value.userName,
-      email:decodedToken.value.email
+      email:decodedToken.value.email,
+      experience:decodedToken.value.experience,
     };
   } catch (error) {
     return { success: false, error };

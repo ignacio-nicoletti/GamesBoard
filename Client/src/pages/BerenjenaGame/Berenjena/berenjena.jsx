@@ -15,6 +15,8 @@ import {distribute, socket} from '../../../functions/SocketIO/sockets/sockets';
 import MyCards from '../../../components/berenjena/myCards/myCards.jsx';
 import TimmerComponent
   from '../../../components/berenjena/timmerComponent/timmerComponent';
+import WinnerComponent
+  from '../../../components/berenjena/winnerComponent/winnerComponent';
 
 const GameBerenjena = () => {
   const [loader, setLoader] = useState (false);
@@ -25,6 +27,8 @@ const GameBerenjena = () => {
   const [round, setRound] = useState ({});
   const [dataRoom, setDataRoom] = useState ({});
   const [results, setResults] = useState ([]); // base del resultado xronda
+  const [winner, setWinner] = useState ({}); // base del resultado xronda
+           
 
   const [showTimmer, setShowTimmer] = useState (false);
   const [timmerTicks, setTimmerTicks] = useState (null);
@@ -37,8 +41,8 @@ const GameBerenjena = () => {
       setRound (data.round); //establece typeRound en waiting
       setResults (data.results);
       setDataRoom (data.room);
-      setPlayers(data.users)
-      
+      setPlayers (data.users);
+
       setLoader (false);
       setShowTimmer (true);
       setTimmerTicks (5);
@@ -62,24 +66,35 @@ const GameBerenjena = () => {
   //repartir cards
 
   //timmer
-  useEffect (() => {
-    if(round.typeRound==="ronda"){
-      setTimmerPlayer (30);
-      const time = setInterval (() => {
-      setTimmerPlayer (prevTime => {
-        if (prevTime > 0) {
-          return prevTime - 1;
-        } else {
-          clearInterval (time);
-          
-          return 0;
-        }
-      });
-    }, 1000);
-    return () => clearInterval (time);
-  }
-  }, [round.typeRound,round.turnJugadorR]);
+  useEffect (
+    () => {
+      if (round.typeRound === 'ronda') {
+        setTimmerPlayer (30);
+        const time = setInterval (() => {
+          setTimmerPlayer (prevTime => {
+            if (prevTime > 0) {
+              return prevTime - 1;
+            } else {
+              clearInterval (time);
+              return 0;
+            }
+          });
+        }, 1000);
+        return () => clearInterval (time);
+      }
+    },
+    [round.typeRound, round.turnJugadorR]
+  );
   //timmer
+
+  useEffect (() => {
+    socket.on ('EndGame', data => {
+      setRound (data.round);
+      setPlayers (data.players);
+      setResults (data.results);
+      setWinner(data.winner)
+    });
+  }, []);
 
   const renderPlayers = () => {
     const positions = [
@@ -135,7 +150,7 @@ const GameBerenjena = () => {
           dataRoom={dataRoom}
         />}
 
-      {dataRoom&&dataRoom.gameStarted && round.typeRound === 'waiting'
+      {dataRoom && dataRoom.gameStarted && round.typeRound === 'waiting'
         ? <TimmerComponent
             type={round.typeRound}
             showTimmer={showTimmer}
@@ -172,11 +187,13 @@ const GameBerenjena = () => {
           round={round}
           results={results}
         />}
-      <ButtonExitRoom />
 
       <div className={style.resultado} onClick={() => setShowResult (true)}>
         <p>Resultados</p>
       </div>
+
+      {round.typeRound === 'EndGame' && <WinnerComponent winner={winner} room={dataRoom}/>}
+      <ButtonExitRoom round={round}/>
       <DataGame round={round} />
     </div>
   );
