@@ -18,7 +18,6 @@ const Home = () => {
     const token = GetDecodedCookie("cookieToken");
     if (token) {
       const data = DecodedToken(token);
-      console.log(data);
       setUserInfo(data);
     }
   }, []);
