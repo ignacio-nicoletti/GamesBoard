@@ -537,7 +537,7 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("tirar_carta", ({ players, myPosition, value, suit, dataRoom }) => {
+  socket.on("tirar_carta", ({myPosition, value, suit, dataRoom }) => {
     if (!dataRoom) return;
     const { game, roomId, round } = dataRoom;
     if (!round || !roomId || !game) {

@@ -61,7 +61,6 @@ const GameBerenjena = () => {
   );
   //repartir cards
 
-
   //timmer
   useEffect (() => {
     if(round.typeRound==="ronda"){
@@ -81,17 +80,6 @@ const GameBerenjena = () => {
   }
   }, [round.typeRound,round.turnJugadorR]);
   //timmer
-
-  useEffect (
-    () => {
-      if (round && round.typeRound === 'waiting') {
-        // console.log ('esperando jugadores');
-      }
-    },
-    [round.typeRound]
-  );
-  
-
 
   const renderPlayers = () => {
     const positions = [
