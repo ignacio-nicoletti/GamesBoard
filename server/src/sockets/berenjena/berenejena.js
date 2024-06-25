@@ -331,7 +331,7 @@ export default function BerenjenaSockets(io) {
         disconnectedUser.connect = false;
         room.disconnectedUsers.push(disconnectedUser);
         if (room.users.length === 2) {
-          room.round.typeRound = "waiting";
+          room.round.typeRound = "waiting_player";
         }
         io.to(`${game}-${roomId}`).emit("roomRefresh", {
           users: room.users,
@@ -589,15 +589,24 @@ export default function BerenjenaSockets(io) {
       ) {
         // Determinar qué carta es mayor
         if (room.round.cantQueTiraron === 0) {
-          room.round.lastCardBet = card;
-          room.round.cardWinxRound = card;
+          room.round.lastCardBet = { ...card, playerId: playerIndex + 1 };
+          room.round.cardWinxRound = { ...card, playerId: playerIndex + 1 };
         } else {
           room.round.beforeLastCardBet = room.round.lastCardBet;
-          room.round.lastCardBet = card;
-          room.round.cardWinxRound =
-            room.round.lastCardBet.value >= room.round.beforeLastCardBet.value
-              ? room.round.lastCardBet
-              : room.round.beforeLastCardBet;
+          room.round.lastCardBet = { ...card, playerId: playerIndex + 1 };
+
+          if (
+            room.round.lastCardBet.value > room.round.beforeLastCardBet.value
+          ) {
+            room.round.cardWinxRound = room.round.lastCardBet;
+          } else if (
+            room.round.lastCardBet.value < room.round.beforeLastCardBet.value
+          ) {
+            room.round.cardWinxRound = room.round.beforeLastCardBet;
+          } else {
+            // Si los valores son iguales, gana la carta que se tiró primero
+            room.round.cardWinxRound = room.round.beforeLastCardBet;
+          }
         }
 
         // Actualizar apuesta de carta del jugador en room.users
@@ -639,8 +648,6 @@ export default function BerenjenaSockets(io) {
               user.cardBet = {};
             });
 
-            // Verificar si algún jugador ha alcanzado 100 puntos
-
             // Configurar nueva ronda
             room.round.typeRound = "waiting";
             room.round.obligado = (room.round.obligado % room.users.length) + 1;
@@ -672,7 +679,6 @@ export default function BerenjenaSockets(io) {
                 cardXRound: room.round.cardXRound,
                 obligado: room.round.obligado,
                 cardWinxRound: room.round.cardWinxRound,
-                ganadorRonda: room.round.ganadorRonda,
               },
               players: room.users.map((user) => ({
                 userName: user.userName,
