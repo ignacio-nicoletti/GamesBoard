@@ -87,6 +87,7 @@ export const joinGameRoom = (
     const responses = {};
 
     socket.once("room_joined", (data) => {
+      console.log(data);
       responses.roomJoined = data;
       checkIfReadyToResolve();
     });

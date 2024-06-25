@@ -96,7 +96,9 @@ const JoinRoom = () => {
           infoUser
         );
   
-        res && navigate (`/berenjena/multiplayer/${res.roomJoined.roomId}`);
+        if (res) {
+          navigate(`/berenjena/multiplayer/${res.roomJoined.roomId}`);
+        }
       }
     } catch (error) {
       console.error (error);

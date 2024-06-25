@@ -28,15 +28,16 @@ const GameBerenjena = () => {
   const [dataRoom, setDataRoom] = useState ({});
   const [results, setResults] = useState ([]); // base del resultado xronda
   const [winner, setWinner] = useState ({}); // base del resultado xronda
-           
 
   const [showTimmer, setShowTimmer] = useState (false);
   const [timmerTicks, setTimmerTicks] = useState (null);
   const [timmerPlayer, setTimmerPlayer] = useState (30);
 
-  //start-game
+  //Start-game
   useEffect (() => {
-    setLoader (true);
+    if (!dataRoom.gameStarted) {
+      setLoader (true);
+    }
     const handleStartGame = data => {
       setRound (data.round); //establece typeRound en waiting
       setResults (data.results);
@@ -52,9 +53,9 @@ const GameBerenjena = () => {
       socket.off ('start_game', handleStartGame);
     };
   }, []);
-  //start-game
+  //Start-game
 
-  //repartir cards
+  //Repartir cards
   useEffect (
     () => {
       if (round && round.typeRound === 'Bet') {
@@ -63,9 +64,9 @@ const GameBerenjena = () => {
     },
     [round.typeRound]
   );
-  //repartir cards
+  //Repartir cards
 
-  //timmer
+  //Timmer
   useEffect (
     () => {
       if (round.typeRound === 'ronda') {
@@ -85,14 +86,24 @@ const GameBerenjena = () => {
     },
     [round.typeRound, round.turnJugadorR]
   );
-  //timmer
+  //Timmer
 
+  //Fin del juego
   useEffect (() => {
     socket.on ('EndGame', data => {
       setRound (data.round);
       setPlayers (data.players);
       setResults (data.results);
-      setWinner(data.winner)
+      setWinner (data.winner);
+    });
+  }, []);
+  //Fin del juego
+
+  useEffect (() => {
+    socket.on ('roomRefresh', data => {
+      setRound (data.round);
+      setPlayers (data.users);
+      setResults (data.results);
     });
   }, []);
 
@@ -192,8 +203,9 @@ const GameBerenjena = () => {
         <p>Resultados</p>
       </div>
 
-      {round.typeRound === 'EndGame' && <WinnerComponent winner={winner} room={dataRoom}/>}
-      <ButtonExitRoom round={round}/>
+      {round.typeRound === 'EndGame' &&
+        <WinnerComponent winner={winner} room={dataRoom} />}
+      <ButtonExitRoom dataRoom={dataRoom} />
       <DataGame round={round} />
     </div>
   );

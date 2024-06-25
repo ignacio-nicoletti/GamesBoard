@@ -48,7 +48,6 @@ export const login = async (req, res) => {
     // user = await User.findOne({ email });
     if (!player) {
       player = await Player.findOne({ email: emaillower });
-      console.log(player);
     }
     if (!player) {
       return res.status(404).json({ error: "No existe este usuario" });
