@@ -54,16 +54,12 @@ export const AddExperience = async (req, res) => {
       return res.status(404).json({ error: "Player not found" });
     }
 
-    // Initialize player's experience if not already done (though it should be initialized as per schema)
-    // No es necesario inicializar player.experience ya que debería estar definido según el esquema
-
-    // Find or create the experience entry for the given game
     let gameExperience = player.experience.find(
       (exp) => exp.game === room.game
     );
 
     if (!gameExperience) {
-      gameExperience = { game, level: 1, xp: 0 }; // Crea una nueva entrada de experiencia si no existe
+      gameExperience = { game: room.game, level: 1, xp: 0, xpRemainingForNextLevel: xpForNextLevel(1) }; // Crea una nueva entrada de experiencia si no existe
       player.experience.push(gameExperience);
     }
 
@@ -79,15 +75,21 @@ export const AddExperience = async (req, res) => {
       gameExperience.level++;
     }
 
+    // Calculate XP remaining for next level
+    gameExperience.xpRemainingForNextLevel = xpForNextLevel(gameExperience.level) - gameExperience.xp;
+
     // Save the updated player data
     await player.save();
 
-    return res.status(200).json({ player });
+    return res.status(200).json({ 
+      player
+    });
   } catch (error) {
     console.log(error);
     res.status(400).json(formatError(error.message)); // Asegúrate de que formatError esté definido
   }
 };
+
 
 export const DeletePlayerById = async (req, res) => {
   const { id } = req.params;

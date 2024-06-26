@@ -9,7 +9,6 @@ const ButtonExitRoom = ({dataRoom}) => {
 
   const handlerExitRoom = () => {
     socket.emit('disconnectRoom', { game, roomId: id });
-    // socket.emit('roomRefresh', { game, roomId: id });
   };
 
   return (

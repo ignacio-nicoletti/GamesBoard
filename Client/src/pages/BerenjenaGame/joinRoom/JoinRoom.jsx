@@ -38,14 +38,17 @@ const JoinRoom = () => {
   const navigate = useNavigate ();
   const [timmerRooms, setTimmerRooms] = useState (5);
   const [infoUser, setInfoUser] = useState ({});
-  const [game] = useState ("Berenjena");
+  const [game] = useState ('Berenjena');
   const token = GetDecodedCookie ('cookieToken');
 
   useEffect (() => {
     const fetchPlayer = async () => {
       try {
         const data = DecodedToken (token);
-        const response = await InstanceOfAxios (`/user/${infoUser.id||data.id}`, 'GET');
+        const response = await InstanceOfAxios (
+          `/user/${infoUser.id || data.id}`,
+          'GET'
+        );
         setUserName (response.player.userName);
       } catch (error) {
         console.error ('Error fetching products:', error);
@@ -68,7 +71,8 @@ const JoinRoom = () => {
           selectedAvatar,
           infoUser
         );
-        res && navigate (`/berenjena/multiplayer/${res.roomCreated.room.roomId}`);
+        res &&
+          navigate (`/berenjena/multiplayer/${res.roomCreated.room.roomId}`);
       }
     } catch (error) {
       console.log (error);
@@ -88,16 +92,22 @@ const JoinRoom = () => {
     try {
       setRoomId (roomId);
       if (roomId !== '' && userName !== '') {
-        const res = await joinGameRoom (
+        let res;
+        res = await joinGameRoom (
           game,
           roomId,
           userName,
           selectedAvatar,
           infoUser
         );
-  
+
+        socket.on ('room_joined', data => {
+          navigate (`/berenjena/multiplayer/${data.roomId}`);
+        });
         if (res) {
-          navigate(`/berenjena/multiplayer/${res.roomJoined.roomId}`);
+          navigate (
+            `/berenjena/multiplayer/${res.roomJoined.roomId || res.roomId}`
+          );
         }
       }
     } catch (error) {
@@ -116,7 +126,7 @@ const JoinRoom = () => {
 
   const initializeRooms = async () => {
     try {
-      const roomsInfo = await getAllRoomsInfo ("Berenjena");
+      const roomsInfo = await getAllRoomsInfo ('Berenjena');
       setRooms (roomsInfo);
       setFilteredRooms (roomsInfo);
     } catch (error) {

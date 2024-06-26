@@ -19,6 +19,7 @@ const playerSchema = new mongoose.Schema({
       game: { type: String, required: true },
       level: { type: Number, default: 1 },
       xp: { type: Number, default: 0 },
+      xpRemainingForNextLevel: { type: Number, default: 0 }
     }
   ],
   Rol: {
