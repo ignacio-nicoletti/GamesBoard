@@ -167,6 +167,7 @@ const JoinRoom = () => {
         initializeRooms ();
         setTimmerRooms (5);
       }
+      
       return () => clearInterval (time);
     },
     [timmerRooms]

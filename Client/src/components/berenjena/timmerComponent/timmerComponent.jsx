@@ -16,7 +16,9 @@ const TimmerComponent = ({type, showTimmer, setShowTimmer,timmerTicks,setRound,
         } else {
           clearInterval (time);
           setShowTimmer(false)
-          setRound({...round,typeRound:"Bet"})
+         
+            setRound({...round,typeRound:"Bet"})
+  
           return 0;
         }
       });

@@ -59,7 +59,12 @@ const GameBerenjena = () => {
   useEffect (
     () => {
       if (round && round.typeRound === 'Bet') {
-        distribute (dataRoom, setPlayers);
+        if (players.every (user => user.connect)) {
+          distribute (dataRoom, setPlayers);
+        } else {
+          setTimmerTicks (60);
+          setRound({...round,typeRound:"waiting"})
+        }
       }
     },
     [round.typeRound]
@@ -90,7 +95,7 @@ const GameBerenjena = () => {
 
   //Fin del juego
   useEffect (() => {
-    socket.on ('EndGame', data => {
+    socket.on ('GameFinish', data => {
       setRound (data.round);
       setPlayers (data.players);
       setResults (data.results);
@@ -169,6 +174,7 @@ const GameBerenjena = () => {
             timmerTicks={timmerTicks}
             setRound={setRound}
             round={round}
+            players={players}
           />
         : ''}
 

@@ -147,117 +147,123 @@ export default function BerenjenaSockets(io) {
       }
     );
 
-    socket.on("join_room", async ({ game, roomId, userName, selectedAvatar, email }) => {
-      const rooms = permanentRooms[game];
-      if (!rooms) {
-        socket.emit("error", { error: "Invalid game" });
-        return;
-      }
-    
-      if (!rooms[roomId]) {
-        socket.emit("room_join_error", { error: "Room does not exist" });
-        return;
-      }
-    
-      const room = rooms[roomId];
-    
-      const userInRoom = room.users.find(user => user.userName === userName||user.email === email);
-      if (userInRoom) {
-        if (!userInRoom.connect && room.gameStarted) {
-          // Permitir reconexión si el juego ya ha comenzado y el usuario está en room.users
-          userInRoom.idSocket = socket.id;
-          userInRoom.connect = true;
-    
-          console.log(`User ${userName} rejoined room ${roomId} in game ${game}`);
-          socket.join(`${game}-${roomId}`);
-          socket.emit("room_joined", {
-            roomId,
-            myInfo: {
-              idSocket: userInRoom.idSocket,
-              userName: userInRoom.userName,
-              email: userInRoom.email,
-              position: userInRoom.position,
-            },
-          });
-          io.to(`${game}-${roomId}`).emit("roomRefresh", {
-            users: room.users,
-            round: room.round,
-            room: room,
-            results: room.results,
-          });
-        } else {
-          // Usuario ya está en la sala y no puede volver a unirse mientras el juego esté en curso
+    socket.on(
+      "join_room",
+      async ({ game, roomId, userName, selectedAvatar, email }) => {
+        const rooms = permanentRooms[game];
+        if (!rooms) {
+          socket.emit("error", { error: "Invalid game" });
+          return;
+        }
+
+        if (!rooms[roomId]) {
+          socket.emit("room_join_error", { error: "Room does not exist" });
+          return;
+        }
+
+        const room = rooms[roomId];
+
+        const userInRoom = room.users.find(
+          (user) => user.userName === userName || user.email === email
+        );
+        if (userInRoom) {
+          if (!userInRoom.connect && room.gameStarted) {
+            // Permitir reconexión si el juego ya ha comenzado y el usuario está en room.users
+            userInRoom.idSocket = socket.id;
+            userInRoom.connect = true;
+
+            console.log(
+              `User ${userName} rejoined room ${roomId} in game ${game}`
+            );
+            socket.join(`${game}-${roomId}`);
+            socket.emit("room_joined", {
+              roomId,
+              myInfo: {
+                idSocket: userInRoom.idSocket,
+                userName: userInRoom.userName,
+                email: userInRoom.email,
+                position: userInRoom.position,
+              },
+            });
+            io.to(`${game}-${roomId}`).emit("roomRefresh", {
+              users: room.users,
+              round: room.round,
+              room: room,
+              results: room.results,
+            });
+          } else {
+            // Usuario ya está en la sala y no puede volver a unirse mientras el juego esté en curso
+            socket.emit("room_join_error", {
+              error: "User is already in the room or game has already started",
+            });
+          }
+          return;
+        }
+
+        const maxUsers = room.maxUsers || 6;
+
+        if (room.users.length >= maxUsers) {
+          socket.emit("room_join_error", { error: "Room is full" });
+          return;
+        }
+
+        if (room.gameStarted) {
           socket.emit("room_join_error", {
-            error: "User is already in the room or game has already started",
+            error: "Game already started, cannot join",
           });
+          return;
         }
-        return;
-      }
-    
-      const maxUsers = room.maxUsers || 6;
-    
-      if (room.users.length >= maxUsers) {
-        socket.emit("room_join_error", { error: "Room is full" });
-        return;
-      }
-    
-      if (room.gameStarted) {
-        socket.emit("room_join_error", {
-          error: "Game already started, cannot join",
+
+        let idDB = "-";
+        if (email !== undefined) {
+          let player = await Player.findOne({ email: email });
+          if (player) {
+            idDB = player.id;
+          }
+        }
+
+        const user = {
+          idSocket: socket.id,
+          userName,
+          roomId,
+          email: email || "invitado",
+          position: room.users.length + 1,
+          ready: false,
+          connect: true,
+          avatar: selectedAvatar,
+          id: 1, // position
+          cardPerson: [], // cards
+          betP: 0, // num de cards apostadas
+          cardsWins: 0, // cards ganadas
+          cardBet: {}, // card apostada
+          myturnA: false, // boolean // turno apuesta
+          myturnR: false, // boolean // turno ronda
+          cumplio: false, // boolean // cumplio su apuesta
+          points: 95, // puntos
+          idDB,
+        };
+
+        room.users.push(user);
+
+        console.log(`User ${userName} joined room ${roomId} in game ${game}`);
+        socket.join(`${game}-${roomId}`);
+
+        socket.emit("room_joined", {
+          roomId,
+          myInfo: {
+            idSocket: user.idSocket,
+            userName: user.userName,
+            email: user.email,
+            position: user.position,
+          },
         });
-        return;
+
+        io.to(`${game}-${roomId}`).emit("player_list", {
+          users: room.users,
+          round: room.round,
+        });
       }
-    
-      let idDB = "-";
-      if (email !== undefined) {
-        let player = await Player.findOne({ email: email });
-        if (player) {
-          idDB = player.id;
-        }
-      }
-    
-      const user = {
-        idSocket: socket.id,
-        userName,
-        roomId,
-        email: email || "invitado",
-        position: room.users.length + 1,
-        ready: false,
-        connect: true,
-        avatar: selectedAvatar,
-        id: 1, // position
-        cardPerson: [], // cards
-        betP: 0, // num de cards apostadas
-        cardsWins: 0, // cards ganadas
-        cardBet: {}, // card apostada
-        myturnA: false, // boolean // turno apuesta
-        myturnR: false, // boolean // turno ronda
-        cumplio: false, // boolean // cumplio su apuesta
-        points: 0, // puntos
-        idDB,
-      };
-    
-      room.users.push(user);
-    
-      console.log(`User ${userName} joined room ${roomId} in game ${game}`);
-      socket.join(`${game}-${roomId}`);
-    
-      socket.emit("room_joined", {
-        roomId,
-        myInfo: {
-          idSocket: user.idSocket,
-          userName: user.userName,
-          email: user.email,
-          position: user.position,
-        },
-      });
-    
-      io.to(`${game}-${roomId}`).emit("player_list", {
-        users: room.users,
-        round: room.round,
-      });
-     
-    });
+    );
 
     socket.on("disconnectRoom", (data) => {
       const handleEmptyRoom = () => {
@@ -666,18 +672,19 @@ export default function BerenjenaSockets(io) {
           }
 
           const winner = room.users.find((user) => user.points >= 100);
-          if (winner) {
-            console.log("Player", winner.id, "won the game");
+        
+          if (winner) {    
             room.round.typeRound = "EndGame";
-
-            io.to(`${game}-${roomId}`).emit("EndGame", {
+            const winner = room.users.find((user) => user.points >= 100);
+            
+            io.to(`${game}-${roomId}`).emit("GameFinish", {
               players: room.users,
               round: room.round,
               results: room.results,
               winner,
             });
-
             return; // Finaliza el juego
+
           }
 
           io.to(`${game}-${roomId}`).emit("carta_tirada", {
@@ -694,6 +701,35 @@ export default function BerenjenaSockets(io) {
           });
         }
       }
+    });
+
+    socket.on("EndGame", (dataRoom) => {
+      console.log("EndGame event received");
+      if (!dataRoom) return;
+      const { game, roomId, round } = dataRoom;
+      if (!round || !roomId || !game) {
+        console.error("Invalid round or roomId object:", dataRoom);
+        socket.emit("error", { error: "Invalid round or roomId object" });
+        return;
+      }
+    
+      const room = permanentRooms[game] && permanentRooms[game][roomId];
+    
+      if (!room) {
+        console.error("Room not found:", roomId);
+        return;
+      }
+    
+      room.round.typeRound = "EndGame";
+    
+      const winner = room.users.find((user) => user.points >= 100);
+    
+      io.to(`${game}-${roomId}`).emit("GameFinish", {
+        players: room.users,
+        round: room.round,
+        results: room.results,
+        winner,
+      });
     });
 
     // Manejo de desconexión del servidor
