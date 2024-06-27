@@ -239,7 +239,7 @@ export default function BerenjenaSockets(io) {
           myturnA: false, // boolean // turno apuesta
           myturnR: false, // boolean // turno ronda
           cumplio: false, // boolean // cumplio su apuesta
-          points: 95, // puntos
+          points: 0, // puntos
           idDB,
         };
 
@@ -629,7 +629,6 @@ export default function BerenjenaSockets(io) {
             });
 
             // Configurar nueva ronda
-            room.round.typeRound = "waiting";
             room.round.obligado = (room.round.obligado % room.users.length) + 1;
             room.round.turnJugadorA =
               (room.round.obligado % room.users.length) + 1;
@@ -645,6 +644,12 @@ export default function BerenjenaSockets(io) {
             room.round.betTotal = 0;
             room.round.hands = 0;
             room.round.numRounds += 1;
+            //analiza por cada ronda si hay alguien desconectado
+            if (room.users.every((user) => user.connect)) {
+              room.round.typeRound = "waiting";
+            } else {
+              room.round.typeRound = "waitingPlayers";
+            }
           }
 
           // Actualizar results con la ronda completada
@@ -672,11 +677,11 @@ export default function BerenjenaSockets(io) {
           }
 
           const winner = room.users.find((user) => user.points >= 100);
-        
-          if (winner) {    
+
+          if (winner) {
             room.round.typeRound = "EndGame";
             const winner = room.users.find((user) => user.points >= 100);
-            
+
             io.to(`${game}-${roomId}`).emit("GameFinish", {
               players: room.users,
               round: room.round,
@@ -684,7 +689,6 @@ export default function BerenjenaSockets(io) {
               winner,
             });
             return; // Finaliza el juego
-
           }
 
           io.to(`${game}-${roomId}`).emit("carta_tirada", {
@@ -712,18 +716,18 @@ export default function BerenjenaSockets(io) {
         socket.emit("error", { error: "Invalid round or roomId object" });
         return;
       }
-    
+
       const room = permanentRooms[game] && permanentRooms[game][roomId];
-    
+
       if (!room) {
         console.error("Room not found:", roomId);
         return;
       }
-    
+
       room.round.typeRound = "EndGame";
-    
+
       const winner = room.users.find((user) => user.points >= 100);
-    
+
       io.to(`${game}-${roomId}`).emit("GameFinish", {
         players: room.users,
         round: room.round,

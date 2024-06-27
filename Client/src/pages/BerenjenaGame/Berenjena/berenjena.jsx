@@ -59,19 +59,14 @@ const GameBerenjena = () => {
   useEffect (
     () => {
       if (round && round.typeRound === 'Bet') {
-        if (players.every (user => user.connect)) {
-          distribute (dataRoom, setPlayers);
-        } else {
-          setTimmerTicks (60);
-          setRound({...round,typeRound:"waiting"})
-        }
+        distribute (dataRoom, setPlayers);
       }
     },
     [round.typeRound]
   );
   //Repartir cards
 
-  //Timmer
+  //Timmer para tirar u apostar
   useEffect (
     () => {
       if (round.typeRound === 'ronda') {
@@ -91,7 +86,7 @@ const GameBerenjena = () => {
     },
     [round.typeRound, round.turnJugadorR]
   );
-  //Timmer
+  //Timmer para tirar u apostar
 
   //Fin del juego
   useEffect (() => {
@@ -166,17 +161,16 @@ const GameBerenjena = () => {
           dataRoom={dataRoom}
         />}
 
-      {dataRoom && dataRoom.gameStarted && round.typeRound === 'waiting'
-        ? <TimmerComponent
-            type={round.typeRound}
-            showTimmer={showTimmer}
-            setShowTimmer={setShowTimmer}
-            timmerTicks={timmerTicks}
-            setRound={setRound}
-            round={round}
-            players={players}
-          />
-        : ''}
+      {((dataRoom && dataRoom.gameStarted && round.typeRound === 'waiting') ||
+        round.typeRound === 'waitingPlayers') &&
+        <TimmerComponent
+          showTimmer={showTimmer}
+          setShowTimmer={setShowTimmer}
+          timmerTicks={timmerTicks}
+          setRound={setRound}
+          round={round}
+          players={players}
+        />}
 
       <MyCards
         myPosition={myPlayer.position}
@@ -211,7 +205,9 @@ const GameBerenjena = () => {
 
       {round.typeRound === 'EndGame' &&
         <WinnerComponent winner={winner} room={dataRoom} />}
+
       <ButtonExitRoom dataRoom={dataRoom} />
+
       <DataGame round={round} />
     </div>
   );

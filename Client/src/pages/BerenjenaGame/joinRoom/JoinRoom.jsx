@@ -49,7 +49,9 @@ const JoinRoom = () => {
           `/user/${infoUser.id || data.id}`,
           'GET'
         );
-        setUserName (response.player.userName);
+        if (response) {
+          setUserName (response.player.userName);
+        }
       } catch (error) {
         console.error ('Error fetching products:', error);
       }
@@ -167,7 +169,7 @@ const JoinRoom = () => {
         initializeRooms ();
         setTimmerRooms (5);
       }
-      
+
       return () => clearInterval (time);
     },
     [timmerRooms]
