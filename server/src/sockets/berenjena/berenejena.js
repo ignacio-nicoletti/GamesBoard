@@ -255,7 +255,7 @@ export default function BerenjenaSockets(io) {
           myturnA: false, // boolean // turno apuesta
           myturnR: false, // boolean // turno ronda
           cumplio: false, // boolean // cumplio su apuesta
-          points: 95, // puntos
+          points: 0, // puntos
           idDB,
         };
 
