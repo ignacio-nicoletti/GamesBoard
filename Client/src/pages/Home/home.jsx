@@ -5,10 +5,10 @@ import BerenjenaImg from "../../assets/homeFirst/berenjenaImg.png";
 import DefaultAvatar from "../../assets/berenjena/jugadores/DefaultAvatar.png";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useState, useEffect } from "react";
-import Login from "../../components/berenjena/login/login";
 import { GetDecodedCookie } from "../../utils/DecodedCookie";
 import { DecodedToken } from "../../utils/DecodedToken";
 import { disconnectServer } from "../../functions/SocketIO/sockets/sockets";
+import Login from "../../components/homePage/login/login";
 
 const Home = () => {
   const [isModalOpen, setModalOpen] = useState(false);
