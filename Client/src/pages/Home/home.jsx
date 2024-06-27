@@ -30,7 +30,7 @@ const Home = () => {
 
   const handleLogout = () => {
     document.cookie =
-      "cookieToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      "cookieToken";
     setUserInfo(null);
     window.location.href = "/";
   };
