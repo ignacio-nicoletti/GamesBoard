@@ -454,7 +454,6 @@ export default function BerenjenaSockets(io) {
     socket.on("BetPlayer", ({ bet, myPosition, dataRoom }) => {
       if (!dataRoom) return;
       const { game, roomId, round } = dataRoom;
-
       // Verificar si round y roomId son válidos
       if (!round || !roomId || !game) {
         console.error("Invalid round or roomId object:", dataRoom);
@@ -646,9 +645,9 @@ export default function BerenjenaSockets(io) {
             room.round.numRounds += 1;
             //analiza por cada ronda si hay alguien desconectado
             if (room.users.every((user) => user.connect)) {
-              room.round.typeRound = "waiting";
+              room.round.typeRound = "waiting";//sigue la partida con 5 segundos entre ronda
             } else {
-              room.round.typeRound = "waitingPlayers";
+              room.round.typeRound = "waitingPlayers";//para la partida con 60 segundos
             }
           }
 

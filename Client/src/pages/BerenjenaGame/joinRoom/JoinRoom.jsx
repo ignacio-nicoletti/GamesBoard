@@ -49,7 +49,7 @@ const JoinRoom = () => {
           `/user/${infoUser.id || data.id}`,
           'GET'
         );
-        if (response) {
+        if (response && response.player) {
           setUserName (response.player.userName);
         }
       } catch (error) {

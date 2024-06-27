@@ -7,10 +7,14 @@ const WinnerComponent = ({winner, room}) => {
   const [timmerFinishRoom, setTimmerFinishRoom] = useState (10);
 
   const navigate = useNavigate ();
-const AddExperience=async()=>{
-    await InstanceOfAxios (`/user/addexperience/${winner.idDB}`, 'PUT',{room})
 
-}
+  const AddExperience = async () => {
+    if (winner && winner.idDB) {
+      await InstanceOfAxios (`/user/addexperience/${winner.idDB}`, 'PUT', {
+        room,
+      });
+    }
+  };
 
   useEffect (
     () => {
@@ -28,7 +32,7 @@ const AddExperience=async()=>{
       if (timmerFinishRoom === 0) {
         disconnectRoom (room.game, room.roomId);
         navigate (`/berenjena/joinRoom`);
-        AddExperience()
+        AddExperience ();
       }
 
       return () => clearInterval (time);

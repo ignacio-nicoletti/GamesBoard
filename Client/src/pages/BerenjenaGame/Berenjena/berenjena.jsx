@@ -29,8 +29,6 @@ const GameBerenjena = () => {
   const [results, setResults] = useState ([]); // base del resultado xronda
   const [winner, setWinner] = useState ({}); // base del resultado xronda
 
-  const [showTimmer, setShowTimmer] = useState (false);
-  const [timmerTicks, setTimmerTicks] = useState (null);
   const [timmerPlayer, setTimmerPlayer] = useState (30);
 
   //Start-game
@@ -45,8 +43,6 @@ const GameBerenjena = () => {
       setPlayers (data.users);
 
       setLoader (false);
-      setShowTimmer (true);
-      setTimmerTicks (5);
     };
     socket.on ('start_game', handleStartGame);
     return () => {
@@ -150,23 +146,23 @@ const GameBerenjena = () => {
           />
         : <div className={style.tableroJugadores}>{renderPlayers ()}</div>}
 
-      {round.typeRound === 'Bet' &&
+      {dataRoom &&
+        dataRoom.gameStarted &&
+        round.typeRound === 'Bet' &&
         <Apuesta
           setPlayers={setPlayers}
           round={round}
           setRound={setRound}
           myPosition={myPlayer.position}
           setResults={setResults}
-          onApuestaEnd={() => setShowTimmer (true)}
           dataRoom={dataRoom}
         />}
 
-      {((dataRoom && dataRoom.gameStarted && round.typeRound === 'waiting') ||
-        round.typeRound === 'waitingPlayers') &&
+      {dataRoom &&
+        dataRoom.gameStarted &&
+        (round.typeRound === 'waiting' ||
+          round.typeRound === 'waitingPlayers') &&
         <TimmerComponent
-          showTimmer={showTimmer}
-          setShowTimmer={setShowTimmer}
-          timmerTicks={timmerTicks}
           setRound={setRound}
           round={round}
           players={players}

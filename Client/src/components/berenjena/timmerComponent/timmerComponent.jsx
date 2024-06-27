@@ -4,52 +4,85 @@ import PersonIcon from '@mui/icons-material/Person';
 import CheckIcon from '@mui/icons-material/Check';
 
 const TimmerComponent = ({
-  showTimmer,
-  setShowTimmer,
   timmerTicks,
   setRound,
   round,
   players,
 }) => {
-  const [timmer, settimer] = useState (timmerTicks);
-  // Timmer entre rondas
+  const [timmer, settimmer] = useState (timmerTicks);
 
   useEffect (
     () => {
-      settimer (timmer); // Inicias con el valor deseado
+      if (!round) return;
+
+      let initialTime = 0;
+      if (round.typeRound === 'waiting') {
+        initialTime = 5;
+      } else if (round.typeRound === 'waitingPlayers') {
+        initialTime = 10;
+      }
+
+      settimmer (initialTime);
+
       const time = setInterval (() => {
-        settimer (prevTime => {
+        settimmer (prevTime => {
           if (prevTime > 0) {
             return prevTime - 1;
           } else {
             clearInterval (time);
-            setShowTimmer (false);
+           
+
             if (round.typeRound === 'waiting') {
               setRound ({...round, typeRound: 'Bet'});
+            } else if (round.typeRound === 'waitingPlayers') {
+              if (players.every (player => player.connect)) {
+                setRound ({...round, typeRound: 'Bet'});
+              } else {
+                if (players.length <= 2) {
+                  setRound ({...round, typeRound: 'EndGame'});
+                  console.log ('entre');
+                } else if (players.length > 2) {
+                  // Otra lógica si hay más de 2 jugadores
+                  // Aquí puedes añadir las acciones necesarias según tu lógica
+                }
+              }
             }
 
             return 0;
           }
         });
       }, 1000);
+
       return () => clearInterval (time);
     },
-    [round.typeRound]
-  );
+    [round.typeRound, players]
+  ); 
+
+  if (!round) {
+    return null; 
+  }
 
   return (
     <div className={styles.container}>
-      {round && round.typeRound === 'waiting'
+      {round.typeRound === 'waiting'
         ? <div>
-            <h3 className={styles.message}>
-              Tiempo de espera:{' '}
-              <span className={styles.timer}>{timmer}</span>
-            </h3>
+            {round.numRounds === 1
+              ? <h3 className={styles.message}>
+                  Comenzando Partida:
+                  {' '}
+                  <span className={styles.timer}>{timmer}</span>
+                </h3>
+              : <h3 className={styles.message}>
+                  Preparando siguiente ronda:
+                  {' '}
+                  <span className={styles.timer}>{timmer}</span>
+                </h3>}
           </div>
-        : round &&round.round.typeRound === 'waitingPlayer'
+        : round.typeRound === 'waitingPlayers'
             ? <div>
                 <h3 className={styles.message}>
-                  Esperando jugadores:{' '}
+                  Esperando jugadores:
+                  {' '}
                   <span className={styles.timer}>{timmer}</span>
                 </h3>
 
@@ -71,7 +104,7 @@ const TimmerComponent = ({
                           />
                   )}
               </div>
-            :""}
+            : ''}
     </div>
   );
 };
