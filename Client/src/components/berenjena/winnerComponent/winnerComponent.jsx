@@ -3,17 +3,17 @@ import styles from './winnerComponent.module.css';
 import {useNavigate} from 'react-router-dom';
 import {disconnectRoom} from '../../../functions/SocketIO/sockets/sockets';
 import InstanceOfAxios from '../../../utils/intanceAxios';
-const WinnerComponent = ({winner, room}) => {
+const WinnerComponent = ({winner, room, players}) => {
   const [timmerFinishRoom, setTimmerFinishRoom] = useState (10);
 
   const navigate = useNavigate ();
 
   const AddExperience = async () => {
-    if (winner && winner.idDB) {
-      await InstanceOfAxios (`/user/addexperience/${winner.idDB}`, 'PUT', {
-        room,
-      });
-    }
+    await InstanceOfAxios (`/user/addexperience/`, 'PUT', {
+      winner,
+      room,
+      players,
+    });
   };
 
   useEffect (

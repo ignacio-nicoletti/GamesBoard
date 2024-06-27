@@ -25,6 +25,22 @@ function createRooms(numberOfRooms, gameName) {
   return rooms;
 }
 
+const handleEmptyRoom = () => {
+  if (roomId <= 10) {
+    // Si la sala es una de las primeras 10 creadas (permanente), se vacía y resetea
+    room.gameStarted = false;
+    room.disconnectedUsers = [];
+    room.users = [];
+    (room.round = {}),
+      (room.results = []),
+      console.log(`Sala permanente ${roomId} vaciada y reseteada.`);
+  } else {
+    // Si la sala no es permanente, se elimina
+    delete permanentRooms[game][roomId];
+    console.log(`Sala ${roomId} eliminada.`);
+  }
+};
+
 export default function BerenjenaSockets(io) {
   io.on("connection", (socket) => {
     console.log(`User Connected: ${socket.id} to server`);
@@ -239,7 +255,7 @@ export default function BerenjenaSockets(io) {
           myturnA: false, // boolean // turno apuesta
           myturnR: false, // boolean // turno ronda
           cumplio: false, // boolean // cumplio su apuesta
-          points: 0, // puntos
+          points: 95, // puntos
           idDB,
         };
 
@@ -266,21 +282,7 @@ export default function BerenjenaSockets(io) {
     );
 
     socket.on("disconnectRoom", (data) => {
-      const handleEmptyRoom = () => {
-        if (roomId <= 10) {
-          // Si la sala es una de las primeras 10 creadas (permanente), se vacía y resetea
-          room.gameStarted = false;
-          room.disconnectedUsers = [];
-          room.users = [];
-          (room.round = {}),
-            (room.results = []),
-            console.log(`Sala permanente ${roomId} vaciada y reseteada.`);
-        } else {
-          // Si la sala no es permanente, se elimina
-          delete permanentRooms[game][roomId];
-          console.log(`Sala ${roomId} eliminada.`);
-        }
-      };
+     
       const { game, roomId } = data;
       if (!game || !roomId) {
         console.log("Los parámetros game o roomId son indefinidos.");
@@ -736,43 +738,46 @@ export default function BerenjenaSockets(io) {
     });
 
     // Manejo de desconexión del servidor
-    socket.on("disconnectServer", () => {
+    socket.on("disconnect", () => {
+      console.log(`Usuario desconectado: ${socket.id}`);
+      
+      // Recorrer todas las salas permanentes para buscar y manejar la desconexión del usuario
       Object.keys(permanentRooms).forEach((game) => {
         const rooms = permanentRooms[game];
         Object.keys(rooms).forEach((roomId) => {
           const room = rooms[roomId];
-          const userIndex = room.users.findIndex(
-            (user) => user.idSocket === socket.id
-          );
+          const userIndex = room.users.findIndex((user) => user.idSocket === socket.id);
           if (userIndex !== -1) {
-            const [disconnectedUser] = room.users.splice(userIndex, 1);
-            room.disconnectedUsers.push(disconnectedUser);
-            io.to(`${game}-${roomId}`).emit("player_list", room.users);
-
-            if (room.users.length === 0) {
-              const roomIndex = parseInt(roomId, 10);
-              if (roomIndex > 10) {
-                delete rooms[roomId];
-                console.log(
-                  `User ${socket.id} Disconnected from room => ${roomId}. Room deleted.`
-                );
-              } else {
-                rooms[roomId] = {
-                  users: [],
-                  disconnectedUsers: [],
-                  gameStarted: false,
-                  round: {},
-                  results: [],
-                };
-                console.log(
-                  `User ${socket.id} Disconnected from room => ${roomId}. Room left empty.`
-                );
+            // Usuario encontrado en la sala, realizar acciones necesarias
+            const disconnectedUser = room.users[userIndex];
+  
+            if (room.gameStarted) {
+              disconnectedUser.connect = false;
+              console.log(`Usuario ${socket.id} marcado como desconectado en la sala ${roomId}.`);
+  
+              // Si todos los usuarios están desconectados, manejar la sala vacía
+              if (room.users.every((user) => !user.connect)) {
+                handleEmptyRoom();
               }
+            } else {
+              // Si el juego no ha comenzado, simplemente remover al usuario de la lista de usuarios
+              room.users.splice(userIndex, 1);
+              room.users.forEach((user, index) => {
+                user.position = index + 1;
+              });
             }
+  
+            // Emitir actualización a los clientes en la sala
+            io.to(`${game}-${roomId}`).emit("roomRefresh", {
+              users: room.users,
+              round: room.round,
+              room: room,
+            });
           }
         });
       });
-      console.log(`User ${socket.id} was disconnected from the server.`);
     });
+  
+  
   });
 }

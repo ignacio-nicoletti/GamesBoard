@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import Login from "../../components/berenjena/login/login";
 import { GetDecodedCookie } from "../../utils/DecodedCookie";
 import { DecodedToken } from "../../utils/DecodedToken";
+import { disconnectServer } from "../../functions/SocketIO/sockets/sockets";
 
 const Home = () => {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -38,6 +39,10 @@ const Home = () => {
     setModalOpen(false);
     window.location.reload();
   };
+  useEffect(()=>{
+    return ()=>{
+      disconnectServer()}
+  },[])
 
   return (
     <div className={styles.contain}>

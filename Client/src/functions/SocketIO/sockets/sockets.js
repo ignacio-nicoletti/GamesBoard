@@ -5,15 +5,15 @@ const URL = "http://localhost:3001";
 
 export let socket = io(URL, { autoConnect: true });
 
-export const connectSocket = () => {
-  return new Promise((resolve) => {
-    socket.connect();
-    socket.on("connect", () => {
-      console.log("Conectado al servidor");
-      resolve(socket);
-    });
-  });
-};
+// export const connectSocket = () => {
+//   return new Promise((resolve) => {
+//     socket.connect();
+//     socket.on("connect", () => {
+//       console.log("Conectado al servidor");
+//       resolve(socket);
+//     });
+//   });
+// };
 
 export const disconnectServer = () => {
   socket.on("disconnectServer", () => {

@@ -23,7 +23,6 @@ export const GetPlayerById = async (req, res) => {
 export const UpdatePlayerById = async (req, res) => {
   const { id } = req.params;
   const { userName, selectedAvatar } = req.body;
-  console.log(req.body);
   try {
     let player = await Player.findByIdAndUpdate(
       id,
@@ -40,57 +39,6 @@ export const UpdatePlayerById = async (req, res) => {
   }
 };
 
-// Función para calcular el XP necesario para el siguiente nivel
-const xpForNextLevel = (level) => 100 * Math.pow(1.2, level - 1);
-
-export const AddExperience = async (req, res) => {
-  const { id } = req.params;
-  const { room } = req.body; // Cambiado de room.xp a game
-
-  try {
-    let player = await Player.findById(id);
-
-    if (!player) {
-      return res.status(404).json({ error: "Player not found" });
-    }
-
-    let gameExperience = player.experience.find(
-      (exp) => exp.game === room.game
-    );
-
-    if (!gameExperience) {
-      gameExperience = { game: room.game, level: 1, xp: 0, xpRemainingForNextLevel: xpForNextLevel(1) }; // Crea una nueva entrada de experiencia si no existe
-      player.experience.push(gameExperience);
-    }
-
-    // Agregar experiencia fija al ganar
-    const fixedExperience = 50; // Aquí define la cantidad fija de experiencia que se agrega al ganar
-
-    // Update experience for the game
-    gameExperience.xp += fixedExperience;
-
-    // Calculate new level
-    while (gameExperience.xp >= xpForNextLevel(gameExperience.level)) {
-      gameExperience.xp -= xpForNextLevel(gameExperience.level);
-      gameExperience.level++;
-    }
-
-    // Calculate XP remaining for next level
-    gameExperience.xpRemainingForNextLevel = xpForNextLevel(gameExperience.level) - gameExperience.xp;
-
-    // Save the updated player data
-    await player.save();
-
-    return res.status(200).json({ 
-      player
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(400).json(formatError(error.message)); // Asegúrate de que formatError esté definido
-  }
-};
-
-
 export const DeletePlayerById = async (req, res) => {
   const { id } = req.params;
   try {
@@ -100,5 +48,78 @@ export const DeletePlayerById = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(400).json(formatError(error.message));
+  }
+};
+
+export const AddExperience = async (req, res) => {
+  const xpForNextLevel = (level) => Math.round(100 * Math.pow(1.2, level - 1));
+  const { winner, room, players } = req.body;
+
+  try {
+    // Función para actualizar la experiencia de un jugador
+    const updatePlayerExperience = async (playerId, experienceToAdd) => {
+      let player = await Player.findById(playerId);
+
+      if (!player) {
+        console.error(`Player not found: ${playerId}`);
+        return null;
+      }
+
+      let gameExperience = player.experience.find(
+        (exp) => exp.game === room.game
+      );
+
+      if (!gameExperience) {
+        gameExperience = {
+          game: room.game,
+          level: 1,
+          xp: 0,
+          xpRemainingForNextLevel: xpForNextLevel(1),
+        };
+        player.experience.push(gameExperience);
+      }
+
+      // Update experience for the game
+      gameExperience.xp += experienceToAdd;
+
+      // Calculate new level
+      while (gameExperience.xp >= xpForNextLevel(gameExperience.level)) {
+        gameExperience.xp -= xpForNextLevel(gameExperience.level);
+        gameExperience.level++;
+      }
+
+      // Calculate XP remaining for next level
+      gameExperience.xpRemainingForNextLevel = Math.round(
+        xpForNextLevel(gameExperience.level) - gameExperience.xp
+      );
+
+      // Save the updated player data
+      await player.save();
+      return player;
+    };
+
+    // Experiencia fija para el ganador y los otros jugadores
+    const winnerExperience = 50;
+    const otherPlayersExperience = 10;
+
+    // Actualizar la experiencia del ganador si tiene un id válido
+    if (winner.idDB && winner.idDB !== "-") {
+      await updatePlayerExperience(winner.idDB, winnerExperience);
+    }
+
+    // Actualizar la experiencia de los otros jugadores
+    const playersToUpdate = players.filter(
+      (player) =>
+        player.idDB && player.idDB !== "-" && player.idDB !== winner.idDB
+    );
+
+    for (const player of playersToUpdate) {
+      await updatePlayerExperience(player.idDB, otherPlayersExperience);
+    }
+
+    return res.status(200).json({ message: "Experience added successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error: error.message });
   }
 };

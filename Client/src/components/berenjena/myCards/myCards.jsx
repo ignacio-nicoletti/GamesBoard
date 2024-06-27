@@ -55,7 +55,6 @@ const MyCards = ({
         round.typeRound === 'ronda' &&
         myPosition === round.turnJugadorR
       ) {
-        console.log ('cumplo');
         const randomIndex = Math.floor (
           Math.random () * player.cardPerson.length
         );

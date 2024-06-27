@@ -30,23 +30,28 @@ const Apuesta = ({
     return randomBet;
   };
 
-  const [bet, setBet] = useState (availableBets());
-  const [timeLeft, setTimeLeft] = useState (5);
+  const [bet, setBet] = useState (availableBets ());
+  const [timeLeft, setTimeLeft] = useState (30);
 
   const handleSubmit = () => {
     socket.emit ('BetPlayer', {bet, myPosition, dataRoom});
   };
 
-
+  //Si llega a 0 apuesta automatico
   useEffect (
     () => {
       if (timeLeft === 0) {
         setTimeLeft (30);
-        socket.emit ('BetPlayer', {bet: availableBets (), myPosition,dataRoom});
+        socket.emit ('BetPlayer', {
+          bet: availableBets (),
+          myPosition,
+          dataRoom,
+        });
       }
     },
     [timeLeft]
   );
+  //Si llega a 0 apuesta automatico
 
   useEffect (
     () => {
@@ -68,6 +73,7 @@ const Apuesta = ({
     setBet (event.target.value);
   };
 
+  //Timmer de la apuesta
   useEffect (
     () => {
       const timer = setInterval (() => {
@@ -78,6 +84,7 @@ const Apuesta = ({
     },
     [setPlayers]
   );
+   //Timmer de la apuesta
 
   const theme = createTheme ({
     typography: {
