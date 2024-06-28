@@ -9,6 +9,7 @@ const TimmerComponent = ({
   setRound,
   round,
   players,
+  dataRoom
 }) => {
   const [timmer, settimmer] = useState (timmerTicks);
 
@@ -43,7 +44,7 @@ const TimmerComponent = ({
                   setRound ({...round, typeRound: 'EndGame'});
           
                 } else if (players.length > 2) {
-                socket.emit("eliminatePlayer")
+                socket.emit("eliminatePlayer",dataRoom)
                 }
               }
             }

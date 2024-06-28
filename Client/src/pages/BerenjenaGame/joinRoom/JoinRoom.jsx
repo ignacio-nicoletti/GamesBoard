@@ -334,6 +334,7 @@ const JoinRoom = () => {
                 <EditIcon />
               </button>
             </div>
+              {infoUser.experience&&
             <div>
               <p>
                 nivel {infoUser.experience[0].level}
@@ -342,6 +343,7 @@ const JoinRoom = () => {
                 xp {infoUser.experience[0].xp+"/"+(Number(infoUser.experience[0].xp)+Number(infoUser.experience[0].xpRemainingForNextLevel))}
               </p>
             </div>
+          }
 
             <div className={style.DivInputRoom}>
               <span>Create a new room: </span>

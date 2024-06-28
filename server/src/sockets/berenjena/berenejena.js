@@ -282,7 +282,6 @@ export default function BerenjenaSockets(io) {
     );
 
     socket.on("disconnectRoom", (data) => {
-     
       const { game, roomId } = data;
       if (!game || !roomId) {
         console.log("Los parámetros game o roomId son indefinidos.");
@@ -616,7 +615,29 @@ export default function BerenjenaSockets(io) {
           });
 
           // Cambio de ronda
-          if (room.round.hands === room.round.cardXRound) {
+          if (room.round.hands === room.round.cardXRound) {  const currentRoundIndex = room.results.findIndex(
+            (r) => r.round?.numRounds === room.round.numRounds
+          );
+
+          if (currentRoundIndex !== -1) {
+            room.results[currentRoundIndex] = {
+              round: {
+                numRounds: room.round.numRounds,
+                cardXRound: room.round.cardXRound,
+                obligado: room.round.obligado,
+                cardWinxRound: room.round.cardWinxRound,
+              },
+              players: room.users.map((user) => ({
+                userName: user.userName,
+                position: user.position,
+                betP: user.betP,
+                cardsWins: user.cardsWins,
+                cumplio: user.cumplio,
+                points: user.points,
+              })),
+            };
+          }
+
             room.users.forEach((user) => {
               if (user.betP === user.cardsWins) {
                 user.points += 5 + user.betP;
@@ -647,36 +668,14 @@ export default function BerenjenaSockets(io) {
             room.round.numRounds += 1;
             //analiza por cada ronda si hay alguien desconectado
             if (room.users.every((user) => user.connect)) {
-              room.round.typeRound = "waiting";//sigue la partida con 5 segundos entre ronda
+              room.round.typeRound = "waiting"; //sigue la partida con 5 segundos entre ronda
             } else {
-              room.round.typeRound = "waitingPlayers";//para la partida con 60 segundos
+              room.round.typeRound = "waitingPlayers"; //para la partida con 60 segundos
             }
           }
 
           // Actualizar results con la ronda completada
-          const currentRoundIndex = room.results.findIndex(
-            (r) => r.round?.numRounds === room.round.numRounds
-          );
-
-          if (currentRoundIndex !== -1) {
-            room.results[currentRoundIndex] = {
-              round: {
-                numRounds: room.round.numRounds,
-                cardXRound: room.round.cardXRound,
-                obligado: room.round.obligado,
-                cardWinxRound: room.round.cardWinxRound,
-              },
-              players: room.users.map((user) => ({
-                userName: user.userName,
-                position: user.position,
-                betP: user.betP,
-                cardsWins: user.cardsWins,
-                cumplio: user.cumplio,
-                points: user.points,
-              })),
-            };
-          }
-
+        
           const winner = room.users.find((user) => user.points >= 100);
 
           if (winner) {
@@ -737,24 +736,57 @@ export default function BerenjenaSockets(io) {
       });
     });
 
+    socket.emit("eliminatePlayer", (dataRoom) => {
+      const { game, roomId, round } = dataRoom;
+
+      // Verifica si existen las salas y los jugadores
+      if (!permanentRooms[game] || !permanentRooms[game][roomId]) {
+        console.log(`Sala no encontrada: ${roomId} en el juego: ${game}`);
+        return;
+      }
+
+      const room = permanentRooms[game][roomId];
+
+      // Filtra a los jugadores que están desconectados
+      room.users = room.users.filter((player) => player.connect);
+
+      // Opcional: Reasigna las posiciones si es necesario
+      room.users.forEach((user, index) => {
+        user.position = index + 1;
+      });
+
+      console.log(`Jugadores desconectados eliminados de la sala ${roomId}.`);
+
+      // Emite un evento para actualizar la sala
+      io.to(`${game}-${roomId}`).emit("roomRefresh", {
+        users: room.users,
+        round: room.round,
+        room: room,
+      });
+    });
+
     // Manejo de desconexión del servidor
     socket.on("disconnect", () => {
       console.log(`Usuario desconectado: ${socket.id}`);
-      
+
       // Recorrer todas las salas permanentes para buscar y manejar la desconexión del usuario
       Object.keys(permanentRooms).forEach((game) => {
         const rooms = permanentRooms[game];
         Object.keys(rooms).forEach((roomId) => {
           const room = rooms[roomId];
-          const userIndex = room.users.findIndex((user) => user.idSocket === socket.id);
+          const userIndex = room.users.findIndex(
+            (user) => user.idSocket === socket.id
+          );
           if (userIndex !== -1) {
             // Usuario encontrado en la sala, realizar acciones necesarias
             const disconnectedUser = room.users[userIndex];
-  
+
             if (room.gameStarted) {
               disconnectedUser.connect = false;
-              console.log(`Usuario ${socket.id} marcado como desconectado en la sala ${roomId}.`);
-  
+              console.log(
+                `Usuario ${socket.id} marcado como desconectado en la sala ${roomId}.`
+              );
+
               // Si todos los usuarios están desconectados, manejar la sala vacía
               if (room.users.every((user) => !user.connect)) {
                 handleEmptyRoom(room, game, roomId);
@@ -766,7 +798,7 @@ export default function BerenjenaSockets(io) {
                 user.position = index + 1;
               });
             }
-  
+
             // Emitir actualización a los clientes en la sala
             io.to(`${game}-${roomId}`).emit("roomRefresh", {
               users: room.users,
@@ -777,14 +809,11 @@ export default function BerenjenaSockets(io) {
         });
       });
     });
-  
-  
   });
 }
 
-
-//  enviar quien gano en la ultima ronda 
-//  revisar la experiencia 
-//  revisar tema de desconexion si se desconecta antes de tirar que pasa ? 
+//  enviar quien gano en la ultima ronda
+//  revisar la experiencia
+//  revisar tema de desconexion si se desconecta antes de tirar que pasa ?
 //  si son 2 gana quien queda si son 3 o mas acomodar a los users y eliminar el user
- 
+//  results
