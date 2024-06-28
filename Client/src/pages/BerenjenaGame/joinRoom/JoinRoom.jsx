@@ -21,6 +21,7 @@ import avatar5 from "../../../assets/berenjena/jugadores/avatar5.png";
 import avatar6 from "../../../assets/berenjena/jugadores/avatar6.png";
 import imgRoom from "../../../assets/berenjena/jugadores/imgRoom.png";
 import logoBerenjena from "../../../assets/berenjena/home/logoBerenjena.png";
+import InstanceOfAxios from "../../../utils/intanceAxios";
 
 const JoinRoom = () => {
   const [rooms, setRooms] = useState([]);
@@ -37,45 +38,31 @@ const JoinRoom = () => {
   const navigate = useNavigate();
   const [timmerRooms, setTimmerRooms] = useState(5);
   const [infoUser, setInfoUser] = useState({});
+  const token = GetDecodedCookie("cookieToken");
 
-  const handlerCreateRoom = async (e) => {
-    e.preventDefault();
-  const [rooms, setRooms] = useState ([]);
-  const [filteredRooms, setFilteredRooms] = useState ([]);
-  const [game, setGame] = useState ('Berenjena');
-  const [userName, setUserName] = useState ('');
-  const [roomId, setRoomId] = useState ('');
-  const [tempMaxUsers, setTempMaxUsers] = useState (''); // temp max o maxusers
-  const [maxUsers, setMaxUsers] = useState (6);
-  const [error, setError] = useState ('');
-  const [selectedAvatar, setSelectedAvatar] = useState ('avatar1');
-  const [showModal, setShowModal] = useState (true);
-  const [isFormValid, setIsFormValid] = useState (false);
-  const navigate = useNavigate ();
-  const [timmerRooms, setTimmerRooms] = useState (5);
-  const [infoUser, setInfoUser] = useState ({});
-  const token = GetDecodedCookie ('cookieToken');
-
-  useEffect (() => {
+  useEffect(() => {
     const fetchPlayer = async () => {
       try {
-        const data = DecodedToken (token);
-        const response = await InstanceOfAxios (`/user/${infoUser.id||data.id}`, 'GET');
-        setUserName (response.player.userName);
+        const data = DecodedToken(token);
+        const response = await InstanceOfAxios(
+          `/user/${infoUser.id || data.id}`,
+          "GET"
+        );
+        setUserName(response.player.userName);
       } catch (error) {
-        console.error ('Error fetching products:', error);
+        console.error("Error fetching products:", error);
       }
     };
     if (token) {
-      fetchPlayer ();
+      fetchPlayer();
     }
   }, []);
 
-  const handlerCreateRoom = async e => {
-    e.preventDefault ();
+  const handlerCreateRoom = async (e) => {
+    e.preventDefault();
     try {
       if (roomId !== "" && userName !== "") {
-        await CreateGameRoom(
+        const res = await CreateGameRoom(
           game,
           roomId,
           userName,
@@ -83,10 +70,11 @@ const JoinRoom = () => {
           selectedAvatar,
           infoUser
         );
-   
-        res && navigate (`/berenjena/multiplayer/${res.roomCreated.roomId}`);
+
+        res && navigate(`/berenjena/multiplayer/${res.roomCreated.roomId}`);
       }
     } catch (error) {
+      console.log(error);
       Swal.fire({
         title: "Error!",
         text: error || "An error occurred while creating the room.",
@@ -101,17 +89,17 @@ const JoinRoom = () => {
 
   const handlerJoinRoom = async (roomId) => {
     try {
-      setRoomId (roomId);
-      if (roomId !== '' && userName !== '') {
-        const res = await joinGameRoom (
+      setRoomId(roomId);
+      if (roomId !== "" && userName !== "") {
+        const res = await joinGameRoom(
           game,
           roomId,
           userName,
           selectedAvatar,
           infoUser
         );
-  
-        res && navigate (`/berenjena/multiplayer/${res.roomJoined.roomId}`);
+
+        res && navigate(`/berenjena/multiplayer/${res.roomJoined.roomId}`);
       }
     } catch (error) {
       console.error(error);
@@ -146,9 +134,9 @@ const JoinRoom = () => {
     }
   };
 
-  // me setea el nombre si inico sesion
+  // me setea el nombre si inicio sesion
+
   useEffect(() => {
-    const token = GetDecodedCookie("cookieToken");
     if (token) {
       const data = DecodedToken(token);
       setUserName(data.userName);
@@ -172,26 +160,6 @@ const JoinRoom = () => {
     }
     return () => clearInterval(time);
   }, [timmerRooms]);
-
-  useEffect(() => {
-    const handlePlayerList = (playerList) => {
-      navigate(`/berenjena/multiplayer/${playerList.round.roomId}`);
-    };
-    socket.on("player_list", handlePlayerList);
-    return () => {
-      socket.off("player_list", handlePlayerList);
-    };
-  }, [navigate]);
-
-  useEffect(() => {
-    const handleRoomJoined = (data) => {
-      navigate(`/berenjena/multiplayer/${data.round.roomId}`);
-    };
-    socket.on("room_joined", handleRoomJoined);
-    return () => {
-      socket.off("room_joined", handleRoomJoined);
-    };
-  }, [navigate]);
 
   useEffect(() => {
     const handleRoomCreationError = (data) => {
@@ -236,9 +204,15 @@ const JoinRoom = () => {
 
   const avatars = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6];
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (userName && selectedAvatar) {
       setShowModal(false);
+      if (token) {
+        await InstanceOfAxios(`/user/${infoUser.id}`, "PUT", {
+          userName,
+          selectedAvatar,
+        }).then((data) => setUserName(data.player.userName));
+      }
       initializeRooms();
     } else {
       Swal.fire({
