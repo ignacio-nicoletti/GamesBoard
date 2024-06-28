@@ -127,3 +127,6 @@ export const distribute = (dataRoom,setPlayers) => {
     setPlayers(data.users);
   });
 };
+
+
+

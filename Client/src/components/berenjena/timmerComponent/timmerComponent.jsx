@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import styles from './timmerComponent.module.css';
 import PersonIcon from '@mui/icons-material/Person';
 import CheckIcon from '@mui/icons-material/Check';
+import { socket } from '../../../functions/SocketIO/sockets/sockets';
 
 const TimmerComponent = ({
   timmerTicks,
@@ -40,10 +41,9 @@ const TimmerComponent = ({
               } else {
                 if (players.length <= 2) {
                   setRound ({...round, typeRound: 'EndGame'});
-                  console.log ('entre');
+          
                 } else if (players.length > 2) {
-                  // Otra lógica si hay más de 2 jugadores
-                  // Aquí puedes añadir las acciones necesarias según tu lógica
+                socket.emit("eliminatePlayer")
                 }
               }
             }

@@ -9,6 +9,7 @@ import { GetDecodedCookie } from "../../utils/DecodedCookie";
 import { DecodedToken } from "../../utils/DecodedToken";
 import { disconnectServer } from "../../functions/SocketIO/sockets/sockets";
 import Login from "../../components/homePage/login/login";
+import Cookies from "js-cookie";
 
 const Home = () => {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -29,8 +30,7 @@ const Home = () => {
   };
 
   const handleLogout = () => {
-    document.cookie =
-      "cookieToken";
+    Cookies.remove("cookieToken");
     setUserInfo(null);
     window.location.href = "/";
   };

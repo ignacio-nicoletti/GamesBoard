@@ -25,15 +25,15 @@ function createRooms(numberOfRooms, gameName) {
   return rooms;
 }
 
-const handleEmptyRoom = () => {
+const handleEmptyRoom = (room, game, roomId) => {
   if (roomId <= 10) {
     // Si la sala es una de las primeras 10 creadas (permanente), se vacía y resetea
     room.gameStarted = false;
     room.disconnectedUsers = [];
     room.users = [];
-    (room.round = {}),
-      (room.results = []),
-      console.log(`Sala permanente ${roomId} vaciada y reseteada.`);
+    room.round = {};
+    room.results = [];
+    console.log(`Sala permanente ${roomId} vaciada y reseteada.`);
   } else {
     // Si la sala no es permanente, se elimina
     delete permanentRooms[game][roomId];
@@ -313,7 +313,7 @@ export default function BerenjenaSockets(io) {
         );
 
         if (room.users.every((user) => !user.connect)) {
-          handleEmptyRoom();
+          handleEmptyRoom(room, game, roomId);
         }
       } else {
         // Si el juego no ha comenzado, el usuario se elimina de la sala
@@ -757,7 +757,7 @@ export default function BerenjenaSockets(io) {
   
               // Si todos los usuarios están desconectados, manejar la sala vacía
               if (room.users.every((user) => !user.connect)) {
-                handleEmptyRoom();
+                handleEmptyRoom(room, game, roomId);
               }
             } else {
               // Si el juego no ha comenzado, simplemente remover al usuario de la lista de usuarios
@@ -781,3 +781,10 @@ export default function BerenjenaSockets(io) {
   
   });
 }
+
+
+//  enviar quien gano en la ultima ronda 
+//  revisar la experiencia 
+//  revisar tema de desconexion si se desconecta antes de tirar que pasa ? 
+//  si son 2 gana quien queda si son 3 o mas acomodar a los users y eliminar el user
+ 
