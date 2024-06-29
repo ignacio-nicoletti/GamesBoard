@@ -611,23 +611,28 @@ export default function BerenjenaSockets(io) {
               user.cardsWins += 1;
             }
             user.cardBet = {};
-
-            // Calcular puntos si el usuario cumplió su apuesta
             if (user.betP === user.cardsWins) {
               user.cumplio = true;
             } else {
               user.cumplio = false;
             }
-            // Resetear contadores del usuario para la próxima ronda
           });
 
           // Cambio de hand
         }
-
         // Cambio de hand
 
         // Cambio de ronda
         if (room.round.hands === room.round.cardXRound) {
+          room.users.forEach((user) => {
+            if (user.cumplio === true) {
+              user.points += 5 + user.betP;
+            }
+            user.betP = 0;
+            user.cardsWins = 0;
+            user.cardBet = {};
+          });
+
           // Actualizar Results de la ronda
           const currentRoundIndex = room.results.findIndex(
             (r) => r.round?.numRounds === room.round.numRounds
@@ -650,15 +655,10 @@ export default function BerenjenaSockets(io) {
               })),
             };
           }
+        
           // Actualizar Results de la ronda
 
           room.users.forEach((user) => {
-            if ((user.cumplio = true)) {
-              user.points += 5 + user.betP;
-            }
-            user.betP = 0;
-            user.cardsWins = 0;
-            user.cardBet = {};
             user.cumplio = false;
           });
 
@@ -701,6 +701,8 @@ export default function BerenjenaSockets(io) {
             });
             return; // Finaliza el juego
           }
+
+          
         }
         // Cambio de ronda
 

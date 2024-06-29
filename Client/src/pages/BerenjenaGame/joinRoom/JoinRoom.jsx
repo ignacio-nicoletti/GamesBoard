@@ -152,7 +152,6 @@ const JoinRoom = () => {
       setUserName (data.userName);
       setSelectedAvatar (data.selectedAvatar || 'avatar1'); // Ajuste aquí para obtener el avatar del token
       setInfoUser (data);
-      console.log(data);
       if (data.userName) {
         setShowModal (false);
       }
@@ -334,13 +333,13 @@ const JoinRoom = () => {
                 <EditIcon />
               </button>
             </div>
-              {infoUser.experience&&
+              {infoUser.experience&&token&&
             <div>
               <p>
                 nivel {infoUser.experience[0].level}
               </p>
               <p>
-                xp {infoUser.experience[0].xp+"/"+(Number(infoUser.experience[0].xp)+Number(infoUser.experience[0].xpRemainingForNextLevel))}
+                xp {infoUser.experience[0].xp+"/"+(infoUser.experience[0].xp+infoUser.experience[0].xpRemainingForNextLevel)}
               </p>
             </div>
           }

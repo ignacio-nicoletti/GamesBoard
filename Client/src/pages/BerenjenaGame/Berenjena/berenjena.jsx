@@ -166,6 +166,8 @@ const GameBerenjena = () => {
           setRound={setRound}
           round={round}
           players={players}
+          results={results}
+          dataRoom={dataRoom}
         />}
 
       <MyCards
@@ -200,7 +202,7 @@ const GameBerenjena = () => {
       </div>
 
       {round.typeRound === 'EndGame' &&
-        <WinnerComponent winner={winner} room={dataRoom}  players={players}/>}
+        <WinnerComponent winner={winner} room={dataRoom}  players={players} />}
 
       <ButtonExitRoom dataRoom={dataRoom} />
 

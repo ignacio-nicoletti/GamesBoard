@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import style from './apuesta.module.css';
-import {socket} from '../../../functions/SocketIO/sockets/sockets';
+import { socket } from '../../../functions/SocketIO/sockets/sockets';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import {createTheme, ThemeProvider} from '@mui/material/styles';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
@@ -15,78 +15,69 @@ const Apuesta = ({
   setResults,
   dataRoom,
 }) => {
-  const availableBets = () => {
-    const availableBets = [...Array (round.cardXRound + 1)]
-      .map ((_, index) => index)
-      .filter (
+  const getAvailableBets = () => {
+    return [...Array(round.cardXRound + 1)]
+      .map((_, index) => index)
+      .filter(
         index =>
           !(myPosition === round.obligado &&
             index + round.betTotal === round.cardXRound)
       );
-
-    const randomBet =
-      availableBets[Math.floor (Math.random () * availableBets.length)];
-
-    return randomBet;
   };
 
-  const [bet, setBet] = useState (availableBets ());
-  const [timeLeft, setTimeLeft] = useState (30);
+  // Inicializamos bet con una apuesta válida
+  const [bet, setBet] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(30);
+
+  useEffect(() => {
+    const bets = getAvailableBets();
+    setBet(bets[0]); // Asegura que la apuesta inicial es válida
+  }, [round.cardXRound, round.betTotal, myPosition]);
 
   const handleSubmit = () => {
-    socket.emit ('BetPlayer', {bet, myPosition, dataRoom});
+    const selectedBet = bet !== null ? bet : getAvailableBets()[0];
+    socket.emit('BetPlayer', { bet: selectedBet, myPosition, dataRoom });
   };
 
-  //Si llega a 0 apuesta automatico
-  useEffect (
-    () => {
-      if (timeLeft === 0) {
-        setTimeLeft (30);
-        socket.emit ('BetPlayer', {
-          bet: availableBets (),
-          myPosition,
-          dataRoom,
-        });
-      }
-    },
-    [timeLeft]
-  );
-  //Si llega a 0 apuesta automatico
-
-  useEffect (
-    () => {
-      socket.on ('update_game_state', data => {
-        setTimeLeft (30);
-        setRound (data.round);
-        setPlayers (data.players);
-        setResults (data.results);
+  useEffect(() => {
+    if (timeLeft === 0) {
+      setTimeLeft(30);
+      socket.emit('BetPlayer', {
+        bet: getAvailableBets()[0],
+        myPosition,
+        dataRoom,
       });
+    }
+  }, [timeLeft, myPosition, dataRoom]);
 
-      return () => {
-        socket.off ('update_game_state');
-      };
-    },
-    [setRound, setPlayers, setResults]
-  );
+  useEffect(() => {
+    socket.on('update_game_state', data => {
+      setTimeLeft(30);
+      setRound(data.round);
+      setPlayers(data.players);
+      setResults(data.results);
+      const bets = getAvailableBets();
+      setBet(bets[0]); // Asegura que la apuesta inicial es válida
+    });
+
+    return () => {
+      socket.off('update_game_state');
+    };
+  }, [setRound, setPlayers, setResults, round.cardXRound, round.betTotal, myPosition]);
 
   const handleChange = event => {
-    setBet (event.target.value);
+    setBet(event.target.value);
   };
 
-  //Timmer de la apuesta
-  useEffect (
-    () => {
-      const timer = setInterval (() => {
-        setTimeLeft (prevTime => (prevTime > 0 ? prevTime - 1 : 0));
-      }, 1000);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(prevTime => (prevTime > 0 ? prevTime - 1 : 0));
+    }, 1000);
 
-      return () => clearInterval (timer);
-    },
-    [setPlayers]
-  );
-   //Timmer de la apuesta
+    return () => clearInterval(timer);
+  }, [setPlayers]);
 
-  const theme = createTheme ({
+  const theme = createTheme({
     typography: {
       fontFamily: 'Bebas Neue',
     },
@@ -124,44 +115,46 @@ const Apuesta = ({
   return (
     <ThemeProvider theme={theme}>
       <div className={style.container}>
-        {round.turnJugadorA === myPosition
-          ? <div className={style.betContainer}>
-              <div className={style.loader} />
-              <p className={style.pTime}>{timeLeft} seconds left</p>
-              <p>Jugador {round.turnJugadorA}</p>
-              <FormControl sx={{m: 1, minWidth: 120}}>
-                <InputLabel id="bet-select-label" />
-                <Select
-                  labelId="bet-select-label"
-                  value={bet}
-                  onChange={handleChange}
-                  displayEmpty
-                  inputProps={{'aria-label': 'Elige tu apuesta'}}
-                >
-                  <MenuItem value="" disabled>
-                    <em>Elige tu apuesta</em>
+        {round.turnJugadorA === myPosition ? (
+          <div className={style.betContainer}>
+            <div className={style.loader} />
+            <p className={style.pTime}>{timeLeft} seconds left</p>
+            <p>Jugador {round.turnJugadorA}</p>
+            <FormControl sx={{ m: 1, minWidth: 120 }}>
+              <InputLabel id="bet-select-label" />
+              <Select
+                labelId="bet-select-label"
+                value={bet}
+                onChange={handleChange}
+                displayEmpty
+                inputProps={{ 'aria-label': 'Elige tu apuesta' }}
+              >
+                <MenuItem value="" disabled>
+                  <em>Elige tu apuesta</em>
+                </MenuItem>
+                {getAvailableBets().map((index) => (
+                  <MenuItem
+                    key={index}
+                    value={index}
+                    disabled={
+                      myPosition === round.obligado &&
+                      index + round.betTotal === round.cardXRound
+                    }
+                  >
+                    {index} cartas
                   </MenuItem>
-                  {[...Array (round.cardXRound + 1)].map ((_, index) => (
-                    <MenuItem
-                      key={index}
-                      value={index}
-                      disabled={
-                        myPosition === round.obligado &&
-                          index + round.betTotal === round.cardXRound
-                      }
-                    >
-                      {index} cartas
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <button onClick={handleSubmit}>Apostar</button>
-            </div>
-          : <div className={style.betContainer}>
-              <div className={style.loader} />
-              <p className={style.pTime}>{timeLeft} seconds left</p>
-              <p>{round.turnJugadorA} apostando...</p>
-            </div>}
+                ))}
+              </Select>
+            </FormControl>
+            <button onClick={handleSubmit}>Apostar</button>
+          </div>
+        ) : (
+          <div className={style.betContainer}>
+            <div className={style.loader} />
+            <p className={style.pTime}>{timeLeft} seconds left</p>
+            <p>{round.turnJugadorA} apostando...</p>
+          </div>
+        )}
       </div>
     </ThemeProvider>
   );

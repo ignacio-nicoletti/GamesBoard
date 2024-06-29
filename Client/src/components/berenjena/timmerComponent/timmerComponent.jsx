@@ -4,13 +4,26 @@ import PersonIcon from '@mui/icons-material/Person';
 import CheckIcon from '@mui/icons-material/Check';
 import {socket} from '../../../functions/SocketIO/sockets/sockets';
 
-const TimmerComponent = ({timmerTicks, setRound, round, players, dataRoom}) => {
-  const [timmer, settimmer] = useState (timmerTicks);
+const TimmerComponent = ({setRound, round, players, results, dataRoom}) => {
+  const [timmer, settimmer] = useState (0);
   const [ListCheck, setListCheck] = useState ([]);
+
   useEffect (
     () => {
-      setListCheck (players.filter (player => player.cumplio));
+      if (round.numRounds && round.typeRound === 'waiting') {
+        let playersChecks = results[round.numRounds - 2].players.filter (
+          player => player.cumplio === true
+        );
+        if (playersChecks) {
+          setListCheck (playersChecks);
+        }
+      }
+    },
+    [results, round.numRounds]
+  );
 
+  useEffect (
+    () => {
       if (!round) return;
 
       let initialTime = 0;
@@ -49,7 +62,7 @@ const TimmerComponent = ({timmerTicks, setRound, round, players, dataRoom}) => {
 
       return () => clearInterval (time);
     },
-    [round.typeRound, players]
+    [round.typeRound, players, setRound, dataRoom]
   );
 
   return (
@@ -63,11 +76,16 @@ const TimmerComponent = ({timmerTicks, setRound, round, players, dataRoom}) => {
                   <span className={styles.timer}>{timmer}</span>
                 </h3>
               : <div>
-                  <p>Cumplieron:</p>
-                  {ListCheck &&
-                    ListCheck.map (player => <p>{player.userName}</p>)}
-                  <h3 className={styles.message}>
+                  {ListCheck.length > 0 &&
+                    ListCheck.map (player => (
+                      <div>
+                        <p>Cumplieron:</p>
 
+                        <p key={player.userName}>{player.userName}</p>
+
+                      </div>
+                    ))}
+                  <h3 className={styles.message}>
                     Preparando siguiente ronda:
                     {' '}
                     <span className={styles.timer}>{timmer}</span>
