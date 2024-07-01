@@ -11,7 +11,7 @@ const TimmerComponent = ({setRound, round, players, results, dataRoom}) => {
   useEffect (
     () => {
       if (round.numRounds && round.typeRound === 'waiting') {
-        let playersChecks = results[round.numRounds - 2].players.filter (
+        let playersChecks = results[round.numRounds - 2]?.players.filter (
           player => player.cumplio === true
         );
         if (playersChecks) {
