@@ -2,16 +2,25 @@ import {useEffect, useState} from 'react';
 import styles from './timmerComponent.module.css';
 import PersonIcon from '@mui/icons-material/Person';
 import CheckIcon from '@mui/icons-material/Check';
-import { socket } from '../../../functions/SocketIO/sockets/sockets';
+import {socket} from '../../../functions/SocketIO/sockets/sockets';
 
-const TimmerComponent = ({
-  timmerTicks,
-  setRound,
-  round,
-  players,
-  dataRoom
-}) => {
-  const [timmer, settimmer] = useState (timmerTicks);
+const TimmerComponent = ({setRound, round, players, results, dataRoom}) => {
+  const [timmer, settimmer] = useState (0);
+  const [ListCheck, setListCheck] = useState ([]);
+
+  useEffect (
+    () => {
+      if (round.numRounds && round.typeRound === 'waiting') {
+        let playersChecks = results[round.numRounds - 2].players.filter (
+          player => player.cumplio === true
+        );
+        if (playersChecks) {
+          setListCheck (playersChecks);
+        }
+      }
+    },
+    [results, round.numRounds]
+  );
 
   useEffect (
     () => {
@@ -21,9 +30,8 @@ const TimmerComponent = ({
       if (round.typeRound === 'waiting') {
         initialTime = 5;
       } else if (round.typeRound === 'waitingPlayers') {
-        initialTime = 10;
+        initialTime = 60;
       }
-
       settimmer (initialTime);
 
       const time = setInterval (() => {
@@ -32,7 +40,6 @@ const TimmerComponent = ({
             return prevTime - 1;
           } else {
             clearInterval (time);
-           
 
             if (round.typeRound === 'waiting') {
               setRound ({...round, typeRound: 'Bet'});
@@ -42,9 +49,8 @@ const TimmerComponent = ({
               } else {
                 if (players.length <= 2) {
                   setRound ({...round, typeRound: 'EndGame'});
-          
                 } else if (players.length > 2) {
-                socket.emit("eliminatePlayer",dataRoom)
+                  socket.emit ('eliminatePlayer', dataRoom);
                 }
               }
             }
@@ -56,12 +62,8 @@ const TimmerComponent = ({
 
       return () => clearInterval (time);
     },
-    [round.typeRound, players]
-  ); 
-
-  if (!round) {
-    return null; 
-  }
+    [round.typeRound, players, setRound, dataRoom]
+  );
 
   return (
     <div className={styles.container}>
@@ -73,11 +75,22 @@ const TimmerComponent = ({
                   {' '}
                   <span className={styles.timer}>{timmer}</span>
                 </h3>
-              : <h3 className={styles.message}>
-                  Preparando siguiente ronda:
-                  {' '}
-                  <span className={styles.timer}>{timmer}</span>
-                </h3>}
+              : <div>
+                  {ListCheck.length > 0 &&
+                    ListCheck.map (player => (
+                      <div>
+                        <p>Cumplieron:</p>
+
+                        <p key={player.userName}>{player.userName}</p>
+
+                      </div>
+                    ))}
+                  <h3 className={styles.message}>
+                    Preparando siguiente ronda:
+                    {' '}
+                    <span className={styles.timer}>{timmer}</span>
+                  </h3>
+                </div>}
           </div>
         : round.typeRound === 'waitingPlayers'
             ? <div>

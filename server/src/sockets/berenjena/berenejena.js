@@ -591,8 +591,6 @@ export default function BerenjenaSockets(io) {
 
         // Actualizar apuesta de carta del jugador en room.users
         room.users[playerIndex].cardBet = card;
-
-        // Filtrar carta jugada de cardPerson del jugador
         room.users[playerIndex].cardPerson = room.users[
           playerIndex
         ].cardPerson.filter((c) => !(c.value === value && c.suit === suit));
@@ -602,6 +600,7 @@ export default function BerenjenaSockets(io) {
         room.round.turnJugadorR =
           (room.round.turnJugadorR % room.users.length) + 1;
 
+        // Cambio de hand
         if (room.round.cantQueTiraron === room.users.length) {
           room.round.cantQueTiraron = 0;
           room.round.hands += 1;
@@ -612,13 +611,32 @@ export default function BerenjenaSockets(io) {
               user.cardsWins += 1;
             }
             user.cardBet = {};
+            if (user.betP === user.cardsWins) {
+              user.cumplio = true;
+            } else {
+              user.cumplio = false;
+            }
           });
 
-          // Cambio de ronda
-          if (room.round.hands === room.round.cardXRound) {  const currentRoundIndex = room.results.findIndex(
+          // Cambio de hand
+        }
+        // Cambio de hand
+
+        // Cambio de ronda
+        if (room.round.hands === room.round.cardXRound) {
+          room.users.forEach((user) => {
+            if (user.cumplio === true) {
+              user.points += 5 + user.betP;
+            }
+            user.betP = 0;
+            user.cardsWins = 0;
+            user.cardBet = {};
+          });
+
+          // Actualizar Results de la ronda
+          const currentRoundIndex = room.results.findIndex(
             (r) => r.round?.numRounds === room.round.numRounds
           );
-
           if (currentRoundIndex !== -1) {
             room.results[currentRoundIndex] = {
               round: {
@@ -637,45 +655,38 @@ export default function BerenjenaSockets(io) {
               })),
             };
           }
+        
+          // Actualizar Results de la ronda
 
-            room.users.forEach((user) => {
-              if (user.betP === user.cardsWins) {
-                user.points += 5 + user.betP;
-                user.cumplio = true;
-              } else {
-                user.cumplio = false;
-              }
-              user.betP = 0;
-              user.cardsWins = 0;
-              user.cardBet = {};
-            });
+          room.users.forEach((user) => {
+            user.cumplio = false;
+          });
 
-            // Configurar nueva ronda
-            room.round.obligado = (room.round.obligado % room.users.length) + 1;
-            room.round.turnJugadorA =
-              (room.round.obligado % room.users.length) + 1;
-            room.round.turnJugadorR =
-              (room.round.obligado % room.users.length) + 1;
-            room.round.cantQueTiraron = 0;
-            room.round.cantQueApostaron = 0;
-            room.round.cardXRound =
-              room.round.cardXRound === 7 ? 1 : room.round.cardXRound + 2;
-            room.round.beforeLastCardBet = {};
-            room.round.lastCardBet = {};
-            room.round.cardWinxRound = {};
-            room.round.betTotal = 0;
-            room.round.hands = 0;
-            room.round.numRounds += 1;
-            //analiza por cada ronda si hay alguien desconectado
-            if (room.users.every((user) => user.connect)) {
-              room.round.typeRound = "waiting"; //sigue la partida con 5 segundos entre ronda
-            } else {
-              room.round.typeRound = "waitingPlayers"; //para la partida con 60 segundos
-            }
+          // Configurar nueva ronda
+          room.round.obligado = (room.round.obligado % room.users.length) + 1;
+          room.round.turnJugadorA =
+            (room.round.obligado % room.users.length) + 1;
+          room.round.turnJugadorR =
+            (room.round.obligado % room.users.length) + 1;
+          room.round.cantQueTiraron = 0;
+          room.round.cantQueApostaron = 0;
+          room.round.cardXRound =
+            room.round.cardXRound === 7 ? 1 : room.round.cardXRound + 2;
+          room.round.beforeLastCardBet = {};
+          room.round.lastCardBet = {};
+          room.round.cardWinxRound = {};
+          room.round.betTotal = 0;
+          room.round.hands = 0;
+          room.round.numRounds += 1;
+          //analiza por cada ronda si hay alguien desconectado
+          if (room.users.every((user) => user.connect)) {
+            room.round.typeRound = "waiting"; //sigue la partida con 5 segundos entre ronda
+          } else {
+            room.round.typeRound = "waitingPlayers"; //para la partida con 60 segundos
           }
 
           // Actualizar results con la ronda completada
-        
+
           const winner = room.users.find((user) => user.points >= 100);
 
           if (winner) {
@@ -691,19 +702,15 @@ export default function BerenjenaSockets(io) {
             return; // Finaliza el juego
           }
 
-          io.to(`${game}-${roomId}`).emit("carta_tirada", {
-            players: room.users,
-            round: room.round,
-            results: room.results,
-          });
-        } else {
-          // Emitir el estado actualizado del juego a todos los clientes en la sala
-          io.to(`${game}-${roomId}`).emit("carta_tirada", {
-            players: room.users,
-            round: room.round,
-            results: room.results,
-          });
+          
         }
+        // Cambio de ronda
+
+        io.to(`${game}-${roomId}`).emit("carta_tirada", {
+          players: room.users,
+          round: room.round,
+          results: room.results,
+        });
       }
     });
 
