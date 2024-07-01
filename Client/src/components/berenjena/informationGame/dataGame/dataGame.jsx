@@ -28,6 +28,7 @@ const DataGame = ({ round }) => {
             : round?.turnJugadorR}
         </span>
       </p>
+      <p>{round.typeRound}</p>
     </div>
   );
 };

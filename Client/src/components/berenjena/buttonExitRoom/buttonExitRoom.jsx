@@ -3,13 +3,12 @@ import { Link, useParams } from 'react-router-dom';
 import style from './buttonExitRoom.module.css';
 import { socket } from '../../../functions/SocketIO/sockets/sockets';
 
-const ButtonExitRoom = () => {
+const ButtonExitRoom = ({dataRoom}) => {
   const { id } = useParams();
   const game = 'Berenjena';
 
   const handlerExitRoom = () => {
     socket.emit('disconnectRoom', { game, roomId: id });
-    socket.emit('roomRefresh', { game, roomId: id });
   };
 
   return (

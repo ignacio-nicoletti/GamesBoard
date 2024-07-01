@@ -6,13 +6,13 @@ import CheckIcon from '@mui/icons-material/Check';
 import ButtonExitRoom from '../buttonExitRoom/buttonExitRoom';
 import style from './loader.module.css';
 
-const Loader = ({game, setPlayers, setRound, myPlayer, setMyPlayer,setLoader}) => {
+const Loader = ({setPlayers, setRound, myPlayer, setMyPlayer,setLoader,setDataRoom,dataRoom}) => {
   const [readyMe, setReadyMe] = useState (false);
   const [playerList, setPlayerList] = useState ([]);
   const {id} = useParams ();
   const handleReady = () => {
     setReadyMe (true);
-    socket.emit ('player_ready', {game, roomId: id});
+    socket.emit ('player_ready', dataRoom);
   };
 
   const updatePlayerList = data => {
@@ -20,6 +20,7 @@ const Loader = ({game, setPlayers, setRound, myPlayer, setMyPlayer,setLoader}) =
       setPlayerList (data.users);
       setPlayers (data.users);
       setRound (data.round);
+      setDataRoom(data.room)
       const myUpdatedInfo = data.users.find (
         player => player.idSocket === socket.id
       );
@@ -45,10 +46,11 @@ const Loader = ({game, setPlayers, setRound, myPlayer, setMyPlayer,setLoader}) =
 
   useEffect (
     () => {
+  
       socket.on ('room_created', updatePlayerList);
       socket.on ('room_joined', updatePlayerList);
 
-      socket.emit ('roomRefresh', {game, roomId: id});
+      socket.emit ('roomRefresh', dataRoom={game:"Berenjena",roomId:id});
       socket.on ('roomRefresh', updatePlayerList);
 
       socket.on ('player_list', updatePlayerList);
@@ -62,7 +64,18 @@ const Loader = ({game, setPlayers, setRound, myPlayer, setMyPlayer,setLoader}) =
         socket.off ('player_ready_status', updatePlayerReadyStatus);
       };
     },
-    [game, id]
+    [setPlayerList]
+  );
+
+  useEffect (
+    () => {
+      socket.emit ('roomRefresh',{dataRoom});
+      socket.on ('roomRefresh', updatePlayerList);
+      return () => {
+        socket.off ('roomRefresh', updatePlayerList);
+      };
+    },
+    [ playerList,setMyPlayer, setPlayers, setRound,dataRoom]
   );
 
   return (

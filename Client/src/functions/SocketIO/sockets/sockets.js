@@ -5,16 +5,15 @@ const URL = "http://localhost:3001";
 
 export let socket = io(URL, { autoConnect: true });
 
-
-export const connectSocket = () => {
-  return new Promise((resolve) => {
-    socket.connect();
-    socket.on("connect", () => {
-      console.log("Conectado al servidor");
-      resolve(socket);
-    });
-  });
-};
+// export const connectSocket = () => {
+//   return new Promise((resolve) => {
+//     socket.connect();
+//     socket.on("connect", () => {
+//       console.log("Conectado al servidor");
+//       resolve(socket);
+//     });
+//   });
+// };
 
 export const disconnectServer = () => {
   socket.on("disconnectServer", () => {
@@ -40,6 +39,7 @@ export const CreateGameRoom = (
   selectedAvatar,
   infoUser
 ) => {
+
   return new Promise((res, rej) => {
     const responses = {};
 
@@ -71,7 +71,7 @@ export const CreateGameRoom = (
       userName,
       maxUsers,
       selectedAvatar,
-      email: infoUser.email,
+      email: infoUser.email?infoUser.email:"invitado",
     });
   });
 };
@@ -119,21 +119,14 @@ export const joinGameRoom = (
 
 export const disconnectRoom = (game, roomId) => {
   socket.emit("disconnectRoom", { game, roomId });
-
 };
 
-export const distribute = (round, setPlayers, players) => {
-  socket.emit("distribute", { round, players });
-
+export const distribute = (dataRoom,setPlayers) => {
+  socket.emit("distribute", dataRoom);
   socket.on("distribute", (data) => {
-    setPlayers((prevPlayers) =>
-      prevPlayers.map((player, index) => {
-        const playerIndex = index + 1;
-        return {
-          ...player,
-          cardPerson: data[`player${playerIndex}`] || [],
-        };
-      })
-    );
+    setPlayers(data.users);
   });
 };
+
+
+

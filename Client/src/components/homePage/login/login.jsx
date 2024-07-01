@@ -4,8 +4,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import Cookies from "js-cookie";
 import InstanceOfAxios from "../../../utils/intanceAxios";
 
-import { socketConnect } from "../../../functions/SocketIO/sockets/sockets";
-
 const Login = ({ isLogin, onClose, onLoginSuccess }) => {
   const [formData, setFormData] = useState({
     userName: "",
@@ -25,12 +23,12 @@ const Login = ({ isLogin, onClose, onLoginSuccess }) => {
     if (isLogin) {
       const data = { email: formData.email, password: formData.password };
       await InstanceOfAxios("/login", "POST", data).then((data) => {
+      
         Cookies.remove("cookieToken");
         document.cookie =
           encodeURIComponent("cookieToken") +
           "=" +
           encodeURIComponent(data.token);
-        initializeSocket(); // Conectar el socket después de iniciar sesión
         onLoginSuccess(); // Llama a esta función después de un inicio de sesión exitoso
       });
     } else if (!isLogin) {
@@ -43,10 +41,6 @@ const Login = ({ isLogin, onClose, onLoginSuccess }) => {
         onClose(); // Cerrar el modal después del registro
       });
     }
-  };
-
-  const initializeSocket = () => {
-    // socketConnect();
   };
 
   return (

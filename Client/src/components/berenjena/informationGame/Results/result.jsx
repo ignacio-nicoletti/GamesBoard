@@ -4,7 +4,6 @@ import { IoCloseCircleOutline } from "react-icons/io5";
 
 const Result = ({ setShowResult, results }) => {
   const players = results[0].players.map((player) => player.userName);
-
   return (
     <div className={styles.containResult}>
       <div className={styles.closeResult} onClick={() => setShowResult(false)}>
@@ -25,7 +24,7 @@ const Result = ({ setShowResult, results }) => {
           <tbody>
             {results.map((result, roundIndex) => (
               <tr key={roundIndex}>
-                <td>{result.numRounds}</td>
+                <td>{roundIndex+1}</td>
                 {result.players.map((player, playerIndex) => (
                   <React.Fragment key={playerIndex}>
                     <td className={styles.points}>{player.points}</td>

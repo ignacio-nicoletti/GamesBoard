@@ -20,6 +20,12 @@ export const register = async (req, res) => {
       password,
       userName,
       admission: currentDate,
+      experience: [
+        { game: "Berenjena", level: 1, xp: 0 }, // Valor inicial para experiencia
+        { game: "Poker", level: 1, xp: 0 },// Valor inicial para experiencia
+        { game: "HorseRace", level: 1, xp: 0 }, // Valor inicial para experiencia
+        { game: "Truco", level: 1, xp: 0 } // Valor inicial para experiencia
+      ]
     });
 
     const { token, expiresIn } = generateToken(player._id);
@@ -31,6 +37,7 @@ export const register = async (req, res) => {
     res.status(400).json(formatError(error.message));
   }
 };
+
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
@@ -50,10 +57,12 @@ export const login = async (req, res) => {
     if (!respuestaPassword) {
       return res.status(401).json({ error: "Contraseña incorrecta" });
     }
+  
     let dataToken = {
       id: player.id,
       userName: player.userName,
       email: player.email,
+      experience:player.experience
     };
     const { token, expiresIn } = generateToken(dataToken);
     generateRefreshToken(player.id, res);

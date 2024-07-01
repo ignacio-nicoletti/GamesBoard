@@ -24,31 +24,33 @@ import logoBerenjena from "../../../assets/berenjena/home/logoBerenjena.png";
 import InstanceOfAxios from "../../../utils/intanceAxios";
 
 const JoinRoom = () => {
-  const [rooms, setRooms] = useState([]);
-  const [filteredRooms, setFilteredRooms] = useState([]);
-  const [game, setGame] = useState("Berenjena");
-  const [userName, setUserName] = useState("");
-  const [roomId, setRoomId] = useState("");
-  const [tempMaxUsers, setTempMaxUsers] = useState(""); // temp max o maxusers
-  const [maxUsers, setMaxUsers] = useState(6);
-  const [error, setError] = useState("");
-  const [selectedAvatar, setSelectedAvatar] = useState("avatar1");
-  const [showModal, setShowModal] = useState(true);
-  const [isFormValid, setIsFormValid] = useState(false);
-  const navigate = useNavigate();
-  const [timmerRooms, setTimmerRooms] = useState(5);
-  const [infoUser, setInfoUser] = useState({});
-  const token = GetDecodedCookie("cookieToken");
+  const [rooms, setRooms] = useState ([]);
+  const [filteredRooms, setFilteredRooms] = useState ([]);
+  const [userName, setUserName] = useState ('');
+  const [roomId, setRoomId] = useState ('');
+  const [tempMaxUsers, setTempMaxUsers] = useState (''); // temp max o maxusers
+  const [maxUsers, setMaxUsers] = useState (6);
+  const [error, setError] = useState ('');
+  const [selectedAvatar, setSelectedAvatar] = useState ('avatar1');
+  const [showModal, setShowModal] = useState (true);
+  const [isFormValid, setIsFormValid] = useState (false);
+  const navigate = useNavigate ();
+  const [timmerRooms, setTimmerRooms] = useState (5);
+  const [infoUser, setInfoUser] = useState ({});
+  const [game] = useState ('Berenjena');
+  const token = GetDecodedCookie ('cookieToken');
 
   useEffect(() => {
     const fetchPlayer = async () => {
       try {
-        const data = DecodedToken(token);
-        const response = await InstanceOfAxios(
+        const data = DecodedToken (token);
+        const response = await InstanceOfAxios (
           `/user/${infoUser.id || data.id}`,
-          "GET"
+          'GET'
         );
-        setUserName(response.player.userName);
+        if (response && response.player) {
+          setUserName (response.player.userName);
+        }
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -70,8 +72,8 @@ const JoinRoom = () => {
           selectedAvatar,
           infoUser
         );
-
-        res && navigate(`/berenjena/multiplayer/${res.roomCreated.roomId}`);
+        res &&
+          navigate (`/berenjena/multiplayer/${res.roomCreated.room.roomId}`);
       }
     } catch (error) {
       console.log(error);
@@ -89,9 +91,10 @@ const JoinRoom = () => {
 
   const handlerJoinRoom = async (roomId) => {
     try {
-      setRoomId(roomId);
-      if (roomId !== "" && userName !== "") {
-        const res = await joinGameRoom(
+      setRoomId (roomId);
+      if (roomId !== '' && userName !== '') {
+        let res;
+        res = await joinGameRoom (
           game,
           roomId,
           userName,
@@ -99,7 +102,14 @@ const JoinRoom = () => {
           infoUser
         );
 
-        res && navigate(`/berenjena/multiplayer/${res.roomJoined.roomId}`);
+        socket.on ('room_joined', data => {
+          navigate (`/berenjena/multiplayer/${data.roomId}`);
+        });
+        if (res) {
+          navigate (
+            `/berenjena/multiplayer/${res.roomJoined.roomId || res.roomId}`
+          );
+        }
       }
     } catch (error) {
       console.error(error);
@@ -117,9 +127,9 @@ const JoinRoom = () => {
 
   const initializeRooms = async () => {
     try {
-      const roomsInfo = await getAllRoomsInfo(game);
-      setRooms(roomsInfo);
-      setFilteredRooms(roomsInfo);
+      const roomsInfo = await getAllRoomsInfo ('Berenjena');
+      setRooms (roomsInfo);
+      setFilteredRooms (roomsInfo);
     } catch (error) {
       console.error("Error initializing rooms:", error);
       Swal.fire({
@@ -135,13 +145,13 @@ const JoinRoom = () => {
   };
 
   // me setea el nombre si inicio sesion
-
-  useEffect(() => {
+  useEffect (() => {
     if (token) {
-      const data = DecodedToken(token);
-      setUserName(data.userName);
-      setSelectedAvatar(data.selectedAvatar || "avatar1"); // Ajuste aquí para obtener el avatar del token
-      setInfoUser(data);
+      const data = DecodedToken (token);
+      setUserName (data.userName);
+      setSelectedAvatar (data.selectedAvatar || 'avatar1'); // Ajuste aquí para obtener el avatar del token
+      setInfoUser (data);
+      console.log(data);
       if (data.userName) {
         setShowModal(false);
       }
@@ -149,17 +159,21 @@ const JoinRoom = () => {
   }, []);
 
   // actualiza las rooms cada 5s
-  useEffect(() => {
-    initializeRooms();
-    const time = setInterval(() => {
-      setTimmerRooms((prevTime) => prevTime - 1);
-    }, 1000);
-    if (timmerRooms === 0) {
-      initializeRooms();
-      setTimmerRooms(5);
-    }
-    return () => clearInterval(time);
-  }, [timmerRooms]);
+  useEffect (
+    () => {
+      initializeRooms ();
+      const time = setInterval (() => {
+        setTimmerRooms (prevTime => prevTime - 1);
+      }, 1000);
+      if (timmerRooms === 0) {
+        initializeRooms ();
+        setTimmerRooms (5);
+      }
+
+      return () => clearInterval (time);
+    },
+    [timmerRooms]
+  );
 
   useEffect(() => {
     const handleRoomCreationError = (data) => {
@@ -317,6 +331,17 @@ const JoinRoom = () => {
                 <EditIcon />
               </button>
             </div>
+              {infoUser.experience&&
+            <div>
+              <p>
+                nivel {infoUser.experience[0].level}
+              </p>
+              <p>
+                xp {infoUser.experience[0].xp+"/"+(Number(infoUser.experience[0].xp)+Number(infoUser.experience[0].xpRemainingForNextLevel))}
+              </p>
+            </div>
+          }
+
             <div className={style.DivInputRoom}>
               <span>Create a new room: </span>
               <input

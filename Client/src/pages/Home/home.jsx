@@ -5,9 +5,11 @@ import BerenjenaImg from "../../assets/homeFirst/berenjenaImg.png";
 import DefaultAvatar from "../../assets/berenjena/jugadores/DefaultAvatar.png";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useState, useEffect } from "react";
-import Login from "../../components/berenjena/login/login";
 import { GetDecodedCookie } from "../../utils/DecodedCookie";
 import { DecodedToken } from "../../utils/DecodedToken";
+import { disconnectServer } from "../../functions/SocketIO/sockets/sockets";
+import Login from "../../components/homePage/login/login";
+import Cookies from "js-cookie";
 
 const Home = () => {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -28,8 +30,7 @@ const Home = () => {
   };
 
   const handleLogout = () => {
-    document.cookie =
-      "cookieToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    Cookies.remove("cookieToken");
     setUserInfo(null);
     window.location.href = "/";
   };
@@ -38,6 +39,10 @@ const Home = () => {
     setModalOpen(false);
     window.location.reload();
   };
+  useEffect(()=>{
+    return ()=>{
+      disconnectServer()}
+  },[])
 
   return (
     <div className={styles.contain}>
