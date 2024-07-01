@@ -744,7 +744,7 @@ export default function BerenjenaSockets(io) {
     });
 
     socket.emit("eliminatePlayer", (dataRoom) => {
-      const { game, roomId, round } = dataRoom;
+      const { game, roomId } = dataRoom;
 
       // Verifica si existen las salas y los jugadores
       if (!permanentRooms[game] || !permanentRooms[game][roomId]) {
@@ -819,8 +819,7 @@ export default function BerenjenaSockets(io) {
   });
 }
 
-//  enviar quien gano en la ultima ronda
-//  revisar la experiencia
+
 //  revisar tema de desconexion si se desconecta antes de tirar que pasa ?
 //  si son 2 gana quien queda si son 3 o mas acomodar a los users y eliminar el user
-//  results
+
