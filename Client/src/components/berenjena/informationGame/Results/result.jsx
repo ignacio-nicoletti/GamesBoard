@@ -44,14 +44,14 @@ const Result = ({setShowResult, results}) => {
                 ))}
               </tr>
             ))}
-            <tr>
+            {/* <tr>
               <td>Total</td>
               {results[0].players.map ((player, playerIndex) => (
                 <React.Fragment key={playerIndex}>
                   <td colSpan="2">{player.total}</td>
                 </React.Fragment>
               ))}
-            </tr>
+            </tr> */}
           </tbody>
         </table>
       </div>
