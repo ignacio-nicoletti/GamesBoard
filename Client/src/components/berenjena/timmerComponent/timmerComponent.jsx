@@ -10,8 +10,8 @@ const TimmerComponent = ({setRound, round, players, results, dataRoom}) => {
 
   useEffect (
     () => {
-      if (round.numRounds && round.typeRound === 'waiting') {
-        let playersChecks = results[round.numRounds - 2]?.players.filter (
+      if (round.numRounds && round.typeRound === 'waiting'&&results&&results.length>0) {
+        let playersChecks = results[round?.numRounds - 2]?.players?.filter (
           player => player.cumplio === true
         );
         if (playersChecks) {
@@ -30,7 +30,7 @@ const TimmerComponent = ({setRound, round, players, results, dataRoom}) => {
       if (round.typeRound === 'waiting') {
         initialTime = 5;
       } else if (round.typeRound === 'waitingPlayers') {
-        initialTime = 60;
+        initialTime = 10;
       }
       settimmer (initialTime);
 
@@ -62,7 +62,7 @@ const TimmerComponent = ({setRound, round, players, results, dataRoom}) => {
 
       return () => clearInterval (time);
     },
-    [round.typeRound, players, setRound, dataRoom]
+    [round.typeRound, players]
   );
 
   return (

@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import style from './berenjena.module.css';
 import Jugadores from '../../../components/berenjena/jugadores/jugadores';
 import Loader from '../../../components/berenjena/loader/loader';
@@ -21,7 +21,7 @@ import WinnerComponent
 const GameBerenjena = () => {
   const [loader, setLoader] = useState (false);
   const [showResult, setShowResult] = useState (false);
-  const [myPlayer, setMyPlayer] = useState ({});
+  const [myPlayer, setMyPlayer] = useState ({}); //mi position
 
   const [players, setPlayers] = useState ([]);
   const [round, setRound] = useState ({});
@@ -30,6 +30,8 @@ const GameBerenjena = () => {
   const [winner, setWinner] = useState ({}); // base del resultado xronda
 
   const [timmerPlayer, setTimmerPlayer] = useState (30);
+
+  const [reorderedPlayers, setReorderedPlayers] = useState ([]);
 
   //Start-game
   useEffect (() => {
@@ -96,41 +98,57 @@ const GameBerenjena = () => {
   //Fin del juego
 
   useEffect (() => {
-    socket.on ('roomRefresh', data => {
+    const handleRoomRefresh = data => {
       setRound (data.round);
       setPlayers (data.users);
       setResults (data.results);
-    });
+    };
+
+    socket.on ('roomRefresh', handleRoomRefresh);
+    return () => {
+      socket.off ('roomRefresh', handleRoomRefresh);
+    };
   }, []);
 
-  const renderPlayers = () => {
-    const positions = [
-      'jugador2',
-      'jugador3',
-      'jugador4',
-      'jugador5',
-      'jugador6',
-    ];
-    const filteredPlayers = players.filter (
-      (_, index) => index !== myPlayer.position - 1
-    );
-    const reorderedPlayers = [
-      ...filteredPlayers.slice (myPlayer.position - 1),
-      ...filteredPlayers.slice (0, myPlayer.position - 1),
-    ];
+  useEffect (
+    () => {
+      // const updatedPlayer = players.filter (
+      //   el => el.userName === myPlayer.userName
+      // );
+      // if (updatedPlayer) {
+      //   setMyPlayer ({...myPlayer, position: updatedPlayer.position});
+      // }
 
-    return reorderedPlayers
-      .slice (0, positions.length)
-      .map ((player, index) => (
-        <div className={style[positions[index]]} key={index}>
-          <Jugadores
-            player={player}
-            round={round}
-            timmerPlayer={timmerPlayer}
-          />
-        </div>
-      ));
-  };
+
+      // buscar forma de actualizar la position
+    },
+    [setPlayers]
+  );
+
+  console.log (myPlayer);
+  useEffect (
+    () => {
+      const positions = [
+        'jugador2',
+        'jugador3',
+        'jugador4',
+        'jugador5',
+        'jugador6',
+      ];
+
+      const filteredPlayers = players.filter (
+        player => player.userName !== myPlayer.userName
+      );
+
+      const reordered = [
+        ...filteredPlayers.slice (myPlayer.position - 1),
+        ...filteredPlayers.slice (0, myPlayer.position - 1),
+      ];
+
+      setReorderedPlayers (reordered.slice (0, positions.length));
+    },
+    [players, myPlayer.position]
+  );
 
   return (
     <div className={style.contain}>
@@ -144,7 +162,21 @@ const GameBerenjena = () => {
             setDataRoom={setDataRoom}
             dataRoom={dataRoom}
           />
-        : <div className={style.tableroJugadores}>{renderPlayers ()}</div>}
+        : <div className={style.tableroJugadores}>
+            {reorderedPlayers &&
+              reorderedPlayers.map ((player, index) => (
+                <div
+                  className={style[`jugador${index + 2}`]}
+                  key={player.userName}
+                >
+                  <Jugadores
+                    player={player}
+                    round={round}
+                    timmerPlayer={timmerPlayer}
+                  />
+                </div>
+              ))}
+          </div>}
 
       {dataRoom &&
         dataRoom.gameStarted &&
@@ -202,7 +234,7 @@ const GameBerenjena = () => {
       </div>
 
       {round.typeRound === 'EndGame' &&
-        <WinnerComponent winner={winner} room={dataRoom}  players={players} />}
+        <WinnerComponent winner={winner} room={dataRoom} players={players} />}
 
       <ButtonExitRoom dataRoom={dataRoom} />
 

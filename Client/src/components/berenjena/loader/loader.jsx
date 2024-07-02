@@ -25,7 +25,7 @@ const Loader = ({setPlayers, setRound, myPlayer, setMyPlayer,setLoader,setDataRo
         player => player.idSocket === socket.id
       );
       if (myUpdatedInfo) {
-        setMyPlayer ({...myPlayer, position:myUpdatedInfo.position});
+        setMyPlayer ({...myPlayer,position:myUpdatedInfo.position,userName:myUpdatedInfo.userName});
       }
       if(data&&data?.room?.gameStarted===true){
         setLoader(false)

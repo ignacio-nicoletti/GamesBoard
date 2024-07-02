@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import style from "./dataPlayer.module.css";
 import avatar1 from "../../../../assets/berenjena/jugadores/avatar1.png";
 import avatar2 from "../../../../assets/berenjena/jugadores/avatar2.png";
@@ -8,8 +8,14 @@ import avatar5 from "../../../../assets/berenjena/jugadores/avatar5.png";
 import avatar6 from "../../../../assets/berenjena/jugadores/avatar6.png";
 
 const DataPlayer = ({ players,myPosition,timmerPlayer,round }) => {
+const[player,setPlayer]=useState({})
+useEffect(()=>{
+  const playerPos = players[myPosition - 1];
+if(playerPos){
 
-  const player = players[myPosition - 1];
+  setPlayer(playerPos)
+}
+},[players,myPosition])
 
   const avatarMap = {
     avatar1: avatar1,
@@ -21,7 +27,6 @@ const DataPlayer = ({ players,myPosition,timmerPlayer,round }) => {
   };
 
   let playerAvatar = avatarMap[player?.avatar];
-
   // Determinar si se cumplió la condición
   const isFulfilled = player?.cumplio;
 

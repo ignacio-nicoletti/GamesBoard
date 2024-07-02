@@ -14,7 +14,6 @@ function createRooms(numberOfRooms, gameName) {
     rooms[i] = {
       users: [],
       round: {},
-      disconnectedUsers: [],
       gameStarted: false,
       maxUsers: 6,
       roomId: i,
@@ -29,7 +28,6 @@ const handleEmptyRoom = (room, game, roomId) => {
   if (roomId <= 10) {
     // Si la sala es una de las primeras 10 creadas (permanente), se vacía y resetea
     room.gameStarted = false;
-    room.disconnectedUsers = [];
     room.users = [];
     room.round = {};
     room.results = [];
@@ -87,7 +85,6 @@ export default function BerenjenaSockets(io) {
           maxUsers,
           roomId: roomId,
           game: game,
-          disconnectedUsers: [],
           users: [],
           round: {},
           results: [],
@@ -655,7 +652,7 @@ export default function BerenjenaSockets(io) {
               })),
             };
           }
-        
+
           // Actualizar Results de la ronda
 
           room.users.forEach((user) => {
@@ -701,8 +698,6 @@ export default function BerenjenaSockets(io) {
             });
             return; // Finaliza el juego
           }
-
-          
         }
         // Cambio de ronda
 
@@ -743,7 +738,7 @@ export default function BerenjenaSockets(io) {
       });
     });
 
-    socket.emit("eliminatePlayer", (dataRoom) => {
+    socket.on("eliminatePlayer", (dataRoom) => {
       const { game, roomId } = dataRoom;
 
       // Verifica si existen las salas y los jugadores
@@ -763,14 +758,18 @@ export default function BerenjenaSockets(io) {
       });
 
       console.log(`Jugadores desconectados eliminados de la sala ${roomId}.`);
-
-      // Emite un evento para actualizar la sala
+      room.round.typeRound = "waiting";
+      room.round.users = room.users.length;
+      dataRoom.round = room.round;
+      dataRoom.users = room.users;
+      
       io.to(`${game}-${roomId}`).emit("roomRefresh", {
         users: room.users,
         round: room.round,
         room: room,
       });
     });
+   
 
     // Manejo de desconexión del servidor
     socket.on("disconnect", () => {
@@ -819,7 +818,5 @@ export default function BerenjenaSockets(io) {
   });
 }
 
-
 //  revisar tema de desconexion si se desconecta antes de tirar que pasa ?
 //  si son 2 gana quien queda si son 3 o mas acomodar a los users y eliminar el user
-
