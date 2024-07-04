@@ -31,7 +31,7 @@ const GameBerenjena = () => {
 
   const [timmerPlayer, setTimmerPlayer] = useState (30);
 
-  const [reorderedPlayers, setReorderedPlayers] = useState ([]);
+  const [reorderedPlayers, setReorderedPlayers] = useState ([]); //distribucion de los jugadores
 
   //Start-game && Finish-Game
   useEffect (() => {
@@ -99,7 +99,6 @@ const GameBerenjena = () => {
       setPlayers (data.users);
       setResults (data.results);
     };
-
     socket.on ('roomRefresh', handleRoomRefresh);
     return () => {
       socket.off ('roomRefresh', handleRoomRefresh);
@@ -242,3 +241,10 @@ const GameBerenjena = () => {
   );
 };
 export default GameBerenjena;
+
+// Estilo wiinnerComponent
+// Estilo TimmerComponent line:79
+// Si se desconecta antes de apostar y que pasa cuando vuelve a conectarse
+// JoinRoom chequear filters
+// Rules Berenejena
+// Chequeo de name en la sala, no puede haber 2 user con mismo nombre

@@ -76,10 +76,10 @@ const TimmerComponent = ({setRound, round, players, results, dataRoom}) => {
                   <span className={styles.timer}>{timmer}</span>
                 </h3>
               : <div>
+                <p>Cumplieron:</p>
                   {ListCheck.length > 0 &&
                     ListCheck.map (player => (
                       <div>
-                        <p>Cumplieron:</p>
 
                         <p key={player.userName}>{player.userName}</p>
 
