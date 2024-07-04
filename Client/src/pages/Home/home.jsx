@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import styles from "./home.module.css";
 import PokerImg from "../../assets/homeFirst/pokerImg.png";
 import BerenjenaImg from "../../assets/homeFirst/berenjenaImg.png";
+import Horseimg from "../../assets/homeFirst/HorseCards.png";
 import DefaultAvatar from "../../assets/berenjena/jugadores/DefaultAvatar.png";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useState, useEffect } from "react";
@@ -93,6 +94,12 @@ const Home = () => {
             <div className={styles.gameCard}>
               <p>Poker</p>
               <img src={PokerImg} alt="Poker game" />
+            </div>
+          </Link>
+          <Link to="/horserace" className={styles.link}>
+            <div className={styles.gameCard}>
+              <p>Horserace</p>
+              <img src={Horseimg} alt="Horse Race" />
             </div>
           </Link>
         </div>
