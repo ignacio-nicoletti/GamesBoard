@@ -244,8 +244,8 @@ export default GameBerenjena;
 
 // Estilo wiinnerComponent
 // Estilo TimmerComponent line:79
+
 // Si se desconecta antes de apostar y que pasa cuando vuelve a conectarse
 // JoinRoom chequear filters
 // Rules Berenejena
-// Chequeo de name en la sala, no puede haber 2 user con mismo nombre y register no poder usar dos veces el mismo name
 

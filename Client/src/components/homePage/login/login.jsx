@@ -10,6 +10,7 @@ const Login = ({ isLogin, onClose, onLoginSuccess }) => {
     email: "",
     password: "",
   });
+  const [error, setError] = useState(""); // Estado para almacenar el mensaje de error
 
   const handleChange = (e) => {
     setFormData({
@@ -20,26 +21,34 @@ const Login = ({ isLogin, onClose, onLoginSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(""); // Reiniciar el mensaje de error al enviar el formulario
     if (isLogin) {
       const data = { email: formData.email, password: formData.password };
-      await InstanceOfAxios("/login", "POST", data).then((data) => {
-      
+      try {
+        const response = await InstanceOfAxios("/login", "POST", data);
         Cookies.remove("cookieToken");
         document.cookie =
           encodeURIComponent("cookieToken") +
           "=" +
-          encodeURIComponent(data.token);
+          encodeURIComponent(response.token); // response.data.token
         onLoginSuccess(); // Llama a esta función después de un inicio de sesión exitoso
-      });
-    } else if (!isLogin) {
-      await InstanceOfAxios("/register", "POST", formData).then((data) => {
+      } catch (err) {
+        setError(err.response?.data?.message || "Error en el inicio de sesión");
+      }
+    } else {
+      try {
+        const response = await InstanceOfAxios("/register", "POST", formData);
+        console.log(response);
         Cookies.remove("cookieToken");
         document.cookie =
           encodeURIComponent("cookieToken") +
           "=" +
-          encodeURIComponent(data.token);
+          encodeURIComponent(response.token); // response.data.token
         onClose(); // Cerrar el modal después del registro
-      });
+      } catch (error) {
+        console.log(error.message);
+        setError(error.response?.data?.message || "Error en el registro");
+      }
     }
   };
 
@@ -50,6 +59,7 @@ const Login = ({ isLogin, onClose, onLoginSuccess }) => {
           <CloseIcon />
         </button>
         <h2>{isLogin ? "Iniciar Sesión" : "Registrarse"}</h2>
+        {error && <div className={styles.error}>{error}</div>} {/* Mostrar el mensaje de error */}
         <form onSubmit={handleSubmit}>
           {!isLogin && (
             <input
