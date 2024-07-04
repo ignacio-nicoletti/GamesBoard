@@ -114,7 +114,7 @@ export default function BerenjenaSockets(io) {
           myturnA: false, // boolean // turno apuesta
           myturnR: false, // boolean // turno ronda
           cumplio: false, // boolean // cumplio su apuesta
-          points: 0, // puntos
+          points: 95, // puntos
         };
 
         const round = {
@@ -762,14 +762,14 @@ export default function BerenjenaSockets(io) {
       room.round.users = room.users.length;
       dataRoom.round = room.round;
       dataRoom.users = room.users;
-      
+
       io.to(`${game}-${roomId}`).emit("roomRefresh", {
         users: room.users,
         round: room.round,
         room: room,
       });
-    });
    
+    });
 
     // Manejo de desconexión del servidor
     socket.on("disconnect", () => {

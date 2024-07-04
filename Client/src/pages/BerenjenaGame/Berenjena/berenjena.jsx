@@ -33,7 +33,7 @@ const GameBerenjena = () => {
 
   const [reorderedPlayers, setReorderedPlayers] = useState ([]);
 
-  //Start-game
+  //Start-game && Finish-Game
   useEffect (() => {
     if (!dataRoom.gameStarted) {
       setLoader (true);
@@ -47,6 +47,13 @@ const GameBerenjena = () => {
       setLoader (false);
     };
     socket.on ('start_game', handleStartGame);
+
+    socket.on ('GameFinish', data => {
+      setRound (data.round);
+      setPlayers (data.players);
+      setResults (data.results);
+      setWinner (data.winner);
+    });
     return () => {
       socket.off ('start_game', handleStartGame);
     };
@@ -86,17 +93,6 @@ const GameBerenjena = () => {
   );
   //Timmer para tirar u apostar
 
-  //Fin del juego
-  useEffect (() => {
-    socket.on ('GameFinish', data => {
-      setRound (data.round);
-      setPlayers (data.players);
-      setResults (data.results);
-      setWinner (data.winner);
-    });
-  }, []);
-  //Fin del juego
-
   useEffect (() => {
     const handleRoomRefresh = data => {
       setRound (data.round);
@@ -110,22 +106,25 @@ const GameBerenjena = () => {
     };
   }, []);
 
+  //Update cuando se elimina un jugador
   useEffect (
     () => {
-      // const updatedPlayer = players.filter (
-      //   el => el.userName === myPlayer.userName
-      // );
-      // if (updatedPlayer) {
-      //   setMyPlayer ({...myPlayer, position: updatedPlayer.position});
-      // }
-
-
-      // buscar forma de actualizar la position
+      if (players.length > 0) {
+        const updatedPlayer = players.find (
+          el => el.userName === myPlayer.userName
+        );
+        if (updatedPlayer) {
+          setMyPlayer (prevMyPlayer => ({
+            ...prevMyPlayer,
+            position: updatedPlayer.position,
+          }));
+        }
+      }
     },
-    [setPlayers]
+    [players.length]
   );
+  //Update cuando se elimina un jugador
 
-  console.log (myPlayer);
   useEffect (
     () => {
       const positions = [
