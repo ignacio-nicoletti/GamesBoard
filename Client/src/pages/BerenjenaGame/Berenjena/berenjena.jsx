@@ -246,6 +246,5 @@ export default GameBerenjena;
 // Estilo TimmerComponent line:79
 
 // Si se desconecta antes de apostar y que pasa cuando vuelve a conectarse
-// JoinRoom chequear filters
 // Rules Berenejena
 

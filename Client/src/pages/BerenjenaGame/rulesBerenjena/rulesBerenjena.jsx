@@ -10,8 +10,8 @@ const RulesOfBerenjena = () => {
         </div>
 
         <p>
-          The game consists of betting a certain number of cards according to
-          the number of deals and fulfilling that bet.
+        The game consists of betting a certain number of cards according to
+          the number of offers and being able to fulfill said bet.
         </p>
         <p style={{ textDecoration: "underline" }}>How do I win?</p>
         <p>
@@ -19,7 +19,7 @@ const RulesOfBerenjena = () => {
           <span>Obligated</span> starts.
         </p>
         <p>
-          The value of the cards, from highest to lowest, is: 1, 12, 11... 3, 2.
+          The value of the cards, from highest to lowest, is: 12, 11... 2, 1.
         </p>
         <p>
           If your opponent to the left plays a card (e.g., a 5), you must play a

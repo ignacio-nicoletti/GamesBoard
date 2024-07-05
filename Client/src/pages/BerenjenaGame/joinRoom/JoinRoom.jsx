@@ -22,6 +22,7 @@ import avatar6 from "../../../assets/berenjena/jugadores/avatar6.png";
 import imgRoom from "../../../assets/berenjena/jugadores/imgRoom.png";
 import logoBerenjena from "../../../assets/berenjena/home/logoBerenjena.png";
 import InstanceOfAxios from "../../../utils/intanceAxios";
+import { FadeLoader } from "react-spinners";
 
 const JoinRoom = () => {
   const [rooms, setRooms] = useState ([]);
@@ -129,7 +130,9 @@ const JoinRoom = () => {
     try {
       const roomsInfo = await getAllRoomsInfo ('Berenjena');
       setRooms (roomsInfo);
-      setFilteredRooms (roomsInfo);
+
+        setFilteredRooms (roomsInfo);
+       
     } catch (error) {
       console.error("Error initializing rooms:", error);
       Swal.fire({
@@ -144,6 +147,25 @@ const JoinRoom = () => {
     }
   };
 
+ // actualiza las rooms cada 5s
+ useEffect (
+  () => {
+      // initializeRooms ();
+      const time = setInterval (() => {
+      setTimmerRooms (prevTime => prevTime - 1);
+    }, 1000);
+    if (timmerRooms === 0) {
+
+       initializeRooms ();
+      setTimmerRooms (5);
+    }
+    
+    return () => clearInterval (time);
+  
+  },
+  [timmerRooms]
+);
+
   // me setea el nombre si inicio sesion
   useEffect (() => {
     if (token) {
@@ -157,22 +179,7 @@ const JoinRoom = () => {
     }
   }, []);
 
-  // actualiza las rooms cada 5s
-  useEffect (
-    () => {
-      initializeRooms ();
-      const time = setInterval (() => {
-        setTimmerRooms (prevTime => prevTime - 1);
-      }, 1000);
-      if (timmerRooms === 0) {
-        initializeRooms ();
-        setTimmerRooms (5);
-      }
-
-      return () => clearInterval (time);
-    },
-    [timmerRooms]
-  );
+ 
 
   useEffect(() => {
     const handleRoomCreationError = (data) => {
@@ -226,7 +233,6 @@ const JoinRoom = () => {
           selectedAvatar,
         }).then((data) => setUserName(data.player.userName));
       }
-      initializeRooms();
     } else {
       Swal.fire({
         title: "Error!",
@@ -336,8 +342,12 @@ const JoinRoom = () => {
                 nivel {infoUser.experience[0].level}
               </p>
               <p>
-                xp {infoUser.experience[0].xp+"/"+(infoUser.experience[0].xp+infoUser.experience[0].xpRemainingForNextLevel)}
-              </p>
+  {infoUser.experience &&
+    `xp ${infoUser.experience[0].xp}/${
+      infoUser.experience[0].xp +
+      infoUser.experience[0].xpRemainingForNextLevel
+    }`}
+</p>
             </div>
           }
 
@@ -394,7 +404,20 @@ const JoinRoom = () => {
               </div>
             </div>
             <div className={style.roomsContainer}>
-              {filteredRooms.map((el) => (
+
+              {filteredRooms.length==0?
+             <div className={style.loaderContainer}>
+             <FadeLoader
+               color="#ff914d"
+               height={23}
+               width={5}
+               aria-label="Loading Spinner"
+               data-testid="loader"
+             />
+             <p>Searching rooms...</p>
+           </div>
+              :
+              filteredRooms.map((el) => (
                 <div key={el.roomId} className={style.DivRoom}>
                   <div className={style.textRoom}>
                     <p>Room {el.roomId}</p>

@@ -8,7 +8,12 @@ export const register = async (req, res) => {
   try {
     let player = await Player.findOne({ email });
     if (player) {
-      throw new Error("Email ya registrado");
+      return res.status(400).json({ message: "Email ya registrado" });
+    }
+
+    player = await Player.findOne({ userName });
+    if (player) {
+      return res.status(400).json({ message: "Nombre de usuario ya registrado" });
     }
 
     let currentDate = new Date();
@@ -22,21 +27,22 @@ export const register = async (req, res) => {
       admission: currentDate,
       experience: [
         { game: "Berenjena", level: 1, xp: 0 }, // Valor inicial para experiencia
-        { game: "Poker", level: 1, xp: 0 },// Valor inicial para experiencia
+        { game: "Poker", level: 1, xp: 0 }, // Valor inicial para experiencia
         { game: "HorseRace", level: 1, xp: 0 }, // Valor inicial para experiencia
-        { game: "Truco", level: 1, xp: 0 } // Valor inicial para experiencia
-      ]
+        { game: "Truco", level: 1, xp: 0 }, // Valor inicial para experiencia
+      ],
     });
 
     const { token, expiresIn } = generateToken(player._id);
 
     await player.save();
-    // sendConfirmationEmail(token, email);
-    return res.status(200).json("usuario creado");
+    return res.status(200).json({ token, expiresIn });
   } catch (error) {
-    res.status(400).json(formatError(error.message));
+    return res.status(500).json({ message: "Error en el servidor" });
   }
 };
+
+
 
 
 export const login = async (req, res) => {

@@ -1,85 +1,97 @@
-import * as React from "react";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import Autocomplete from "@mui/material/Autocomplete";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import style from "./autocomplete.module.css";
-import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
+import * as React from 'react';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
+import style from './autocomplete.module.css';
+import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
 
-export default function AutocompleteExample({ roomsInfo, onFilter }) {
-  const [selectedRoom, setSelectedRoom] = React.useState("all");
-  const [selectedPlayer, setSelectedPlayer] = React.useState("");
-  const [roomNumber, setRoomNumber] = React.useState(null);
+export default function AutocompleteExample({roomsInfo, onFilter}) {
+  const [selectedRoom, setSelectedRoom] = React.useState ('all');
+  const [selectedPlayer, setSelectedPlayer] = React.useState ('');
+  const [roomNumber, setRoomNumber] = React.useState (null);
 
-  React.useEffect(() => {
-    filterRooms();
-  }, [selectedRoom, selectedPlayer, roomNumber]);
+  React.useEffect (
+    () => {
+      filterRooms ();
+    },
+    [selectedRoom, selectedPlayer, roomNumber]
+  );
 
-  const handleRoomChange = (event) => {
-    setSelectedRoom(event.target.value);
+  const handleRoomChange = event => {
+    setSelectedRoom (event.target.value);
   };
 
-  const handlePlayerChange = (event) => {
-    setSelectedPlayer(event.target.value);
+  const handlePlayerChange = event => {
+    setSelectedPlayer (event.target.value);
   };
 
   const handleRoomNumberChange = (event, newValue) => {
-    setRoomNumber(newValue);
+    setRoomNumber (newValue);
   };
 
   const filterRooms = () => {
     let filtered = roomsInfo;
 
-    if (selectedRoom !== "all") {
-      if (selectedRoom === "open") {
-        filtered = filtered.filter((room) => room.users.length < room.maxUser);
-      } else if (selectedRoom === "inProgress") {
-        filtered = filtered.filter((room) => room.users.length >= room.maxUser);
+    if (selectedRoom !== 'all') {
+      if (selectedRoom === 'open') {
+        filtered = filtered.filter (room => room.users.length < room.maxUser);
+      } else if (selectedRoom === 'inProgress') {
+        filtered = filtered.filter (room => room.users.length >= room.maxUser);
       }
     }
 
     if (selectedPlayer) {
-      filtered = filtered.filter(
-        (room) => room.users.length === Number(selectedPlayer)
+      filtered = filtered.filter (
+        room => room.users.length === Number (selectedPlayer)
       );
     }
 
-    if (roomNumber) {
-      filtered = filtered.filter((room) =>
-        room.roomId.toString().includes(roomNumber.value.toString())
+    if (roomNumber && roomNumber.value) {
+      filtered = filtered.filter (room =>
+        room.roomId.toString ().includes (roomNumber.value.toString ())
       );
     }
-
-    onFilter(filtered);
+    if (filtered) {
+      onFilter (filtered);
+    } else {
+      onFilter (roomsInfo);
+    }
   };
 
   const handleClearFilters = () => {
-    setSelectedRoom("all");
-    setSelectedPlayer("");
-    setRoomNumber("");
-    onFilter(roomsInfo);
+    setSelectedRoom ('all');
+    setSelectedPlayer ('');
+    setRoomNumber (null);
+    onFilter (roomsInfo);
   };
 
-  const roomOptions = roomsInfo.map((room) => ({
+  const roomOptions = roomsInfo.map (room => ({
     label: `Room ${room.roomId}`,
     value: room.roomId,
   }));
 
+  React.useEffect (
+    () => {
+      filterRooms ();
+    },
+    [selectedRoom, selectedPlayer, roomNumber]
+  );
+
   return (
     <div className={style.container}>
       <FormControl
-        sx={{ m: 1, minWidth: 120, backgroundColor: "white" }}
+        sx={{m: 1, minWidth: 120, backgroundColor: 'white'}}
         size="small"
       >
         <InputLabel
           id="room-select-label"
           sx={{
-            backgroundColor: "white",
-            paddingInline: "3px",
-            borderRadius: "3px",
+            backgroundColor: 'white',
+            paddingInline: '3px',
+            borderRadius: '3px',
           }}
         >
           Rooms
@@ -97,15 +109,15 @@ export default function AutocompleteExample({ roomsInfo, onFilter }) {
       </FormControl>
 
       <FormControl
-        sx={{ m: 1, minWidth: 120, backgroundColor: "white" }}
+        sx={{m: 1, minWidth: 120, backgroundColor: 'white'}}
         size="small"
       >
         <InputLabel
           id="player-select-label"
           sx={{
-            backgroundColor: "white",
-            paddingInline: "3px",
-            borderRadius: "3px",
+            backgroundColor: 'white',
+            paddingInline: '3px',
+            borderRadius: '3px',
           }}
         >
           Players
@@ -116,7 +128,7 @@ export default function AutocompleteExample({ roomsInfo, onFilter }) {
           value={selectedPlayer}
           onChange={handlePlayerChange}
         >
-          {[...Array(5)].map((_, index) => (
+          {[...Array (5)].map ((_, index) => (
             <MenuItem key={index} value={index + 2}>
               {index + 2}
             </MenuItem>
@@ -125,13 +137,13 @@ export default function AutocompleteExample({ roomsInfo, onFilter }) {
       </FormControl>
 
       <Autocomplete
-        sx={{ m: 1, minWidth: 150, backgroundColor: "white" }}
+        sx={{m: 1, minWidth: 150, backgroundColor: 'white'}}
         size="small"
         options={roomOptions}
         value={roomNumber}
         onChange={handleRoomNumberChange}
         freeSolo
-        renderInput={(params) => (
+        renderInput={params => (
           <TextField
             {...params}
             label="N° Room"
@@ -139,17 +151,19 @@ export default function AutocompleteExample({ roomsInfo, onFilter }) {
             size="small"
             InputLabelProps={{
               sx: {
-                backgroundColor: "white",
-                paddingInline: "3px",
-                borderRadius: "3px",
+                backgroundColor: 'white',
+                paddingInline: '3px',
+                borderRadius: '3px',
               },
             }}
           />
         )}
       />
       <button
-      className={style.clearFiltersBtn}
-       variant="outlined" onClick={handleClearFilters}>
+        className={style.clearFiltersBtn}
+        variant="outlined"
+        onClick={handleClearFilters}
+      >
         <FilterAltOffIcon />
       </button>
     </div>

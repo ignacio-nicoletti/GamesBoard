@@ -168,23 +168,24 @@ export default function BerenjenaSockets(io) {
           socket.emit("error", { error: "Invalid game" });
           return;
         }
-
+    
         if (!rooms[roomId]) {
           socket.emit("room_join_error", { error: "Room does not exist" });
           return;
         }
-
+    
         const room = rooms[roomId];
-
+    
         const userInRoom = room.users.find(
           (user) => user.userName === userName || user.email === email
         );
+    
         if (userInRoom) {
           if (!userInRoom.connect && room.gameStarted) {
             // Permitir reconexión si el juego ya ha comenzado y el usuario está en room.users
             userInRoom.idSocket = socket.id;
             userInRoom.connect = true;
-
+    
             console.log(
               `User ${userName} rejoined room ${roomId} in game ${game}`
             );
@@ -207,26 +208,34 @@ export default function BerenjenaSockets(io) {
           } else {
             // Usuario ya está en la sala y no puede volver a unirse mientras el juego esté en curso
             socket.emit("room_join_error", {
-              error: "User is already in the room or game has already started",
+              error: "User is already in the room or game has already started,change userName",
             });
           }
           return;
         }
-
+    
+        if (room.users.find(user => user.userName === userName)) {
+          // Verificar si el userName ya está en la sala
+          socket.emit("room_join_error", {
+            error: "UserName already exists in the room",
+          });
+          return;
+        }
+    
         const maxUsers = room.maxUsers || 6;
-
+    
         if (room.users.length >= maxUsers) {
           socket.emit("room_join_error", { error: "Room is full" });
           return;
         }
-
+    
         if (room.gameStarted) {
           socket.emit("room_join_error", {
             error: "Game already started, cannot join",
           });
           return;
         }
-
+    
         let idDB = "-";
         if (email !== undefined) {
           let player = await Player.findOne({ email: email });
@@ -234,7 +243,7 @@ export default function BerenjenaSockets(io) {
             idDB = player.id;
           }
         }
-
+    
         const user = {
           idSocket: socket.id,
           userName,
@@ -255,12 +264,12 @@ export default function BerenjenaSockets(io) {
           points: 0, // puntos
           idDB,
         };
-
+    
         room.users.push(user);
-
+    
         console.log(`User ${userName} joined room ${roomId} in game ${game}`);
         socket.join(`${game}-${roomId}`);
-
+    
         socket.emit("room_joined", {
           roomId,
           myInfo: {
@@ -270,13 +279,14 @@ export default function BerenjenaSockets(io) {
             position: user.position,
           },
         });
-
+    
         io.to(`${game}-${roomId}`).emit("player_list", {
           users: room.users,
           round: room.round,
         });
       }
     );
+    
 
     socket.on("disconnectRoom", (data) => {
       const { game, roomId } = data;

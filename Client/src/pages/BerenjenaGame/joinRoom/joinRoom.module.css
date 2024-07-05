@@ -24,6 +24,15 @@
   height: auto;
 }
 
+.loaderContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15rem;
+  font-size: 2rem;
+}
+
 @media (max-width: 815px) {
   .containRoom {
     flex-direction: column;
