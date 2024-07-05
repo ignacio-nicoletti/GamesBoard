@@ -244,6 +244,4 @@ export default GameBerenjena;
 
 // Estilo wiinnerComponent
 // Estilo TimmerComponent line:79
-
-// Si se desconecta antes de apostar y que pasa cuando vuelve a conectarse
-
+// Estilo avisar cuantas aposto cada jugador y cuanto va total

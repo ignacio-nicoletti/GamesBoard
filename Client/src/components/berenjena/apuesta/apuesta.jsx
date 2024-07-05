@@ -15,6 +15,7 @@ const Apuesta = ({
   setResults,
   dataRoom,
 }) => {
+  // Da opciones disponibles
   const getAvailableBets = () => {
     return [...Array(round.cardXRound + 1)]
       .map((_, index) => index)
@@ -25,7 +26,6 @@ const Apuesta = ({
       );
   };
 
-  // Inicializamos bet con una apuesta válida
   const [bet, setBet] = useState(null);
   const [timeLeft, setTimeLeft] = useState(30);
 
@@ -35,39 +35,30 @@ const Apuesta = ({
   }, [round.cardXRound, round.betTotal, myPosition]);
 
   const handleSubmit = () => {
-    const selectedBet = bet !== null ? bet : getAvailableBets()[0];
-    socket.emit('BetPlayer', { bet: selectedBet, myPosition, dataRoom });
+    socket.emit('BetPlayer', { bet: bet ?? getAvailableBets()[0], myPosition, dataRoom });
   };
 
   useEffect(() => {
     if (timeLeft === 0) {
-      setTimeLeft(30);
-      socket.emit('BetPlayer', {
-        bet: getAvailableBets()[0],
-        myPosition,
-        dataRoom,
-      });
+      handleSubmit();
     }
-  }, [timeLeft, myPosition, dataRoom]);
+  }, [timeLeft]);
 
   useEffect(() => {
-    socket.on('update_game_state', data => {
+    const handleGameStateUpdate = (data) => {
       setTimeLeft(30);
       setRound(data.round);
       setPlayers(data.players);
       setResults(data.results);
-      const bets = getAvailableBets();
-      setBet(bets[0]); // Asegura que la apuesta inicial es válida
-    });
+      setBet(getAvailableBets()[0]); // Asegura que la apuesta inicial es válida
+    };
+
+    socket.on('update_game_state', handleGameStateUpdate);
 
     return () => {
-      socket.off('update_game_state');
+      socket.off('update_game_state', handleGameStateUpdate);
     };
-  }, [setRound, setPlayers, setResults, round.cardXRound, round.betTotal, myPosition]);
-
-  const handleChange = event => {
-    setBet(event.target.value);
-  };
+  }, [round, setPlayers, setRound, setResults]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -75,7 +66,11 @@ const Apuesta = ({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [setPlayers]);
+  }, []);
+
+  const handleChange = event => {
+    setBet(event.target.value);
+  };
 
   const theme = createTheme({
     typography: {
@@ -132,7 +127,7 @@ const Apuesta = ({
                 <MenuItem value="" disabled>
                   <em>Elige tu apuesta</em>
                 </MenuItem>
-                {getAvailableBets().map((index) => (
+                {getAvailableBets().map(index => (
                   <MenuItem
                     key={index}
                     value={index}

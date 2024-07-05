@@ -287,7 +287,6 @@ export default function BerenjenaSockets(io) {
       }
     );
     
-
     socket.on("disconnectRoom", (data) => {
       const { game, roomId } = data;
       if (!game || !roomId) {
@@ -829,4 +828,4 @@ export default function BerenjenaSockets(io) {
 }
 
 //  revisar tema de desconexion si se desconecta antes de tirar que pasa ?
-//  si son 2 gana quien queda si son 3 o mas acomodar a los users y eliminar el user
+// Si se desconecta antes de apostar y que pasa cuando vuelve a conectarse
