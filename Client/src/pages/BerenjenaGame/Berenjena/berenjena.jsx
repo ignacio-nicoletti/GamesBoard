@@ -71,7 +71,7 @@ const GameBerenjena = () => {
   );
   //Repartir cards
 
-  //Timmer para tirar u apostar
+  //Timmer para tirar
   useEffect (
     () => {
       if (round.typeRound === 'ronda') {
@@ -242,6 +242,9 @@ const GameBerenjena = () => {
 };
 export default GameBerenjena;
 
-// Estilo wiinnerComponent
-// Estilo TimmerComponent line:79
-// Estilo avisar cuantas aposto cada jugador y cuanto va total
+// Estilo => WiinnerComponent
+// Estilo => TimmerComponent line:79
+// Estilo => Avisar cuantas aposto cada jugador y cuanto va total
+
+// Logica => Si el jugador se desconecta, logica para que tire igual.
+// Logica => Si se desconecta y vuelve obtener los mismos datos de la partida que todos.
