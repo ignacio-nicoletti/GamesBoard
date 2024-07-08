@@ -92,22 +92,17 @@ const JoinRoom = () => {
 
   const handlerJoinRoom = async (roomId) => {
     try {
-      setRoomId (roomId);
+      setRoomId(roomId);
       if (roomId !== '' && userName !== '') {
-        let res;
-        res = await joinGameRoom (
+        const res = await joinGameRoom(
           game,
           roomId,
           userName,
           selectedAvatar,
           infoUser
         );
-
-        socket.on ('room_joined', data => {
-          navigate (`/berenjena/multiplayer/${data.roomId}`);
-        });
         if (res) {
-          navigate (
+          navigate(
             `/berenjena/multiplayer/${res.roomJoined.roomId || res.roomId}`
           );
         }

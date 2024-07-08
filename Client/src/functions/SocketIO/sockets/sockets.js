@@ -39,17 +39,11 @@ export const CreateGameRoom = (
   selectedAvatar,
   infoUser
 ) => {
-
   return new Promise((res, rej) => {
     const responses = {};
 
     socket.once("room_created", (data) => {
       responses.roomCreated = data;
-      checkIfReadyToResolve();
-    });
-
-    socket.once("player_list", (data) => {
-      responses.playerList = data;
       checkIfReadyToResolve();
     });
 
@@ -59,7 +53,7 @@ export const CreateGameRoom = (
     });
 
     function checkIfReadyToResolve() {
-      if (Object.keys(responses).length === 2) {
+      if (Object.keys(responses).length === 1) {
         // Asegúrate de que esto coincida con el número de eventos esperados
         res(responses);
       }
@@ -71,7 +65,7 @@ export const CreateGameRoom = (
       userName,
       maxUsers,
       selectedAvatar,
-      email: infoUser.email?infoUser.email:"invitado",
+      email: infoUser.email ? infoUser.email : "invitado",
     });
   });
 };
@@ -86,26 +80,23 @@ export const joinGameRoom = (
   return new Promise((resolve, reject) => {
     const responses = {};
 
-    socket.once("room_joined", (data) => {
+    socket.on("room_joined", (data) => {
       responses.roomJoined = data;
       checkIfReadyToResolve();
     });
 
-    socket.once("player_list", (data) => {
-      responses.playerList = data;
-      checkIfReadyToResolve();
-    });
-
-    socket.once("room_join_error", ({ error }) => {
+    socket.on("room_join_error", ({ error }) => {
       reject(error);
     });
 
     function checkIfReadyToResolve() {
-      if (Object.keys(responses).length === 2) {
+      if (Object.keys(responses).length === 1) {
+        console.log(Object.keys(responses).length);
         // Asegúrate de que esto coincida con el número de eventos esperados
         resolve(responses);
       }
     }
+    console.log(Object.keys(responses).length);
 
     socket.emit("join_room", {
       game,
@@ -121,12 +112,9 @@ export const disconnectRoom = (game, roomId) => {
   socket.emit("disconnectRoom", { game, roomId });
 };
 
-export const distribute = (dataRoom,setPlayers) => {
+export const distribute = (dataRoom, setPlayers) => {
   socket.emit("distribute", dataRoom);
   socket.on("distribute", (data) => {
     setPlayers(data.users);
   });
 };
-
-
-

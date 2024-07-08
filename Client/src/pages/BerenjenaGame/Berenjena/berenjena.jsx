@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import style from './berenjena.module.css';
 import Jugadores from '../../../components/berenjena/jugadores/jugadores';
 import Loader from '../../../components/berenjena/loader/loader';
@@ -80,6 +80,30 @@ const GameBerenjena = () => {
           setTimmerPlayer (prevTime => {
             if (prevTime > 0) {
               return prevTime - 1;
+            } else if (prevTime === 0) {
+              //  si el tiempo termina y el jugador se desconecto entonces que tire una carta random
+              const playerFilter = players.filter (
+                el => el.position === round.turnJugadorR
+              );
+
+              if (
+                playerFilter.length > 0 &&
+                playerFilter[0].connect === false
+              ) {
+                const cardPerson = playerFilter[0].cardPerson;
+
+                if (cardPerson && cardPerson.length > 0) {
+                  const randomCard =
+                    cardPerson[Math.floor (Math.random () * cardPerson.length)];
+                  const {value, suit} = randomCard;
+                  socket.emit ('tirar_carta', {
+                    myPosition: playerFilter[0].position,
+                    value,
+                    suit,
+                    dataRoom,
+                  });
+                }
+              }
             } else {
               clearInterval (time);
               return 0;
@@ -124,6 +148,7 @@ const GameBerenjena = () => {
   );
   //Update cuando se elimina un jugador
 
+  //Actualiza las positions de los players
   useEffect (
     () => {
       const positions = [
@@ -147,6 +172,7 @@ const GameBerenjena = () => {
     },
     [players, myPlayer.position]
   );
+  //Actualiza las positions de los players
 
   return (
     <div className={style.contain}>
@@ -246,5 +272,4 @@ export default GameBerenjena;
 // Estilo => TimmerComponent line:79
 // Estilo => Avisar cuantas aposto cada jugador y cuanto va total
 
-// Logica => Si el jugador se desconecta, logica para que tire igual.
 // Logica => Si se desconecta y vuelve obtener los mismos datos de la partida que todos.
