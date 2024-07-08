@@ -461,6 +461,7 @@ export default function BerenjenaSockets(io) {
     });
 
     socket.on("BetPlayer", ({ bet, myPosition, dataRoom }) => {
+    console.log(bet);
       if (!dataRoom) return;
       const { game, roomId, round } = dataRoom;
       // Verificar si round y roomId son válidos
@@ -520,8 +521,7 @@ export default function BerenjenaSockets(io) {
       }
 
       // Determinar el siguiente jugador en turno
-      let nextTurn = (room.round.turnJugadorA % room.users.length) + 1;
-
+      
       room.round.cantQueApostaron += 1;
       room.round.betTotal = Number(room.round.betTotal) + Number(bet);
       room.round.typeRound = "Bet";
@@ -529,9 +529,9 @@ export default function BerenjenaSockets(io) {
         // Cambiar de ronda
         room.round.typeRound = "ronda";
         room.round.turnJugadorR = (room.round.obligado % room.users.length) + 1;
-        room.round.cantQueApostaron = 0;
       } else {
         // Continuar con la ronda de apuestas
+        let nextTurn = (room.round.turnJugadorA % room.users.length) + 1;
         room.round.turnJugadorA = nextTurn;
       }
 

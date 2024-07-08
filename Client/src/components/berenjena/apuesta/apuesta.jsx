@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import style from './apuesta.module.css';
-import { socket } from '../../../functions/SocketIO/sockets/sockets';
+import {socket} from '../../../functions/SocketIO/sockets/sockets';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import {createTheme, ThemeProvider} from '@mui/material/styles';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
@@ -15,64 +15,77 @@ const Apuesta = ({
   setResults,
   dataRoom,
 }) => {
-  const [bet, setBet] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(30);
-    
-  // Da opciones disponibles
-  const getAvailableBets = () => {
-    return [...Array(round.cardXRound + 1)]
-      .map((_, index) => index)
-      .filter(
-        index =>
-          !(myPosition === round.obligado &&
-            index + round.betTotal === round.cardXRound)
-      );
-  };
+    // Da opciones disponibles
+    const getAvailableBets = () => {
+      return [...Array (round.cardXRound + 1)]
+        .map ((_, index) => index)
+        .filter (
+          index =>
+            !(myPosition === round.obligado &&
+              index + round.betTotal === round.cardXRound)
+        );
+    };
+  const [bet, setBet] = useState ( getAvailableBets ()[0]);
+  const [timeLeft, setTimeLeft] = useState (30);
+
+
 
   const handleSubmit = () => {
-    socket.emit('BetPlayer', { bet: bet ?? getAvailableBets()[0], myPosition, dataRoom });
+    socket.emit ('BetPlayer', {
+      bet: bet,
+      myPosition,
+      dataRoom,
+    });
   };
-
-  useEffect(() => {
-    const bets = getAvailableBets();
-    setBet(bets[0]); // Asegura que la apuesta inicial es válida
-  }, [round.cardXRound, round.betTotal, myPosition]);
-
-  useEffect(() => {
-    if (timeLeft === 0) {
-      handleSubmit();
-    }
-  }, [timeLeft]);
-
-  useEffect(() => {
-    const handleGameStateUpdate = (data) => {
-      setTimeLeft(30);
-      setRound(data.round);
-      setPlayers(data.players);
-      setResults(data.results);
-      setBet(getAvailableBets()[0]); // Asegura que la apuesta inicial es válida
-    };
-
-    socket.on('update_game_state', handleGameStateUpdate);
-
-    return () => {
-      socket.off('update_game_state', handleGameStateUpdate);
-    };
-  }, [round]);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(prevTime => (prevTime > 0 ? prevTime - 1 : 0));
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
 
   const handleChange = event => {
-    setBet(event.target.value);
+    setBet (event.target.value);
   };
 
-  const theme = createTheme({
+
+  useEffect (
+    () => {
+      const handleGameStateUpdate = data => {
+        setRound (data.round);
+        setPlayers (data.players);
+        setResults (data.results);
+      };
+      
+      socket.on ('update_game_state', handleGameStateUpdate);
+      setBet (getAvailableBets ()[0]); // Asegura que la apuesta inicial es válida
+      setTimeLeft (30);
+      return () => {
+        socket.off ('update_game_state', handleGameStateUpdate);
+      };
+    },
+    [round]
+  );
+
+  useEffect (
+    () => {
+      const timer = setInterval (() => {
+        setTimeLeft (prevTime => {
+          if (prevTime > 0) {
+            return prevTime - 1;
+          } else {
+            socket.emit ('BetPlayer', {
+              bet:getAvailableBets ()[0],
+              myPosition,
+              dataRoom,
+            });
+            clearInterval (timer);
+            return 0;
+          }
+        });
+      }, 1000);
+
+      // Limpieza del intervalo cuando el componente se desmonta
+      return () => clearInterval (timer);
+    },
+    [timeLeft]
+  );
+
+  const theme = createTheme ({
     typography: {
       fontFamily: 'Bebas Neue',
     },
@@ -110,46 +123,44 @@ const Apuesta = ({
   return (
     <ThemeProvider theme={theme}>
       <div className={style.container}>
-        {round.turnJugadorA === myPosition ? (
-          <div className={style.betContainer}>
-            <div className={style.loader} />
-            <p className={style.pTime}>{timeLeft} seconds left</p>
-            <p>Jugador {round.turnJugadorA}</p>
-            <FormControl sx={{ m: 1, minWidth: 120 }}>
-              <InputLabel id="bet-select-label" />
-              <Select
-                labelId="bet-select-label"
-                value={bet}
-                onChange={handleChange}
-                displayEmpty
-                inputProps={{ 'aria-label': 'Elige tu apuesta' }}
-              >
-                <MenuItem value="" disabled>
-                  <em>Elige tu apuesta</em>
-                </MenuItem>
-                {getAvailableBets().map(index => (
-                  <MenuItem
-                    key={index}
-                    value={index}
-                    disabled={
-                      myPosition === round.obligado &&
-                      index + round.betTotal === round.cardXRound
-                    }
-                  >
-                    {index} cartas
+        {round.turnJugadorA === myPosition
+          ? <div className={style.betContainer}>
+              <div className={style.loader} />
+              <p className={style.pTime}>{timeLeft} seconds left</p>
+              <p>Jugador {round.turnJugadorA}</p>
+              <FormControl sx={{m: 1, minWidth: 120}}>
+                <InputLabel id="bet-select-label" />
+                <Select
+                  labelId="bet-select-label"
+                  value={bet}
+                  onChange={handleChange}
+                  displayEmpty
+                  inputProps={{'aria-label': 'Elige tu apuesta'}}
+                >
+                  <MenuItem value="" disabled>
+                    <em>Elige tu apuesta</em>
                   </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <button onClick={handleSubmit}>Apostar</button>
-          </div>
-        ) : (
-          <div className={style.betContainer}>
-            <div className={style.loader} />
-            <p className={style.pTime}>{timeLeft} seconds left</p>
-            <p>{round.turnJugadorA} apostando...</p>
-          </div>
-        )}
+                  {getAvailableBets ().map (index => (
+                    <MenuItem
+                      key={index}
+                      value={index}
+                      disabled={
+                        myPosition === round.obligado &&
+                          index + round.betTotal === round.cardXRound
+                      }
+                    >
+                      {index} cartas
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <button onClick={handleSubmit}>Apostar</button>
+            </div>
+          : <div className={style.betContainer}>
+              <div className={style.loader} />
+              <p className={style.pTime}>{timeLeft} seconds left</p>
+              <p>{round.turnJugadorA} apostando...</p>
+            </div>}
       </div>
     </ThemeProvider>
   );
