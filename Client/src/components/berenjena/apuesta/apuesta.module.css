@@ -42,10 +42,6 @@
   transform: rotate(45deg);
 }
 
-.betContainer p {
-  margin: 5px 0;
-}
-
 .pTime {
   font-style: italic !important;
   font-size: 1.2rem;

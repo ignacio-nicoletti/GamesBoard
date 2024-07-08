@@ -15,77 +15,84 @@ const Apuesta = ({
   setResults,
   dataRoom,
 }) => {
-    // Da opciones disponibles
-    const getAvailableBets = () => {
-      return [...Array (round.cardXRound + 1)]
-        .map ((_, index) => index)
-        .filter (
-          index =>
-            !(myPosition === round.obligado &&
-              index + round.betTotal === round.cardXRound)
-        );
-    };
-  const [bet, setBet] = useState ( getAvailableBets ()[0]);
-  const [timeLeft, setTimeLeft] = useState (30);
+  const getAvailableBets = () => {
+    return [...Array(round.cardXRound + 1)]
+      .map((_, index) => index)
+      .filter(
+        index =>
+          !(myPosition === round.obligado &&
+            index + round.betTotal === round.cardXRound)
+      );
+  };
 
-
+  const [bet, setBet] = useState(getAvailableBets()[0]);
+  const [timeLeft, setTimeLeft] = useState(30);
 
   const handleSubmit = () => {
-    socket.emit ('BetPlayer', {
+    socket.emit('BetPlayer', {
       bet: bet,
       myPosition,
       dataRoom,
     });
+    resetTimer(); // Reset the timer and CSS animation when the player submits a bet
   };
 
   const handleChange = event => {
-    setBet (event.target.value);
+    setBet(event.target.value);
   };
 
+  const resetTimer = () => {
+    setTimeLeft(30); // Reset timeLeft to 30 seconds
+    const loader = document.querySelector(`.${style.loader}`);
+    if (loader) {
+      loader.style.animation = 'none';
+      setTimeout(() => {
+        loader.style.animation = '';
+      }, 0);
+    }
+  };
 
-  useEffect (
-    () => {
-      const handleGameStateUpdate = data => {
-        setRound (data.round);
-        setPlayers (data.players);
-        setResults (data.results);
-      };
-      
-      socket.on ('update_game_state', handleGameStateUpdate);
-      setBet (getAvailableBets ()[0]); // Asegura que la apuesta inicial es válida
-      setTimeLeft (30);
-      return () => {
-        socket.off ('update_game_state', handleGameStateUpdate);
-      };
-    },
-    [round]
-  );
+  useEffect(() => {
+    const handleGameStateUpdate = data => {
+      setRound(data.round);
+      setPlayers(data.players);
+      setResults(data.results);
+      resetTimer(); // Reset the timer and CSS animation when game state updates
+    };
 
-  useEffect (
-    () => {
-      const timer = setInterval (() => {
-        setTimeLeft (prevTime => {
-          if (prevTime > 0) {
-            return prevTime - 1;
-          } else {
-            socket.emit ('BetPlayer', {
-              bet:getAvailableBets ()[0],
-              myPosition,
-              dataRoom,
-            });
-            clearInterval (timer);
-            return 0;
-          }
-        });
-      }, 1000);
+    socket.on('update_game_state', handleGameStateUpdate);
+    setBet(getAvailableBets()[0]); // Ensure initial bet is valid
 
-      // Limpieza del intervalo cuando el componente se desmonta
-      return () => clearInterval (timer);
-    },
-    [timeLeft]
-  );
+    return () => {
+      socket.off('update_game_state', handleGameStateUpdate);
+    };
+  }, [round]);
 
-  const theme = createTheme ({
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(prevTime => {
+        if (prevTime > 0) {
+          return prevTime - 1;
+        } else {
+          const availableBets = getAvailableBets();
+          const randomBet = availableBets[Math.floor(Math.random() * availableBets.length)];
+
+          socket.emit('BetPlayer', {
+            bet: randomBet,
+            myPosition,
+            dataRoom,
+          });
+
+          clearInterval(timer);
+          return 0;
+        }
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [round.turnJugadorA]); // Depend on the player turn
+
+  const theme = createTheme({
     typography: {
       fontFamily: 'Bebas Neue',
     },
@@ -122,44 +129,44 @@ const Apuesta = ({
 
   return (
     <ThemeProvider theme={theme}>
-      <div className={style.container}>
+      <div className={style.container} key={round.turnJugadorA}>
         {round.turnJugadorA === myPosition
           ? <div className={style.betContainer}>
               <div className={style.loader} />
               <p className={style.pTime}>{timeLeft} seconds left</p>
-              <p>Jugador {round.turnJugadorA}</p>
-              <FormControl sx={{m: 1, minWidth: 120}}>
+              <p>Player {round.turnJugadorA}</p>
+              <FormControl sx={{ m: 1, minWidth: 120 }}>
                 <InputLabel id="bet-select-label" />
                 <Select
                   labelId="bet-select-label"
                   value={bet}
                   onChange={handleChange}
                   displayEmpty
-                  inputProps={{'aria-label': 'Elige tu apuesta'}}
+                  inputProps={{ 'aria-label': 'Elige tu apuesta' }}
                 >
                   <MenuItem value="" disabled>
-                    <em>Elige tu apuesta</em>
+                    <em>Choose your Bet</em>
                   </MenuItem>
-                  {getAvailableBets ().map (index => (
+                  {getAvailableBets().map(index => (
                     <MenuItem
                       key={index}
                       value={index}
                       disabled={
                         myPosition === round.obligado &&
-                          index + round.betTotal === round.cardXRound
+                        index + round.betTotal === round.cardXRound
                       }
                     >
-                      {index} cartas
+                      {index} card/s
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
-              <button onClick={handleSubmit}>Apostar</button>
+              <button onClick={handleSubmit}>Bet</button>
             </div>
           : <div className={style.betContainer}>
               <div className={style.loader} />
               <p className={style.pTime}>{timeLeft} seconds left</p>
-              <p>{round.turnJugadorA} apostando...</p>
+              <p>Player {round.turnJugadorA} betting...</p>
             </div>}
       </div>
     </ThemeProvider>
