@@ -15,6 +15,9 @@ const Apuesta = ({
   setResults,
   dataRoom,
 }) => {
+  const [bet, setBet] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(30);
+    
   // Da opciones disponibles
   const getAvailableBets = () => {
     return [...Array(round.cardXRound + 1)]
@@ -26,17 +29,14 @@ const Apuesta = ({
       );
   };
 
-  const [bet, setBet] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(30);
+  const handleSubmit = () => {
+    socket.emit('BetPlayer', { bet: bet ?? getAvailableBets()[0], myPosition, dataRoom });
+  };
 
   useEffect(() => {
     const bets = getAvailableBets();
     setBet(bets[0]); // Asegura que la apuesta inicial es válida
   }, [round.cardXRound, round.betTotal, myPosition]);
-
-  const handleSubmit = () => {
-    socket.emit('BetPlayer', { bet: bet ?? getAvailableBets()[0], myPosition, dataRoom });
-  };
 
   useEffect(() => {
     if (timeLeft === 0) {
@@ -58,7 +58,7 @@ const Apuesta = ({
     return () => {
       socket.off('update_game_state', handleGameStateUpdate);
     };
-  }, [round, setPlayers, setRound, setResults]);
+  }, [round]);
 
   useEffect(() => {
     const timer = setInterval(() => {

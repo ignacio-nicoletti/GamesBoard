@@ -174,8 +174,6 @@ const JoinRoom = () => {
     }
   }, []);
 
- 
-
   useEffect(() => {
     const handleRoomCreationError = (data) => {
       Swal.fire({

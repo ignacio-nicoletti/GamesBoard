@@ -828,5 +828,3 @@ export default function BerenjenaSockets(io) {
   });
 }
 
-//  revisar tema de desconexion si se desconecta antes de tirar que pasa ?
-// Si se desconecta antes de apostar y que pasa cuando vuelve a conectarse
