@@ -268,6 +268,6 @@ const GameBerenjena = () => {
 };
 export default GameBerenjena;
 
-// Estilo => Avisar cuantas aposto cada jugador y cuanto va total
+// Estilo => Avisar cuantas aposto cada jugador
 
 // Logica => Si se desconecta y vuelve obtener los mismos datos de la partida que todos.

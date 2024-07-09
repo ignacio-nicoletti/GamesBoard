@@ -56,10 +56,6 @@ const DataPlayer = ({players, myPosition, timmerPlayer, round}) => {
               <td>Points</td>
               <td>{player.points}</td>
             </tr>
-            {/* <tr>
-              <td>Ronda</td>
-              <td>{round?.numRounds}</td>
-            </tr> */}
             <tr>
               <td>Cumplió</td>
 
