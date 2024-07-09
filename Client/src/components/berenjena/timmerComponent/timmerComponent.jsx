@@ -10,7 +10,12 @@ const TimmerComponent = ({setRound, round, players, results, dataRoom}) => {
 
   useEffect (
     () => {
-      if (round.numRounds && round.typeRound === 'waiting'&&results&&results.length>0) {
+      if (
+        round.numRounds &&
+        round.typeRound === 'waiting' &&
+        results &&
+        results.length > 0
+      ) {
         let playersChecks = results[round?.numRounds - 2]?.players?.filter (
           player => player.cumplio === true
         );
@@ -76,18 +81,21 @@ const TimmerComponent = ({setRound, round, players, results, dataRoom}) => {
                   <span className={styles.timer}>{timmer}</span>
                 </h3>
               : <div className={styles.BoxMessage}>
-               { ListCheck.length > 0 ?
-                <p>They fulfilled their bet in this round:</p>
-                  &&
-                    ListCheck.map (player => (
-                      <div className={styles.ListCheckMap}>
+                  {ListCheck.length > 0
+                    ? <div>
+                        <p>They fulfilled their bet in this round:</p>
 
-                        <p key={player.userName}>- {player.userName}</p>
+                        {ListCheck.map (player => (
+                          <div className={styles.ListCheckMap}>
 
+                            <p key={player.userName}>- {player.userName}</p>
+
+                          </div>
+                        ))}
                       </div>
-                    )): <p>Nobody fulfilled their bet in this round</p>}
+                    : <p>Nobody fulfilled their bet in this round</p>}
                   <h3 className={styles.message}>
-                  Preparing the next round :
+                    Preparing the next round :
                     {' '}
                     <span className={styles.timer}>{timmer}</span>
                   </h3>

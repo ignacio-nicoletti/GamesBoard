@@ -1,21 +1,25 @@
-import React, { useEffect, useState } from "react";
-import style from "./dataPlayer.module.css";
-import avatar1 from "../../../../assets/berenjena/jugadores/avatar1.png";
-import avatar2 from "../../../../assets/berenjena/jugadores/avatar2.png";
-import avatar3 from "../../../../assets/berenjena/jugadores/avatar3.png";
-import avatar4 from "../../../../assets/berenjena/jugadores/avatar4.png";
-import avatar5 from "../../../../assets/berenjena/jugadores/avatar5.png";
-import avatar6 from "../../../../assets/berenjena/jugadores/avatar6.png";
+import React, {useEffect, useState} from 'react';
+import style from './dataPlayer.module.css';
+import avatar1 from '../../../../assets/berenjena/jugadores/avatar1.png';
+import avatar2 from '../../../../assets/berenjena/jugadores/avatar2.png';
+import avatar3 from '../../../../assets/berenjena/jugadores/avatar3.png';
+import avatar4 from '../../../../assets/berenjena/jugadores/avatar4.png';
+import avatar5 from '../../../../assets/berenjena/jugadores/avatar5.png';
+import avatar6 from '../../../../assets/berenjena/jugadores/avatar6.png';
+import {faStar} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
-const DataPlayer = ({ players,myPosition,timmerPlayer,round }) => {
-const[player,setPlayer]=useState({})
-useEffect(()=>{
-  const playerPos = players[myPosition - 1];
-if(playerPos){
-
-  setPlayer(playerPos)
-}
-},[players,myPosition])
+const DataPlayer = ({players, myPosition, timmerPlayer, round}) => {
+  const [player, setPlayer] = useState ({});
+  useEffect (
+    () => {
+      const playerPos = players[myPosition - 1];
+      if (playerPos) {
+        setPlayer (playerPos);
+      }
+    },
+    [players, myPosition]
+  );
 
   const avatarMap = {
     avatar1: avatar1,
@@ -26,9 +30,9 @@ if(playerPos){
     avatar6: avatar6,
   };
 
-  let playerAvatar = avatarMap[player?.avatar];
+  let playerAvatar = avatarMap[player.avatar];
   // Determinar si se cumplió la condición
-  const isFulfilled = player?.cumplio;
+  const isFulfilled = player.cumplio;
 
   return (
     <div className={style.infoPropia}>
@@ -41,52 +45,55 @@ if(playerPos){
           </thead>
           <tbody>
             <tr>
-              <td>Apostadas</td>
-              <td>{player?.betP}</td>
+              <td>Bets</td>
+              <td>{player.betP}</td>
             </tr>
             <tr>
-              <td>Ganadas</td>
-              <td>{player?.cardsWins}</td>
+              <td>Wins</td>
+              <td>{player.cardsWins}</td>
             </tr>
             <tr>
-              <td>Puntos</td>
-              <td>{player?.points}</td>
+              <td>Points</td>
+              <td>{player.points}</td>
             </tr>
-            <tr>
+            {/* <tr>
               <td>Ronda</td>
               <td>{round?.numRounds}</td>
-            </tr>
+            </tr> */}
             <tr>
               <td>Cumplió</td>
 
               <td
                 className={isFulfilled ? style.fulfilled : style.notFulfilled}
               >
-                {isFulfilled ? (
-                  <>
-                    Cumplió
-                    {/* <CheckCircleIcon className={style.icon} /> */}
-                  </>
-                ) : (
-                  <>
-                    No Cumplió
-                    {/* <CancelIcon className={style.icon} /> */}
-                  </>
-                )}
+                {isFulfilled
+                  ? <div>
+                      Cumplió
+                      {/* <CheckCircleIcon className={style.icon} /> */}
+                    </div>
+                  : <div>
+                      No Cumplió
+                      {/* <CancelIcon className={style.icon} /> */}
+                    </div>}
               </td>
             </tr>
           </tbody>
         </table>
       </div>
       <div className={style.avatar}>
+        {round.obligado === player.position &&
+          <FontAwesomeIcon
+            icon={faStar}
+            className={style.obligatedIcon}
+            title="Obligado"
+          />}
         <img src={playerAvatar} alt="Avatar" />
         <span className={style.name}>
-          {player?.userName ? player.userName : "Jugador"}
+          {player.userName ? player.userName : 'Jugador'}
         </span>
-        {
-          round?.typeRound==="ronda"&& round?.turnJugadorR===myPosition?
-          
-          <p>tiempo para tirar: {timmerPlayer} seg</p>:""}
+        {round.typeRound === 'ronda' && round.turnJugadorR === myPosition
+          ? <p>Time to play a card: {timmerPlayer} seconds</p>
+          : ''}
       </div>
     </div>
   );
