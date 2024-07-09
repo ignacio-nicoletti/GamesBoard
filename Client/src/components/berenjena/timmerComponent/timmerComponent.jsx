@@ -71,22 +71,23 @@ const TimmerComponent = ({setRound, round, players, results, dataRoom}) => {
         ? <div>
             {round.numRounds === 1
               ? <h3 className={styles.message}>
-                  Comenzando Partida:
+                  Starting the game:
                   {' '}
                   <span className={styles.timer}>{timmer}</span>
                 </h3>
-              : <div>
-                <p>Cumplieron:</p>
-                  {ListCheck.length > 0 &&
+              : <div className={styles.BoxMessage}>
+               { ListCheck.length > 0 ?
+                <p>They fulfilled their bet in this round:</p>
+                  &&
                     ListCheck.map (player => (
-                      <div>
+                      <div className={styles.ListCheckMap}>
 
-                        <p key={player.userName}>{player.userName}</p>
+                        <p key={player.userName}>- {player.userName}</p>
 
                       </div>
-                    ))}
+                    )): <p>Nobody fulfilled their bet in this round</p>}
                   <h3 className={styles.message}>
-                    Preparando siguiente ronda:
+                  Preparing the next round :
                     {' '}
                     <span className={styles.timer}>{timmer}</span>
                   </h3>

@@ -254,7 +254,7 @@ const GameBerenjena = () => {
         />}
 
       <div className={style.resultado} onClick={() => setShowResult (true)}>
-        <p>Resultados</p>
+        <p>Score game</p>
       </div>
 
       {round.typeRound === 'EndGame' &&
@@ -268,8 +268,6 @@ const GameBerenjena = () => {
 };
 export default GameBerenjena;
 
-// Estilo => WiinnerComponent
-// Estilo => TimmerComponent line:79
 // Estilo => Avisar cuantas aposto cada jugador y cuanto va total
 
 // Logica => Si se desconecta y vuelve obtener los mismos datos de la partida que todos.

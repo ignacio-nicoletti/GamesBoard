@@ -18,6 +18,7 @@ const WinnerComponent = ({winner, room, players}) => {
 
   useEffect (
     () => {
+      AddExperience ();
       const time = setInterval (() => {
         setTimmerFinishRoom (prevTime => {
           if (prevTime > 0) {
@@ -28,11 +29,10 @@ const WinnerComponent = ({winner, room, players}) => {
           }
         });
       }, 1000);
-
+      
       if (timmerFinishRoom === 0) {
         disconnectRoom (room.game, room.roomId);
         navigate (`/berenjena/joinRoom`);
-        AddExperience ();
       }
 
       return () => clearInterval (time);
@@ -42,8 +42,13 @@ const WinnerComponent = ({winner, room, players}) => {
 
   return (
     <div className={styles.containWinner}>
-      <p>Ganador del juego: jugador {winner.userName}</p>
-      <p>La sala cerrara en : {timmerFinishRoom}</p>
+      <div className={styles.BoxWinner}>
+        <h2>Game Over</h2>
+        <p>{winner.userName} is winner</p>
+        <p className={styles.message}>
+          The room will close in: {timmerFinishRoom}
+        </p>
+      </div>
     </div>
   );
 };

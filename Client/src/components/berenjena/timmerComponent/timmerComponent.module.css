@@ -5,6 +5,17 @@
   align-items: center;
 }
 
+.BoxMessage{
+  background-color:#ff914d;
+  border-radius: 5px;
+  padding: 10px 20px;
+  color: #fff;
+}
+
+.ListCheckMap{
+  font-size: 1.2rem;
+}
+
 .message {
   font-size: 1.8rem;
   font-weight: bold;
