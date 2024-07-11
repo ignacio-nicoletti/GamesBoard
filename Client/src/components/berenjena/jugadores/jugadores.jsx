@@ -65,11 +65,11 @@ const Jugadores = ({ player, round, timmerPlayer }) => {
           <p className={styles.infoPlayer}>{player?.userName}</p>
           {round.obligado === player.position && (
             <FontAwesomeIcon
-              icon={faStar}
-              className={styles.obligatedIcon}
-              title="Obligado"
+            icon={faStar}
+            className={styles.obligatedIcon}
+            title="Obligado"
             />
-          )}
+            )}
         </div>
         <div className={styles.cards}>
           {round.turnJugadorR === player.position && round.typeRound==="ronda"&&(
@@ -80,9 +80,10 @@ const Jugadores = ({ player, round, timmerPlayer }) => {
                   width: `${progress}%`,
                   backgroundColor: getProgressColor(),
                 }}
-              ></div>
+                ></div>
             </div>
           )}
+          <p>Bet: {player.betP} cards</p>
         </div>
         {!player.connect && (
           <div className={styles.overlay}>
