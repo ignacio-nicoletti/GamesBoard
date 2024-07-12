@@ -77,7 +77,6 @@ const JoinRoom = () => {
           navigate (`/berenjena/multiplayer/${res.roomCreated.room.roomId}`);
       }
     } catch (error) {
-      console.log(error);
       Swal.fire({
         title: "Error!",
         text: error || "An error occurred while creating the room.",
@@ -108,7 +107,7 @@ const JoinRoom = () => {
         }
       }
     } catch (error) {
-      console.error(error);
+     
       Swal.fire({
         title: "Error!",
         text: error || "Room is full.",
@@ -330,17 +329,17 @@ const JoinRoom = () => {
               </button>
             </div>
               {infoUser.experience&&token&&
-            <div>
+            <div className={style.levelMap}>
               <p>
                 nivel {infoUser.experience[0].level}
               </p>
               <p>
-  {infoUser.experience &&
-    `xp ${infoUser.experience[0].xp}/${
-      infoUser.experience[0].xp +
-      infoUser.experience[0].xpRemainingForNextLevel
-    }`}
-</p>
+                {infoUser.experience &&
+                  `xp ${infoUser.experience[0].xp}/${
+                    infoUser.experience[0].xp +
+                    infoUser.experience[0].xpRemainingForNextLevel
+                  }`}
+              </p>
             </div>
           }
 
