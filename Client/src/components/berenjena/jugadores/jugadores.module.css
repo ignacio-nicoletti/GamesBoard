@@ -12,6 +12,7 @@
   height: 100px;
   position: relative;
   transition: border-color 0.1s linear;
+  color: white;
 }
 
 .infoPlayer {

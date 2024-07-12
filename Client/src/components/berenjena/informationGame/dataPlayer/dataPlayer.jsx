@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import style from './dataPlayer.module.css';
 import avatar1 from '../../../../assets/berenjena/jugadores/avatar1.png';
 import avatar2 from '../../../../assets/berenjena/jugadores/avatar2.png';
@@ -11,6 +11,17 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 const DataPlayer = ({players, myPosition, timmerPlayer, round}) => {
   const [player, setPlayer] = useState ({});
+  const [progress, setProgress] = useState (100);
+  const intervalRef = useRef (null);
+  const totalTime = 30;
+  const progressRef = useRef (null);
+
+  const getProgressColor = () => {
+    const percent = progress / 100;
+    const red = Math.min (255, Math.floor ((1 - percent) * 255));
+    const green = Math.min (255, Math.floor (percent * 255));
+    return `rgb(${red},${green},0)`;
+  };
   useEffect (
     () => {
       const playerPos = players[myPosition - 1];
@@ -19,6 +30,24 @@ const DataPlayer = ({players, myPosition, timmerPlayer, round}) => {
       }
     },
     [players, myPosition]
+  );
+
+  useEffect (
+    () => {
+      if (round.turnJugadorR === player.position) {
+        setProgress (timmerPlayer / totalTime * 100);
+
+        intervalRef.current = setInterval (() => {
+          setProgress (prev => {
+            const newProgress = prev - 100 / totalTime;
+            return newProgress >= 0 ? newProgress : 0;
+          });
+        }, 1000);
+
+        return () => clearInterval (intervalRef.current);
+      }
+    },
+    [round.turnJugadorR, player.position, timmerPlayer]
   );
 
   const avatarMap = {
@@ -88,8 +117,17 @@ const DataPlayer = ({players, myPosition, timmerPlayer, round}) => {
           {player.userName ? player.userName : 'Jugador'}
         </span>
         {round.typeRound === 'ronda' && round.turnJugadorR === myPosition
-          ? <p>Time to play a card: {timmerPlayer} seconds</p>
+          ? <div className={style.progressBar}>
+              <div
+                className={style.progress}
+                style={{
+                  width: `${progress}%`,
+                  backgroundColor: getProgressColor (),
+                }}
+              />
+            </div>
           : ''}
+
       </div>
     </div>
   );

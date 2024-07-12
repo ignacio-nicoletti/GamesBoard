@@ -86,3 +86,19 @@
 .icon {
   margin-left: 5px;
 }
+
+.progressBar {
+  width: 100%;
+  height: 10px;
+  background-color: #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-top: 10px;
+  position: relative;
+}
+
+.progress {
+  height: 100%;
+  transition: width 0.5s linear, background-color 0.5s linear;
+  background-color: #4CAF50;
+}

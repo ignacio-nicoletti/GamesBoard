@@ -268,7 +268,7 @@ const GameBerenjena = () => {
 };
 export default GameBerenjena;
 
-// Estilo => Avisar cuantas aposto cada jugador(jugadores line:86)
+
 
 // Logica => Si se desconecta y vuelve obtener los mismos datos de la partida que todos.
 // Logica => Si no apeusta nadie se buguea la apuesta
