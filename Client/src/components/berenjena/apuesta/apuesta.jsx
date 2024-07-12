@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import style from './apuesta.module.css';
-import {socket} from '../../../functions/SocketIO/sockets/sockets';
+import { socket } from '../../../functions/SocketIO/sockets/sockets';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import {createTheme, ThemeProvider} from '@mui/material/styles';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
@@ -28,13 +28,13 @@ const Apuesta = ({
   const [bet, setBet] = useState(getAvailableBets()[0]);
   const [timeLeft, setTimeLeft] = useState(30);
 
-  const handleSubmit = () => {
+  const handleSubmit = (selectedBet = bet) => {
     socket.emit('BetPlayer', {
-      bet: bet,
+      bet: selectedBet,
       myPosition,
       dataRoom,
     });
-    resetTimer(); // Reset the timer and CSS animation when the player submits a bet
+    resetTimer();
   };
 
   const handleChange = event => {
@@ -73,24 +73,17 @@ const Apuesta = ({
       setTimeLeft(prevTime => {
         if (prevTime > 0) {
           return prevTime - 1;
-        } else {
-          const availableBets = getAvailableBets();
-          const randomBet = availableBets[Math.floor(Math.random() * availableBets.length)];
-
-          socket.emit('BetPlayer', {
-            bet: randomBet,
-            myPosition,
-            dataRoom,
-          });
-
-          clearInterval(timer);
-          return 0;
+        } else if (prevTime === 0) {
+          clearInterval(timer); // Clear the interval once the time is up
+          const randomBet = getAvailableBets()[Math.floor(Math.random() * getAvailableBets().length)];
+          handleSubmit(randomBet);
+          return 0; // Reset the timer
         }
       });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [round.turnJugadorA]); // Depend on the player turn
+  }, [round.turnJugadorA, myPosition]); // Depend on the player turn and myPosition
 
   const theme = createTheme({
     typography: {
@@ -161,7 +154,7 @@ const Apuesta = ({
                   ))}
                 </Select>
               </FormControl>
-              <button onClick={handleSubmit}>Bet</button>
+              <button onClick={() => handleSubmit(bet)}>Bet</button>
             </div>
           : <div className={style.betContainer}>
               <div className={style.loader} />
