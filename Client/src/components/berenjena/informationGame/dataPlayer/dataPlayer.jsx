@@ -86,19 +86,17 @@ const DataPlayer = ({players, myPosition, timmerPlayer, round}) => {
               <td>{player.points}</td>
             </tr>
             <tr>
-              <td>Cumplió</td>
+              <td>Met</td>
 
               <td
                 className={isFulfilled ? style.fulfilled : style.notFulfilled}
               >
                 {isFulfilled
                   ? <div>
-                      Cumplió
-                      {/* <CheckCircleIcon className={style.icon} /> */}
+                      Met
                     </div>
                   : <div>
-                      No Cumplió
-                      {/* <CancelIcon className={style.icon} /> */}
+                      No Met
                     </div>}
               </td>
             </tr>
