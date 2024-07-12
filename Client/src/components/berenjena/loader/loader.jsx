@@ -80,13 +80,13 @@ const Loader = ({setPlayers, setRound, myPlayer, setMyPlayer,setLoader,setDataRo
 
   return (
     <div className={style.containLoader}>
-      <h1 className={style.roomTitle}>Te estás uniendo a la sala N°{id}</h1>
+      <h1 className={style.roomTitle}>You are joining room N°{id}</h1>
       <ul className={style.background}>
         {Array.from ({length: 30}).map ((_, index) => <li key={index} />)}
       </ul>
       <div className={style.loader} />
       <p className={style.preGameMessage}>
-        Esperando que todos los jugadores estén listos para comenzar.
+      Waiting for all players to be ready to start.
       </p>
       <p>{myPlayer.position}</p>
       <div className={style.playersAndButton}>
