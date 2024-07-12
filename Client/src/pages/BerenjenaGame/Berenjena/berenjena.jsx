@@ -262,12 +262,10 @@ const GameBerenjena = () => {
 
       <ButtonExitRoom dataRoom={dataRoom} />
 
-      <DataGame round={round} />
+      <DataGame round={round} players={players} />
     </div>
   );
 };
 export default GameBerenjena;
-
-
 
 // Logica => Si se desconecta y vuelve obtener los mismos datos de la partida que todos.

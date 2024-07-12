@@ -1,21 +1,37 @@
-import React from "react";
-import style from "./dataGame.module.css";
+import React from 'react';
+import style from './dataGame.module.css';
 
-const DataGame = ({ round }) => {
+const DataGame = ({round, players}) => {
+  const getPlayerName = playerId => {
+    const player = players.filter (player => player.position === playerId);
+    return player.length > 0 ? player[0].userName : '-';
+  };
   return (
     <div className={style.infoPartida}>
-     
+
       <p>
-        Total Bet:{" "}
-        <span className={style.dataValue}>{round?.betTotal}</span>
+        Total Bet: {' '}
+        <span className={style.dataValue}>{round.betTotal}</span>
       </p>
       <p>
-        Card Win : {" "}
+        Turn: {' '}
+        {round.typeRopund === 'ronda'
+          ? <span className={style.dataValue}>
+              {getPlayerName (round.turnJugadorR)}
+            </span>
+          : <span className={style.dataValue}>
+              {getPlayerName (round.turnJugadorA)}
+            </span>}
+      </p>
+      <p>
+        Card Win : {' '}
         <span className={style.dataValue}>
-          {round?.cardWinxRound?.value} {round?.cardWinxRound?.suit}
+          {round.cardWinxRound && round.cardWinxRound.value}
+          {' '}
+          {round.cardWinxRound && round.cardWinxRound.suit}
         </span>
       </p>
-    
+
       {/* <p>
         Turn: Player{" "}
         <span className={style.dataValue}>
@@ -25,7 +41,7 @@ const DataGame = ({ round }) => {
         </span>
       </p> */}
       {/* <p>{round.typeRound}</p> */}
-       {/* <p>
+      {/* <p>
         Obligado: <span className={style.dataValue}>{round?.obligado}</span>
       </p> 
          <p>
