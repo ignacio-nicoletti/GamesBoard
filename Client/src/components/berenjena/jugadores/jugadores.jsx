@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
 import styles from "./jugadores.module.css";
-import cardsIcon from "../../../assets/berenjena/jugadores/cartas.png";
 import Cards from "../cards/card";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
