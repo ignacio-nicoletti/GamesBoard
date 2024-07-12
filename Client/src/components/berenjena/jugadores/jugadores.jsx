@@ -89,9 +89,6 @@ const Jugadores = ({ player, round, timmerPlayer }) => {
           <div className={styles.overlay}>
             <div className={styles.disconnectedContainer}>
               <p className={styles.disconnectedText}>Player disconnected</p>
-              {round.turnJugadorR === player.position && round.typeRound==="ronda" &&(
-                <p className={styles.timmer}>Timer: {timmerPlayer}</p>
-              )}
             </div>
           </div>
         )}
