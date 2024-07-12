@@ -91,12 +91,10 @@ export const joinGameRoom = (
 
     function checkIfReadyToResolve() {
       if (Object.keys(responses).length === 1) {
-        console.log(Object.keys(responses).length);
         // Asegúrate de que esto coincida con el número de eventos esperados
         resolve(responses);
       }
     }
-    console.log(Object.keys(responses).length);
 
     socket.emit("join_room", {
       game,

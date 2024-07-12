@@ -331,7 +331,7 @@ const JoinRoom = () => {
               {infoUser.experience&&token&&
             <div className={style.levelMap}>
               <p>
-                nivel {infoUser.experience[0].level}
+                Level {infoUser.experience[0].level}
               </p>
               <p>
                 {infoUser.experience &&

@@ -271,4 +271,3 @@ export default GameBerenjena;
 
 
 // Logica => Si se desconecta y vuelve obtener los mismos datos de la partida que todos.
-// Logica => Si no apeusta nadie se buguea la apuesta

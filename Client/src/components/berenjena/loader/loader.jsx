@@ -97,13 +97,13 @@ const Loader = ({setPlayers, setRound, myPlayer, setMyPlayer,setLoader,setDataRo
                 player.ready
                   ? <CheckIcon
                       key={player.idSocket}
-                      sx={{fontSize: 50, color: '#ff904f'}}
+                      sx={{fontSize: 60, color: '#ff904f'}}
                       alt="Current Player"
                       className={`${style.playerImage} ${style.ready}`}
                     />
                   : <PersonIcon
                       key={player.idSocket}
-                      sx={{fontSize: 50}}
+                      sx={{fontSize: 60}}
                       alt="Current Player"
                       className={style.playerImage}
                     />
@@ -111,12 +111,12 @@ const Loader = ({setPlayers, setRound, myPlayer, setMyPlayer,setLoader,setDataRo
           {!playerList.some (player => player.idSocket === socket.id) &&
             (readyMe
               ? <CheckIcon
-                  sx={{fontSize: 50, color: '#ff904f'}}
+                  sx={{fontSize: 60, color: '#ff904f'}}
                   alt="Current Player"
                   className={`${style.playerImage} ${style.ready}`}
                 />
               : <PersonIcon
-                  sx={{fontSize: 50}}
+                  sx={{fontSize: 60}}
                   alt="Current Player"
                   className={style.playerImage}
                 />)}
