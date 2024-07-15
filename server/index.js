@@ -13,7 +13,6 @@ import BerenjenaSockets from "./src/sockets/berenjena/berenejena.js";
 const app = express();
 const server = http.createServer(app);
 
-// const whiteList = ["http://localhost:3000", "https://games-board.vercel.app"];
 const whiteList = [process.env.DEPLOY_CLIENT_URL, "http://localhost:3000"];
 const io = new Server(server, {
   cors: { origin: whiteList, methods: ["GET", "POST"] },
