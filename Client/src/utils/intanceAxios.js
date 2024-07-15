@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Crear una instancia de Axios con opciones comunes
 const axiosInstance = axios.create({
-  baseURL: `${process.env.REACT_APP_URL_API_LOCAL || process.env.REACT_APP_URL_API}`,
+  baseURL: `${process.env.REACT_APP_URL_API}`,
   headers: {
     'Content-Type': 'application/json',
   },
