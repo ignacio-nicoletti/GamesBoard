@@ -42,7 +42,6 @@ const handleEmptyRoom = (room, game, roomId) => {
 export default function BerenjenaSockets(io) {
   io.on("connection", (socket) => {
     console.log(`User Connected: ${socket.id} to server`);
-    //chequear errores de room
 
     socket.on("get_all_rooms_info", ({ game }) => {
       const rooms = permanentRooms[game];
@@ -461,7 +460,6 @@ export default function BerenjenaSockets(io) {
     });
 
     socket.on("BetPlayer", ({ bet, myPosition, dataRoom }) => {
-    console.log(bet);
       if (!dataRoom) return;
       const { game, roomId, round } = dataRoom;
       // Verificar si round y roomId son válidos
