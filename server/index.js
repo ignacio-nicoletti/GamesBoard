@@ -8,7 +8,8 @@ import AuthRoute from "./src/routes/auth.routes.js";
 import userRoutes from "./src/routes/user.routes.js";
 import "dotenv/config";
 
-import BerenjenaSockets from "./src/sockets/berenjena/berenejena.js";
+import BerenjenaSockets from "./src/sockets/berenejena.js";
+import HorseRaceSockets from "./src/sockets/horseRace.js";
 
 const app = express();
 const server = http.createServer(app);
@@ -19,7 +20,8 @@ const io = new Server(server, {
 });
 
 app.use(cors());
-BerenjenaSockets(io)
+BerenjenaSockets(io);
+HorseRaceSockets(io);
 
 app.use(morgan("dev"));
 app.use(express.json());

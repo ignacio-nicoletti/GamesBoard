@@ -122,7 +122,7 @@ const JoinRoomHorseRace=()=>{
   
     const initializeRooms = async () => {
       try {
-        const roomsInfo = await getAllRoomsInfo ('Berenjena');
+        const roomsInfo = await getAllRoomsInfo ('Horserace');
         setRooms (roomsInfo);
   
           setFilteredRooms (roomsInfo);
@@ -331,13 +331,13 @@ const JoinRoomHorseRace=()=>{
                 {infoUser.experience&&token&&
               <div className={style.levelMap}>
                 <p>
-                  Level {infoUser.experience[0].level}
+                  Level {infoUser.experience[2].level}
                 </p>
                 <p>
                   {infoUser.experience &&
-                    `xp ${infoUser.experience[0].xp}/${
-                      infoUser.experience[0].xp +
-                      infoUser.experience[0].xpRemainingForNextLevel
+                    `xp ${infoUser.experience[2].xp}/${
+                      infoUser.experience[2].xp +
+                      infoUser.experience[2].xpRemainingForNextLevel
                     }`}
                 </p>
               </div>
