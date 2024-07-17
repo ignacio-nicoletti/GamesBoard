@@ -5,6 +5,7 @@ import LoaderHorseRace
 import Cards from '../../../components/horseRace/cards/cards';
 import DataPlayerHorseRace
   from '../../../components/horseRace/dataPlayerHorseRace/dataPlayerHorseRace';
+import ButtonExitRoomHorserace from '../../../components/horseRace/buttonExitRoomHorserace/buttonExitRoomHorserace';
 const HorseRace = () => {
   const [loader, setLoader] = useState (false);
   return (
@@ -13,6 +14,7 @@ const HorseRace = () => {
         ? <LoaderHorseRace />
         : <div className={styles.contain}>
             <DataPlayerHorseRace />
+            <ButtonExitRoomHorserace/>
             
             <div className={styles.cardsContain}>
 
