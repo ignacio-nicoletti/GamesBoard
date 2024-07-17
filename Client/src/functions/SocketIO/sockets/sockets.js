@@ -27,7 +27,9 @@ export const getAllRoomsInfo = (game) => {
   return new Promise((resolve) => {
     socket.emit("get_all_rooms_info", { game });
     socket.on("all_rooms_info", (data) => {
-      resolve(data);
+      if (data) {
+        resolve(data);
+      }
     });
   });
 };

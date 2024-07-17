@@ -36,7 +36,7 @@ const JoinRoom = () => {
   const [showModal, setShowModal] = useState (true);
   const [isFormValid, setIsFormValid] = useState (false);
   const navigate = useNavigate ();
-  const [timmerRooms, setTimmerRooms] = useState (20);
+  const [timmerRooms, setTimmerRooms] = useState (5);
   const [infoUser, setInfoUser] = useState ({});
   const [game] = useState ('Berenjena');
   const token = GetDecodedCookie ('cookieToken');
@@ -151,7 +151,7 @@ const JoinRoom = () => {
     if (timmerRooms === 0) {
 
        initializeRooms ();
-      setTimmerRooms (20);
+      setTimmerRooms (5);
     }
     
     return () => clearInterval (time);
