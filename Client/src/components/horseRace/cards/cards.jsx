@@ -19,19 +19,7 @@ const Cards = ({value, suit}) => {
       <div className={styles.topRight}>
         <p className={styles.cardValue}>{value}</p>
       </div>
-      {value === "11"
-        ? <img
-            // src={imgPalo[suit]}
-            src={horseicon}
-            alt="logoCard"
-            className={styles.cardImage}
-          />
-        : <img
-            src={imgPalo[suit]}
-            // src={horseicon}
-            alt="logoCard"
-            className={styles.cardImage}
-          />}
+      <img src={imgPalo[suit]} alt="logoCard" className={styles.cardImage} />
       <div className={styles.bottomLeft}>
         <p className={styles.cardValue}>{value}</p>
       </div>

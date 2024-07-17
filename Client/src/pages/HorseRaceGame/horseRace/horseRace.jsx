@@ -13,6 +13,7 @@ const HorseRace = () => {
         ? <LoaderHorseRace />
         : <div className={styles.contain}>
             <DataPlayerHorseRace />
+            
             <div className={styles.cardsContain}>
 
               <div className={styles.cards}>

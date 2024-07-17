@@ -269,3 +269,4 @@ const GameBerenjena = () => {
 export default GameBerenjena;
 
 // Logica => Si se desconecta y vuelve obtener los mismos datos de la partida que todos.
+//sala de 6 si comienza no arranca
