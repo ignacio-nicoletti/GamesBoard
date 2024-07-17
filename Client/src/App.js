@@ -8,7 +8,9 @@ import GameBerenjena from "./pages/BerenjenaGame/Berenjena/berenjena";
 import JoinRoom from "./pages/BerenjenaGame/joinRoom/JoinRoom";
 
 import PokerMenu from "./pages/PokerGame/pokerMenu/pokerMenu";
-import HorseGame from "./pages/HorseGame/horseGame";
+import PagePrimaryHorseGame from "./pages/HorseRaceGame/PagePrimaryHorseGame/PagePrimaryHorseGame";
+import JoinRoomHorseRace from "./pages/HorseRaceGame/JoinRoomHorseRace/JoinRoomHorseRace";
+import HorseRace from "./pages/HorseRaceGame/horseRace/horseRace";
 
 function App() {
   return (
@@ -21,12 +23,14 @@ function App() {
         <Route path="/berenjena/rules" element={<RulesOfBerenjena />} />
         <Route path="/berenjena/joinRoom" element={<JoinRoom/>}/>
         <Route path="/berenjena/multiplayer/:id" element={<GameBerenjena />} />
-        <Route path="/gameberenjenaIA" element={<GameBerenjena />} />
+        <Route path="/gameberenjenaIA" element={<JoinRoom />} />
 
         {/* Poker */}
         <Route path="/poker" element={<PokerMenu />} />
         {/* HorseGame */}
-        <Route path="/horserace" element={<HorseGame />} />
+        <Route path="/horserace" element={<PagePrimaryHorseGame />} />
+        <Route path="/horserace/joinRoom" element={<JoinRoomHorseRace/>}/>
+        <Route path="/horserace/multiplayer/:id" element={<HorseRace />} />
       </Routes>
     </div>
   );

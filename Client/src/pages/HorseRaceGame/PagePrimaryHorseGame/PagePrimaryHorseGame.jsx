@@ -1,8 +1,8 @@
 import {Link} from 'react-router-dom';
-import styles from './horseGame.module.css';
-import videoHorse from '../../assets/horseGame/horsevideo.mp4';
+import styles from './PagePrimaryHorseGame.module.css';
+import videoHorse from '../../../assets/horseGame/horsevideo.mp4';
 
-const HorseGame = () => {
+const PagePrimaryHorseGame = () => {
   return (
     <div className={styles.contain}>
       <div className={styles.containOption}>
@@ -16,7 +16,7 @@ const HorseGame = () => {
           <Link to="/" className={styles.link}>
             VS CPU
           </Link>
-          <Link to="/" className={styles.link}>
+          <Link to="/horserace/joinRoom" className={styles.link}>
             Multiplayer
           </Link>
           <Link to="/" className={styles.link}>
@@ -31,4 +31,4 @@ const HorseGame = () => {
   );
 };
 
-export default HorseGame;
+export default PagePrimaryHorseGame;
