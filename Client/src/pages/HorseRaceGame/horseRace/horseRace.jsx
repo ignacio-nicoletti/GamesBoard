@@ -5,17 +5,23 @@ import LoaderHorseRace
 import Cards from '../../../components/horseRace/cards/cards';
 import DataPlayerHorseRace
   from '../../../components/horseRace/dataPlayerHorseRace/dataPlayerHorseRace';
-import ButtonExitRoomHorserace from '../../../components/horseRace/buttonExitRoomHorserace/buttonExitRoomHorserace';
+import ButtonExitRoomHorserace
+  from '../../../components/horseRace/buttonExitRoomHorserace/buttonExitRoomHorserace';
 const HorseRace = () => {
   const [loader, setLoader] = useState (false);
+  const [myPlayer, setMyPlayer] = useState ({}); //mi position
+  const [players, setPlayers] = useState ([]);
+  const [round, setRound] = useState ({});
+  const [dataRoom, setDataRoom] = useState ({});
+
   return (
     <div className={styles.contain}>
       {loader
         ? <LoaderHorseRace />
         : <div className={styles.contain}>
             <DataPlayerHorseRace />
-            <ButtonExitRoomHorserace/>
-            
+            <ButtonExitRoomHorserace />
+
             <div className={styles.cardsContain}>
 
               <div className={styles.cards}>
