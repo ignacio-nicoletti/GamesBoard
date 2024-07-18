@@ -40,7 +40,7 @@ const io = new Server(server, {
       }
     },
     methods: ["GET", "POST"],
-    credentials: true,
+    // credentials: true,
   },
   transports: ["websocket", "polling"],  // Habilitar ambos transportes
 });
