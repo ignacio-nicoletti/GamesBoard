@@ -31,14 +31,19 @@ const whiteList = [process.env.DEPLOY_CLIENT_URL, "http://localhost:3000"];
 
 const corsOptions = {
   origin: "*",  // Permitir cualquier origen
-  // methods: ["GET", "POST"],  // Métodos permitidos
-  // credentials: true  // Permitir el uso de credenciales (cookies, autenticaciones, etc.)
+  methods: ["GET", "POST"],  // Métodos permitidos
+  credentials: true  // Permitir el uso de credenciales (cookies, autenticaciones, etc.)
 };
 
 app.use(cors(corsOptions));
 
 const io = new Server(server, {
-  cors: corsOptions,
+  cors: {
+    origin: "*",  // Permitir cualquier origen
+    methods: ["GET", "POST"],  // Métodos permitidos
+    credentials: true  // Permitir el uso de credenciales (cookies, autenticaciones, etc.)
+  },
+  transports: ["websocket", "polling"]  // Habilitar ambos transportes
 });
 BerenjenaSockets(io);
 HorseRaceSockets(io);
