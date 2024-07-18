@@ -17,33 +17,33 @@ const server = http.createServer(app);
 
 const whiteList = [process.env.DEPLOY_CLIENT_URL, "http://localhost:3000"];
 
-// const corsOptions = {
-//   origin: (origin, callback) => {
-//     if (whiteList.indexOf(origin) !== -1 || !origin) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error("Not allowed by CORS"));
-//     }
-//   },
-//   methods: ["GET", "POST"],
-//   credentials: true,
-// };
-
 const corsOptions = {
-  origin: "*",  // Permitir cualquier origen
-  methods: ["GET", "POST"],  // Métodos permitidos
-  credentials: true  // Permitir el uso de credenciales (cookies, autenticaciones, etc.)
+  origin: (origin, callback) => {
+    if (whiteList.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST"],
+  credentials: true,
 };
 
 app.use(cors(corsOptions));
 
 const io = new Server(server, {
   cors: {
-    origin: "*",  // Permitir cualquier origen
-    methods: ["GET", "POST"],  // Métodos permitidos
-    credentials: true  // Permitir el uso de credenciales (cookies, autenticaciones, etc.)
+    origin: (origin, callback) => {
+      if (whiteList.indexOf(origin) !== -1 || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST"],
+    credentials: true,
   },
-  transports: ["websocket", "polling"]  // Habilitar ambos transportes
+  transports: ["websocket", "polling"],  // Habilitar ambos transportes
 });
 BerenjenaSockets(io);
 HorseRaceSockets(io);
