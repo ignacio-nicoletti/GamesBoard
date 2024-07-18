@@ -14,7 +14,6 @@ import HorseRaceSockets from "./src/sockets/horseRace.js";
 const app = express();
 const server = http.createServer(app);
 
-
 const whiteList = [process.env.DEPLOY_CLIENT_URL, "http://localhost:3000"];
 
 const corsOptions = {
@@ -45,6 +44,7 @@ const io = new Server(server, {
   },
   transports: ["websocket", "polling"],  // Habilitar ambos transportes
 });
+
 BerenjenaSockets(io);
 HorseRaceSockets(io);
 

@@ -4,6 +4,7 @@ import {permanentRooms,handleEmptyRoom } from "./general.js";
 
 export default function BerenjenaSockets(io) {
   io.on("connection", (socket) => {
+    
     console.log(`User Connected: ${socket.id} to server`);
     socket.on("get_all_rooms_info", ({ game }) => {
       const rooms = permanentRooms[game];
