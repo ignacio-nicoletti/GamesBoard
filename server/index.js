@@ -14,7 +14,7 @@ import HorseRaceSockets from "./src/sockets/horseRace.js";
 const app = express();
 const server = http.createServer(app);
 
-const whiteList = [process.env.DEPLOY_CLIENT_URL, "http://localhost:3000"];
+const whiteList = [ "http://localhost:3000"];
 
 const corsOptions = {
   origin: (origin, callback) => {
