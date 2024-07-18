@@ -14,12 +14,26 @@ import HorseRaceSockets from "./src/sockets/horseRace.js";
 const app = express();
 const server = http.createServer(app);
 
-const whiteList = [process.env.DEPLOY_CLIENT_URL, "http://localhost:3000"];
-const io = new Server(server, {
-  cors: { origin: whiteList, methods: ["GET", "POST"] },
-});
 
-app.use(cors());
+const whiteList = [process.env.DEPLOY_CLIENT_URL, "http://localhost:3000"];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (whiteList.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST"],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+
+const io = new Server(server, {
+  cors: corsOptions,
+});
 BerenjenaSockets(io);
 HorseRaceSockets(io);
 
