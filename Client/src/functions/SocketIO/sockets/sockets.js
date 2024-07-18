@@ -4,7 +4,7 @@ import { io } from "socket.io-client";
 const URL = `${process.env.REACT_APP_URL_API}`;
 // Se conecta al servidor
 
-export let socket = io(URL, { autoConnect: true,transports: ["websocket", "polling"], });
+export let socket = io(URL, { autoConnect: true});
 
 // export const connectSocket = () => {
 //   return new Promise((resolve) => {
