@@ -31,8 +31,8 @@ const whiteList = [process.env.DEPLOY_CLIENT_URL, "http://localhost:3000"];
 
 const corsOptions = {
   origin: "*",  // Permitir cualquier origen
-  methods: ["GET", "POST"],  // Métodos permitidos
-  credentials: true  // Permitir el uso de credenciales (cookies, autenticaciones, etc.)
+  // methods: ["GET", "POST"],  // Métodos permitidos
+  // credentials: true  // Permitir el uso de credenciales (cookies, autenticaciones, etc.)
 };
 
 app.use(cors(corsOptions));
