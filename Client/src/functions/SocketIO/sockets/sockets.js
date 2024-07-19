@@ -1,10 +1,10 @@
 import { io } from "socket.io-client";
 
-
 const URL =
   process.env.REACT_APP_NODE_ENV === "production"
     ? process.env.REACT_APP_URL_API
-    : REACT_APP_URL_API_LOCAL;
+    : process.env.REACT_APP_NODE_ENV === "develoment" ?
+      process.env.REACT_APP_URL_API_LOCAL:"";
 // Se conecta al servidor
 
 export let socket = io(URL, {
