@@ -1,12 +1,15 @@
 import { io } from "socket.io-client";
 
-// const URL= "http://localhost:3001";
-const URL = `${process.env.REACT_APP_URL_API}`;
+
+const URL =
+  process.env.REACT_APP_NODE_ENV === "production"
+    ? process.env.REACT_APP_URL_API
+    : REACT_APP_URL_API_LOCAL;
 // Se conecta al servidor
 
 export let socket = io(URL, {
   autoConnect: true,
-  transports: ["websocket", "polling"],  // Asegúrate de habilitar ambos transportes
+  transports: ["websocket", "polling"], // Asegúrate de habilitar ambos transportes
 });
 
 // export const connectSocket = () => {
