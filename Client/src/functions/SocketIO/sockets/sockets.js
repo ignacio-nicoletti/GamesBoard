@@ -1,7 +1,7 @@
 import { io } from "socket.io-client";
 
-// const URL= "http://localhost:3001";
-const URL = `${process.env.REACT_APP_URL_API}`;
+const URL= "http://localhost:3001";
+// const URL = `${process.env.REACT_APP_URL_API}`;
 // Se conecta al servidor
 
 export let socket = io(URL, {
