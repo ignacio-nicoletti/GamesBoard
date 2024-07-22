@@ -1,8 +1,13 @@
 import axios from "axios";
-
+const URL =
+  process.env.REACT_APP_NODE_ENV === "production"
+    ? process.env.REACT_APP_URL_API
+    : process.env.REACT_APP_NODE_ENV === "development"
+    ? process.env.REACT_APP_URL_API_LOCAL
+    : "";
 // Crear una instancia de Axios con opciones comunes
 const axiosInstance = axios.create({
-  baseURL: `${process.env.REACT_APP_URL_API}`,
+  baseURL: URL,
   headers: {
     'Content-Type': 'application/json',
   },

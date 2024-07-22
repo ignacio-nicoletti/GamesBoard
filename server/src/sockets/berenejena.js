@@ -334,7 +334,7 @@ export default function BerenjenaSockets(io) {
         });
 
         const allReady = room.users.every((u) => u.ready);
-        if (allReady && room.users.length >= 2) {
+        if (allReady && room.users.length > 1) {
           room.gameStarted = true;
           const userObligado = Math.floor(Math.random() * room.users.length);
           const nextTurn = (userObligado + 1) % room.users.length;
