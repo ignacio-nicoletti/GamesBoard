@@ -10,6 +10,7 @@ import "dotenv/config";
 
 import BerenjenaSockets from "./src/sockets/berenejena.js";
 import HorseRaceSockets from "./src/sockets/horseRace.js";
+import GeneralSocket from "./src/sockets/general.js";
 
 const app = express();
 const server = http.createServer(app);
@@ -28,8 +29,6 @@ const corsOptions = {
   credentials: true,
 };
 
-app.use(cors(corsOptions));
-
 const io = new Server(server, {
   cors: {
     origin: (origin, callback) => {
@@ -42,12 +41,14 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
     credentials: true,
   },
-  transports: ["websocket", "polling"],  // Habilitar ambos transportes
+  transports: ["websocket", "polling"], // Habilitar ambos transportes
 });
 
+GeneralSocket(io);
 BerenjenaSockets(io);
 HorseRaceSockets(io);
 
+app.use(cors(corsOptions));
 app.use(morgan("dev"));
 app.use(express.json());
 

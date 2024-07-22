@@ -19,7 +19,12 @@ const HorseRace = () => {
       {loader
         ? <LoaderHorseRace />
         : <div className={styles.contain}>
-            <DataPlayerHorseRace />
+            <DataPlayerHorseRace
+              myPosition={myPlayer.position}
+              players={players}
+              // timmerPlayer={timmerPlayer}
+              round={round}
+            />
             <ButtonExitRoomHorserace />
 
             <div className={styles.cardsContain}>
