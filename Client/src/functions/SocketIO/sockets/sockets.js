@@ -6,7 +6,7 @@ const URL =
     : process.env.REACT_APP_NODE_ENV === "development"
     ? process.env.REACT_APP_URL_API_LOCAL
     : "";
-
+console.log(URL);
 // Se conecta al servidor
 
 export let socket = io(URL, {
@@ -14,15 +14,15 @@ export let socket = io(URL, {
   transports: ["websocket", "polling"], // Asegúrate de habilitar ambos transportes
 });
 
-// export const connectSocket = () => {
-//   return new Promise((resolve) => {
-//     socket.connect();
-//     socket.on("connect", () => {
-//       console.log("Conectado al servidor");
-//       resolve(socket);
-//     });
-//   });
-// };
+export const connectSocket = () => {
+  return new Promise((resolve) => {
+    socket.connect();
+    socket.on("connect", () => {
+      console.log("Conectado al servidor");
+      resolve(socket);
+    });
+  });
+};
 
 export const disconnectServer = () => {
   socket.on("disconnectServer", () => {

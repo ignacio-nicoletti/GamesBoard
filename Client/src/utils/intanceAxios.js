@@ -5,6 +5,7 @@ const URL =
     : process.env.REACT_APP_NODE_ENV === "development"
     ? process.env.REACT_APP_URL_API_LOCAL
     : "";
+console.log(URL);
 // Crear una instancia de Axios con opciones comunes
 const axiosInstance = axios.create({
   baseURL: URL,
