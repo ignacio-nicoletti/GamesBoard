@@ -48,6 +48,13 @@ GeneralSocket(io);
 BerenjenaSockets(io);
 HorseRaceSockets(io);
 
+
+const errorHandler=(error,req,res,next)=>{
+console.log(error);
+res.status(500).send(error.messages)
+}
+
+// app.use(errorHandler)
 app.use(cors(corsOptions));
 app.use(morgan("dev"));
 app.use(express.json());

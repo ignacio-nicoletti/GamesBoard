@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
-import 'dotenv/config'
+import "dotenv/config";
 
 try {
-    await mongoose.connect(process.env.URI_MONGO)
-    console.log("dataBase connected");
+  await mongoose.connect(process.env.URI_MONGO);
+  console.log("DataBase connected");
 } catch (error) {
-    console.log(error);
+  console.log("Error al conectarse a la base");
 }

@@ -8,12 +8,12 @@ export const register = async (req, res) => {
   try {
     let player = await Player.findOne({ email });
     if (player) {
-      return res.status(400).json({ message: "Email ya registrado" });
+      return res.status(400).json({ error: "Email ya registrado" });
     }
 
     player = await Player.findOne({ userName });
     if (player) {
-      return res.status(400).json({ message: "Nombre de usuario ya registrado" });
+      return res.status(400).json({ error: "Nombre de usuario ya registrado" });
     }
 
     let currentDate = new Date();
@@ -38,43 +38,41 @@ export const register = async (req, res) => {
     await player.save();
     return res.status(200).json({ token, expiresIn });
   } catch (error) {
-    return res.status(500).json({ message: "Error en el servidor" });
+    return res.status(500).json({ error: "Error en el servidor" });
   }
 };
 
-
-
-
 export const login = async (req, res) => {
   const { email, password } = req.body;
-
   let player;
-  let emaillower = email.toLowerCase();
+  const emaillower = email.toLowerCase();
+
   try {
-    // user = await User.findOne({ email });
-    if (!player) {
-      player = await Player.findOne({ email: emaillower });
-    }
+    player = await Player.findOne({ email: emaillower });
+    
     if (!player) {
       return res.status(404).json({ error: "No existe este usuario" });
     }
+
     // compara que las contraseñas coincidan
     const respuestaPassword = await player.comparePassword(password);
+
     if (!respuestaPassword) {
       return res.status(401).json({ error: "Contraseña incorrecta" });
     }
-  
-    let dataToken = {
+
+    const dataToken = {
       id: player.id,
       userName: player.userName,
       email: player.email,
-      experience:player.experience
+      experience: player.experience
     };
     const { token, expiresIn } = generateToken(dataToken);
     generateRefreshToken(player.id, res);
+
     return res.status(200).json({ token, expiresIn, rol: player.Rol });
   } catch (error) {
-    console.log(error);
-    res.status(400).json(formatError(error.message));
+    console.error('Error en el servidor:', error); // Log the error for debugging purposes
+    return res.status(400).json({ error: error.message || "Error en el servidor" });
   }
 };

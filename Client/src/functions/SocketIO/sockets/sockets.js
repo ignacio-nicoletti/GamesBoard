@@ -6,7 +6,6 @@ const URL =
     : process.env.REACT_APP_NODE_ENV === "development"
     ? process.env.REACT_APP_URL_API_LOCAL
     : "";
-console.log(URL);
 // Se conecta al servidor
 
 export let socket = io(URL, {
