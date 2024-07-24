@@ -9,19 +9,19 @@ import avatar6 from '../../../assets/berenjena/jugadores/avatar6.png';
 import {faStar} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
-const DataPlayerHorseRace = ({players, myPosition, round}) => {
+const DataPlayerHorseRace = ({players, myPosition}) => {
   const [player, setPlayer] = useState ({});
-  const [progress, setProgress] = useState (100);
+
  
-  // useEffect (
-  //   () => {
-  //     const playerPos = players[myPosition - 1];
-  //     if (playerPos) {
-  //       setPlayer (playerPos);
-  //     }
-  //   },
-  //   [players, myPosition]
-  // );
+  useEffect (
+    () => {
+      const playerPos = players[myPosition - 1];
+      if (playerPos) {
+        setPlayer (playerPos);
+      }
+    },
+    [players, myPosition]
+  );
 
   
   const avatarMap = {
@@ -40,44 +40,7 @@ const DataPlayerHorseRace = ({players, myPosition, round}) => {
 
   return (
     <div className={style.infoPropia}>
-      {/* <div className={style.table_component} role="region" tabIndex="0">
-        <table>
-          <thead>
-            <tr>
-              <th colSpan="2">Score</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Bets</td>
-              <td>{player.betP}</td>
-            </tr>
-            <tr>
-              <td>Wins</td>
-              <td>{player.cardsWins}</td>
-            </tr>
-            <tr>
-              <td>Points</td>
-              <td>{player.points}</td>
-            </tr>
-            <tr>
-              <td>Met</td>
-
-              <td
-                className={isFulfilled ? style.fulfilled : style.notFulfilled}
-              >
-                {isFulfilled
-                  ? <div>
-                      Met
-                    </div>
-                  : <div>
-                      No Met
-                    </div>}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div> */}
+      
       <div className={style.avatar}>
         <img src={playerAvatar} alt="Avatar" />
         <span className={style.name}>

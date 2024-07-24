@@ -9,7 +9,7 @@ import { GetDecodedCookie } from "../../../utils/DecodedCookie";
 import { DecodedToken } from "../../../utils/DecodedToken";
 import {
   getAllRoomsInfo,
-  CreateGameRoom,
+  CreateGameRoomHorserace,
   joinGameRoom,
   socket,
 } from "../../../functions/SocketIO/sockets/sockets";
@@ -38,7 +38,7 @@ const JoinRoomHorseRace=()=>{
     const navigate = useNavigate ();
     const [timmerRooms, setTimmerRooms] = useState (5);
     const [infoUser, setInfoUser] = useState ({});
-    const [game] = useState ('Berenjena');
+    const [game] = useState ('Horserace');
     const token = GetDecodedCookie ('cookieToken');
   
     useEffect(() => {
@@ -65,7 +65,7 @@ const JoinRoomHorseRace=()=>{
       e.preventDefault();
       try {
         if (roomId !== "" && userName !== "") {
-          const res = await CreateGameRoom(
+          const res = await CreateGameRoomHorserace(
             game,
             roomId,
             userName,
@@ -73,6 +73,7 @@ const JoinRoomHorseRace=()=>{
             selectedAvatar,
             infoUser
           );
+          console.log(res);
           res &&
             navigate (`/horseRace/multiplayer/${res.roomCreated.room.roomId}`);
         }

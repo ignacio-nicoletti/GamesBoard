@@ -12,7 +12,7 @@ const LoaderHorseRace = ({setPlayers, setRound, myPlayer, setMyPlayer,setLoader,
   const {id} = useParams ();
   const handleReady = () => {
     setReadyMe (true);
-    socket.emit ('player_ready', dataRoom);
+    socket.emit ('player_ready_horserace', dataRoom);
   };
 
   const updatePlayerList = data => {
@@ -47,21 +47,21 @@ const LoaderHorseRace = ({setPlayers, setRound, myPlayer, setMyPlayer,setLoader,
   useEffect (
     () => {
   
-      socket.on ('room_created', updatePlayerList);
-      socket.on ('room_joined', updatePlayerList);
+      socket.on ('room_created_horserace', updatePlayerList);
+      socket.on ('room_joined_horserace', updatePlayerList);
 
-      socket.emit ('roomRefresh', dataRoom={game:"Berenjena",roomId:id});
-      socket.on ('roomRefresh', updatePlayerList);
+      socket.emit ('roomRefresh_horserace', dataRoom={game:"Horserace",roomId:id});
+      socket.on ('roomRefresh_horserace', updatePlayerList);
 
-      socket.on ('player_list', updatePlayerList);
-      socket.on ('player_ready_status', updatePlayerReadyStatus);
+      socket.on ('player_list_horserace', updatePlayerList);
+      socket.on ('player_ready_status_horserace', updatePlayerReadyStatus);
 
       return () => {
-        socket.off ('room_created', updatePlayerList);
-        socket.off ('room_joined', updatePlayerList);
-        socket.off ('roomRefresh', updatePlayerList);
-        socket.off ('player_list', updatePlayerList);
-        socket.off ('player_ready_status', updatePlayerReadyStatus);
+        socket.off ('room_created_horserace', updatePlayerList);
+        socket.off ('room_joined_horserace', updatePlayerList);
+        socket.off ('roomRefresh_horserace', updatePlayerList);
+        socket.off ('player_list_horserace', updatePlayerList);
+        socket.off ('player_ready_status_horserace', updatePlayerReadyStatus);
       };
     },
     [setPlayerList]
@@ -69,10 +69,10 @@ const LoaderHorseRace = ({setPlayers, setRound, myPlayer, setMyPlayer,setLoader,
 
   useEffect (
     () => {
-      socket.emit ('roomRefresh',{dataRoom});
-      socket.on ('roomRefresh', updatePlayerList);
+      socket.emit ('roomRefres_horseraceh',{dataRoom});
+      socket.on ('roomRefresh_horserace', updatePlayerList);
       return () => {
-        socket.off ('roomRefresh', updatePlayerList);
+        socket.off ('roomRefresh_horserace', updatePlayerList);
       };
     },
     [ playerList,setMyPlayer, setPlayers, setRound,dataRoom]

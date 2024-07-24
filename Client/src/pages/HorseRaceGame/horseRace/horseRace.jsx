@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import styles from './horseRace.module.css';
 import LoaderHorseRace
   from '../../../components/horseRace/loader/loaderHorseRace';
@@ -7,23 +7,60 @@ import DataPlayerHorseRace
   from '../../../components/horseRace/dataPlayerHorseRace/dataPlayerHorseRace';
 import ButtonExitRoomHorserace
   from '../../../components/horseRace/buttonExitRoomHorserace/buttonExitRoomHorserace';
+import { socket } from '../../../functions/SocketIO/sockets/sockets';
 const HorseRace = () => {
   const [loader, setLoader] = useState (false);
+  const [showResult, setShowResult] = useState (false);
   const [myPlayer, setMyPlayer] = useState ({}); //mi position
+
   const [players, setPlayers] = useState ([]);
   const [round, setRound] = useState ({});
   const [dataRoom, setDataRoom] = useState ({});
+  const [results, setResults] = useState ([]); // base del resultado xronda
+  const [winner, setWinner] = useState ({}); // base del resultado xronda
+
+  useEffect (() => {
+    if (!dataRoom.gameStarted) {
+      setLoader (true);
+    }
+    const handleStartGame = data => {
+      setRound (data.round); //establece typeRound en waiting
+      setResults (data.results);
+      setDataRoom (data.room);
+      setPlayers (data.users);
+
+      setLoader (false);
+    };
+    socket.on ('start_game_horserace', handleStartGame);
+
+    // socket.on ('GameFinish', data => {
+    //   setRound (data.round);
+    //   setPlayers (data.players);
+    //   setResults (data.results);
+    //   setWinner (data.winner);
+    // });
+    return () => {
+      socket.off ('start_game_horserace', handleStartGame);
+    };
+  }, []);
+  //Start-game
 
   return (
     <div className={styles.contain}>
       {loader
-        ? <LoaderHorseRace />
+        ? <LoaderHorseRace
+            setPlayers={setPlayers}
+            setRound={setRound}
+            myPlayer={myPlayer}
+            setMyPlayer={setMyPlayer}
+            setLoader={setLoader}
+            setDataRoom={setDataRoom}
+            dataRoom={dataRoom}
+          />
         : <div className={styles.contain}>
             <DataPlayerHorseRace
               myPosition={myPlayer.position}
               players={players}
-              // timmerPlayer={timmerPlayer}
-              round={round}
             />
             <ButtonExitRoomHorserace />
 

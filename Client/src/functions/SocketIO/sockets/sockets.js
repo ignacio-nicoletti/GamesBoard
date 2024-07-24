@@ -40,7 +40,7 @@ export const getAllRoomsInfo = (game) => {
     });
   });
 };
-//se desconecta de la sala
+
 export const CreateGameRoom = (
   game,
   roomId,
@@ -107,6 +107,81 @@ export const joinGameRoom = (
     }
 
     socket.emit("join_room", {
+      game,
+      roomId,
+      userName,
+      selectedAvatar,
+      email: infoUser.email,
+    });
+  });
+};
+
+export const CreateGameRoomHorserace = (
+  game,
+  roomId,
+  userName,
+  maxUsers = 10,
+  selectedAvatar,
+  infoUser
+) => {
+  return new Promise((res, rej) => {
+    const responses = {};
+
+    socket.once("room_created_horserace", (data) => {
+      responses.roomCreated = data;
+      checkIfReadyToResolve();
+    });
+
+    socket.once("room_creation_error_horserace", ({ error }) => {
+      console.log(error);
+      rej(error);
+    });
+
+    function checkIfReadyToResolve() {
+      if (Object.keys(responses).length === 1) {
+        // Asegúrate de que esto coincida con el número de eventos esperados
+        res(responses);
+      }
+    }
+
+    socket.emit("create_room_horserace", {
+      game,
+      roomId,
+      userName,
+      maxUsers,
+      selectedAvatar,
+      email: infoUser.email ? infoUser.email : "invitado",
+    });
+  });
+};
+
+export const joinGameRoomHorserace = (
+  game,
+  roomId,
+  userName,
+  selectedAvatar,
+  infoUser
+) => {
+  return new Promise((resolve, reject) => {
+    const responses = {};
+
+    socket.on("room_joined_horserace", (data) => {
+      responses.roomJoined = data;
+      checkIfReadyToResolve();
+    });
+
+    socket.on("room_join_error_horserace", ({ error }) => {
+      reject(error);
+    });
+
+    function checkIfReadyToResolve() {
+      if (Object.keys(responses).length === 1) {
+        // Asegúrate de que esto coincida con el número de eventos esperados
+        resolve(responses);
+      }
+    }
+
+    socket.emit("join_room_horserace", {
       game,
       roomId,
       userName,
