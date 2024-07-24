@@ -1,0 +1,15 @@
+.contain {
+  background-color: darkgoldenrod;
+  padding: 1rem;
+  border-radius: 10px;
+  z-index: 2;
+  font-size: 2rem;
+}
+.containCards {
+  display: flex;
+  gap: 25px;
+}
+
+.divCard{
+    cursor: pointer;
+}

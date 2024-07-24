@@ -7,7 +7,8 @@ import DataPlayerHorseRace
   from '../../../components/horseRace/dataPlayerHorseRace/dataPlayerHorseRace';
 import ButtonExitRoomHorserace
   from '../../../components/horseRace/buttonExitRoomHorserace/buttonExitRoomHorserace';
-import { socket } from '../../../functions/SocketIO/sockets/sockets';
+import {socket} from '../../../functions/SocketIO/sockets/sockets';
+import BetHorse from '../../../components/horseRace/betHorse/betHorse';
 const HorseRace = () => {
   const [loader, setLoader] = useState (false);
   const [showResult, setShowResult] = useState (false);
@@ -58,12 +59,14 @@ const HorseRace = () => {
             dataRoom={dataRoom}
           />
         : <div className={styles.contain}>
+
             <DataPlayerHorseRace
               myPosition={myPlayer.position}
               players={players}
             />
             <ButtonExitRoomHorserace />
-
+            {round.typeRound === 'Bet' ? <BetHorse /> : ''}
+            
             <div className={styles.cardsContain}>
 
               <div className={styles.cards}>

@@ -225,7 +225,6 @@ export default function HorseRaceSockets(io) {
       }
     );
 
-
     socket.on("roomRefresh_horserace", (dataRoom) => {
       if (!dataRoom || !dataRoom.game || !dataRoom.roomId) {
         return;
