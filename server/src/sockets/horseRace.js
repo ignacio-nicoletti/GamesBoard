@@ -14,7 +14,7 @@ export default function HorseRaceSockets(io) {
         email,
       }) => {
         const rooms = permanentRooms[game];
-        console.log("entre");
+
         if (!rooms) {
           socket.emit("room_creation_error_horserace", { error: "Invalid game" });
           return;
@@ -60,19 +60,10 @@ export default function HorseRaceSockets(io) {
         const round = {
           users: null, //usuarios conectados
           numRounds: 0, //num de ronda
-          hands: 0, //igual a cant de cards repartidas
-          cardXRound: 1, //cant de cartas que se reparten
           typeRound: "waiting", //apuesta o ronda
           turnJugadorA: 1, //1j 2j 3j 4j apuesta
-          turnJugadorR: 1, //1j 2j 3j 4j ronda
-          obligado: null, //numero de jugador obligado
-          betTotal: 0, //suma de la apuesta de todos
-          cardWinxRound: {}, //card ganada en la ronda    {value: null, suit: '', id: ''}
-          lastCardBet: {}, //ultima card apostada
-          beforeLastCardBet: {}, //anteultima card apostada
           ganadorRonda: null,
           cantQueApostaron: 0,
-          cantQueTiraron: 0,
           roomId: { gameId: game, roomId: roomId }, // Guarda la data correctamente
         };
 
@@ -303,5 +294,100 @@ export default function HorseRaceSockets(io) {
         }
       }
     });
+
+
+    socket.on("BetPlayer_horserace", ({ bet, myPosition, dataRoom }) => {
+      if (!dataRoom) return;
+      const { game, roomId, round } = dataRoom;
+      // Verificar si round y roomId son válidos
+      if (!round || !roomId || !game) {
+        console.error("Invalid round or roomId object:", dataRoom);
+        socket.emit("error", { error: "Invalid round or roomId object" });
+        return;
+      }
+
+      const room =
+        permanentRooms[dataRoom.game] &&
+        permanentRooms[dataRoom.game][dataRoom.roomId];
+
+      if (!room) return;
+
+      // Actualizar la apuesta del jugador en room.users
+      const userIndex = room.users.findIndex(
+        (user) => user.position === myPosition
+      );
+
+      if (userIndex !== -1) {
+        room.users[userIndex].betP = bet;
+      }
+
+      // Actualizar la ronda actual en room.results
+      let currentRoundIndex = room.results.findIndex(
+        (r) => r.round?.numRounds === room.round.numRounds
+      );
+
+      // const round = {
+      //   users: null, //usuarios conectados
+      //   numRounds: 0, //num de ronda
+      //   typeRound: "waiting", //apuesta o ronda
+      //   turnJugadorA: 1, //1j 2j 3j 4j apuesta
+      //   ganadorRonda: null,
+      //   cantQueApostaron: 0,
+      //   roomId: { gameId: game, roomId: roomId }, // Guarda la data correctamente
+      // };
+
+      const roundData = {
+        numRounds: room.round.numRounds,
+        cardXRound: room.round.cardXRound,
+        obligado: room.round.obligado,
+        cardWinxRound: room.round.cardWinxRound,
+        ganadorRonda: room.round.ganadorRonda,
+      };
+
+      const playersData = room.users.map((user) => ({
+        userName: user.userName,
+        position: user.position,
+        betP: user.betP,
+        cardsWins: user.cardsWins,
+        cumplio: user.cumplio,
+        points: user.points,
+      }));
+
+      if (currentRoundIndex !== -1) {
+        room.results[currentRoundIndex] = {
+          round: roundData,
+          players: playersData,
+        };
+      } else {
+        room.results.push({
+          round: roundData,
+          players: playersData,
+        });
+      }
+
+      // Determinar el siguiente jugador en turno
+      
+      room.round.cantQueApostaron += 1;
+      room.round.betTotal = Number(room.round.betTotal) + Number(bet);
+      room.round.typeRound = "Bet";
+      if (room.round.cantQueApostaron === room.users.length) {
+        // Cambiar de ronda
+        room.round.typeRound = "ronda";
+        room.round.turnJugadorR = (room.round.obligado % room.users.length) + 1;
+      } else {
+        // Continuar con la ronda de apuestas
+        let nextTurn = (room.round.turnJugadorA % room.users.length) + 1;
+        room.round.turnJugadorA = nextTurn;
+      }
+
+      // Emitir el estado actualizado del juego a todos los clientes en la sala
+      io.to(`${dataRoom.game}-${roomId}`).emit("update_game_state", {
+        round: room.round,
+        players: room.users,
+        results: room.results,
+      });
+    });
+
+
   });
 }
