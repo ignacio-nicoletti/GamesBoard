@@ -5,11 +5,36 @@
   z-index: 2;
   font-size: 2rem;
 }
+
 .containCards {
   display: flex;
   gap: 25px;
 }
 
-.divCard{
-    cursor: pointer;
+.divCard {
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.selectedCard {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  border: 3px solid brown;
+  padding: 0.5rem;
+  border-radius: 10px;
+}
+
+.buttonDiv {
+  /* background-color: red; */
+  margin-top: 1rem;
+}
+
+.buttonDiv button {
+  width: 50%;
+  background-color: #669bbc;
+  font-size: 1rem;
+  color: white;
+  padding: 0.5rem;
+  border-radius: 10px;
+  cursor: pointer;
 }

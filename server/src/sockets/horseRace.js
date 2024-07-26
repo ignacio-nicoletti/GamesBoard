@@ -1,8 +1,8 @@
 import { Player } from "../models/players.js";
 import { permanentRooms } from "./general.js";
+
 export default function HorseRaceSockets(io) {
   io.on("connection", (socket) => {
-    
     socket.on(
       "create_room_horserace",
       async ({
@@ -16,12 +16,16 @@ export default function HorseRaceSockets(io) {
         const rooms = permanentRooms[game];
 
         if (!rooms) {
-          socket.emit("room_creation_error_horserace", { error: "Invalid game" });
+          socket.emit("room_creation_error_horserace", {
+            error: "Invalid game",
+          });
           return;
         }
 
         if (rooms[roomId]) {
-          socket.emit("room_creation_error_horserace", { error: "Room already exists" });
+          socket.emit("room_creation_error_horserace", {
+            error: "Room already exists",
+          });
           return;
         }
 
@@ -53,14 +57,14 @@ export default function HorseRaceSockets(io) {
           avatar: selectedAvatar,
           id: 1, // position
           betP: "", // suit apostado
-          myturnA: false, // boolean // turno apuesta
+          hasBet: false, // flag to check if the player has bet
           points: 0, // puntos
         };
 
         const round = {
           users: null, //usuarios conectados
           numRounds: 0, //num de ronda
-          typeRound: "waiting", //apuesta o ronda
+          typeRound: "Bet", //apuesta o ronda
           turnJugadorA: 1, //1j 2j 3j 4j apuesta
           ganadorRonda: null,
           cantQueApostaron: 0,
@@ -92,7 +96,7 @@ export default function HorseRaceSockets(io) {
     );
 
     socket.on(
-      "join_room",
+      "join_room_horserace",
       async ({ game, roomId, userName, selectedAvatar, email }) => {
         const rooms = permanentRooms[game];
         if (!rooms) {
@@ -101,7 +105,9 @@ export default function HorseRaceSockets(io) {
         }
 
         if (!rooms[roomId]) {
-          socket.emit("room_join_error_horserace", { error: "Room does not exist" });
+          socket.emit("room_join_error_horserace", {
+            error: "Room does not exist",
+          });
           return;
         }
 
@@ -113,7 +119,6 @@ export default function HorseRaceSockets(io) {
 
         if (userInRoom) {
           if (!userInRoom.connect && room.gameStarted) {
-            // Permitir reconexión si el juego ya ha comenzado y el usuario está en room.users
             userInRoom.idSocket = socket.id;
             userInRoom.connect = true;
 
@@ -127,18 +132,11 @@ export default function HorseRaceSockets(io) {
                 position: userInRoom.position,
               },
             });
-        
+
             console.log(
               `User ${userName} rejoined room ${roomId} in game ${game}`
             );
-            // io.to(`${game}-${roomId}`).emit("roomRefresh", {
-            //   users: room.users,
-            //   round: room.round,
-            //   room: room,
-            //   results: room.results,
-            // });
           } else {
-            // Usuario ya está en la sala y no puede volver a unirse mientras el juego esté en curso
             socket.emit("room_join_error_horserace", {
               error:
                 "UserName is already in the room or game has already started",
@@ -148,7 +146,6 @@ export default function HorseRaceSockets(io) {
         }
 
         if (room.users.find((user) => user.userName === userName)) {
-          // Verificar si el userName ya está en la sala
           socket.emit("room_join_error", {
             error: "UserName already exists in the room",
           });
@@ -189,10 +186,9 @@ export default function HorseRaceSockets(io) {
           avatar: selectedAvatar,
           id: 1, // position
           betP: "", // suit apostado
-          myturnA: false, // boolean // turno apuesta
+          hasBet: false, // flag to check if the player has bet
           points: 0, // puntos
         };
-
 
         room.users.push(user);
 
@@ -229,12 +225,15 @@ export default function HorseRaceSockets(io) {
         return;
       }
 
-      io.to(`${dataRoom.game}-${dataRoom.roomId}`).emit("roomRefresh_horserace", {
-        users: room.users,
-        round: room.round,
-        room: room,
-        results: room.results,
-      });
+      io.to(`${dataRoom.game}-${dataRoom.roomId}`).emit(
+        "roomRefresh_horserace",
+        {
+          users: room.users,
+          round: room.round,
+          room: room,
+          results: room.results,
+        }
+      );
     });
 
     socket.on("player_ready_horserace", (dataRoom) => {
@@ -254,37 +253,30 @@ export default function HorseRaceSockets(io) {
         const allReady = room.users.every((u) => u.ready);
         if (allReady && room.users.length > 1) {
           room.gameStarted = true;
-          const userObligado = Math.floor(Math.random() * room.users.length);
-          const nextTurn = (userObligado + 1) % room.users.length;
 
-          // Actualizar el objeto round
-          room.round.obligado = userObligado + 1;
-          room.round.turnJugadorA = nextTurn + 1;
-          room.round.numRounds = (room.round.numRounds || 0) + 1; // Incrementar la ronda
+          room.round.numRounds = (room.round.numRounds || 0) + 1;
           room.round.users = room.users.length;
 
-          // Inicializar la ronda actual en results
-          const currentRound = {
-            round: {
-              numRounds: room.round.numRounds,
-              cardXRound: room.round.cardXRound,
-              obligado: room.round.obligado,
-              cardWinxRound: room.round.cardWinxRound,
-              ganadorRonda: room.round.ganadorRonda,
-            },
-            players: room.users.map((user) => ({
-              userName: user.userName,
-              email: user.email,
-              betP: user.betP,
-              cardsWins: user.cardsWins,
-              cumplio: user.cumplio,
-              points: user.points,
-            })),
-          };
+          // const currentRound = {
+          //   round: {
+          //     numRounds: room.round.numRounds,
+          //     cardXRound: room.round.cardXRound,
+          //     obligado: room.round.obligado,
+          //     cardWinxRound: room.round.cardWinxRound,
+          //     ganadorRonda: room.round.ganadorRonda,
+          //   },
+          //   players: room.users.map((user) => ({
+          //     userName: user.userName,
+          //     email: user.email,
+          //     betP: user.betP,
+          //     cardsWins: user.cardsWins,
+          //     cumplio: user.cumplio,
+          //     points: user.points,
+          //   })),
+          // };
 
-          room.results.push(currentRound);
+          // room.results.push(currentRound);
 
-          // Emitir el evento de inicio del juego a todos los usuarios en la sala
           io.to(`${game}-${roomId}`).emit("start_game_horserace", {
             round: room.round,
             users: room.users,
@@ -295,11 +287,9 @@ export default function HorseRaceSockets(io) {
       }
     });
 
-
     socket.on("BetPlayer_horserace", ({ bet, myPosition, dataRoom }) => {
       if (!dataRoom) return;
       const { game, roomId, round } = dataRoom;
-      // Verificar si round y roomId son válidos
       if (!round || !roomId || !game) {
         console.error("Invalid round or roomId object:", dataRoom);
         socket.emit("error", { error: "Invalid round or roomId object" });
@@ -312,82 +302,29 @@ export default function HorseRaceSockets(io) {
 
       if (!room) return;
 
-      // Actualizar la apuesta del jugador en room.users
       const userIndex = room.users.findIndex(
         (user) => user.position === myPosition
       );
 
       if (userIndex !== -1) {
         room.users[userIndex].betP = bet;
+        room.users[userIndex].hasBet = true; // Mark the user as having bet
       }
 
-      // Actualizar la ronda actual en room.results
-      let currentRoundIndex = room.results.findIndex(
-        (r) => r.round?.numRounds === room.round.numRounds
-      );
-
-      // const round = {
-      //   users: null, //usuarios conectados
-      //   numRounds: 0, //num de ronda
-      //   typeRound: "waiting", //apuesta o ronda
-      //   turnJugadorA: 1, //1j 2j 3j 4j apuesta
-      //   ganadorRonda: null,
-      //   cantQueApostaron: 0,
-      //   roomId: { gameId: game, roomId: roomId }, // Guarda la data correctamente
-      // };
-
-      const roundData = {
-        numRounds: room.round.numRounds,
-        cardXRound: room.round.cardXRound,
-        obligado: room.round.obligado,
-        cardWinxRound: room.round.cardWinxRound,
-        ganadorRonda: room.round.ganadorRonda,
-      };
-
-      const playersData = room.users.map((user) => ({
-        userName: user.userName,
-        position: user.position,
-        betP: user.betP,
-        cardsWins: user.cardsWins,
-        cumplio: user.cumplio,
-        points: user.points,
-      }));
-
-      if (currentRoundIndex !== -1) {
-        room.results[currentRoundIndex] = {
-          round: roundData,
-          players: playersData,
-        };
-      } else {
-        room.results.push({
-          round: roundData,
-          players: playersData,
-        });
-      }
-
-      // Determinar el siguiente jugador en turno
-      
       room.round.cantQueApostaron += 1;
-      room.round.betTotal = Number(room.round.betTotal) + Number(bet);
-      room.round.typeRound = "Bet";
+
       if (room.round.cantQueApostaron === room.users.length) {
-        // Cambiar de ronda
         room.round.typeRound = "ronda";
-        room.round.turnJugadorR = (room.round.obligado % room.users.length) + 1;
-      } else {
-        // Continuar con la ronda de apuestas
-        let nextTurn = (room.round.turnJugadorA % room.users.length) + 1;
-        room.round.turnJugadorA = nextTurn;
+       
       }
 
-      // Emitir el estado actualizado del juego a todos los clientes en la sala
       io.to(`${dataRoom.game}-${roomId}`).emit("update_game_state", {
         round: room.round,
         players: room.users,
         results: room.results,
       });
+
+      socket.emit("bet_received", { bet: true });
     });
-
-
   });
 }

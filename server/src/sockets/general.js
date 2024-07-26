@@ -35,6 +35,7 @@ export const handleEmptyRoom = (room, game, roomId) => {
     console.log(`Sala ${roomId} eliminada.`);
   }
 };
+
 export default function GeneralSocket(io) {
   io.on("connection", (socket) => {
     

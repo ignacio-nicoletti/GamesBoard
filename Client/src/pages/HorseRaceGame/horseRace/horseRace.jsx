@@ -20,7 +20,7 @@ const HorseRace = () => {
   const [winner, setWinner] = useState({}); // base del resultado xronda
 
   useEffect(() => {
-    if (!dataRoom.gameStarted) {
+    if (dataRoom&&!dataRoom.gameStarted) {
       setLoader(true);
     }
     const handleStartGame = (data) => {
@@ -42,7 +42,7 @@ const HorseRace = () => {
     return () => {
       socket.off("start_game_horserace", handleStartGame);
     };
-  }, [dataRoom.gameStarted]);
+  }, [dataRoom]);
   //Start-game
 
   useEffect(() => {
