@@ -256,26 +256,7 @@ export default function HorseRaceSockets(io) {
 
           room.round.numRounds = (room.round.numRounds || 0) + 1;
           room.round.users = room.users.length;
-
-          // const currentRound = {
-          //   round: {
-          //     numRounds: room.round.numRounds,
-          //     cardXRound: room.round.cardXRound,
-          //     obligado: room.round.obligado,
-          //     cardWinxRound: room.round.cardWinxRound,
-          //     ganadorRonda: room.round.ganadorRonda,
-          //   },
-          //   players: room.users.map((user) => ({
-          //     userName: user.userName,
-          //     email: user.email,
-          //     betP: user.betP,
-          //     cardsWins: user.cardsWins,
-          //     cumplio: user.cumplio,
-          //     points: user.points,
-          //   })),
-          // };
-
-          // room.results.push(currentRound);
+    
 
           io.to(`${game}-${roomId}`).emit("start_game_horserace", {
             round: room.round,

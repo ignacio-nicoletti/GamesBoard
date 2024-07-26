@@ -139,7 +139,7 @@ const HorseRace = () => {
             <Cards value={"1"} suit={"oro"} />
           </div>
 
-          <BetHorseTable players={players}/>
+          <BetHorseTable players={players} />
         </div>
       )}
     </div>
