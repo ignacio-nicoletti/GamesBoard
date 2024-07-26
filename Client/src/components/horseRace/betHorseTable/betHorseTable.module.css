@@ -1,0 +1,21 @@
+.table {
+  display: table;
+  position: absolute;
+  left: 75%;
+  top: 5%;
+  width: 10%;
+  border-collapse: collapse;
+  color: #ddd;
+  flex: 1;
+}
+
+.row {
+  display: table-row;
+}
+
+.cell {
+  display: table-cell;
+  border: 1px solid #000;
+  padding: 8px;
+  text-align: center;
+}

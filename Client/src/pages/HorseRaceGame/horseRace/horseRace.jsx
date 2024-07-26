@@ -7,6 +7,7 @@ import ButtonExitRoomHorserace from "../../../components/horseRace/buttonExitRoo
 import { socket } from "../../../functions/SocketIO/sockets/sockets";
 import BetHorse from "../../../components/horseRace/betHorse/betHorse";
 import TimmerComponentHorserace from "../../../components/horseRace/timmerComponentHorserace/timmerComponentHorserace";
+import BetHorseTable from "../../../components/horseRace/betHorseTable/betHorseTable";
 
 const HorseRace = () => {
   const [loader, setLoader] = useState(false); //active loaderComponente
@@ -20,7 +21,7 @@ const HorseRace = () => {
   const [winner, setWinner] = useState({}); // base del resultado xronda
 
   useEffect(() => {
-    if (dataRoom&&!dataRoom.gameStarted) {
+    if (dataRoom && !dataRoom.gameStarted) {
       setLoader(true);
     }
     const handleStartGame = (data) => {
@@ -138,26 +139,7 @@ const HorseRace = () => {
             <Cards value={"1"} suit={"oro"} />
           </div>
 
-          <div className={styles.table}>
-            <div className={styles.row}>
-              <div className={styles.cell} />
-              <div className={styles.cell}>Oro</div>
-              <div className={styles.cell}>Copa</div>
-              <div className={styles.cell}>Espada</div>
-              <div className={styles.cell}>Basto</div>
-              <div className={styles.cell}>punto</div>
-            </div>
-            {[...Array(10)].map((_, rowIndex) => (
-              <div key={rowIndex} className={styles.row}>
-                <div className={styles.cell}>player {rowIndex + 1} </div>
-                <div className={styles.cell} />
-                <div className={styles.cell} />
-                <div className={styles.cell} />
-                <div className={styles.cell} />
-                <div className={styles.cell} />
-              </div>
-            ))}
-          </div>
+          <BetHorseTable players={players}/>
         </div>
       )}
     </div>

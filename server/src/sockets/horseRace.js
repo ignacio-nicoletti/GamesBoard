@@ -152,7 +152,7 @@ export default function HorseRaceSockets(io) {
           return;
         }
 
-        const maxUsers = room.maxUsers || 6;
+        const maxUsers = room.maxUsers || 10;
 
         if (room.users.length >= maxUsers) {
           socket.emit("room_join_error_horserace", { error: "Room is full" });
@@ -180,7 +180,7 @@ export default function HorseRaceSockets(io) {
           userName,
           roomId,
           email: email,
-          position: 1,
+          position: room.users.length + 1,
           ready: false,
           connect: true,
           avatar: selectedAvatar,
@@ -318,7 +318,7 @@ export default function HorseRaceSockets(io) {
        
       }
 
-      io.to(`${dataRoom.game}-${roomId}`).emit("update_game_state", {
+      io.to(`${dataRoom.game}-${roomId}`).emit("update_game_state_horserace", {
         round: room.round,
         players: room.users,
         results: room.results,

@@ -22,7 +22,6 @@ const BetHorse = ({
     return { value, suit: randomSuit };
   }
 
-
   const handleCardClick = (suit) => {
     setCard({ ...card, suit });
   };
@@ -38,12 +37,13 @@ const BetHorse = ({
 
   useEffect(() => {
     const handleGameStateUpdate = (data) => {
+      console.log(data);
       setRound(data.round);
       setPlayers(data.players);
       setResults(data.results);
     };
 
-    socket.on("update_game_state", handleGameStateUpdate);
+    socket.on("update_game_state_horserace", handleGameStateUpdate);
 
     const handleBetReceived = () => {
       setHasBet(true); // Update the state when the bet is received
@@ -52,7 +52,7 @@ const BetHorse = ({
     socket.on("bet_received", handleBetReceived);
 
     return () => {
-      socket.off("update_game_state", handleGameStateUpdate);
+      socket.off("update_game_state_horserace", handleGameStateUpdate);
       socket.off("bet_received", handleBetReceived);
     };
   }, [round, setRound, setPlayers, setResults]);

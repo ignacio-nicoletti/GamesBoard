@@ -55,28 +55,3 @@
   border: 3px solid darkgoldenrod;
   border-radius: 10px;
 }
-
-
-/* src/components/Table.module.css */
-.table {
-    display: table;
-    position: absolute;
-    left: 75%;
-    top:5%;
-    width: 10%;
-    border-collapse: collapse;
-    color: #ddd;
-    flex: 1;
-  }
-  
-  .row {
-    display: table-row;
-  }
-  
-  .cell {
-    display: table-cell;
-    padding: 8px;
-    border: 1px solid #ddd;
-    text-align: center;
-  }
-  

@@ -102,7 +102,6 @@ const JoinRoomHorseRace = () => {
           infoUser
         );
         res &&
-        console.log(res);
           navigate(
             `/horserace/multiplayer/${res.roomJoined.roomId || res.roomId}`
           );
