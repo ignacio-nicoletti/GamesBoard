@@ -2,11 +2,8 @@ import Cards from "../cards/cards";
 import styles from "./horseSideLeft.module.css";
 
 const HorseSideLeft = () => {
-
   return (
     <div className={styles.ContainSideLeft}>
-      <div className={styles.cardsContainSideLeft}>
-        
       <div className={`${styles.cardsSideLeft} ${styles.yPos1}`}>
         <Cards value={"8"} suit={"oro"} />
       </div>
@@ -21,7 +18,6 @@ const HorseSideLeft = () => {
       </div>
       <div className={`${styles.cardsSideLeft} ${styles.yPos5}`}>
         <Cards value={"4"} suit={"espada"} />
-      </div>
       </div>
     </div>
   );
