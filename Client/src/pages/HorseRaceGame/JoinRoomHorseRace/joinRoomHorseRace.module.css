@@ -180,6 +180,40 @@
   box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
 }
 
+.divstoreButton {
+  width: 100%;
+  height: max-content;
+  display: flex;
+  justify-content: center;
+  margin-top: 10rem;
+}
+
+.storeButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  width: 90%;
+  font-family: "Bebas Neue";
+  font-size: 1rem;
+  text-decoration: none;
+  background-color: #669bbc;
+  color: white;
+  padding: 0.5rem;
+  transition: background-color 0.3s;
+  transition: width 0.3s ease-in-out;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.storeButton:hover {
+  width: calc(100% + 2rem);
+  background-color: white;
+  color: #003049;
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+}
+
 .editIcon:hover {
   transform: scale(1.1);
   background-color: white;
@@ -263,7 +297,7 @@
     font-family: "Bebas Neue";
     font-size: 1rem;
     text-decoration: none;
-    background-color: #669bbc;;
+    background-color: #669bbc;
     color: white;
     padding: 0.3rem;
     transition: background-color 0.3s;

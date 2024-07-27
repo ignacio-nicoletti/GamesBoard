@@ -367,6 +367,9 @@ const JoinRoomHorseRace = () => {
               >
                 Create
               </button>
+              {/* <div className={style.divstoreButton}>
+                <button className={style.storeButton}>Store</button>
+              </div> */}
             </div>
           </div>
 
