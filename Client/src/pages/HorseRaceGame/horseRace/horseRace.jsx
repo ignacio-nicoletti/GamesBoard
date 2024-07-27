@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./horseRace.module.css";
-import LoaderHorseRace from "../../../components/horseRace/loader/loaderHorseRace";
+import LoaderHorseRace from "../../../components/horseRace/loaderHorseRace/loaderHorseRace";
 import Cards from "../../../components/horseRace/cards/cards";
 import DataPlayerHorseRace from "../../../components/horseRace/dataPlayerHorseRace/dataPlayerHorseRace";
 import ButtonExitRoomHorserace from "../../../components/horseRace/buttonExitRoomHorserace/buttonExitRoomHorserace";
@@ -8,6 +8,8 @@ import { socket } from "../../../functions/SocketIO/sockets/sockets";
 import BetHorse from "../../../components/horseRace/betHorse/betHorse";
 import TimmerComponentHorserace from "../../../components/horseRace/timmerComponentHorserace/timmerComponentHorserace";
 import BetHorseTable from "../../../components/horseRace/betHorseTable/betHorseTable";
+import HorseContain from "../../../components/horseRace/horseContain/horseContain";
+import HorseSideLeft from "../../../components/horseRace/horseSideLeft/horseSideLeft";
 
 const HorseRace = () => {
   const [loader, setLoader] = useState(false); //active loaderComponente
@@ -22,7 +24,7 @@ const HorseRace = () => {
 
   useEffect(() => {
     if (dataRoom && !dataRoom.gameStarted) {
-      setLoader(true);
+      setLoader(false);
     }
     const handleStartGame = (data) => {
       setRound(data.round); //establece typeRound en waiting
@@ -102,38 +104,9 @@ const HorseRace = () => {
               />
             )}
 
-          <div className={styles.cardsContain}>
-            <div className={styles.cards}>
-              <Cards value={"11"} suit={"oro"} />
-            </div>
-            <div className={styles.cards}>
-              <Cards value={"11"} suit={"espada"} className={styles.cards} />
-            </div>
-            <div className={styles.cards}>
-              <Cards value={"11"} suit={"basto"} className={styles.cards} />
-            </div>
-            <div className={styles.cards}>
-              <Cards value={"11"} suit={"copa"} className={styles.cards} />
-            </div>
-          </div>
+          <HorseContain />
 
-          <div className={styles.cardsContainSideLeft}>
-            <div className={styles.cardsSideLeft}>
-              <Cards value={"8"} suit={"oro"} />
-            </div>
-            <div className={styles.cardsSideLeft}>
-              <Cards value={"3"} suit={"copa"} />
-            </div>
-            <div className={styles.cardsSideLeft}>
-              <Cards value={"10"} suit={"basto"} />
-            </div>
-            <div className={styles.cardsSideLeft}>
-              <Cards value={"12"} suit={"basto"} />
-            </div>
-            <div className={styles.cardsSideLeft}>
-              <Cards value={"4"} suit={"espada"} />
-            </div>
-          </div>
+          <HorseSideLeft />
 
           <div className={styles.cardsContainMazo}>
             <Cards value={"1"} suit={"oro"} />

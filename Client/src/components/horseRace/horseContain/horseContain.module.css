@@ -1,0 +1,45 @@
+.Contain {
+  display: flex;
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+}
+.cardsContain {
+  display: flex;
+  position: absolute;
+  /* height: 100vh; */
+  width: 100%;
+  padding-top: 1rem;
+  
+}
+
+.cards {
+  left: 30%;
+  position: absolute;
+  border-radius: 12px;
+  padding: 0.5rem;
+}
+
+/* Clases para diferentes posiciones en el eje Y */
+.yPos1 {
+  transform: translateY(0rem);
+}
+
+.yPos2 {
+  transform: translateY(10rem);
+}
+
+.yPos3 {
+  transform: translateY(20rem);
+}
+
+.yPos4 {
+  transform: translateY(30rem);
+}
+
+.yPos5 {
+  transform: translateY(40rem);
+}
+.yPos6 {
+  transform: translateY(50rem);
+}

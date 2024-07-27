@@ -116,3 +116,6 @@ const Home = () => {
 };
 
 export default Home;
+
+// tienda para objetos
+// avatares, color en el name
