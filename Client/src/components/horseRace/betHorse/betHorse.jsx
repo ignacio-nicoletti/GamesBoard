@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Cards from "../cards/cards";
+import Cards from "../cards/cardsHorse";
 import style from "./betHorse.module.css";
 import { socket } from "../../../functions/SocketIO/sockets/sockets";
 
@@ -37,7 +37,6 @@ const BetHorse = ({
 
   useEffect(() => {
     const handleGameStateUpdate = (data) => {
-      console.log(data);
       setRound(data.round);
       setPlayers(data.players);
       setResults(data.results);

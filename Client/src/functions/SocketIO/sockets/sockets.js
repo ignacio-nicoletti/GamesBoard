@@ -201,3 +201,9 @@ export const distribute = (dataRoom, setPlayers) => {
     setPlayers(data.users);
   });
 };
+export const distributeHorserace = (dataRoom, setRound) => {
+  socket.emit("distributeHorserace", dataRoom);
+  socket.on("distributeHorserace", (data) => {
+    setRound(data.round);
+  });
+};

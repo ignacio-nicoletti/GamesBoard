@@ -15,6 +15,7 @@
   height: fit-content;
   border: 3px solid darkgoldenrod;
   border-radius: 13px;
+  transition: top 0.5s ease-in-out;
 }
 
 /* Clases para diferentes posiciones en el eje Y */

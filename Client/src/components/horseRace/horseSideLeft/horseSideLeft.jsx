@@ -1,24 +1,16 @@
-import Cards from "../cards/cards";
+import Cards from "../cards/cardsHorse";
 import styles from "./horseSideLeft.module.css";
 
-const HorseSideLeft = () => {
+const HorseSideLeft = ({ cardsMap }) => {
+  const yPositions = [styles.yPos1, styles.yPos2, styles.yPos3, styles.yPos4, styles.yPos5];
+
   return (
     <div className={styles.ContainSideLeft}>
-      <div className={`${styles.cardsSideLeft} ${styles.yPos1}`}>
-        <Cards value={"8"} suit={"oro"} />
-      </div>
-      <div className={`${styles.cardsSideLeft} ${styles.yPos2}`}>
-        <Cards value={"3"} suit={"copa"} />
-      </div>
-      <div className={`${styles.cardsSideLeft} ${styles.yPos3}`}>
-        <Cards value={"10"} suit={"basto"} />
-      </div>
-      <div className={`${styles.cardsSideLeft} ${styles.yPos4}`}>
-        <Cards value={"12"} suit={"basto"} />
-      </div>
-      <div className={`${styles.cardsSideLeft} ${styles.yPos5}`}>
-        <Cards value={"4"} suit={"espada"} />
-      </div>
+      {cardsMap&&cardsMap.slice(0, 5).map((card, index) => (
+        <div key={index} className={`${styles.cardsSideLeft} ${yPositions[index]}`}>
+          <Cards value={card.value} suit={card.suit} back={false} />
+        </div>
+      ))}
     </div>
   );
 };

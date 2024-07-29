@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import styles from "./horseRace.module.css";
 import LoaderHorseRace from "../../../components/horseRace/loaderHorseRace/loaderHorseRace";
-import Cards from "../../../components/horseRace/cards/cards";
+import Cards from "../../../components/horseRace/cards/cardsHorse";
 import DataPlayerHorseRace from "../../../components/horseRace/dataPlayerHorseRace/dataPlayerHorseRace";
 import ButtonExitRoomHorserace from "../../../components/horseRace/buttonExitRoomHorserace/buttonExitRoomHorserace";
-import { socket } from "../../../functions/SocketIO/sockets/sockets";
+import {
+  distributeHorserace,
+  socket,
+} from "../../../functions/SocketIO/sockets/sockets";
 import BetHorse from "../../../components/horseRace/betHorse/betHorse";
 import TimmerComponentHorserace from "../../../components/horseRace/timmerComponentHorserace/timmerComponentHorserace";
 import BetHorseTable from "../../../components/horseRace/betHorseTable/betHorseTable";
@@ -24,7 +27,7 @@ const HorseRace = () => {
 
   useEffect(() => {
     if (dataRoom && !dataRoom.gameStarted) {
-      setLoader(false);
+      setLoader(true);
     }
     const handleStartGame = (data) => {
       setRound(data.round); //establece typeRound en waiting
@@ -47,6 +50,17 @@ const HorseRace = () => {
     };
   }, [dataRoom]);
   //Start-game
+
+  useEffect(() => {
+    if (round && round.typeRound === "Bet") {
+      distributeHorserace(dataRoom, setRound);
+    } else if (round && round.typeRound === "ronda") {
+      socket.emit("tirarCarta_horserace", dataRoom);
+      socket.on("tirarCarta_horserace", (data) => {
+        setRound(data.round);
+      });
+    }
+  }, [round.typeRound]);
 
   useEffect(() => {
     const handleRoomRefresh = (data) => {
@@ -104,12 +118,14 @@ const HorseRace = () => {
               />
             )}
 
-          <HorseContain />
+          <HorseContain cardSuitUp={round.cardSuit} cardSuitDown={round} />
 
-          <HorseSideLeft />
+          <HorseSideLeft cardsMap={round.sideLeftCards} />
 
           <div className={styles.cardsContainMazo}>
-            <Cards value={"1"} suit={"oro"} />
+            {round.cardSuit && (
+              <Cards value={round.cardSuit.value} suit={round.cardSuit.suit} back={!round.cardSuit.value}/>
+            )}
           </div>
 
           <BetHorseTable players={players} />
