@@ -71,7 +71,7 @@ const BetHorse = ({
         myPosition,
         dataRoom,
       });
-   
+
       setHasBet(true); // Mark that the player has bet
     }
   }, [timeLeft, hasBet, myPosition, dataRoom]);

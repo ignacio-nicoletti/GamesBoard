@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Cards from "../cards/cardsHorse";
 import styles from "./horseContain.module.css";
+import { socket } from "../../../functions/SocketIO/sockets/sockets";
 
-const HorseContain = ({ cardSuitUp, cardSuitDown }) => {
+const HorseContain = ({ cardSuitUp, setRound, round, dataRoom }) => {
+  const [timerCard, setTimerCard] = useState(3);
   const [cardPosY, setCardPosY] = useState({
     cardOro: 5,
     cardEspada: 5,
@@ -20,33 +22,88 @@ const HorseContain = ({ cardSuitUp, cardSuitDown }) => {
   ];
 
   useEffect(() => {
-    if (cardSuitUp && cardSuitUp.suit !== "") {
+    if (cardSuitUp && cardSuitUp.suit) {
       const { suit } = cardSuitUp;
-
-      setCardPosY((prevCardPosY) => {
-        let newCardPosY = { ...prevCardPosY };
-
+      setCardPosY((prevState) => {
+        const newState = { ...prevState };
         switch (suit) {
           case "oro":
-            newCardPosY.cardOro = prevCardPosY.cardOro - 1;
+            newState.cardOro = Math.max(prevState.cardOro - 1, 0);
             break;
           case "espada":
-            newCardPosY.cardEspada = prevCardPosY.cardEspada - 1;
+            newState.cardEspada = Math.max(prevState.cardEspada - 1, 0);
             break;
           case "basto":
-            newCardPosY.cardBasto = prevCardPosY.cardBasto - 1;
+            newState.cardBasto = Math.max(prevState.cardBasto - 1, 0);
             break;
           case "copa":
-            newCardPosY.cardCopa = prevCardPosY.cardCopa - 1;
+            newState.cardCopa = Math.max(prevState.cardCopa - 1, 0);
             break;
           default:
             break;
         }
-
-        return newCardPosY;
+        return newState;
       });
     }
   }, [cardSuitUp]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimerCard((prevTime) => {
+        if (prevTime > 0) {
+          return prevTime - 1;
+        } else if (prevTime === 0) {
+          if (round && round.typeRound === "ronda") {
+            if (Object.values(cardPosY).every(pos => pos >= 4)) {
+              const suit = round.sideLeftCards[5]?.suit;
+              if (suit) {
+                setCardPosY((prevState) => {
+                  const newState = { ...prevState };
+                  switch (suit) {
+                    case "oro":
+                      newState.cardOro = Math.min(prevState.cardOro + 1, 5);
+                      break;
+                    case "espada":
+                      newState.cardEspada = Math.min(prevState.cardEspada + 1, 5);
+                      break;
+                    case "basto":
+                      newState.cardBasto = Math.min(prevState.cardBasto + 1, 5);
+                      break;
+                    case "copa":
+                      newState.cardCopa = Math.min(prevState.cardCopa + 1, 5);
+                      break;
+                    default:
+                      break;
+                  }
+                  return newState;
+                });
+              }
+            } else {
+              socket.emit("tirarCarta_horserace", dataRoom);
+            }
+          }
+          return 3; // Reset the timer
+        }
+        return prevTime;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer); // Clean up the interval on component unmount
+  }, [cardPosY, round, dataRoom]);
+
+  useEffect(() => {
+    const handleTirarCarta = (data) => {
+      setRound(data.round);
+    };
+
+    if (round && round.typeRound === "ronda") {
+      socket.on("tirarCarta_horserace", handleTirarCarta);
+    }
+
+    return () => {
+      socket.off("tirarCarta_horserace", handleTirarCarta); // Clean up the socket listener on component unmount
+    };
+  }, [round, setRound]);
 
   return (
     <div className={styles.Contain}>

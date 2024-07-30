@@ -69,7 +69,7 @@ const LoaderHorseRace = ({setPlayers, setRound, myPlayer, setMyPlayer,setLoader,
 
   useEffect (
     () => {
-      socket.emit ('roomRefres_horseraceh',{dataRoom});
+      socket.emit ('roomRefres_horserace',{dataRoom});
       socket.on ('roomRefresh_horserace', updatePlayerList);
       return () => {
         socket.off ('roomRefresh_horserace', updatePlayerList);

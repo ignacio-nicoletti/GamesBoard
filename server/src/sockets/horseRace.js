@@ -69,9 +69,9 @@ export default function HorseRaceSockets(io) {
           turnJugadorA: 1, //1j 2j 3j 4j apuesta
           ganadorRonda: null,
           cantQueApostaron: 0,
-          sideLeftCards:[],
-          cardsDeck:[],
-          cardSuit:{},
+          sideLeftCards: [],
+          cardsDeck: [],
+          cardSuit: {suit:"",value:null},
           roomId: { gameId: game, roomId: roomId }, // Guarda la data correctamente
         };
 
@@ -260,7 +260,6 @@ export default function HorseRaceSockets(io) {
 
           room.round.numRounds = (room.round.numRounds || 0) + 1;
           room.round.users = room.users.length;
-    
 
           io.to(`${game}-${roomId}`).emit("start_game_horserace", {
             round: room.round,
@@ -300,7 +299,6 @@ export default function HorseRaceSockets(io) {
 
       if (room.round.cantQueApostaron === room.users.length) {
         room.round.typeRound = "ronda";
-       
       }
 
       io.to(`${dataRoom.game}-${roomId}`).emit("update_game_state_horserace", {
@@ -313,12 +311,9 @@ export default function HorseRaceSockets(io) {
     });
 
     socket.on("distributeHorserace", (dataRoom) => {
-      if(!dataRoom){
-        return
-      }
+      if (!dataRoom) return;
       const { game, roomId, round } = dataRoom;
     
-      // Verificar si round y roomId son válidos
       if (!round || !roomId || !game) {
         console.error("Invalid round or roomId object:", dataRoom);
         socket.emit("error", { error: "Invalid round or roomId object" });
@@ -326,23 +321,23 @@ export default function HorseRaceSockets(io) {
       }
     
       try {
-        let deck = distribute(); // Obtener el mazo de cartas
-        let shuffledCards = shuffle(deck); // Mezclar el mazo de cartas
-    
-        // Eliminar las cartas con valor 11
-        shuffledCards = shuffledCards.filter(card => card.value !== '11');
+        let deck = distribute();
+        let shuffledCards = shuffle(deck);
+        shuffledCards = shuffledCards.filter((card) => card.value !== "11");
     
         const room = permanentRooms[game] && permanentRooms[game][roomId];
         if (!room) return;
     
-        // Asignar 5 cartas a room.sideLeftCards
-        room.round.sideLeftCards = shuffledCards.slice(0, 5);
+        // Asignar la primera carta a cardSuit
+        const initialCardSuit = shuffledCards.shift();
     
-        // Asignar el resto de cartas a rooms.cardDeck
+        room.round.cardSuit = initialCardSuit;
+        room.round.sideLeftCards = shuffledCards.slice(0, 5);
         room.round.cardsDeck = shuffledCards.slice(5);
     
-        // Emitir evento con usuarios actualizados
-        io.to(`${game}-${roomId}`).emit("distributeHorserace", { round: room.round });
+        io.to(`${game}-${roomId}`).emit("distributeHorserace", {
+          round: room.round,
+        });
       } catch (error) {
         console.error("Error in distribute function:", error);
         socket.emit("error", { error: "Error in distribute function" });
@@ -350,34 +345,35 @@ export default function HorseRaceSockets(io) {
     });
     
     socket.on("tirarCarta_horserace", (dataRoom) => {
-      if(!dataRoom){
-        return
-      }
+      if (!dataRoom) return;
       const { game, roomId, round } = dataRoom;
     
-      // Verificar si round y roomId son válidos
       if (!round || !roomId || !game) {
         console.error("Invalid round or roomId object:", dataRoom);
         socket.emit("error", { error: "Invalid round or roomId object" });
         return;
       }
     
-      const room = permanentRooms[game] && permanentRooms[game][roomId];
-      if (!room) return;
+      try {
+        const room = permanentRooms[game] && permanentRooms[game][roomId];
+        if (!room) return;
     
-      // Verificar que room.round y room.round.cardsDeck existan y no estén vacíos
-      if (!room.round || !room.round.cardsDeck || room.round.cardsDeck.length === 0) {
-        console.error("No cards available in the deck");
-        socket.emit("error", { error: "No cards available in the deck" });
-        return;
+        if (!room.round || !room.round.cardsDeck || room.round.cardsDeck.length === 0) {
+          console.error("No cards available in the deck");
+          socket.emit("error", { error: "No cards available in the deck" });
+          return;
+        }
+    
+        const drawnCard = room.round.cardsDeck.shift();
+        room.round.cardSuit = drawnCard;
+    
+        io.to(`${game}-${roomId}`).emit("tirarCarta_horserace", {
+          round: room.round,
+        });
+      } catch (error) {
+        console.error("Error in tirarCarta function:", error);
+        socket.emit("error", { error: "Error in tirarCarta function" });
       }
-    
-      // Sacar la primera carta del mazo y asignarla a cardSuit
-      const drawnCard = room.round.cardsDeck.shift();
-      room.round.cardSuit = drawnCard;
-    
-      // Emitir evento con el estado actualizado de round
-      io.to(`${game}-${roomId}`).emit("tirarCarta_horserace", { round: room.round });
     });
   });
 }

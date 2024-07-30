@@ -39,12 +39,6 @@ const HorseRace = () => {
     };
     socket.on("start_game_horserace", handleStartGame);
 
-    // socket.on ('GameFinish', data => {
-    //   setRound (data.round);
-    //   setPlayers (data.players);
-    //   setResults (data.results);
-    //   setWinner (data.winner);
-    // });
     return () => {
       socket.off("start_game_horserace", handleStartGame);
     };
@@ -52,15 +46,11 @@ const HorseRace = () => {
   //Start-game
 
   useEffect(() => {
-    if (round && round.typeRound === "Bet") {
+    if (round && round.typeRound === "ronda") {
       distributeHorserace(dataRoom, setRound);
-    } else if (round && round.typeRound === "ronda") {
-      socket.emit("tirarCarta_horserace", dataRoom);
-      socket.on("tirarCarta_horserace", (data) => {
-        setRound(data.round);
-      });
     }
   }, [round.typeRound]);
+
 
   useEffect(() => {
     const handleRoomRefresh = (data) => {
@@ -118,13 +108,13 @@ const HorseRace = () => {
               />
             )}
 
-          <HorseContain cardSuitUp={round.cardSuit} cardSuitDown={round} />
+          <HorseContain cardSuitUp={round.cardSuit} cardSuitDown={round} setRound={setRound} round={round} dataRoom={dataRoom} />
 
           <HorseSideLeft cardsMap={round.sideLeftCards} />
 
           <div className={styles.cardsContainMazo}>
             {round.cardSuit && (
-              <Cards value={round.cardSuit.value} suit={round.cardSuit.suit} back={!round.cardSuit.value}/>
+              <Cards value={round.cardSuit.value} suit={round.cardSuit.suit} back={!round.cardSuit.value} />
             )}
           </div>
 
