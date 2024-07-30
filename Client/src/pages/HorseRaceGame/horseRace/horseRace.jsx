@@ -13,6 +13,7 @@ import TimmerComponentHorserace from "../../../components/horseRace/timmerCompon
 import BetHorseTable from "../../../components/horseRace/betHorseTable/betHorseTable";
 import HorseContain from "../../../components/horseRace/horseContain/horseContain";
 import HorseSideLeft from "../../../components/horseRace/horseSideLeft/horseSideLeft";
+import DeckRight from "../../../components/horseRace/deckRight/deckRight";
 
 const HorseRace = () => {
   const [loader, setLoader] = useState(false); //active loaderComponente
@@ -24,6 +25,8 @@ const HorseRace = () => {
   const [dataRoom, setDataRoom] = useState({});
   const [results, setResults] = useState([]); // base del resultado xronda
   const [winner, setWinner] = useState({}); // base del resultado xronda
+  const [timerCard, setTimerCard] = useState(3);
+
 
   useEffect(() => {
     if (dataRoom && !dataRoom.gameStarted) {
@@ -51,7 +54,6 @@ const HorseRace = () => {
     }
   }, [round.typeRound]);
 
-
   useEffect(() => {
     const handleRoomRefresh = (data) => {
       setRound(data.round);
@@ -64,6 +66,37 @@ const HorseRace = () => {
     };
   }, []);
 
+
+   useEffect(() => {
+    const timer = setInterval(() => {
+      setTimerCard((prevTime) => {
+        if (prevTime > 0) {
+          console.log(timerCard);
+          return prevTime - 1;
+        } else if (prevTime === 0) {
+          if (round && round.typeRound === "ronda") {
+            socket.emit("tirarCarta_horserace", dataRoom);
+          }
+          return 3; // Reset the timer
+        }
+        return prevTime;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer); // Clean up the interval on component unmount
+  }, [timerCard]);
+
+  useEffect(() => {
+    const handleTirarCarta = (data) => {
+      setRound(data.round);
+    };
+
+    // socket.on("tirarCarta_horserace", handleTirarCarta);
+
+    return () => {
+      // socket.off("tirarCarta_horserace", handleTirarCarta); // Clean up the socket listener on component unmount
+    };
+  }, []);
   return (
     <div className={styles.contain}>
       {loader ? (
@@ -108,15 +141,11 @@ const HorseRace = () => {
               />
             )}
 
-          <HorseContain cardSuitUp={round.cardSuit} cardSuitDown={round} setRound={setRound} round={round} dataRoom={dataRoom} />
+          <HorseContain round={round} setRound={setRound} dataRoom={dataRoom} />
 
           <HorseSideLeft cardsMap={round.sideLeftCards} />
 
-          <div className={styles.cardsContainMazo}>
-            {round.cardSuit && (
-              <Cards value={round.cardSuit.value} suit={round.cardSuit.suit} back={!round.cardSuit.value} />
-            )}
-          </div>
+          <DeckRight round={round} />
 
           <BetHorseTable players={players} />
         </div>

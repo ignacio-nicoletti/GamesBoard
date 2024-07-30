@@ -16,12 +16,3 @@
 
 
 
-
-.cardsContainMazo {
-  position: absolute;
-  bottom: 5%;
-  left: 80%;
-  padding: 1rem;
-  border: 3px solid darkgoldenrod;
-  border-radius: 10px;
-}

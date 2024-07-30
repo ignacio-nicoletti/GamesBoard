@@ -367,9 +367,18 @@ export default function HorseRaceSockets(io) {
         const drawnCard = room.round.cardsDeck.shift();
         room.round.cardSuit = drawnCard;
     
-        io.to(`${game}-${roomId}`).emit("tirarCarta_horserace", {
-          round: room.round,
-        });
+        // io.to(`${game}-${roomId}`).emit("tirarCarta_horserace", {
+        //   round: room.round,
+        // });
+        io.to(`${dataRoom.game}-${dataRoom.roomId}`).emit(
+          "roomRefresh_horserace",
+          {
+            users: room.users,
+            round: room.round,
+            room: room,
+            results: room.results,
+          }
+        );
       } catch (error) {
         console.error("Error in tirarCarta function:", error);
         socket.emit("error", { error: "Error in tirarCarta function" });
