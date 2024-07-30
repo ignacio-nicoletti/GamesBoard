@@ -3,14 +3,7 @@ import Cards from "../cards/cardsHorse";
 import style from "./betHorse.module.css";
 import { socket } from "../../../functions/SocketIO/sockets/sockets";
 
-const BetHorse = ({
-  setPlayers,
-  round,
-  setRound,
-  myPosition,
-  setResults,
-  dataRoom,
-}) => {
+const BetHorse = ({ setPlayers, round, setRound, myPosition, dataRoom }) => {
   const [card, setCard] = useState({ value: "11", suit: "" });
   const [hasBet, setHasBet] = useState(false);
   const [timeLeft, setTimeLeft] = useState(30); // 30 seconds timer
@@ -39,7 +32,6 @@ const BetHorse = ({
     const handleGameStateUpdate = (data) => {
       setRound(data.round);
       setPlayers(data.players);
-      setResults(data.results);
     };
 
     socket.on("update_game_state_horserace", handleGameStateUpdate);
@@ -54,7 +46,7 @@ const BetHorse = ({
       socket.off("update_game_state_horserace", handleGameStateUpdate);
       socket.off("bet_received", handleBetReceived);
     };
-  }, [round, setRound, setPlayers, setResults]);
+  }, [round, setRound, setPlayers]);
 
   useEffect(() => {
     if (!hasBet && timeLeft > 0) {

@@ -1,6 +1,10 @@
-import { distribute, shuffle } from "../../functions/functions.js";
+import {
+  distribute,
+  distributeHorse,
+  shuffle,
+} from "../../functions/functions.js";
 import { Player } from "../models/players.js";
-import { permanentRooms } from "./general.js";
+import { handleEmptyRoom, permanentRooms } from "./general.js";
 
 export default function HorseRaceSockets(io) {
   io.on("connection", (socket) => {
@@ -71,7 +75,8 @@ export default function HorseRaceSockets(io) {
           cantQueApostaron: 0,
           sideLeftCards: [],
           cardsDeck: [],
-          cardSuit: {suit:"",value:null},
+          cardSuit: { suit: "", value: null },
+          horseDeck: [],
           roomId: { gameId: game, roomId: roomId }, // Guarda la data correctamente
         };
 
@@ -235,7 +240,6 @@ export default function HorseRaceSockets(io) {
           users: room.users,
           round: room.round,
           room: room,
-          results: room.results,
         }
       );
     });
@@ -313,28 +317,30 @@ export default function HorseRaceSockets(io) {
     socket.on("distributeHorserace", (dataRoom) => {
       if (!dataRoom) return;
       const { game, roomId, round } = dataRoom;
-    
+
       if (!round || !roomId || !game) {
         console.error("Invalid round or roomId object:", dataRoom);
         socket.emit("error", { error: "Invalid round or roomId object" });
         return;
       }
-    
+
       try {
-        let deck = distribute();
-        let shuffledCards = shuffle(deck);
-        shuffledCards = shuffledCards.filter((card) => card.value !== "11");
-    
+        let deck = distributeHorse(); //crea la baraja
+        let shuffledCards = shuffle(deck); //mezcla
+
+        const horseDeck = shuffledCards.filter((card) => card.value === 11); // me da los 11
+        const filteredDeck = shuffledCards.filter((card) => card.value !== 11); //borra los 11 de la baraja
+
         const room = permanentRooms[game] && permanentRooms[game][roomId];
         if (!room) return;
-    
-        // Asignar la primera carta a cardSuit
-        const initialCardSuit = shuffledCards.shift();
-    
-        room.round.cardSuit = initialCardSuit;
-        room.round.sideLeftCards = shuffledCards.slice(0, 5);
-        room.round.cardsDeck = shuffledCards.slice(5);
-    
+        room.round.horseDeck = horseDeck; //[4]
+        room.round.sideLeftCards = filteredDeck.slice(0, 5); //[5]
+        room.round.sideLeftCards.map((el) => (el.back = true));
+
+        room.round.cardsDeck = filteredDeck.slice(5); //[41]
+
+        // Asignar las cartas con valor 11 a horseDeck
+
         io.to(`${game}-${roomId}`).emit("distributeHorserace", {
           round: room.round,
         });
@@ -343,46 +349,147 @@ export default function HorseRaceSockets(io) {
         socket.emit("error", { error: "Error in distribute function" });
       }
     });
-    
+
     socket.on("tirarCarta_horserace", (dataRoom) => {
       if (!dataRoom) return;
       const { game, roomId, round } = dataRoom;
-    
+
       if (!round || !roomId || !game) {
         console.error("Invalid round or roomId object:", dataRoom);
         socket.emit("error", { error: "Invalid round or roomId object" });
         return;
       }
-    
+
       try {
         const room = permanentRooms[game] && permanentRooms[game][roomId];
         if (!room) return;
-    
-        if (!room.round || !room.round.cardsDeck || room.round.cardsDeck.length === 0) {
+
+        if (
+          !room.round ||
+          !room.round.cardsDeck ||
+          room.round.cardsDeck.length === 0
+        ) {
           console.error("No cards available in the deck");
           socket.emit("error", { error: "No cards available in the deck" });
           return;
         }
-    
+
+        // Asignar la primera carta a cardSuit y eliminarla de cardsDeck
+      
+        if (
+          room.round.horseDeck.every((el) => el.pos < 6) &&
+          room.round.sideLeftCards[4].back === true
+        ) {
+          room.round.sideLeftCards[4].back = false;
+          let cardDown = room.round.horseDeck.find(
+            (el) => el.suit === room.round.sideLeftCards[4].suit
+          );
+          cardDown.pos = cardDown.pos + 1;
+        }
+        if (
+          room.round.horseDeck.every((el) => el.pos < 5) &&
+          room.round.sideLeftCards[3].back === true
+        ) {
+          room.round.sideLeftCards[3].back = false;
+          let cardDown = room.round.horseDeck.find(
+            (el) => el.suit === room.round.sideLeftCards[3].suit
+          );
+          cardDown.pos = cardDown.pos + 1;
+        }
+        if (
+          room.round.horseDeck.every((el) => el.pos < 4) &&
+          room.round.sideLeftCards[2].back === true
+        ) {
+          room.round.sideLeftCards[2].back = false;
+          let cardDown = room.round.horseDeck.find(
+            (el) => el.suit === room.round.sideLeftCards[2].suit
+          );
+          cardDown.pos = cardDown.pos + 1;
+        }
+        if (
+          room.round.horseDeck.every((el) => el.pos < 3) &&
+          room.round.sideLeftCards[1].back === true
+        ) {
+          room.round.sideLeftCards[1].back = false;
+          let cardDown = room.round.horseDeck.find(
+            (el) => el.suit === room.round.sideLeftCards[1].suit
+          );
+          cardDown.pos = cardDown.pos + 1;
+        }
+        if (
+          room.round.horseDeck.every((el) => el.pos < 2) &&
+          room.round.sideLeftCards[0].back === true
+        ) {
+          room.round.sideLeftCards[0].back = false;
+          let cardDown = room.round.horseDeck.find(
+            (el) => el.suit === room.round.sideLeftCards[0].suit
+          );
+          cardDown.pos = cardDown.pos + 1;
+        }
+
         const drawnCard = room.round.cardsDeck.shift();
         room.round.cardSuit = drawnCard;
-    
-        // io.to(`${game}-${roomId}`).emit("tirarCarta_horserace", {
-        //   round: room.round,
-        // });
-        io.to(`${dataRoom.game}-${dataRoom.roomId}`).emit(
-          "roomRefresh_horserace",
-          {
-            users: room.users,
-            round: room.round,
-            room: room,
-            results: room.results,
-          }
+
+        // Buscar en horseDeck la carta con el mismo suit y reducir su pos en 1
+        const suitToMatch = drawnCard.suit;
+        const horseCard = room.round.horseDeck.find(
+          (card) => card.suit === suitToMatch
         );
+        if (horseCard) {
+          horseCard.pos = Math.max(horseCard.pos - 1, 0); // Asegurarse de que pos no sea menor a 0
+        }
+
+        io.to(`${game}-${roomId}`).emit("tirarCarta_horserace", {
+          round: room.round,
+        });
       } catch (error) {
         console.error("Error in tirarCarta function:", error);
         socket.emit("error", { error: "Error in tirarCarta function" });
       }
+    });
+
+    socket.on("disconnect", () => {
+      console.log(`Usuario desconectado: ${socket.id}`);
+
+      // Recorrer todas las salas permanentes para buscar y manejar la desconexión del usuario
+      Object.keys(permanentRooms).forEach((game) => {
+        const rooms = permanentRooms[game];
+        Object.keys(rooms).forEach((roomId) => {
+          const room = rooms[roomId];
+          const userIndex = room.users.findIndex(
+            (user) => user.idSocket === socket.id
+          );
+          if (userIndex !== -1) {
+            // Usuario encontrado en la sala, realizar acciones necesarias
+            const disconnectedUser = room.users[userIndex];
+
+            if (room.gameStarted) {
+              disconnectedUser.connect = false;
+              console.log(
+                `Usuario ${socket.id} marcado como desconectado en la sala ${roomId}.`
+              );
+
+              // Si todos los usuarios están desconectados, manejar la sala vacía
+              if (room.users.every((user) => !user.connect)) {
+                handleEmptyRoom(room, game, roomId);
+              }
+            } else {
+              // Si el juego no ha comenzado, simplemente remover al usuario de la lista de usuarios
+              room.users.splice(userIndex, 1);
+              room.users.forEach((user, index) => {
+                user.position = index + 1;
+              });
+            }
+
+            // Emitir actualización a los clientes en la sala
+            io.to(`${game}-${roomId}`).emit("roomRefresh", {
+              users: room.users,
+              round: room.round,
+              room: room,
+            });
+          }
+        });
+      });
     });
   });
 }

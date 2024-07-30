@@ -237,53 +237,7 @@ export default function BerenjenaSockets(io) {
         });
       }
     );
-
-    socket.on("disconnectRoom", (data) => {
-      const { game, roomId } = data;
-      if (!game || !roomId) {
-        console.log("Los parámetros game o roomId son indefinidos.");
-        return;
-      }
-
-      if (!permanentRooms[game] || !permanentRooms[game][roomId]) {
-        console.log(`Sala no encontrada: ${roomId} en el juego: ${game}`);
-        return;
-      }
-
-      const room = permanentRooms[game][roomId];
-      const userIndex = room.users.findIndex(
-        (user) => user.idSocket === socket.id
-      );
-
-      if (userIndex === -1) {
-        console.log(`Usuario no encontrado en la sala: ${roomId}`);
-        return;
-      }
-
-      const disconnectedUser = room.users[userIndex];
-
-      if ((room.gameStarted = true)) {
-        disconnectedUser.connect = false;
-        console.log(
-          `Usuario ${socket.id} desconectado de la sala ${roomId}. Marcado como desconectado.`
-        );
-
-        if (room.users.every((user) => !user.connect)) {
-          handleEmptyRoom(room, game, roomId);
-        }
-      } else {
-        // Si el juego no ha comenzado, el usuario se elimina de la sala
-        room.users.splice(userIndex, 1);
-        room.users.forEach((user, index) => {
-          user.position = index + 1;
-        });
-      }
-      io.to(`${game}-${roomId}`).emit("roomRefresh", {
-        users: room.users,
-        round: room.round,
-        room: room,
-      });
-    });
+     
 
     socket.on("roomRefresh", (dataRoom) => {
       if (!dataRoom || !dataRoom.game || !dataRoom.roomId) {

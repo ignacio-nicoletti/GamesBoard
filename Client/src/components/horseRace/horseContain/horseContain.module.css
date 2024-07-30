@@ -19,6 +19,9 @@
 }
 
 /* Clases para diferentes posiciones en el eje Y */
+.yPos0{
+  top:-10%
+}
 .yPos1 {
   top: 0%;
 }

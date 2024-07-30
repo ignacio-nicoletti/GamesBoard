@@ -22,3 +22,17 @@ export const distribute = () => {
   }
   return deck;
 };
+
+
+export function distributeHorse() {
+  const suits = ['oro', 'espada', 'basto', 'copa'];
+  const deck = [];
+
+  suits.forEach(suit => {
+    for (let i = 1; i <= 12; i++) {
+      deck.push({ value: i, suit: suit, pos: 6 ,back:false});
+    }
+  });
+
+  return deck;
+}

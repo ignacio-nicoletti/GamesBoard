@@ -5,7 +5,7 @@ import {socket} from '../../../functions/SocketIO/sockets/sockets';
 
 const ButtonExitRoomHorserace = () => {
   const {id} = useParams ();
-  const game = 'Berenjena';
+  const game = 'Horserace';
 
   const handlerExitRoom = () => {
     socket.emit ('disconnectRoom', {game, roomId: id});
