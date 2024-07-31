@@ -19,79 +19,43 @@ const HorseRace = () => {
   const [loader, setLoader] = useState(false); //active loaderComponente
   const [showResult, setShowResult] = useState(false); //showResult in mobile
   const [myPlayer, setMyPlayer] = useState({}); //information player
-
   const [players, setPlayers] = useState([]);
   const [round, setRound] = useState({});
   const [dataRoom, setDataRoom] = useState({});
   const [winner, setWinner] = useState({}); // base del resultado xronda
   const [timerCard, setTimerCard] = useState(3);
-
+console.log(round.typeRound);
   useEffect(() => {
     if (dataRoom && !dataRoom.gameStarted) {
       setLoader(true);
     }
     const handleStartGame = (data) => {
-      setRound(data.round); //establece typeRound en waiting
-      setDataRoom(data.room);
-      setPlayers(data.users);
-
-      setLoader(false);
+      if (data) {
+        setRound(data.round); //establece typeRound en waiting
+        setDataRoom(data.room);
+        setPlayers(data.users);
+        setLoader(false);
+      }
     };
+    distributeHorserace(dataRoom, setRound);
     socket.on("start_game_horserace", handleStartGame);
 
     return () => {
       socket.off("start_game_horserace", handleStartGame);
     };
   }, [dataRoom]);
-  //Start-game
 
-  useEffect(() => {
-    if (round && round.typeRound === "Bet") {
-      distributeHorserace(dataRoom, setRound);
-    }
-  }, [round.typeRound]);
-
-  useEffect(() => {
-    const handleRoomRefresh = (data) => {
-      setRound(data.round);
-      setPlayers(data.users);
-    };
-    socket.on("roomRefresh_horserace", handleRoomRefresh);
-    return () => {
-      socket.off("roomRefresh_horserace", handleRoomRefresh);
-    };
-  }, []);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimerCard((prevTime) => {
-        if (prevTime > 0) {
-          return prevTime - 1;
-        } else {
-          return 3; // Reset the timer
-        }
-      });
-    }, 1000);
-    return () => clearInterval(timer); // Clean up the interval on component unmount
-  }, []);
-
-  useEffect(() => {
-    if (timerCard === 0 && round && round.typeRound === "ronda") {
-      socket.emit("tirarCarta_horserace", dataRoom);
-    }
-  }, [timerCard]);
-
-  useEffect(() => {
-    const handleTirarCarta = (data) => {
-      setRound(data.round);
-    };
-
-    socket.on("tirarCarta_horserace",handleTirarCarta);
-
-    return () => {
-      socket.off("tirarCarta_horserace", handleTirarCarta); // Clean up the socket listener on component unmount
-    };
-  }, []);
+  // useEffect(() => {
+  //   if (round.typeRound === "ronda") {
+  //     socket.emit("tirarCarta_horserace", dataRoom);
+  //   }
+  //   socket.on("cardTirada_horserace", (data) => {
+  //     setRound(data.round);
+  //   });
+  //   return () => {
+  //     socket.off("cardTirada_horserace");
+  //   };
+  // }, [round]);
 
   return (
     <div className={styles.contain}>
@@ -125,14 +89,8 @@ const HorseRace = () => {
 
           {dataRoom &&
             dataRoom.gameStarted &&
-            (round.typeRound === "waiting" ||
-              round.typeRound === "waitingPlayers") && (
-              <TimmerComponentHorserace
-                setRound={setRound}
-                round={round}
-                players={players}
-                dataRoom={dataRoom}
-              />
+            round.typeRound === "waiting" && (
+              <TimmerComponentHorserace setRound={setRound} round={round} />
             )}
 
           <HorseContain round={round} />

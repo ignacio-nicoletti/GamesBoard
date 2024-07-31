@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import Cards from "../cards/cardsHorse";
 import style from "./betHorse.module.css";
-import { socket } from "../../../functions/SocketIO/sockets/sockets";
+import {
+  distributeHorserace,
+  socket,
+} from "../../../functions/SocketIO/sockets/sockets";
 
 const BetHorse = ({ setPlayers, round, setRound, myPosition, dataRoom }) => {
   const [card, setCard] = useState({ value: "11", suit: "" });
@@ -109,7 +112,9 @@ const BetHorse = ({ setPlayers, round, setRound, myPosition, dataRoom }) => {
             </div>
           </div>
           <div className={style.buttonDiv}>
-            <button onClick={handleSubmit}>Bet</button>
+            <button onClick={handleSubmit} disabled={card.suit === ""}>
+              Bet
+            </button>
           </div>
         </div>
       ) : (

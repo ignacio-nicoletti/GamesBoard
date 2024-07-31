@@ -268,7 +268,6 @@ export default function HorseRaceSockets(io) {
           io.to(`${game}-${roomId}`).emit("start_game_horserace", {
             round: room.round,
             users: room.users,
-            results: room.results,
             room: room,
           });
         }
@@ -302,7 +301,7 @@ export default function HorseRaceSockets(io) {
       room.round.cantQueApostaron += 1;
 
       if (room.round.cantQueApostaron === room.users.length) {
-        room.round.typeRound = "ronda";
+        room.round.typeRound = "waiting";
       }
 
       io.to(`${dataRoom.game}-${roomId}`).emit("update_game_state_horserace", {
@@ -439,12 +438,12 @@ export default function HorseRaceSockets(io) {
           horseCard.pos = Math.max(horseCard.pos - 1, 0); // Asegurarse de que pos no sea menor a 0
         }
 
-        io.to(`${game}-${roomId}`).emit("tirarCarta_horserace", {
+        io.to(`${game}-${roomId}`).emit("cardTirada_horserace", {
           round: room.round,
         });
       } catch (error) {
         console.error("Error in tirarCarta function:", error);
-        socket.emit("error", { error: "Error in tirarCarta function" });
+        socket.emit("error", { error: "Error in tirarCarta function" });s
       }
     });
 
@@ -493,3 +492,9 @@ export default function HorseRaceSockets(io) {
     });
   });
 }
+
+
+// que no se repita dos veces la llamada 
+// que si resto entonces no sume 
+// si una carta llego a pos 0 entonces suma exp quien haya llegado y apostado gana exp y monedas 
+//  
