@@ -1,38 +1,30 @@
 import { useEffect, useState } from "react";
 import styles from "./timmerComponentHorserace.module.css";
 
-const TimmerComponentHorserace = ({ setRound, round }) => {
-  const [timmer, settimmer] = useState(0);
+const TimmerComponentHorserace = ({ round, setRound }) => {
+  const [timer, setTimer] = useState(5);
 
   useEffect(() => {
-    if (!round) return;
-
-    let initialTime = 5;
-
-    settimmer(initialTime);
-
     const time = setInterval(() => {
-      settimmer((prevTime) => {
+      setTimer((prevTime) => {
         if (prevTime > 0) {
           return prevTime - 1;
         } else {
           clearInterval(time);
-
           setRound({ ...round, typeRound: "ronda" });
-
-          return 0;
+          return 5; // Reiniciar el temporizador
         }
       });
     }, 1000);
 
-    return () => clearInterval(time);
+    return () => clearInterval(time); // Limpiar el intervalo en desmontaje
   }, []);
 
   return (
     <div className={styles.container}>
       <div>
         <h3 className={styles.message}>
-          Starting the race : <span className={styles.timer}>{timmer}</span>
+          Starting the race: <span className={styles.timer}>{timer}</span>
         </h3>
       </div>
     </div>

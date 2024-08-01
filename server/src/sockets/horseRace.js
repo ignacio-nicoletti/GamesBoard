@@ -75,7 +75,7 @@ export default function HorseRaceSockets(io) {
           cantQueApostaron: 0,
           sideLeftCards: [],
           cardsDeck: [],
-          cardSuit: { suit: "", value: null },
+          cardSuit: { suit: "", value: null,back:false },
           horseDeck: [],
           roomId: { gameId: game, roomId: roomId }, // Guarda la data correctamente
         };
@@ -360,6 +360,7 @@ export default function HorseRaceSockets(io) {
       }
 
       try {
+        console.log("active");
         const room = permanentRooms[game] && permanentRooms[game][roomId];
         if (!room) return;
 
@@ -428,7 +429,7 @@ export default function HorseRaceSockets(io) {
 
         const drawnCard = room.round.cardsDeck.shift();
         room.round.cardSuit = drawnCard;
-
+        room.round.typeRound = "ronda";
         // Buscar en horseDeck la carta con el mismo suit y reducir su pos en 1
         const suitToMatch = drawnCard.suit;
         const horseCard = room.round.horseDeck.find(
