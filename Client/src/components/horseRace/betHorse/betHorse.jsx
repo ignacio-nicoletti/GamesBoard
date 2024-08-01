@@ -48,6 +48,7 @@ const BetHorse = ({ setPlayers, round, setRound, myPosition, dataRoom }) => {
     return () => {
       socket.off("update_game_state_horserace", handleGameStateUpdate);
       socket.off("bet_received", handleBetReceived);
+      
     };
   }, [round, setRound, setPlayers]);
 

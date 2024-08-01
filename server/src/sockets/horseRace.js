@@ -1,8 +1,4 @@
-import {
-  distribute,
-  distributeHorse,
-  shuffle,
-} from "../../functions/functions.js";
+import { distributeHorse, shuffle } from "../../functions/functions.js";
 import { Player } from "../models/players.js";
 import { handleEmptyRoom, permanentRooms } from "./general.js";
 
@@ -41,7 +37,6 @@ export default function HorseRaceSockets(io) {
           game: game,
           users: [],
           round: {},
-          results: [],
         };
 
         let idDB = "-";
@@ -73,9 +68,15 @@ export default function HorseRaceSockets(io) {
           turnJugadorA: 1, //1j 2j 3j 4j apuesta
           ganadorRonda: null,
           cantQueApostaron: 0,
-          sideLeftCards: [],
+          sideLeftCards: [
+            { back: true },
+            { back: true },
+            { back: true },
+            { back: true },
+            { back: true },
+          ],
           cardsDeck: [],
-          cardSuit: { suit: "", value: null,back:false },
+          cardSuit: { suit: "", value: null, back: false },
           horseDeck: [],
           roomId: { gameId: game, roomId: roomId }, // Guarda la data correctamente
         };
@@ -307,7 +308,6 @@ export default function HorseRaceSockets(io) {
       io.to(`${dataRoom.game}-${roomId}`).emit("update_game_state_horserace", {
         round: room.round,
         players: room.users,
-        results: room.results,
       });
 
       socket.emit("bet_received", { bet: true });
@@ -335,9 +335,8 @@ export default function HorseRaceSockets(io) {
         room.round.horseDeck = horseDeck; //[4]
         room.round.sideLeftCards = filteredDeck.slice(0, 5); //[5]
         room.round.sideLeftCards.map((el) => (el.back = true));
-
         room.round.cardsDeck = filteredDeck.slice(5); //[41]
-
+        room.round.typeRound = "ronda";
         // Asignar las cartas con valor 11 a horseDeck
 
         io.to(`${game}-${roomId}`).emit("distributeHorserace", {
@@ -351,16 +350,15 @@ export default function HorseRaceSockets(io) {
 
     socket.on("tirarCarta_horserace", (dataRoom) => {
       if (!dataRoom) return;
-      const { game, roomId, round } = dataRoom;
+      const { game, roomId } = dataRoom;
 
-      if (!round || !roomId || !game) {
+      if (!roomId || !game) {
         console.error("Invalid round or roomId object:", dataRoom);
         socket.emit("error", { error: "Invalid round or roomId object" });
         return;
       }
 
       try {
-        console.log("active");
         const room = permanentRooms[game] && permanentRooms[game][roomId];
         if (!room) return;
 
@@ -375,7 +373,7 @@ export default function HorseRaceSockets(io) {
         }
 
         // Asignar la primera carta a cardSuit y eliminarla de cardsDeck
-      
+
         if (
           room.round.horseDeck.every((el) => el.pos < 6) &&
           room.round.sideLeftCards[4].back === true
@@ -439,12 +437,85 @@ export default function HorseRaceSockets(io) {
           horseCard.pos = Math.max(horseCard.pos - 1, 0); // Asegurarse de que pos no sea menor a 0
         }
 
+        const winningHorse = room.round.horseDeck.find((el) => el.pos === 0);
+        if (winningHorse) {
+          room.round.typeRound = "FinishGame";
+
+          const winners = room.users.filter((user) => {
+            return user.betP == winningHorse.suit;
+          });
+
+          console.log("Winners:", winners, "card:", winningHorse.suit);
+          io.to(`${game}-${roomId}`).emit("Finish_game_horserace", {
+            round: room.round,
+          });
+          return;
+        }
+
         io.to(`${game}-${roomId}`).emit("cardTirada_horserace", {
           round: room.round,
         });
       } catch (error) {
         console.error("Error in tirarCarta function:", error);
-        socket.emit("error", { error: "Error in tirarCarta function" });s
+        socket.emit("error", { error: "Error in tirarCarta function" });
+      }
+    });
+
+    socket.on("reset_horserace", (dataRoom) => {
+      if (!dataRoom) return;
+      const { game, roomId, round } = dataRoom;
+
+      if (!round || !roomId || !game) {
+        console.error("Invalid round or roomId object:", dataRoom);
+        socket.emit("error", { error: "Invalid round or roomId object" });
+        return;
+      }
+
+      try {
+        const room = permanentRooms[game] && permanentRooms[game][roomId];
+        if (!room) return;
+
+        // Reiniciar el estado de la ronda
+
+        let deck = distributeHorse(); //crea la baraja
+        let shuffledCards = shuffle(deck); //mezcla
+
+        const horseDeck = shuffledCards.filter((card) => card.value === 11); // me da los 11
+        const filteredDeck = shuffledCards.filter((card) => card.value !== 11); //borra los 11 de la baraja
+
+        const round = {
+          users: room.users, // mantener los usuarios conectados
+          numRounds: 0, // reiniciar el número de rondas
+          typeRound: "Bet", // reiniciar al tipo de ronda de apuesta
+          turnJugadorA: 1, // reiniciar al turno del primer jugador para apostar
+          ganadorRonda: null,
+          cantQueApostaron: 0,
+          sideLeftCards: [
+            { back: true },
+            { back: true },
+            { back: true },
+            { back: true },
+            { back: true },
+          ], //[5]
+          cardsDeck: filteredDeck.slice(5), // generar un nuevo mazo de cartas
+          cardSuit: { suit: "", value: null, back: false },
+          horseDeck: horseDeck, // generar un nuevo mazo de caballos
+          roomId: { gameId: game, roomId: roomId }, // guardar la información de la sala
+        };
+
+        room.round = round;
+        room.round.sideLeftCards.map((el) => (el.back = true));
+        io.to(`${game}-${roomId}`).emit("reset_completed_horserace", {
+          room: room,
+          round: room.round,
+        });
+
+        console.log(`Room ${roomId} reset in game ${game}`);
+      } catch (error) {
+        console.error("Error in reset function:", error);
+        socket.emit("reset_error_horserace", {
+          error: "Error in reset function",
+        });
       }
     });
 
@@ -494,8 +565,7 @@ export default function HorseRaceSockets(io) {
   });
 }
 
-
-// que no se repita dos veces la llamada 
-// que si resto entonces no sume 
-// si una carta llego a pos 0 entonces suma exp quien haya llegado y apostado gana exp y monedas 
-//  
+// que no se repita dos veces la llamada
+// que si resto entonces no sume
+// si una carta llego a pos 0 entonces suma exp quien haya llegado y apostado gana exp y monedas
+//

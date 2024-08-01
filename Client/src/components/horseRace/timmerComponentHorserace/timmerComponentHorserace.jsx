@@ -1,30 +1,30 @@
 import { useEffect, useState } from "react";
 import styles from "./timmerComponentHorserace.module.css";
+import { distributeHorserace } from "../../../functions/SocketIO/sockets/sockets";
 
-const TimmerComponentHorserace = ({ round, setRound }) => {
-  const [timer, setTimer] = useState(5);
+const TimmerComponentHorserace = ({setRound, dataRoom }) => {
+  const [timmer, settimmer] = useState(3);
 
   useEffect(() => {
     const time = setInterval(() => {
-      setTimer((prevTime) => {
+      settimmer((prevTime) => {
         if (prevTime > 0) {
           return prevTime - 1;
-        } else {
-          clearInterval(time);
-          setRound({ ...round, typeRound: "ronda" });
-          return 5; // Reiniciar el temporizador
+        } else if (prevTime === 0) {
+          distributeHorserace(dataRoom, setRound);//type: ronda 
+          return prevTime;
         }
       });
     }, 1000);
 
-    return () => clearInterval(time); // Limpiar el intervalo en desmontaje
-  }, []);
+    return () => clearInterval(time);
+  }, [timmer]);
 
   return (
     <div className={styles.container}>
       <div>
         <h3 className={styles.message}>
-          Starting the race: <span className={styles.timer}>{timer}</span>
+          Starting the race: <span className={styles.timer}>{timmer}</span>
         </h3>
       </div>
     </div>
