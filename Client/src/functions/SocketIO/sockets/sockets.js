@@ -204,7 +204,7 @@ export const distribute = (dataRoom, setPlayers) => {
 
 export const distributeHorserace = (dataRoom, setRound) => {
   socket.emit("distributeHorserace", dataRoom);
-  socket.on("distributeHorserace", (data) => {
+  socket.once("distributeHorserace", (data) => {
     setRound(data.round);
   });
 };

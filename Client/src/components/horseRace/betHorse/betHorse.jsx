@@ -6,26 +6,29 @@ import {
   socket,
 } from "../../../functions/SocketIO/sockets/sockets";
 
-const BetHorse = ({ setPlayers, round, setRound, myPosition, dataRoom }) => {
-  const [card, setCard] = useState({ value: "11", suit: "" });
-  const [hasBet, setHasBet] = useState(false);
+const BetHorse = ({ setPlayers, round, setRound, myPlayer, dataRoom }) => {
+  const [card, setCard] = useState({ value: "11", suit: "-" });//card selecionada
+  const [hasBet, setHasBet] = useState(false); // ya vote
   const [timeLeft, setTimeLeft] = useState(30); // 30 seconds timer
-
-  function getRandomCard() {
-    const suits = ["oro", "espada", "basto", "copa"];
-    const value = "11";
-    const randomSuit = suits[Math.floor(Math.random() * suits.length)];
-    return { value, suit: randomSuit };
-  }
+  const [inBet, setInBet] = useState(false); //si entro en la apuesta o no
 
   const handleCardClick = (suit) => {
     setCard({ ...card, suit });
+    setInBet(true);
+  };
+
+  const handleCheckboxChange = () => {
+    if (inBet) {
+      setCard({ ...card, suit: "-" });
+    }
+    setInBet(false);
   };
 
   const handleSubmit = () => {
     socket.emit("BetPlayer_horserace", {
+      inBet: inBet,
       bet: card,
-      myPosition,
+      myPlayer,
       dataRoom,
     });
     setHasBet(true); // Mark that the player has bet
@@ -48,7 +51,6 @@ const BetHorse = ({ setPlayers, round, setRound, myPosition, dataRoom }) => {
     return () => {
       socket.off("update_game_state_horserace", handleGameStateUpdate);
       socket.off("bet_received", handleBetReceived);
-      
     };
   }, [round, setRound, setPlayers]);
 
@@ -63,14 +65,14 @@ const BetHorse = ({ setPlayers, round, setRound, myPosition, dataRoom }) => {
 
     if (timeLeft === 0 && !hasBet) {
       socket.emit("BetPlayer_horserace", {
-        bet: getRandomCard(),
-        myPosition,
+        inBet: inBet,
+        bet: { value: "11", suit: "-" },
+        myPlayer,
         dataRoom,
       });
-
       setHasBet(true); // Mark that the player has bet
     }
-  }, [timeLeft, hasBet, myPosition, dataRoom]);
+  }, [timeLeft, hasBet, dataRoom]);
 
   return (
     <div className={style.contain}>
@@ -78,6 +80,21 @@ const BetHorse = ({ setPlayers, round, setRound, myPosition, dataRoom }) => {
         <div>
           <p>Choose your horse to win!!</p>
           <p>Time left: {timeLeft} seconds</p>
+
+          <div className={style.checkbox_wrapper_24}>
+            <p>In Bet</p>
+            <input
+              type="checkbox"
+              id="check_24"
+              name="check"
+              checked={inBet}
+              onChange={handleCheckboxChange}
+            />
+            <label htmlFor="check_24">
+              <span></span>
+            </label>
+          </div>
+
           <div className={style.containCards}>
             <div
               className={`${style.divCard} ${
@@ -113,9 +130,7 @@ const BetHorse = ({ setPlayers, round, setRound, myPosition, dataRoom }) => {
             </div>
           </div>
           <div className={style.buttonDiv}>
-            <button onClick={handleSubmit} disabled={card.suit === ""}>
-              Bet
-            </button>
+            <button onClick={handleSubmit}>Bet</button>
           </div>
         </div>
       ) : (

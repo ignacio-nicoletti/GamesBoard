@@ -38,11 +38,11 @@ const DeckRight = ({ round, dataRoom, setRound }) => {
     }, 1000);
 
     return () => clearInterval(interval); // Clear interval on unmount
-  }, [timerCard,round.typeRound]);
+  }, [timerCard]);
 
   return (
     <div className={styles.cardsContainMazo}>
-      {round.cardSuit && (
+      {round&&round.cardSuit && (
         <Cards
           value={round.cardSuit.value}
           suit={round.cardSuit.suit}

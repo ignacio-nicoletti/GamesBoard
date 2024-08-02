@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import styles from "./horseRace.module.css";
 import DataPlayerHorseRace from "../../../components/horseRace/dataPlayerHorseRace/dataPlayerHorseRace";
 import ButtonExitRoomHorserace from "../../../components/horseRace/buttonExitRoomHorserace/buttonExitRoomHorserace";
@@ -15,7 +15,6 @@ import DeckRight from "../../../components/horseRace/deckRight/deckRight";
 import WinnerComponentHorserace from "../../../components/horseRace/winnerComponentHorserace/winnerComponentHorserace";
 
 const HorseRace = () => {
-  const [loader, setLoader] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [myPlayer, setMyPlayer] = useState({});
 
@@ -26,14 +25,6 @@ const HorseRace = () => {
   const [winner, setWinner] = useState({});
 
   useEffect(() => {
-    const UpdateData = (data) => {
-      if (data) {
-        setRound(data.round); //establece typeRound en waiting
-        setDataRoom(data.room);
-        setPlayers(data.users);
-      }
-    };
-    socket.on("start_game_horserace", UpdateData);
     socket.on("Finish_game_horserace", (data) => {
       setRound(data.round);
       setWinner(data.winners);
@@ -41,10 +32,9 @@ const HorseRace = () => {
 
     socket.on("reset_completed_horserace", (data) => setRound(data.round));
     return () => {
-      socket.off("start_game_horserace");
       socket.off("Finish_game_horserace");
     };
-  }, []);
+  }, [players]);
 
   const updatePlayerList = (data) => {
     if (data) {
@@ -61,10 +51,20 @@ const HorseRace = () => {
     socket.on("player_list_horserace", (data) => {
       setPlayers(data.users);
       setRound(data.round);
+      setDataRoom(data.room);
     });
 
+    if (
+      round &&
+      round.typeRound === "ronda" &&
+      round.sideLeftCards.suit === ""
+    ) {
+      //si es ronda y no hay cartas dadas...mezcla
+      distributeHorserace(dataRoom, setRound);
+    }
     return () => {
       socket.off("player_list_horserace", updatePlayerList);
+      socket.off("start_game_horserace");
     };
   }, [round, players]);
 
@@ -79,7 +79,7 @@ const HorseRace = () => {
             setPlayers={setPlayers}
             round={round}
             setRound={setRound}
-            myPosition={myPlayer.position}
+            myPlayer={myPlayer}
             dataRoom={dataRoom}
           />
         )}

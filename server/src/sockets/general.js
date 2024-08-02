@@ -1,16 +1,53 @@
 export function createRooms(numberOfRooms, gameName, cantUsers) {
   const rooms = {};
-  for (let i = 1; i <= numberOfRooms; i++) {
-    rooms[i] = {
-      users: [],
-      round: {},
-      gameStarted: false,
-      maxUsers: cantUsers,
-      roomId: i,
-      results: [],
-      game: gameName,
-    };
+  
+  if (gameName === "Berenjena") {
+    for (let i = 1; i <= numberOfRooms; i++) {
+      rooms[i] = {
+        users: [],
+        round: {},
+        gameStarted: false,
+        maxUsers: cantUsers,
+        roomId: i,
+        results: [],
+        game: gameName,
+      };
+    }
+  } else if (gameName === "Horserace") {
+    for (let i = 1; i <= numberOfRooms; i++) {
+      const roundHorseRace = {
+        users: [], //usuarios conectados
+        typeRound: "Bet", //apuesta o ronda
+        cantQueApostaron: 0,
+        sideLeftCards: [
+          { back: true },
+          { back: true },
+          { back: true },
+          { back: true },
+          { back: true },
+        ],
+        cardsDeck: [], //mazo
+        cardSuit: { suit: "", value: null, back: false }, //carta tirada
+        horseDeck: [
+          { suit: "oro", value: 11, back: false, pos: 6 },
+          { suit: "espada", value: 11, back: false, pos: 6 },
+          { suit: "copa", value: 11, back: false, pos: 6 },
+          { suit: "basto", value: 11, back: false, pos: 6 },
+        ], //los 4 caballos
+        roomId: { gameId: gameName, roomId: i }, // Guarda la data correctamente
+      };
+
+      rooms[i] = {
+        users: [],
+        round: roundHorseRace,
+        gameStarted: false,
+        maxUsers: cantUsers,
+        roomId: i,
+        game: gameName,
+      };
+    }
   }
+  
   return rooms;
 }
 
@@ -38,7 +75,6 @@ export const handleEmptyRoom = (room, game, roomId) => {
 
 export default function GeneralSocket(io) {
   io.on("connection", (socket) => {
-    
     socket.on("get_all_rooms_info", ({ game }) => {
       const rooms = permanentRooms[game];
       if (rooms) {
@@ -110,3 +146,6 @@ export default function GeneralSocket(io) {
     });
   });
 }
+
+
+// acomodar el handleempty

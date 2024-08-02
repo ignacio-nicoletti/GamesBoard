@@ -54,7 +54,7 @@ export default function HorseRaceSockets(io) {
           avatar: selectedAvatar,
           betP: "", // suit apostado
           hasBet: false, // flag to check if the player has bet
-          InBet: false,
+          inBet: false,
           points: 0, // puntos
         };
 
@@ -71,7 +71,12 @@ export default function HorseRaceSockets(io) {
           ],
           cardsDeck: [], //mazo
           cardSuit: { suit: "", value: null, back: false }, //carta tirada
-          horseDeck: [], //los 4 caballos
+          horseDeck: [
+            { suit: "oro", value: 11, back: false, pos: 6 },
+            { suit: "espada", value: 11, back: false, pos: 6 },
+            { suit: "copa", value: 11, back: false, pos: 6 },
+            { suit: "basto", value: 11, back: false, pos: 6 },
+          ], //los 4 caballos
           roomId: { gameId: game, roomId: roomId }, // Guarda la data correctamente
         };
 
@@ -87,12 +92,19 @@ export default function HorseRaceSockets(io) {
         });
 
         socket.emit("room_created_myInfo_horserace", {
+          //info propia
           user,
         });
+
+        if (rooms[roomId].users.length >= 0) {
+          // si ya hay gente comienza el juego
+          rooms[roomId].gameStarted = true;
+        }
 
         io.to(`${game}-${roomId}`).emit("player_list_horserace", {
           users: rooms[roomId].users,
           round: rooms[roomId].round,
+          room: rooms[roomId],
         });
       }
     );
@@ -115,41 +127,6 @@ export default function HorseRaceSockets(io) {
 
         const room = rooms[roomId];
 
-        const userInRoom = room.users.find(
-          (user) => user.userName === userName || user.email === email
-        );
-
-        if (userInRoom) {
-          if (!userInRoom.connect && room.gameStarted) {
-            userInRoom.idSocket = socket.id;
-            userInRoom.connect = true;
-
-            socket.join(`${game}-${roomId}`);
-            socket.emit("room_joined_horserace", {
-              roomId,
-              myInfo: {
-                idSocket: userInRoom.idSocket,
-                userName: userInRoom.userName,
-                email: userInRoom.email,
-                position: userInRoom.position,
-              },
-            });
-            socket.emit("room_joined_myInfo_horserace", {
-              userInRoom,
-            });
-
-            console.log(
-              `User ${userName} rejoined room ${roomId} in game ${game}`
-            );
-          } else {
-            socket.emit("room_join_error_horserace", {
-              error:
-                "UserName is already in the room or game has already started",
-            });
-          }
-          return;
-        }
-
         if (room.users.find((user) => user.userName === userName)) {
           socket.emit("room_join_error", {
             error: "UserName already exists in the room",
@@ -161,13 +138,6 @@ export default function HorseRaceSockets(io) {
 
         if (room.users.length >= maxUsers) {
           socket.emit("room_join_error_horserace", { error: "Room is full" });
-          return;
-        }
-
-        if (room.gameStarted) {
-          socket.emit("room_join_error_horserace", {
-            error: "Game already started, cannot join",
-          });
           return;
         }
 
@@ -188,7 +158,7 @@ export default function HorseRaceSockets(io) {
           avatar: selectedAvatar,
           betP: "", // suit apostado
           hasBet: false, // flag to check if the player has bet
-          InBet: false,
+          inBet: false,
           points: 0, // puntos
         };
 
@@ -211,9 +181,14 @@ export default function HorseRaceSockets(io) {
           user,
         });
 
+        if (room.users.length >= 0) {
+          // si ya hay gente comienza el juego
+          room.gameStarted = true;
+        }
         io.to(`${game}-${roomId}`).emit("player_list_horserace", {
-          users: room.users,
-          round: room.round,
+          users: rooms[roomId].users,
+          round: rooms[roomId].round,
+          room: rooms[roomId],
         });
       }
     );
@@ -241,37 +216,7 @@ export default function HorseRaceSockets(io) {
       );
     });
 
-    socket.on("player_ready_horserace", (dataRoom) => {
-      const game = dataRoom.game;
-      const roomId = dataRoom.roomId;
-      const room = permanentRooms[game] && permanentRooms[game][roomId];
-      if (!room) return;
-
-      const user = room.users.find((u) => u.idSocket === socket.id);
-      if (user) {
-        user.ready = true;
-        io.to(`${game}-${roomId}`).emit("player_ready_status_horserace", {
-          idSocket: socket.id,
-          ready: true,
-        });
-
-        const allReady = room.users.every((u) => u.ready);
-        if (allReady && room.users.length > 1) {
-          room.gameStarted = true;
-
-          room.round.numRounds = (room.round.numRounds || 0) + 1;
-          room.round.users = room.users.length;
-
-          io.to(`${game}-${roomId}`).emit("start_game_horserace", {
-            round: room.round,
-            users: room.users,
-            room: room,
-          });
-        }
-      }
-    });
-
-    socket.on("BetPlayer_horserace", ({ bet, myPosition, dataRoom }) => {
+    socket.on("BetPlayer_horserace", ({ inBet,bet, myPlayer, dataRoom }) => {
       if (!dataRoom) return;
       const { game, roomId, round } = dataRoom;
       if (!round || !roomId || !game) {
@@ -279,7 +224,6 @@ export default function HorseRaceSockets(io) {
         socket.emit("error", { error: "Invalid round or roomId object" });
         return;
       }
-
       const room =
         permanentRooms[dataRoom.game] &&
         permanentRooms[dataRoom.game][dataRoom.roomId];
@@ -287,10 +231,11 @@ export default function HorseRaceSockets(io) {
       if (!room) return;
 
       const userIndex = room.users.findIndex(
-        (user) => user.position === myPosition
+        (user) => user.userName === myPlayer.userName
       );
 
       if (userIndex !== -1) {
+        room.users[userIndex].inBet = inBet;//true or false
         room.users[userIndex].betP = bet;
         room.users[userIndex].hasBet = true; // Mark the user as having bet
       }
@@ -323,12 +268,10 @@ export default function HorseRaceSockets(io) {
         let deck = distributeHorse(); //crea la baraja
         let shuffledCards = shuffle(deck); //mezcla
 
-        const horseDeck = shuffledCards.filter((card) => card.value === 11); // me da los 11
         const filteredDeck = shuffledCards.filter((card) => card.value !== 11); //borra los 11 de la baraja
 
         const room = permanentRooms[game] && permanentRooms[game][roomId];
         if (!room) return;
-        room.round.horseDeck = horseDeck; //[4]
         room.round.sideLeftCards = filteredDeck.slice(0, 5); //[5]
         room.round.sideLeftCards.map((el) => (el.back = true));
         room.round.cardsDeck = filteredDeck.slice(5); //[41]
