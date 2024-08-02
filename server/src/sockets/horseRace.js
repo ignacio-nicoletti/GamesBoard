@@ -83,13 +83,11 @@ export default function HorseRaceSockets(io) {
         );
         socket.join(`${game}-${roomId}`);
         socket.emit("room_created_horserace", {
-          myInfo: {
-            idSocket: user.idSocket,
-            userName: user.userName,
-            email: user.email,
-            position: user.position,
-          },
           room: rooms[roomId],
+        });
+
+        socket.emit("room_created_myInfo_horserace", {
+          user,
         });
 
         io.to(`${game}-${roomId}`).emit("player_list_horserace", {
@@ -135,6 +133,9 @@ export default function HorseRaceSockets(io) {
                 email: userInRoom.email,
                 position: userInRoom.position,
               },
+            });
+            socket.emit("room_joined_myInfo_horserace", {
+              userInRoom,
             });
 
             console.log(
@@ -204,6 +205,10 @@ export default function HorseRaceSockets(io) {
             email: user.email,
             position: user.position,
           },
+        });
+
+        socket.emit("room_joined_myInfo_horserace", {
+          user,
         });
 
         io.to(`${game}-${roomId}`).emit("player_list_horserace", {

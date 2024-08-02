@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
 import styles from "./horseRace.module.css";
-import LoaderHorseRace from "../../../components/horseRace/loaderHorseRace/loaderHorseRace";
 import DataPlayerHorseRace from "../../../components/horseRace/dataPlayerHorseRace/dataPlayerHorseRace";
 import ButtonExitRoomHorserace from "../../../components/horseRace/buttonExitRoomHorserace/buttonExitRoomHorserace";
 import {
@@ -14,7 +13,6 @@ import HorseContain from "../../../components/horseRace/horseContain/horseContai
 import HorseSideLeft from "../../../components/horseRace/horseSideLeft/horseSideLeft";
 import DeckRight from "../../../components/horseRace/deckRight/deckRight";
 import WinnerComponentHorserace from "../../../components/horseRace/winnerComponentHorserace/winnerComponentHorserace";
-import { useParams } from "react-router-dom";
 
 const HorseRace = () => {
   const [loader, setLoader] = useState(false);
@@ -26,13 +24,6 @@ const HorseRace = () => {
   const [dataRoom, setDataRoom] = useState({});
 
   const [winner, setWinner] = useState({});
-  const { id } = useParams();
-
-  useEffect(() => {
-    if (dataRoom && !dataRoom.gameStarted) {
-      // setLoader(true);
-    }
-  }, [dataRoom]);
 
   useEffect(() => {
     const UpdateData = (data) => {
@@ -56,106 +47,64 @@ const HorseRace = () => {
   }, []);
 
   const updatePlayerList = (data) => {
-    console.log(data);
-    if (data && data.users) {
-      setMyPlayer(data.myInfo);
+    if (data) {
+      setMyPlayer(data.user);
       setPlayers(data.users);
       setRound(data.round);
-      setDataRoom(data.room);
-
-      // const myUpdatedInfo = data.users.find(
-      //   (player) => player.idSocket === socket.id
-      // );
-
-      // if (myUpdatedInfo) {
-      //   setMyPlayer({
-      //     ...myPlayer,
-      //     position: myUpdatedInfo.position,
-      //     userName: myUpdatedInfo.userName,
-      //   });
-      // }
     }
   };
 
   useEffect(() => {
-    socket.on("room_created_horserace", (data) => {
-      setMyPlayer(data.myInfo);
+    socket.on("room_created_myInfo_horserace", updatePlayerList);
+    socket.on("room_joined_myInfo_horserace", updatePlayerList);
+
+    socket.on("player_list_horserace", (data) => {
       setPlayers(data.users);
       setRound(data.round);
-      setDataRoom(data.room);
     });
-    socket.on("room_joined_horserace", updatePlayerList);
-    socket.on("player_list_horserace", updatePlayerList);
 
     return () => {
-      socket.off("room_created_horserace", updatePlayerList);
-      socket.off("room_joined_horserace", updatePlayerList);
-      socket.off("roomRefresh_horserace", updatePlayerList);
       socket.off("player_list_horserace", updatePlayerList);
     };
-  }, [round]);
+  }, [round, players]);
 
-  useEffect(() => {
-    socket.emit("roomRefresh_horserace", { dataRoom });
-    return () => {
-      socket.off("roomRefresh_horserace", updatePlayerList);
-    };
-  }, [round]);
-
-  
   return (
     <div className={styles.contain}>
-      {loader ? (
-        <LoaderHorseRace
-          setPlayers={setPlayers}
-          setRound={setRound}
-          myPlayer={myPlayer}
-          setMyPlayer={setMyPlayer}
-          setLoader={setLoader}
-          setDataRoom={setDataRoom}
-          dataRoom={dataRoom}
-        />
-      ) : (
-        <div className={styles.contain}>
-          <p>{round.typeRound}</p>
-          <DataPlayerHorseRace
-            players={players}
+      <div className={styles.contain}>
+        <p>{round && round.typeRound}</p>
+        <DataPlayerHorseRace myPlayer={myPlayer} />
+        <ButtonExitRoomHorserace />
+        {dataRoom && dataRoom.gameStarted && round.typeRound === "Bet" && (
+          <BetHorse
+            setPlayers={setPlayers}
+            round={round}
+            setRound={setRound}
+            myPosition={myPlayer.position}
+            dataRoom={dataRoom}
           />
-          <ButtonExitRoomHorserace />
-          {dataRoom && dataRoom.gameStarted && round.typeRound === "Bet" && (
-            <BetHorse
-              setPlayers={setPlayers}
+        )}
+        {dataRoom && dataRoom.gameStarted && round.typeRound === "waiting" && (
+          <TimmerComponentHorserace
+            round={round}
+            setRound={setRound}
+            dataRoom={dataRoom}
+          />
+        )}
+
+        {dataRoom &&
+          dataRoom.gameStarted &&
+          round.typeRound === "FinishGame" && (
+            <WinnerComponentHorserace
               round={round}
               setRound={setRound}
-              myPosition={myPlayer.position}
-              dataRoom={dataRoom}
+              winner={winner}
             />
           )}
-          {dataRoom &&
-            dataRoom.gameStarted &&
-            round.typeRound === "waiting" && (
-              <TimmerComponentHorserace
-                round={round}
-                setRound={setRound}
-                dataRoom={dataRoom}
-              />
-            )}
-
-          {dataRoom &&
-            dataRoom.gameStarted &&
-            round.typeRound === "FinishGame" && (
-              <WinnerComponentHorserace
-                round={round}
-                setRound={setRound}
-                winner={winner}
-              />
-            )}
-          <HorseContain round={round} />
-          <HorseSideLeft round={round} />
-          <DeckRight round={round} dataRoom={dataRoom} setRound={setRound} />
-          <BetHorseTable players={players} />
-        </div>
-      )}
+        <HorseContain round={round} />
+        <HorseSideLeft round={round} />
+        <DeckRight round={round} dataRoom={dataRoom} setRound={setRound} />
+        <BetHorseTable players={players} />
+      </div>
     </div>
   );
 };
