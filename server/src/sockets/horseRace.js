@@ -51,22 +51,16 @@ export default function HorseRaceSockets(io) {
           userName,
           roomId,
           email: email,
-          position: 1,
-          ready: false,
-          connect: true,
           avatar: selectedAvatar,
-          id: 1, // position
           betP: "", // suit apostado
           hasBet: false, // flag to check if the player has bet
+          InBet: false,
           points: 0, // puntos
         };
 
         const round = {
-          users: null, //usuarios conectados
-          numRounds: 0, //num de ronda
+          users: [], //usuarios conectados
           typeRound: "Bet", //apuesta o ronda
-          turnJugadorA: 1, //1j 2j 3j 4j apuesta
-          ganadorRonda: null,
           cantQueApostaron: 0,
           sideLeftCards: [
             { back: true },
@@ -75,9 +69,9 @@ export default function HorseRaceSockets(io) {
             { back: true },
             { back: true },
           ],
-          cardsDeck: [],
-          cardSuit: { suit: "", value: null, back: false },
-          horseDeck: [],
+          cardsDeck: [], //mazo
+          cardSuit: { suit: "", value: null, back: false }, //carta tirada
+          horseDeck: [], //los 4 caballos
           roomId: { gameId: game, roomId: roomId }, // Guarda la data correctamente
         };
 
@@ -190,13 +184,10 @@ export default function HorseRaceSockets(io) {
           userName,
           roomId,
           email: email,
-          position: room.users.length + 1,
-          ready: false,
-          connect: true,
           avatar: selectedAvatar,
-          id: 1, // position
           betP: "", // suit apostado
           hasBet: false, // flag to check if the player has bet
+          InBet: false,
           points: 0, // puntos
         };
 
@@ -504,9 +495,8 @@ export default function HorseRaceSockets(io) {
         };
 
         room.round = round;
-        room.round.sideLeftCards.map((el) => (el.back = true));
+
         io.to(`${game}-${roomId}`).emit("reset_completed_horserace", {
-          room: room,
           round: room.round,
         });
 

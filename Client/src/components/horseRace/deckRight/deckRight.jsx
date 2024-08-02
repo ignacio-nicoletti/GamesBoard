@@ -4,7 +4,7 @@ import styles from "./deckRight.module.css";
 import { socket } from "../../../functions/SocketIO/sockets/sockets";
 
 const DeckRight = ({ round, dataRoom, setRound }) => {
-  
+
   const [timerCard, setTimerCard] = useState(3);
 
   // Función para tirar carta usando promesa
@@ -15,7 +15,7 @@ const DeckRight = ({ round, dataRoom, setRound }) => {
         resolve(data);
       };
 
-      socket.once("cardTirada_horserace", onCardTirada);
+      socket.on("cardTirada_horserace", onCardTirada);
 
       // Emitir el evento para tirar la carta
       socket.emit("tirarCarta_horserace", dataRoom);

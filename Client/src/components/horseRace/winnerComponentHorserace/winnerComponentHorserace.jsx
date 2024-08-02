@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import styles from "./winnerComponentHorserace.module.css";
 import { socket } from "../../../functions/SocketIO/sockets/sockets";
 
-const WinnerComponentHorserace = ({dataRoom, winner }) => {
+const WinnerComponentHorserace = ({ dataRoom, winner }) => {
   const [timmer, settimmer] = useState(3);
 
   useEffect(() => {
@@ -11,11 +11,9 @@ const WinnerComponentHorserace = ({dataRoom, winner }) => {
         if (prevTime > 0) {
           return prevTime - 1;
         } else {
-          if (prevTime === 0) {
-            socket.emit("reset_horserace", dataRoom);
-          }
-          return prevTime;
+          socket.emit("reset_horserace", dataRoom);
         }
+        return prevTime;
       });
     }, 1000);
 

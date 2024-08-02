@@ -64,7 +64,7 @@ const LoaderHorseRace = ({setPlayers, setRound, myPlayer, setMyPlayer,setLoader,
         socket.off ('player_ready_status_horserace', updatePlayerReadyStatus);
       };
     },
-    [setPlayerList]
+    []
   );
 
   useEffect (
