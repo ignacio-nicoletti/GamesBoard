@@ -71,7 +71,6 @@ const HorseRace = () => {
   return (
     <div className={styles.contain}>
       <div className={styles.contain}>
-        <p>{round && round.typeRound}</p>
         <DataPlayerHorseRace myPlayer={myPlayer} />
         <ButtonExitRoomHorserace />
         {dataRoom && dataRoom.gameStarted && round.typeRound === "Bet" && (

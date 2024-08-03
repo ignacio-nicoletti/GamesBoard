@@ -208,3 +208,19 @@ export const distributeHorserace = (dataRoom, setRound) => {
     setRound(data.round);
   });
 };
+
+export const tirarCartaHorserace = (dataRoom,setRound) => {
+  return new Promise((resolve, reject) => {
+    // Escuchar solo una vez para evitar duplicados
+    const onCardTirada = (data) => {
+      setRound(data.round)
+      // resolve(data);
+    };
+
+    socket.on("cardTirada_horserace", onCardTirada);
+
+    // Emitir el evento para tirar la carta
+    socket.emit("tirarCarta_horserace", dataRoom);
+    socket.off("tirarCarta_horserace", dataRoom);
+  });
+};

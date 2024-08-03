@@ -10,10 +10,11 @@ const WinnerComponentHorserace = ({ dataRoom, winner }) => {
       settimmer((prevTime) => {
         if (prevTime > 0) {
           return prevTime - 1;
-        } else {
+        } else if(prevTime===0){
           socket.emit("reset_horserace", dataRoom);
+          socket.on("reset_completed_horserace",data=>console.log(data))
         }
-        return prevTime;
+        return 3;
       });
     }, 1000);
 
