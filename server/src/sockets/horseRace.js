@@ -384,13 +384,6 @@ export default function HorseRaceSockets(io) {
             (user) => user.betP.suit == winningHorse.suit
           );
 
-          if (winners.length > 0) {
-            winners.map((el) => {
-              if (inBet === true) {
-                //subo la exp
-              }
-            });
-          }
 
           io.to(`${game}-${roomId}`).emit("Finish_game_horserace", {
             round: room.round,

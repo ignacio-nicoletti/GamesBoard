@@ -91,6 +91,7 @@ const HorseRace = () => {
               dataRoom={dataRoom}
               setRound={setRound}
               winner={winner}
+              players={players}
             />
           )}
         <HorseContain round={round} />

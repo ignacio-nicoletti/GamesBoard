@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import styles from "./pokerMenu.module.css";
+import styles from "./PagePrimaryPoker.module.css";
 import pokerTitle from "../../../assets/poker/pokerTitle.png";
 import Loader from "../loader/loader";
 

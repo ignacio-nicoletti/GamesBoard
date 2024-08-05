@@ -323,12 +323,12 @@ const JoinRoomHorseRace = () => {
             </div>
             {infoUser.experience && token && (
               <div className={style.levelMap}>
-                <p>Level {infoUser.experience[2].level}</p>
+                <p>Level {infoUser.experience[3].level}</p>
                 <p>
                   {infoUser.experience &&
-                    `xp ${infoUser.experience[2].xp}/${
-                      infoUser.experience[2].xp +
-                      infoUser.experience[2].xpRemainingForNextLevel
+                    `xp ${infoUser.experience[4].xp}/${
+                      infoUser.experience[4].xp +
+                      infoUser.experience[4].xpRemainingForNextLevel
                     }`}
                 </p>
               </div>

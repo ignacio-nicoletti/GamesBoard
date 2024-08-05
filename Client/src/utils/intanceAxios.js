@@ -1,17 +1,15 @@
 import axios from "axios";
 
-const URL =
-  process.env.NODE_ENV === "production"
-    ? process.env.REACT_APP_URL_API
-    : process.env.NODE_ENV === "development"
-    ? process.env.REACT_APP_URL_API_LOCAL
-    : "";
+// Configura la URL del servidor según el entorno
+const URL = process.env.NODE_ENV === 'production' 
+  ? process.env.REACT_APP_URL_API 
+  : process.env.REACT_APP_URL_API_LOCAL;
 
 // Crear una instancia de Axios con opciones comunes
 const axiosInstance = axios.create({
   baseURL: URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
@@ -25,7 +23,7 @@ async function InstanceOfAxios(ruta, metodo, datos, token) {
       data: datos,
       headers: {
         ...axiosInstance.defaults.headers, // Copiar encabezados comunes
-        'user-token': token, // Añadir token como "user-token"
+        "user-token": token, // Añadir token como "user-token"
       },
     };
 
@@ -33,21 +31,26 @@ async function InstanceOfAxios(ruta, metodo, datos, token) {
     return response.data;
   } catch (error) {
     if (error.response) {
-      // console.error('Error en la respuesta del servidor:', {
-      //   status: error.response.status,
-      //   data: error.response.data,
-      // });
-      
+      console.error('Error en la respuesta del servidor:', {
+        status: error.response.status,
+        data: error.response.data,
+      });
+
       // Propaga el mensaje de error recibido del backend
-      throw new Error(error.response.data.error || `Error ${error.response.status}: Ocurrió un error`);
+      throw new Error(
+        error.response.data.error ||
+          `Error ${error.response.status}: Ocurrió un error`
+      );
     } else if (error.request) {
-      // La petición fue hecha pero no hubo respuesta
-      console.error('No se recibió respuesta del servidor:', error.request);
-      throw new Error('No se recibió respuesta del servidor. Por favor, inténtalo de nuevo más tarde.');
+      console.error("No se recibió respuesta del servidor:", error.request);
+      throw new Error(
+        "No se recibió respuesta del servidor. Por favor, inténtalo de nuevo más tarde."
+      );
     } else {
-      // Algo sucedió al configurar la petición que desencadenó un error
-      console.error('Error en la configuración de la petición:', error.message);
-      throw new Error(`Error en la configuración de la petición: ${error.message}`);
+      console.error("Error en la configuración de la petición:", error.message);
+      throw new Error(
+        `Error en la configuración de la petición: ${error.message}`
+      );
     }
   }
 }

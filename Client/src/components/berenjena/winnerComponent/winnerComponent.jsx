@@ -3,7 +3,7 @@ import styles from './winnerComponent.module.css';
 import {useNavigate} from 'react-router-dom';
 import {disconnectRoom} from '../../../functions/SocketIO/sockets/sockets';
 import InstanceOfAxios from '../../../utils/intanceAxios';
-const WinnerComponent = ({winner, room, players}) => {
+const WinnerComponent = ({winner, dataRoom, players}) => {
   const [timmerFinishRoom, setTimmerFinishRoom] = useState (10);
 
   const navigate = useNavigate ();
@@ -11,7 +11,7 @@ const WinnerComponent = ({winner, room, players}) => {
   const AddExperience = async () => {
     await InstanceOfAxios (`/user/addexperience/`, 'PUT', {
       winner,
-      room,
+      dataRoom,
       players,
     });
   };
@@ -31,7 +31,7 @@ const WinnerComponent = ({winner, room, players}) => {
       }, 1000);
       
       if (timmerFinishRoom === 0) {
-        disconnectRoom (room.game, room.roomId);
+        disconnectRoom (dataRoom.game, dataRoom.roomId);
         navigate (`/berenjena/joinRoom`);
       }
 

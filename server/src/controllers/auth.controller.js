@@ -28,7 +28,7 @@ export const register = async (req, res) => {
       experience: [
         { game: "Berenjena", level: 1, xp: 0 }, // Valor inicial para experiencia
         { game: "Poker", level: 1, xp: 0 }, // Valor inicial para experiencia
-        { game: "HorseRace", level: 1, xp: 0 }, // Valor inicial para experiencia
+        { game: "Horserace", level: 1, xp: 0 }, // Valor inicial para experiencia
         { game: "Truco", level: 1, xp: 0 }, // Valor inicial para experiencia
       ],
     });

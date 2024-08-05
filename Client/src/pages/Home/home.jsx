@@ -5,6 +5,7 @@ import BerenjenaImg from "../../assets/homeFirst/berenjenaImg.png";
 import Horseimg from "../../assets/homeFirst/HorseCards.png";
 import DefaultAvatar from "../../assets/berenjena/jugadores/DefaultAvatar.png";
 import LogoutIcon from "@mui/icons-material/Logout";
+import StoreIcon from "@mui/icons-material/Store";
 import { useState, useEffect } from "react";
 import { GetDecodedCookie } from "../../utils/DecodedCookie";
 import { DecodedToken } from "../../utils/DecodedToken";
@@ -36,14 +37,20 @@ const Home = () => {
     window.location.href = "/";
   };
 
+  const handleStore = () => {
+    window.location.href = "/store";
+  };
+
   const handleLoginSuccess = () => {
     setModalOpen(false);
     window.location.reload();
   };
-  useEffect(()=>{
-    return ()=>{
-      disconnectServer()}
-  },[])
+
+  useEffect(() => {
+    return () => {
+      disconnectServer();
+    };
+  }, []);
 
   return (
     <div className={styles.contain}>
@@ -58,6 +65,9 @@ const Home = () => {
             Hello, <span>{userInfo.userName}</span>
             <button className={styles.logoutBtn} onClick={handleLogout}>
               <LogoutIcon />
+            </button>
+            <button className={styles.logoutBtn} onClick={handleStore}>
+              <StoreIcon />
             </button>
           </div>
         ) : (
@@ -119,3 +129,6 @@ export default Home;
 
 // tienda para objetos
 // avatares, color en el name
+
+
+//reutilizar componentes

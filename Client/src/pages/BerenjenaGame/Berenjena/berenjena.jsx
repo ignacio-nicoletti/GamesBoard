@@ -243,7 +243,7 @@ const GameBerenjena = () => {
       </div>
 
       {round.typeRound === "EndGame" && (
-        <WinnerComponent winner={winner} room={dataRoom} players={players} />
+        <WinnerComponent winner={winner} dataRoom={dataRoom} players={players} />
       )}
 
       <ButtonExitRoom dataRoom={dataRoom} />

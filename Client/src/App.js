@@ -7,10 +7,10 @@ import RulesOfBerenjena from "./pages/BerenjenaGame/rulesBerenjena/rulesBerenjen
 import GameBerenjena from "./pages/BerenjenaGame/Berenjena/berenjena";
 import JoinRoom from "./pages/BerenjenaGame/joinRoom/JoinRoom";
 
-import PokerMenu from "./pages/PokerGame/pokerMenu/pokerMenu";
 import PagePrimaryHorseGame from "./pages/HorseRaceGame/PagePrimaryHorseGame/PagePrimaryHorseGame";
 import JoinRoomHorseRace from "./pages/HorseRaceGame/JoinRoomHorseRace/JoinRoomHorseRace";
 import HorseRace from "./pages/HorseRaceGame/horseRace/horseRace";
+import PagePrimaryPoker from "./pages/PokerGame/PagePrimaryPoker/PagePrimaryPoker";
 
 function App() {
   return (
@@ -26,7 +26,7 @@ function App() {
         <Route path="/gameberenjenaIA" element={<JoinRoom />} />
 
         {/* Poker */}
-        <Route path="/poker" element={<PokerMenu />} />
+        <Route path="/poker" element={<PagePrimaryPoker />} />
         {/* HorseGame */}
         <Route path="/horserace" element={<PagePrimaryHorseGame />} />
         <Route path="/horserace/joinRoom" element={<JoinRoomHorseRace/>}/>

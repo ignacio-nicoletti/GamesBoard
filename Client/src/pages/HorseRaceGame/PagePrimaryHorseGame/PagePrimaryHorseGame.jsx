@@ -1,6 +1,7 @@
 import {Link} from 'react-router-dom';
 import styles from './PagePrimaryHorseGame.module.css';
 import videoHorse from '../../../assets/horseGame/horsevideo.mp4';
+import logoHorserace from "../../../assets/horseGame/logohorserace.png"
 
 const PagePrimaryHorseGame = () => {
   return (
@@ -10,7 +11,7 @@ const PagePrimaryHorseGame = () => {
           <source src={videoHorse} type="video/mp4" />
         </video>
         <div className={styles.title}>
-          <h1>Horse Race</h1>
+          <img src={logoHorserace} alt="" />
         </div>
         <div className={`${styles.option} no-text-select`}>
           <Link to="/" className={styles.link}>

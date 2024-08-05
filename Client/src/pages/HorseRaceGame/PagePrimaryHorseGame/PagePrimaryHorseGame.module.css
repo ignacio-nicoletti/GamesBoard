@@ -35,9 +35,10 @@
   padding: 1rem;
 }
 
-.title{
-    font-size: 2rem;
-    color: brown;
+.title {
+  background-color: brown;
+  border-radius: 50%;
+  padding: 1rem 3rem;
 }
 .welcomeImg {
   width: 100%;
@@ -57,7 +58,6 @@
   margin-top: 2rem;
   font-size: 1.5rem;
   width: 100%;
- 
 }
 
 .link {

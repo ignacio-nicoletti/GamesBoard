@@ -25,7 +25,7 @@ const corsOptions = {
       callback(new Error("Not allowed by CORS"));
     }
   },
-  methods: ["GET", "POST"],
+  methods: ["GET", "POST", "PUT", "DELETE"], // Añadir todos los métodos necesarios
   credentials: true,
 };
 
@@ -38,7 +38,7 @@ const io = new Server(server, {
         callback(new Error("Not allowed by CORS"));
       }
     },
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST"], // Ajusta según tus necesidades
     credentials: true,
   },
   transports: ["websocket", "polling"], // Habilitar ambos transportes
@@ -48,13 +48,18 @@ GeneralSocket(io);
 BerenjenaSockets(io);
 HorseRaceSockets(io);
 
-
 app.use(cors(corsOptions));
 app.use(morgan("dev"));
 app.use(express.json());
 
 app.use("/", AuthRoute);
 app.use("/user", userRoutes);
+
+// Manejo de errores genérico
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
 
 const port = process.env.PORT || 3001;
 server.listen(port, () => {
