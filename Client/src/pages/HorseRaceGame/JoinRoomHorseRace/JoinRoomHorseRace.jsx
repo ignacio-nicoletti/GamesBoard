@@ -20,7 +20,7 @@ import avatar4 from "../../../assets/berenjena/jugadores/avatar4.png";
 import avatar5 from "../../../assets/berenjena/jugadores/avatar5.png";
 import avatar6 from "../../../assets/berenjena/jugadores/avatar6.png";
 import imgRoom from "../../../assets/berenjena/jugadores/imgRoom.png";
-import logoBerenjena from "../../../assets/berenjena/home/logoBerenjena.png";
+import logoHorserace from "../../../assets/horseGame/logohorserace.png";
 import InstanceOfAxios from "../../../utils/intanceAxios";
 import { FadeLoader } from "react-spinners";
 
@@ -30,7 +30,7 @@ const JoinRoomHorseRace = () => {
   const [userName, setUserName] = useState("");
   const [roomId, setRoomId] = useState("");
   const [tempMaxUsers, setTempMaxUsers] = useState(""); // temp max o maxusers
-  const [maxUsers, setMaxUsers] = useState(6);
+  const [maxUsers, setMaxUsers] = useState(10);
   const [error, setError] = useState("");
   const [selectedAvatar, setSelectedAvatar] = useState("avatar1");
   const [showModal, setShowModal] = useState(true);
@@ -237,19 +237,19 @@ const JoinRoomHorseRace = () => {
 
   const handleChange = (e) => {
     const value = e.target.value;
-    if (["2", "3", "4", "5", "6"].includes(value)) {
+    if (["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"].includes(value)) {
       setTempMaxUsers(value);
       setError("");
     } else {
       setTempMaxUsers("");
-      setError("Please enter a value between 2 and 6");
+      setError("Please enter a value between 1 and 10");
     }
   };
 
   const handleBlur = (e) => {
     const value = parseInt(e.target.value, 10);
-    if (isNaN(value) || value < 2 || value > 6) {
-      setError("Please enter a value between 2 and 6");
+    if (isNaN(value) || value < 1 || value > 10) {
+      setError("Please enter a value between 1 and 10");
     } else {
       setMaxUsers(value);
       setError("");
@@ -346,7 +346,7 @@ const JoinRoomHorseRace = () => {
               />
               <input
                 type="text"
-                placeholder="players: 2 to 6..."
+                placeholder="players: 1 to 10..."
                 value={tempMaxUsers}
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -367,9 +367,11 @@ const JoinRoomHorseRace = () => {
               >
                 Create
               </button>
-              {/* <div className={style.divstoreButton}>
-                <button className={style.storeButton}>Store</button>
-              </div> */}
+              <div className={style.divstoreButton}>
+                <Link to="/store" className={style.storeButtonLink}>
+                  <button className={style.storeButton}>Store</button>
+                </Link>
+              </div>
             </div>
           </div>
 
@@ -377,9 +379,9 @@ const JoinRoomHorseRace = () => {
             <div className={style.autocomplete}>
               <div className={style.logoContainer}>
                 <img
-                  src={logoBerenjena}
+                  src={logoHorserace}
                   alt=""
-                  className={style.logoBerenjena}
+                  className={style.logoHorserace}
                 />
               </div>
               <div>

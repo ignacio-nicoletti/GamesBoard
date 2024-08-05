@@ -1,7 +1,6 @@
-
 import { distributeHorse, shuffle } from "../functions/functions.js";
 import { Player } from "../models/players.js";
-import { handleEmptyRoom, permanentRooms } from "./general.js";
+import { permanentRooms } from "./general.js";
 
 export default function HorseRaceSockets(io) {
   io.on("connection", (socket) => {
@@ -459,50 +458,6 @@ export default function HorseRaceSockets(io) {
         });
       }
     });
-
-    // socket.on("disconnect", () => {
-    //   console.log(`Usuario desconectado: ${socket.id}`);
-
-    //   // Recorrer todas las salas permanentes para buscar y manejar la desconexión del usuario
-    //   Object.keys(permanentRooms).forEach((game) => {
-    //     const rooms = permanentRooms[game];
-    //     Object.keys(rooms).forEach((roomId) => {
-    //       const room = rooms[roomId];
-    //       const userIndex = room.users.findIndex(
-    //         (user) => user.idSocket === socket.id
-    //       );
-    //       if (userIndex !== -1) {
-    //         // Usuario encontrado en la sala, realizar acciones necesarias
-    //         const disconnectedUser = room.users[userIndex];
-
-    //         if (room.gameStarted) {
-    //           disconnectedUser.connect = false;
-    //           console.log(
-    //             `Usuario ${socket.id} marcado como desconectado en la sala ${roomId}.`
-    //           );
-
-    //           // Si todos los usuarios están desconectados, manejar la sala vacía
-    //           if (room.users.every((user) => !user.connect)) {
-    //             handleEmptyRoom(room, game, roomId);
-    //           }
-    //         } else {
-    //           // Si el juego no ha comenzado, simplemente remover al usuario de la lista de usuarios
-    //           room.users.splice(userIndex, 1);
-    //           room.users.forEach((user, index) => {
-    //             user.position = index + 1;
-    //           });
-    //         }
-
-    //         // Emitir actualización a los clientes en la sala
-    //         io.to(`${game}-${roomId}`).emit("roomRefresh", {
-    //           users: room.users,
-    //           round: room.round,
-    //           room: room,
-    //         });
-    //       }
-    //     });
-    //   });
-    // });
   });
 }
 

@@ -5,10 +5,10 @@ import copa from "../../../assets/berenjena/valores/copa.png";
 import espada from "../../../assets/berenjena/valores/espada.png";
 import oro from "../../../assets/berenjena/valores/oro.png";
 import backDeck from "../../../assets/horseGame/deckBack.png";
-import horseoro from "../../../assets/horseGame/horseoro.jpg";
-import horsebasto from "../../../assets/horseGame/horsebasto.jpg";
-import horseespada from "../../../assets/horseGame/horseespada.jpg";
-import horsecopa from "../../../assets/horseGame/horsecopa.jpg";
+import horseoro from "../../../assets/horseGame/horseoro.png";
+import horsebasto from "../../../assets/horseGame/horsebasto.png";
+import horseespada from "../../../assets/horseGame/horseespada.png";
+import horsecopa from "../../../assets/horseGame/horsecopa.png";
 
 const Cards = ({ value, suit, back }) => {
   const imgPalo = {
@@ -17,6 +17,7 @@ const Cards = ({ value, suit, back }) => {
     basto: basto,
     copa: copa,
   };
+
   const horsePalo = {
     oro: horseoro,
     espada: horseespada,

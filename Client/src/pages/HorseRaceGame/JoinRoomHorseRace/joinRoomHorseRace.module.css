@@ -185,7 +185,7 @@
   height: max-content;
   display: flex;
   justify-content: center;
-  margin-top: 10rem;
+  margin-top: 2rem;
 }
 
 .storeButton {
@@ -207,11 +207,27 @@
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
-.storeButton:hover {
+.storeButton:hover{
   width: calc(100% + 2rem);
-  background-color: white;
   color: #003049;
   box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+  background-color: white;
+}
+.storeButtonLink {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  width: 90%;
+  font-family: "Bebas Neue";
+  font-size: 1rem;
+  text-decoration: none;
+  color: white;
+  padding: 0.5rem;
+  transition: background-color 0.3s;
+  transition: width 0.3s ease-in-out;
 }
 
 .editIcon:hover {
@@ -517,7 +533,7 @@
   flex-wrap: wrap;
 }
 
-.logoBerenjena {
+.logoHorserace {
   width: 100%;
   max-width: 12rem;
 }

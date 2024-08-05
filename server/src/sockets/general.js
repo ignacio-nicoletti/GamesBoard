@@ -1,6 +1,6 @@
 export function createRooms(numberOfRooms, gameName, cantUsers) {
   const rooms = {};
-  
+
   if (gameName === "Berenjena") {
     for (let i = 1; i <= numberOfRooms; i++) {
       rooms[i] = {
@@ -47,7 +47,7 @@ export function createRooms(numberOfRooms, gameName, cantUsers) {
       };
     }
   }
-  
+
   return rooms;
 }
 
@@ -59,17 +59,57 @@ export const permanentRooms = {
 };
 
 export const handleEmptyRoom = (room, game, roomId) => {
-  if (roomId <= 10) {
-    // Si la sala es una de las primeras 10 creadas (permanente), se vacía y resetea
-    room.gameStarted = false;
-    room.users = [];
-    room.round = {};
-    room.results = [];
-    console.log(`Sala permanente ${roomId} vaciada y reseteada.`);
-  } else {
-    // Si la sala no es permanente, se elimina
-    delete permanentRooms[game][roomId];
-    console.log(`Sala ${roomId} eliminada.`);
+  if (game === "Berenjena") {
+    if (roomId <= 10) {
+      // Si la sala es una de las primeras 10 creadas (permanente), se vacía y resetea
+      room.gameStarted = false;
+      room.users = [];
+      room.round = {};
+      room.results = [];
+      console.log(`Sala permanente ${roomId} vaciada y reseteada.`);
+    } else {
+      // Si la sala no es permanente, se elimina
+      delete permanentRooms[game][roomId];
+      console.log(`Sala ${roomId} eliminada.`);
+    }
+  } else if (game === "Horserace") {
+    if (roomId <= 15) {
+      const roundHorseRace = {
+        users: [], //usuarios conectados
+        typeRound: "Bet", //apuesta o ronda
+        cantQueApostaron: 0,
+        sideLeftCards: [
+          { back: true },
+          { back: true },
+          { back: true },
+          { back: true },
+          { back: true },
+        ],
+        cardsDeck: [], //mazo
+        cardSuit: { suit: "", value: null, back: false }, //carta tirada
+        horseDeck: [
+          { suit: "oro", value: 11, back: false, pos: 6 },
+          { suit: "espada", value: 11, back: false, pos: 6 },
+          { suit: "copa", value: 11, back: false, pos: 6 },
+          { suit: "basto", value: 11, back: false, pos: 6 },
+        ], //los 4 caballos
+        roomId: { gameId: game, roomId: roomId }, // Guarda la data correctamente
+      };
+
+      room = {
+        users: [],
+        round: roundHorseRace,
+        gameStarted: false,
+        maxUsers: room.cantUsers,
+        roomId: roomId,
+        game: game,
+      };
+      console.log(`Sala permanente ${roomId} vaciada y reseteada.`);
+    } else {
+      // Si la sala no es permanente, se elimina
+      delete permanentRooms[game][roomId];
+      console.log(`Sala ${roomId} eliminada.`);
+    }
   }
 };
 
@@ -101,42 +141,52 @@ export default function GeneralSocket(io) {
         console.log(`Sala no encontrada: ${roomId} en el juego: ${game}`);
         return;
       }
-
       const room = permanentRooms[game][roomId];
       const userIndex = room.users.findIndex(
         (user) => user.idSocket === socket.id
       );
-
-      if (userIndex === -1) {
-        console.log(`Usuario no encontrado en la sala: ${roomId}`);
-        return;
-      }
-
-      const disconnectedUser = room.users[userIndex];
-
-      if ((room.gameStarted = true)) {
-        disconnectedUser.connect = false;
-        console.log(
-          `Usuario ${socket.id} desconectado de la sala ${roomId}. Marcado como desconectado.`
-        );
-
-        if (room.users.every((user) => !user.connect)) {
-          handleEmptyRoom(room, game, roomId);
-        }
-      } else {
-        // Si el juego no ha comenzado, el usuario se elimina de la sala
-        room.users.splice(userIndex, 1);
-        room.users.forEach((user, index) => {
-          user.position = index + 1;
-        });
-      }
       if (game === "Berenjena") {
+        if (userIndex === -1) {
+          console.log(`Usuario no encontrado en la sala: ${roomId}`);
+          return;
+        }
+
+        const disconnectedUser = room.users[userIndex];
+
+        if ((room.gameStarted = true)) {
+          disconnectedUser.connect = false;
+          console.log(
+            `Usuario ${socket.id} desconectado de la sala ${roomId}. Marcado como desconectado.`
+          );
+
+          if (room.users.every((user) => !user.connect)) {
+            handleEmptyRoom(room, game, roomId);
+          }
+        } else {
+          // Si el juego no ha comenzado, el usuario se elimina de la sala
+          room.users.splice(userIndex, 1);
+          room.users.forEach((user, index) => {
+            user.position = index + 1;
+          });
+        }
         io.to(`${game}-${roomId}`).emit("roomRefresh", {
           users: room.users,
           round: room.round,
           room: room,
         });
       } else if (game === "Horserace") {
+        if (userIndex === -1) {
+          console.log(`Usuario no encontrado en la sala: ${roomId}`);
+          return;
+        }
+        if (userIndex !== -1) {
+          console.log(`Usuario ${socket.id} desconectado de la sala ${roomId}`);
+          room.users.splice(userIndex, 1);
+
+          if (room.users.length === 0) {
+            handleEmptyRoom(room, game, roomId);
+          }
+        }
         io.to(`${game}-${roomId}`).emit("roomRefresh_horserace", {
           users: room.users,
           round: room.round,
@@ -146,6 +196,3 @@ export default function GeneralSocket(io) {
     });
   });
 }
-
-
-// acomodar el handleempty
