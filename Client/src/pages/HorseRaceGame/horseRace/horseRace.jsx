@@ -29,12 +29,10 @@ const HorseRace = () => {
       setRound(data.round);
       setWinner(data.winners);
     });
-
-    socket.on("reset_completed_horserace", (data) => setRound(data.round));
     return () => {
       socket.off("Finish_game_horserace");
     };
-  }, [players]);
+  }, []);
 
   const updatePlayerList = (data) => {
     if (data) {
@@ -83,18 +81,14 @@ const HorseRace = () => {
           />
         )}
         {dataRoom && dataRoom.gameStarted && round.typeRound === "waiting" && (
-          <TimmerComponentHorserace
-            round={round}
-            setRound={setRound}
-            dataRoom={dataRoom}
-          />
+          <TimmerComponentHorserace dataRoom={dataRoom} setRound={setRound} />
         )}
 
         {dataRoom &&
           dataRoom.gameStarted &&
           round.typeRound === "FinishGame" && (
             <WinnerComponentHorserace
-              round={round}
+              dataRoom={dataRoom}
               setRound={setRound}
               winner={winner}
             />

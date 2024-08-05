@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
 import Cards from "../cards/cardsHorse";
 import style from "./betHorse.module.css";
-import {
-  distributeHorserace,
-  socket,
-} from "../../../functions/SocketIO/sockets/sockets";
+import { socket } from "../../../functions/SocketIO/sockets/sockets";
 
 const BetHorse = ({ setPlayers, round, setRound, myPlayer, dataRoom }) => {
-  const [card, setCard] = useState({ value: "11", suit: "-" });//card selecionada
+  const [card, setCard] = useState({ value: "11", suit: "-" }); //card selecionada
   const [hasBet, setHasBet] = useState(false); // ya vote
   const [timeLeft, setTimeLeft] = useState(30); // 30 seconds timer
   const [inBet, setInBet] = useState(false); //si entro en la apuesta o no
@@ -43,7 +40,7 @@ const BetHorse = ({ setPlayers, round, setRound, myPlayer, dataRoom }) => {
     socket.on("update_game_state_horserace", handleGameStateUpdate);
 
     const handleBetReceived = () => {
-      setHasBet(true); // Update the state when the bet is received
+      setHasBet(true);
     };
 
     socket.on("bet_received", handleBetReceived);
@@ -70,7 +67,7 @@ const BetHorse = ({ setPlayers, round, setRound, myPlayer, dataRoom }) => {
         myPlayer,
         dataRoom,
       });
-      setHasBet(true); // Mark that the player has bet
+      setHasBet(true);
     }
   }, [timeLeft, hasBet, dataRoom]);
 
@@ -78,7 +75,7 @@ const BetHorse = ({ setPlayers, round, setRound, myPlayer, dataRoom }) => {
     <div className={style.contain}>
       {!hasBet && round.typeRound === "Bet" ? (
         <div>
-          <p>Choose your horse to win!!</p>
+          <p className={style.title}>Choose your horse to win!!</p>
           <p>Time left: {timeLeft} seconds</p>
 
           <div className={style.checkbox_wrapper_24}>
@@ -91,7 +88,24 @@ const BetHorse = ({ setPlayers, round, setRound, myPlayer, dataRoom }) => {
               onChange={handleCheckboxChange}
             />
             <label htmlFor="check_24">
-              <span></span>
+              <span>
+                {inBet && (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M5 12l5 5l10 -10" />
+                  </svg>
+                )}
+              </span>
             </label>
           </div>
 
@@ -102,7 +116,7 @@ const BetHorse = ({ setPlayers, round, setRound, myPlayer, dataRoom }) => {
               }`}
               onClick={() => handleCardClick("oro")}
             >
-              <Cards value={"11"} suit={"oro"} />
+              <Cards value={11} suit={"oro"} />
             </div>
             <div
               className={`${style.divCard} ${
@@ -110,7 +124,7 @@ const BetHorse = ({ setPlayers, round, setRound, myPlayer, dataRoom }) => {
               }`}
               onClick={() => handleCardClick("espada")}
             >
-              <Cards value={"11"} suit={"espada"} />
+              <Cards value={11} suit={"espada"} />
             </div>
             <div
               className={`${style.divCard} ${
@@ -118,7 +132,7 @@ const BetHorse = ({ setPlayers, round, setRound, myPlayer, dataRoom }) => {
               }`}
               onClick={() => handleCardClick("basto")}
             >
-              <Cards value={"11"} suit={"basto"} />
+              <Cards value={11} suit={"basto"} />
             </div>
             <div
               className={`${style.divCard} ${
@@ -126,7 +140,7 @@ const BetHorse = ({ setPlayers, round, setRound, myPlayer, dataRoom }) => {
               }`}
               onClick={() => handleCardClick("copa")}
             >
-              <Cards value={"11"} suit={"copa"} />
+              <Cards value={11} suit={"copa"} />
             </div>
           </div>
           <div className={style.buttonDiv}>

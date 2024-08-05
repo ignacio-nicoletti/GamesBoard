@@ -224,3 +224,4 @@ export const tirarCartaHorserace = (dataRoom,setRound) => {
     socket.off("tirarCarta_horserace", dataRoom);
   });
 };
+

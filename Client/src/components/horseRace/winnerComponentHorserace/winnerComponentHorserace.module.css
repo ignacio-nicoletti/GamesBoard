@@ -1,13 +1,16 @@
 /* beetweenRound.module.css */
 .container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   z-index: 1;
+  background-color:#ff914d;
+  width: 25%;
+  border-radius: 10px;
 }
 
 .BoxMessage{
-  background-color:#ff914d;
   border-radius: 5px;
   padding: 10px 20px;
   color: #fff;
@@ -21,7 +24,7 @@
   font-size: 1.8rem;
   font-weight: bold;
   color: #333;
-  background: #fff;
+  /* background: #fff; */
   padding: 10px 20px;
   border-radius: 5px;
   box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;

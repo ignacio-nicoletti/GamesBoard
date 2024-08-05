@@ -1,4 +1,5 @@
-import { distribute, shuffle } from "../../functions/functions.js";
+
+import { distribute, shuffle } from "../functions/functions.js";
 import { Player } from "../models/players.js";
 import {permanentRooms,handleEmptyRoom } from "./general.js";
 

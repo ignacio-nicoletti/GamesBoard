@@ -2,37 +2,40 @@ import { useEffect, useState } from "react";
 import styles from "./winnerComponentHorserace.module.css";
 import { socket } from "../../../functions/SocketIO/sockets/sockets";
 
-const WinnerComponentHorserace = ({ dataRoom, winner }) => {
+const WinnerComponentHorserace = ({ dataRoom, setRound, winner }) => {
   const [timmer, settimmer] = useState(3);
+
+winner=[{userName:"pepe"},{userName:"pepe"}]
+
 
   useEffect(() => {
     const time = setInterval(() => {
       settimmer((prevTime) => {
         if (prevTime > 0) {
           return prevTime - 1;
-        } else if(prevTime===0){
-          socket.emit("reset_horserace", dataRoom);
-          socket.on("reset_completed_horserace",data=>console.log(data))
+        } else {
+          // socket.emit("reset_horserace", dataRoom);
+          socket.on("reset_completed_horserace", (data) => {
+            setRound(data.round);
+          });
+          return 3; // Reset the timer to 3
         }
-        return 3;
       });
     }, 1000);
 
     return () => clearInterval(time);
-  }, [timmer]);
+  }, []);
 
-  console.log(winner);
   return (
     <div className={styles.container}>
+      <h1>Finish race</h1>
       <div>
-        <h3 className={styles.message}>
-          Finish race: <span className={styles.timer}>{timmer}</span>
-        </h3>
-        winners:
-        {/* {winner.map((el) => (
-            <p>{el.userName}</p>
-          ))} */}
-      </div>
+
+      winners:
+      {winner.map((el) => (
+        <p key={el.userName}>{el.userName}</p>
+        ))}
+        </div>
     </div>
   );
 };

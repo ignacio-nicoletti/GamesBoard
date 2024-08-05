@@ -5,6 +5,10 @@ import copa from "../../../assets/berenjena/valores/copa.png";
 import espada from "../../../assets/berenjena/valores/espada.png";
 import oro from "../../../assets/berenjena/valores/oro.png";
 import backDeck from "../../../assets/horseGame/deckBack.png";
+import horseoro from "../../../assets/horseGame/horseoro.jpg";
+import horsebasto from "../../../assets/horseGame/horsebasto.jpg";
+import horseespada from "../../../assets/horseGame/horseespada.jpg";
+import horsecopa from "../../../assets/horseGame/horsecopa.jpg";
 
 const Cards = ({ value, suit, back }) => {
   const imgPalo = {
@@ -12,6 +16,12 @@ const Cards = ({ value, suit, back }) => {
     espada: espada,
     basto: basto,
     copa: copa,
+  };
+  const horsePalo = {
+    oro: horseoro,
+    espada: horseespada,
+    basto: horsebasto,
+    copa: horsecopa,
   };
 
   return (
@@ -23,19 +33,31 @@ const Cards = ({ value, suit, back }) => {
           alt="Carta trasera"
         />
       ) : (
-        <>
-          <div className={styles.topRight}>
-            <p className={styles.cardValue}>{value}</p>
-          </div>
-          <img
-            src={imgPalo[suit]}
-            alt={`${suit} logo`}
-            className={styles.cardImage}
-          />
-          <div className={styles.bottomLeft}>
-            <p className={styles.cardValue}>{value}</p>
-          </div>
-        </>
+        <div>
+          {value === 11 ? (
+            <div>
+              <img
+                src={horsePalo[suit]}
+                alt={`${suit} logo`}
+                className={styles.cardImageHorse}
+              />
+            </div>
+          ) : (
+            <div>
+              <div className={styles.topRight}>
+                <p className={styles.cardValue}>{value}</p>
+              </div>
+              <img
+                src={imgPalo[suit]}
+                alt={`${suit} logo`}
+                className={styles.cardImage}
+              />
+              <div className={styles.bottomLeft}>
+                <p className={styles.cardValue}>{value}</p>
+              </div>
+            </div>
+          )}
+        </div>
       )}
     </div>
   );

@@ -1,4 +1,5 @@
-import { distributeHorse, shuffle } from "../../functions/functions.js";
+
+import { distributeHorse, shuffle } from "../functions/functions.js";
 import { Player } from "../models/players.js";
 import { handleEmptyRoom, permanentRooms } from "./general.js";
 
@@ -380,11 +381,18 @@ export default function HorseRaceSockets(io) {
         if (winningHorse) {
           room.round.typeRound = "FinishGame";
 
-          const winners = room.users.filter((user) => {
-            return user.betP == winningHorse.suit;
-          });
+          const winners = room.users.filter(
+            (user) => user.betP.suit == winningHorse.suit
+          );
 
-          console.log("Winners:", winners, "card:", winningHorse.suit);
+          if (winners.length > 0) {
+            winners.map((el) => {
+              if (inBet === true) {
+                //subo la exp
+              }
+            });
+          }
+
           io.to(`${game}-${roomId}`).emit("Finish_game_horserace", {
             round: room.round,
             winners,
@@ -402,7 +410,6 @@ export default function HorseRaceSockets(io) {
     });
 
     socket.on("reset_horserace", (dataRoom) => {
-      console.log("entre");
       if (!dataRoom) return;
       const { game, roomId, round } = dataRoom;
 
