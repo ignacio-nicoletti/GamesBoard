@@ -1,0 +1,38 @@
+.contain {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: "Bebas Neue", sans-serif;
+  background-image: url("../../../src/assets/fondoo.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+}
+
+.title {
+  width: 100%;
+}
+.title p {
+  width: 100%;
+  font-size: 6rem;
+  margin: 0;
+}
+
+.MapProducts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 50px;
+}
+
+.cardProduct {
+  font-size: 3rem;
+  width: 300px;
+
+  backdrop-filter: blur(10px);
+  box-shadow: rgba(0, 0, 0, 0.35) 0px -50px 36px -28px inset;
+
+}

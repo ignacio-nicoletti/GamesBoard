@@ -11,12 +11,14 @@ import PagePrimaryHorseGame from "./pages/HorseRaceGame/PagePrimaryHorseGame/Pag
 import JoinRoomHorseRace from "./pages/HorseRaceGame/JoinRoomHorseRace/JoinRoomHorseRace";
 import HorseRace from "./pages/HorseRaceGame/horseRace/horseRace";
 import PagePrimaryPoker from "./pages/PokerGame/PagePrimaryPoker/PagePrimaryPoker";
+import Store from "./pages/store/store";
 
 function App() {
   return (
     <div className="App">
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/store" element={<Store />} />
 
         {/* BERENJENA */}
         <Route path="/berenjena" element={<PagePrimaryBerenjena />} />

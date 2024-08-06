@@ -3,49 +3,11 @@ import styles from "./home.module.css";
 import PokerImg from "../../assets/homeFirst/pokerImg.png";
 import BerenjenaImg from "../../assets/homeFirst/berenjenaImg.png";
 import Horseimg from "../../assets/homeFirst/HorseCards.png";
-import DefaultAvatar from "../../assets/berenjena/jugadores/DefaultAvatar.png";
-import LogoutIcon from "@mui/icons-material/Logout";
-import StoreIcon from "@mui/icons-material/Store";
-import { useState, useEffect } from "react";
-import { GetDecodedCookie } from "../../utils/DecodedCookie";
-import { DecodedToken } from "../../utils/DecodedToken";
+import { useEffect } from "react";
 import { disconnectServer } from "../../functions/SocketIO/sockets/sockets";
-import Login from "../../components/homePage/login/login";
-import Cookies from "js-cookie";
+import SesionLogged from "../../components/homePage/sesionLogged/sesionLogged";
 
 const Home = () => {
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [isLogin, setIsLogin] = useState(true);
-  const [userInfo, setUserInfo] = useState(null);
-
-  useEffect(() => {
-    const token = GetDecodedCookie("cookieToken");
-    if (token) {
-      const data = DecodedToken(token);
-      setUserInfo(data);
-    }
-  }, []);
-
-  const toggleModal = (isLogin) => {
-    setIsLogin(isLogin);
-    setModalOpen(!isModalOpen);
-  };
-
-  const handleLogout = () => {
-    Cookies.remove("cookieToken");
-    setUserInfo(null);
-    window.location.href = "/";
-  };
-
-  const handleStore = () => {
-    window.location.href = "/store";
-  };
-
-  const handleLoginSuccess = () => {
-    setModalOpen(false);
-    window.location.reload();
-  };
-
   useEffect(() => {
     return () => {
       disconnectServer();
@@ -54,39 +16,8 @@ const Home = () => {
 
   return (
     <div className={styles.contain}>
-      <div className={styles.header}>
-        {userInfo ? (
-          <div className={styles.userInfo}>
-            <img
-              src={userInfo.avatar || DefaultAvatar}
-              alt="Avatar"
-              className={styles.avatar}
-            />
-            Hello, <span>{userInfo.userName}</span>
-            <button className={styles.logoutBtn} onClick={handleLogout}>
-              <LogoutIcon />
-            </button>
-            <button className={styles.logoutBtn} onClick={handleStore}>
-              <StoreIcon />
-            </button>
-          </div>
-        ) : (
-          <>
-            <button
-              className={styles.authButton}
-              onClick={() => toggleModal(true)}
-            >
-              Log In
-            </button>
-            <button
-              className={styles.authButton}
-              onClick={() => toggleModal(false)}
-            >
-              Sign Up
-            </button>
-          </>
-        )}
-      </div>
+      <SesionLogged />
+
       <div className={styles.containOption}>
         <h1>Place Your Bets</h1>
         <p className={styles.description}>
@@ -114,13 +45,6 @@ const Home = () => {
           </Link>
         </div>
       </div>
-      {isModalOpen && (
-        <Login
-          isLogin={isLogin}
-          onClose={() => setModalOpen(false)}
-          onLoginSuccess={handleLoginSuccess}
-        />
-      )}
     </div>
   );
 };
@@ -129,6 +53,5 @@ export default Home;
 
 // tienda para objetos
 // avatares, color en el name
-
 
 //reutilizar componentes
