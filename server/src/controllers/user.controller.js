@@ -51,11 +51,9 @@ export const DeletePlayerById = async (req, res) => {
   }
 };
 
-
 export const AddExperience = async (req, res) => {
   const xpForNextLevel = (level) => Math.round(100 * Math.pow(1.2, level - 1));
   const { winner, dataRoom, players } = req.body;
-
 
   try {
     if (dataRoom.game === "Berenjena" || dataRoom.game === "Horserace") {
@@ -85,10 +83,20 @@ export const AddExperience = async (req, res) => {
           // Update experience for the game
           gameExperience.xp += experienceToAdd;
 
-          // Calculate new level
+          // Calculate new level or decrement level if necessary
           while (gameExperience.xp >= xpForNextLevel(gameExperience.level)) {
             gameExperience.xp -= xpForNextLevel(gameExperience.level);
             gameExperience.level++;
+          }
+
+          while (gameExperience.xp < 0 && gameExperience.level > 1) {
+            gameExperience.level--;
+            gameExperience.xp += xpForNextLevel(gameExperience.level);
+          }
+
+          // Ensure XP doesn't go negative at level 1
+          if (gameExperience.level === 1 && gameExperience.xp < 0) {
+            gameExperience.xp = 0;
           }
 
           // Calculate XP remaining for next level
