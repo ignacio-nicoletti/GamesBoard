@@ -41,6 +41,7 @@ const JoinRoomHorseRace = () => {
   const [game] = useState("Horserace");
   const token = GetDecodedCookie("cookieToken");
 
+  console.log(infoUser);
   useEffect(() => {
     const fetchPlayer = async () => {
       try {
@@ -326,9 +327,9 @@ const JoinRoomHorseRace = () => {
                 <p>Level {infoUser.experience[3].level}</p>
                 <p>
                   {infoUser.experience &&
-                    `xp ${infoUser.experience[4].xp}/${
-                      infoUser.experience[4].xp +
-                      infoUser.experience[4].xpRemainingForNextLevel
+                    `xp ${infoUser.experience[3].xp}/${
+                      infoUser.experience[3].xp +
+                      infoUser.experience[3].xpRemainingForNextLevel
                     }`}
                 </p>
               </div>

@@ -12,6 +12,9 @@
   position: relative;
 }
 
+.contain p {
+  margin: 0;
+}
 .title {
   width: 100%;
 }
@@ -19,20 +22,35 @@
   width: 100%;
   font-size: 6rem;
   margin: 0;
+  color: #669bbc;
+}
+.description {
+  font-size: 2rem;
 }
 
 .MapProducts {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 50px;
+  gap: 25px;
+  margin: 1rem;
 }
 
 .cardProduct {
   font-size: 3rem;
-  width: 300px;
-
+  width: 400px;
   backdrop-filter: blur(10px);
   box-shadow: rgba(0, 0, 0, 0.35) 0px -50px 36px -28px inset;
-
+  border-radius: 10px;
+  border: 3px solid black;
+}
+.cardProduct img {
+  width: 150px;
+}
+.cardProduct button {
+  font-size: 2rem;
+  width: 100%;
+  background-color: #669bbc;
+  border-radius: 10px;
+  cursor: pointer;
 }
