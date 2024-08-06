@@ -60,6 +60,11 @@ export const AddExperience = async (req, res) => {
       // Función para actualizar la experiencia de un jugador
       const updatePlayerExperience = async (playerId, experienceToAdd) => {
         try {
+          if (!playerId || playerId === "-") {
+            console.error(`Invalid player ID: ${playerId}`);
+            return null;
+          }
+
           let player = await Player.findById(playerId);
           if (!player) {
             console.error(`Player not found: ${playerId}`);
@@ -136,13 +141,17 @@ export const AddExperience = async (req, res) => {
       } else if (dataRoom.game === "Horserace") {
         // Actualizar la experiencia de los ganadores
         for (const player of winner) {
-          await updatePlayerExperience(player.idDB, winnerExperience);
+          if (player.idDB && player.idDB !== "-") {
+            await updatePlayerExperience(player.idDB, winnerExperience);
+          }
         }
 
         // Actualizar la experiencia de los perdedores que apostaron
         const losers = players.filter(player => player.inBet && !winner.some(w => w.idDB === player.idDB));
         for (const loser of losers) {
-          await updatePlayerExperience(loser.idDB, loseExperience);
+          if (loser.idDB && loser.idDB !== "-") {
+            await updatePlayerExperience(loser.idDB, loseExperience);
+          }
         }
       }
 
@@ -155,4 +164,5 @@ export const AddExperience = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 
