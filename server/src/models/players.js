@@ -27,7 +27,35 @@ const playerSchema = new mongoose.Schema({
     default: "Rol_player",
   },
   coins: { type: Number, default: 0 },
+  
   colorName: { type: String, default: "normal" },
+
+  avatarProfile: {
+    type: Object,
+    default: {
+      title: "Default Avatar",
+      price: 0,
+      description: "static avatar",
+      levelNecesary: [{ levelB: 0, levelH: 0 }],
+      url: "DefaultAvatar",
+      image: true,
+      category: "Avatar",
+    },
+  },
+  avatares: {
+    type: [],
+    default: [
+      {
+        title: "Default Avatar",
+        price: 0,
+        description: "static avatar",
+        levelNecesary: [{ levelB: 0, levelH: 0 }],
+        url: "DefaultAvatar",
+        image: true,
+        category: "Avatar",
+      },
+    ],
+  },
 });
 
 playerSchema.pre("save", async function (next) {

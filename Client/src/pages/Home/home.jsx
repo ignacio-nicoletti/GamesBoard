@@ -51,7 +51,7 @@ const Home = () => {
 
 export default Home;
 
-// tienda para objetos
-// avatares, color en el name
 
-//reutilizar componentes
+// avatares, color en el name
+// reutilizar componentes
+// base para avatares

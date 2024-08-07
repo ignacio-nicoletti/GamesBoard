@@ -9,23 +9,21 @@
   background-image: url("../../../src/assets/global/fondoo.png");
   background-repeat: no-repeat;
   background-size: cover;
-  position: relative;
 }
 
 .contain p {
   margin: 0;
 }
+
 .title {
   width: 100%;
 }
+
 .title p {
   width: 100%;
   font-size: 6rem;
   margin: 0;
   color: #669bbc;
-}
-.description {
-  font-size: 2rem;
 }
 
 .MapProducts {
@@ -33,7 +31,10 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 25px;
-  margin: 1rem;
+}
+
+.titleCard {
+  color: white;
 }
 
 .cardProduct {
@@ -44,13 +45,116 @@
   border-radius: 10px;
   border: 3px solid black;
 }
-.cardProduct img {
-  width: 150px;
+
+.cardProductMedia {
+  width: 100%;
+  margin-top: 2rem;
 }
+
+.cardProductMedia img {
+  width: 150px;
+  border-radius: 50%;
+  border: 2px solid black;
+  padding: 1rem;
+}
+
+.cardProduct video {
+  width: 150px;
+  border-radius: 50%;
+  border: 2px solid black;
+  padding: 1rem;
+}
+
+.descriptionDiv {
+}
+
+.description {
+  color: white;
+  font-size: 2rem;
+}
+
+.rainbow_text {
+  font-size: 2rem;
+  font-weight: bold;
+  animation: rainbow 5s linear infinite;
+}
+
+.rgb_text {
+  font-size: 2rem;
+  font-weight: bold;
+  animation: RGB 10s linear infinite;
+}
+
+@keyframes rainbow {
+  0% {
+    color: red;
+  }
+  14% {
+    color: orange;
+  }
+  28% {
+    color: yellow;
+  }
+  42% {
+    color: green;
+  }
+  57% {
+    color: blue;
+  }
+  71% {
+    color: indigo;
+  }
+  85% {
+    color: violet;
+  }
+  100% {
+    color: red;
+  }
+}
+
+@keyframes RGB {
+  0% {
+    color: red;
+  }
+
+  25% {
+    color: green;
+  }
+  50% {
+    color: blue;
+  }
+
+  100% {
+    color: pink;
+  }
+}
+
+.priceDiv {
+  color: white;
+}
+
+.NecesaryDiv {
+  display: flex;
+  font-size: 1.5rem;
+  justify-content: center;
+  color: #669bbc;
+}
+
+.NecesaryValue {
+  color: white; /* Cambia este color al que desees */
+}
+
 .cardProduct button {
   font-size: 2rem;
   width: 100%;
   background-color: #669bbc;
   border-radius: 10px;
   cursor: pointer;
+  color: black;
+  font-weight: 600;
+  transition: 1s;
+}
+.cardProduct button:hover {
+  background-color: white;
+  transition: 1s;
 }
