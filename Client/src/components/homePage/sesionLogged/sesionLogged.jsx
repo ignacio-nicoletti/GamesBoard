@@ -1,6 +1,6 @@
 import styles from "./sesionLogged.module.css";
 import Cookies from "js-cookie";
-import DefaultAvatar from "../../../assets/berenjena/jugadores/DefaultAvatar.png";
+import DefaultAvatar from "../../../assets/global/jugadores/DefaultAvatar.png";
 import LogoutIcon from "@mui/icons-material/Logout";
 import StoreIcon from "@mui/icons-material/Store";
 import HomeIcon from "@mui/icons-material/Home";
@@ -9,6 +9,7 @@ import { GetDecodedCookie } from "../../../utils/DecodedCookie";
 import { DecodedToken } from "../../../utils/DecodedToken";
 import Login from "../login/login";
 import { useLocation } from "react-router-dom";
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 
 const SesionLogged = () => {
   const [userInfo, setUserInfo] = useState(null);
@@ -71,6 +72,10 @@ const SesionLogged = () => {
               ""
             )}
           </button>
+          <span className={styles.logoutBtn}>
+            {userInfo.coins}
+            <MonetizationOnIcon />
+          </span>
         </div>
       ) : (
         <>

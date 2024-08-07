@@ -27,6 +27,7 @@ const playerSchema = new mongoose.Schema({
     default: "Rol_player",
   },
   coins: { type: Number, default: 0 },
+  colorName: { type: String, default: "normal" },
 });
 
 playerSchema.pre("save", async function (next) {

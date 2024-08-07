@@ -1,11 +1,11 @@
 import React, {useEffect, useRef, useState} from 'react';
 import style from './dataPlayer.module.css';
-import avatar1 from '../../../../assets/berenjena/jugadores/avatar1.png';
-import avatar2 from '../../../../assets/berenjena/jugadores/avatar2.png';
-import avatar3 from '../../../../assets/berenjena/jugadores/avatar3.png';
-import avatar4 from '../../../../assets/berenjena/jugadores/avatar4.png';
-import avatar5 from '../../../../assets/berenjena/jugadores/avatar5.png';
-import avatar6 from '../../../../assets/berenjena/jugadores/avatar6.png';
+import avatar1 from '../../../../assets/global/jugadores/avatar1.png';
+import avatar2 from '../../../../assets/global/jugadores/avatar2.png';
+import avatar3 from '../../../../assets/global/jugadores/avatar3.png';
+import avatar4 from '../../../../assets/global/jugadores/avatar4.png';
+import avatar5 from '../../../../assets/global/jugadores/avatar5.png';
+import avatar6 from '../../../../assets/global/jugadores/avatar6.png';
 import {faStar} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
