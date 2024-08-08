@@ -10,6 +10,7 @@ import { DecodedToken } from "../../../utils/DecodedToken";
 import Login from "../login/login";
 import { useLocation } from "react-router-dom";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+import InstanceOfAxios from "../../../utils/intanceAxios";
 
 const SesionLogged = () => {
   const [userInfo, setUserInfo] = useState(null);
@@ -19,13 +20,26 @@ const SesionLogged = () => {
   let location = useLocation();
 
   useEffect(() => {
-    const token = GetDecodedCookie("cookieToken");
-    if (token) {
-      const data = DecodedToken(token);
-      setUserInfo(data);
-    }
-  }, []);
+    const fetchUserInfo = async () => {
+      try {
+        const token = GetDecodedCookie("cookieToken");
+        if (token) {
+          const data = DecodedToken(token);
 
+          const response = await InstanceOfAxios(
+            `/user/${data.user.id}`,
+            "GET"
+          );
+
+          setUserInfo(response.player);
+        }
+      } catch (error) {
+        console.error("Error fetching user info:", error);
+      }
+    };
+
+    fetchUserInfo();
+  }, []); 
   const toggleModal = (isLogin) => {
     setIsLogin(isLogin);
     setModalOpen(!isModalOpen);
@@ -55,7 +69,7 @@ const SesionLogged = () => {
       {userInfo ? (
         <div className={styles.userInfo}>
           <img
-            src={userInfo.avatar || DefaultAvatar}
+            src={userInfo.avatarProfile.url || DefaultAvatar}
             alt="Avatar"
             className={styles.avatar}
           />

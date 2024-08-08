@@ -1,9 +1,26 @@
 import SesionLogged from "../../components/homePage/sesionLogged/sesionLogged";
 import style from "./store.module.css";
-
-import { store } from "../../DB's/avatares";
+import { useEffect, useState } from "react";
+import InstanceOfAxios from "../../utils/intanceAxios";
 
 const Store = () => {
+  const [dataStore, setDataStore] = useState([]);
+
+  useEffect(() => {
+    const fetchConsumables = async () => {
+      try {
+        const response = await InstanceOfAxios(`/consumable`, "GET");
+        if (response) {
+          setDataStore(response);
+        }
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchConsumables();
+  }, []);
+
   return (
     <div className={style.contain}>
       <SesionLogged />
@@ -13,7 +30,7 @@ const Store = () => {
       </div>
 
       <div className={style.MapProducts}>
-        {store.map((el) => (
+        {dataStore.map((el) => (
           <div className={style.cardProduct}>
             <p className={style.titleCard}>{el.title}</p>
             <div className={style.cardProductMedia}>

@@ -36,7 +36,6 @@ const Login = ({isLogin, onClose, onLoginSuccess}) => {
     } else {
       try {
         const response = await InstanceOfAxios ('/register', 'POST', formData);
-        console.log (response);
         Cookies.remove ('cookieToken');
         document.cookie = `${encodeURIComponent ('cookieToken')}=${encodeURIComponent (response.token)}`;
         onClose (); // Cerrar el modal después del registro

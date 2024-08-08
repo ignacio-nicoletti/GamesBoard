@@ -6,6 +6,7 @@ import morgan from "morgan";
 import "./src/dataBase/connectDB.js";
 import AuthRoute from "./src/routes/auth.routes.js";
 import userRoutes from "./src/routes/user.routes.js";
+import consumableRoutes from "./src/routes/consumables.routes.js";
 import "dotenv/config";
 
 import BerenjenaSockets from "./src/sockets/berenejena.js";
@@ -54,6 +55,7 @@ app.use(express.json());
 
 app.use("/", AuthRoute);
 app.use("/user", userRoutes);
+app.use("/consumable", consumableRoutes);
 
 // Manejo de errores genérico
 app.use((err, req, res, next) => {

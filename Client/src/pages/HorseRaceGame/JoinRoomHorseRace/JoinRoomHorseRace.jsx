@@ -13,66 +13,47 @@ import {
   socket,
   joinGameRoomHorserace,
 } from "../../../functions/SocketIO/sockets/sockets";
-import avatar1 from "../../../assets/global/jugadores/avatar1.png";
-import avatar2 from "../../../assets/global/jugadores/avatar2.png";
-import avatar3 from "../../../assets/global/jugadores/avatar3.png";
-import avatar4 from "../../../assets/global/jugadores/avatar4.png";
-import avatar5 from "../../../assets/global/jugadores/avatar5.png";
-import avatar6 from "../../../assets/global/jugadores/avatar6.png";
+
 import imgRoom from "../../../assets/global/jugadores/imgRoom.png";
 import logoHorserace from "../../../assets/horseGame/logohorserace.png";
-import InstanceOfAxios from "../../../utils/intanceAxios";
 import { FadeLoader } from "react-spinners";
+import ChooseName from "../../../components/global/chooseName/chooseName";
 
 const JoinRoomHorseRace = () => {
   const [rooms, setRooms] = useState([]);
   const [filteredRooms, setFilteredRooms] = useState([]);
-  const [userName, setUserName] = useState("");
   const [roomId, setRoomId] = useState("");
   const [tempMaxUsers, setTempMaxUsers] = useState(""); // temp max o maxusers
   const [maxUsers, setMaxUsers] = useState(10);
   const [error, setError] = useState("");
-  const [selectedAvatar, setSelectedAvatar] = useState("avatar1");
-  const [showModal, setShowModal] = useState(true);
   const [isFormValid, setIsFormValid] = useState(false);
   const navigate = useNavigate();
   const [timmerRooms, setTimmerRooms] = useState(5);
-  const [infoUser, setInfoUser] = useState({});
-  const [game] = useState("Horserace");
-  const token = GetDecodedCookie("cookieToken");
 
-  console.log(infoUser);
-  useEffect(() => {
-    const fetchPlayer = async () => {
-      try {
-        const data = DecodedToken(token);
-        const response = await InstanceOfAxios(
-          `/user/${infoUser.id || data.id}`,
-          "GET"
-        );
-        if (response && response.player) {
-          setUserName(response.player.userName);
-        }
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-    };
-    if (token) {
-      fetchPlayer();
-    }
-  }, []);
+  const [game] = useState("Horserace");
+  const [showModal, setShowModal] = useState(true);
+  const [userInfo, setUserInfo] = useState({
+    userName: "Invitado",
+    avatarProfile: {
+      title: "Default Avatar",
+      price: 0,
+      description: "static avatar",
+      levelNecesary: [{ levelB: 0, levelH: 0 }],
+      url: "https://res.cloudinary.com/dbu2biawj/image/upload/v1723124993/cardgame/bwzkxvxx2jhdzibaoofc.png",
+      image: true,
+      category: "avatar",
+    },
+  });
 
   const handlerCreateRoom = async (e) => {
     e.preventDefault();
     try {
-      if (roomId !== "" && userName !== "") {
+      if (roomId !== "" && userInfo.userName !== "") {
         const res = await CreateGameRoomHorserace(
           game,
           roomId,
-          userName,
           maxUsers,
-          selectedAvatar,
-          infoUser
+          userInfo
         );
 
         res &&
@@ -94,13 +75,12 @@ const JoinRoomHorseRace = () => {
   const handlerJoinRoom = async (roomId) => {
     try {
       setRoomId(roomId);
-      if (roomId !== "" && userName !== "") {
+      if (roomId !== "" && userInfo.userName !== "") {
         const res = await joinGameRoomHorserace(
           game,
           roomId,
-          userName,
-          selectedAvatar,
-          infoUser
+
+          userInfo
         );
         res &&
           navigate(
@@ -154,19 +134,6 @@ const JoinRoomHorseRace = () => {
     return () => clearInterval(time);
   }, [timmerRooms]);
 
-  // me setea el nombre si inicio sesion
-  useEffect(() => {
-    if (token) {
-      const data = DecodedToken(token);
-      setUserName(data.userName);
-      setSelectedAvatar(data.selectedAvatar || "avatar1"); // Ajuste aquí para obtener el avatar del token
-      setInfoUser(data);
-      if (data.userName) {
-        setShowModal(false);
-      }
-    }
-  }, []);
-
   useEffect(() => {
     const handleRoomCreationError = (data) => {
       Swal.fire({
@@ -208,34 +175,6 @@ const JoinRoomHorseRace = () => {
     }
   }, [roomId, tempMaxUsers, error]);
 
-  const avatars = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6];
-
-  const handleSubmit = async () => {
-    if (userName && selectedAvatar) {
-      setShowModal(false);
-      if (token) {
-        await InstanceOfAxios(`/user/${infoUser.id}`, "PUT", {
-          userName,
-          selectedAvatar,
-        }).then((data) => setUserName(data.player.userName));
-      }
-    } else {
-      Swal.fire({
-        title: "Error!",
-        text: "Please enter your name and select an avatar to continue.",
-        icon: "error",
-        confirmButtonText: "OK",
-        customClass: {
-          container: "swal2-container",
-        },
-      });
-    }
-  };
-
-  const handleEditProfile = () => {
-    setShowModal(true);
-  };
-
   const handleChange = (e) => {
     const value = e.target.value;
     if (["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"].includes(value)) {
@@ -264,42 +203,11 @@ const JoinRoomHorseRace = () => {
   return (
     <div className={style.containRoom}>
       {showModal && (
-        <div className={style.modalOverlay}>
-          <div className={style.modal}>
-            <div className={style.modalContent}>
-              <h2>Enter your name and choose an avatar</h2>
-              <div className={style.DivName}>
-                <span>Name: </span>
-                <input
-                  type="text"
-                  placeholder="Type your name here..."
-                  value={userName}
-                  onChange={(e) => setUserName(e.target.value)}
-                  maxLength={15}
-                />
-              </div>
-              <div className={style.DivAvatars}>
-                <p>Choose your Avatar</p>
-                <div className={style.DivAvatarsGrid}>
-                  {avatars.map((avatar, index) => (
-                    <img
-                      key={index}
-                      src={avatar}
-                      alt={`Avatar ${index + 1}`}
-                      className={
-                        selectedAvatar === `avatar${index + 1}`
-                          ? style.selectedAvatar
-                          : ""
-                      }
-                      onClick={() => setSelectedAvatar(`avatar${index + 1}`)}
-                    />
-                  ))}
-                </div>
-              </div>
-              <button onClick={handleSubmit}>Save</button>
-            </div>
-          </div>
-        </div>
+        <ChooseName
+          setShowModal={setShowModal}
+          userInfo={userInfo}
+          setUserInfo={setUserInfo}
+        />
       )}
       {!showModal && (
         <>
@@ -309,28 +217,28 @@ const JoinRoomHorseRace = () => {
             </div>
             <div className={style.profile}>
               <img
-                src={
-                  avatars[
-                    parseInt(selectedAvatar.replace("avatar", ""), 10) - 1
-                  ]
-                }
+                src={userInfo.avatarProfile.url}
                 alt="Selected Avatar"
                 className={style.profileAvatar}
               />
-              <span className={style.userName}>{userName}</span>
-              <button className={style.editIcon} onClick={handleEditProfile}>
+              <span className={style.userName}>
+                {userInfo && userInfo.userName}
+              </span>
+              <button
+                className={style.editIcon}
+                onClick={() => setShowModal(true)}
+              >
                 <EditIcon />
               </button>
             </div>
-            {infoUser.experience && token && (
+            {userInfo && userInfo.experience && (
               <div className={style.levelMap}>
-                <p>Level {infoUser.experience[3].level}</p>
+                <p>Level {userInfo.experience[3].level}</p>
                 <p>
-                  {infoUser.experience &&
-                    `xp ${infoUser.experience[3].xp}/${
-                      infoUser.experience[3].xp +
-                      infoUser.experience[3].xpRemainingForNextLevel
-                    }`}
+                  {`xp ${userInfo.experience[3].xp}/${
+                    userInfo.experience[3].xp +
+                    userInfo.experience[3].xpRemainingForNextLevel
+                  }`}
                 </p>
               </div>
             )}

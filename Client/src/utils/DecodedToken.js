@@ -12,12 +12,10 @@ export function DecodedToken(token) {
         .join("")
     );
     const decodedToken = JSON.parse(jsonPayload);
+
     return {
       success: true,
-      id: decodedToken.value.id,
-      userName: decodedToken.value.userName,
-      email:decodedToken.value.email,
-      experience:decodedToken.value.experience,
+      user:decodedToken.value
     };
   } catch (error) {
     return { success: false, error };

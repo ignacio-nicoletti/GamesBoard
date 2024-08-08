@@ -1,8 +1,9 @@
 import { io } from "socket.io-client";
 
-const URL = process.env.NODE_ENV === 'production' 
-  ? process.env.REACT_APP_URL_API 
-  : process.env.REACT_APP_URL_API_LOCAL;
+const URL =
+  process.env.NODE_ENV === "production"
+    ? process.env.REACT_APP_URL_API
+    : process.env.REACT_APP_URL_API_LOCAL;
 
 // Se conecta al servidor
 
@@ -117,10 +118,8 @@ export const joinGameRoom = (
 export const CreateGameRoomHorserace = (
   game,
   roomId,
-  userName,
   maxUsers = 10,
-  selectedAvatar,
-  infoUser
+  userInfo
 ) => {
   return new Promise((res, rej) => {
     const responses = {};
@@ -145,20 +144,19 @@ export const CreateGameRoomHorserace = (
     socket.emit("create_room_horserace", {
       game,
       roomId,
-      userName,
+      userName: userInfo.userName,
       maxUsers,
-      selectedAvatar,
-      email: infoUser.email ? infoUser.email : "invitado",
+      selectedAvatar: userInfo.avatarProfile,
+      email: userInfo.email ? userInfo.email : "invitado",
     });
   });
 };
 
 export const joinGameRoomHorserace = (
   game,
+  maxUsers = 10,
   roomId,
-  userName,
-  selectedAvatar,
-  infoUser
+  userInfo
 ) => {
   return new Promise((resolve, reject) => {
     const responses = {};
@@ -182,9 +180,10 @@ export const joinGameRoomHorserace = (
     socket.emit("join_room_horserace", {
       game,
       roomId,
-      userName,
-      selectedAvatar,
-      email: infoUser.email,
+      userName: userInfo.userName,
+      maxUsers,
+      selectedAvatar: userInfo.avatarProfile,
+      email: userInfo.email ? userInfo.email : "invitado",
     });
   });
 };
@@ -207,11 +206,11 @@ export const distributeHorserace = (dataRoom, setRound) => {
   });
 };
 
-export const tirarCartaHorserace = (dataRoom,setRound) => {
+export const tirarCartaHorserace = (dataRoom, setRound) => {
   return new Promise((resolve, reject) => {
     // Escuchar solo una vez para evitar duplicados
     const onCardTirada = (data) => {
-      setRound(data.round)
+      setRound(data.round);
       // resolve(data);
     };
 
@@ -222,4 +221,3 @@ export const tirarCartaHorserace = (dataRoom,setRound) => {
     socket.off("tirarCarta_horserace", dataRoom);
   });
 };
-

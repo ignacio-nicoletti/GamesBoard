@@ -1,5 +1,4 @@
 import { Player } from "../models/players.js";
-import { formatError } from "../utils/formatError.js";
 import { generateRefreshToken, generateToken } from "../utils/tokenManager.js";
 
 export const register = async (req, res) => {
@@ -49,7 +48,7 @@ export const login = async (req, res) => {
 
   try {
     player = await Player.findOne({ email: emaillower });
-    
+
     if (!player) {
       return res.status(404).json({ error: "No existe este usuario" });
     }
@@ -60,19 +59,18 @@ export const login = async (req, res) => {
     if (!respuestaPassword) {
       return res.status(401).json({ error: "Contraseña incorrecta" });
     }
-
+ 
     const dataToken = {
       id: player.id,
-      userName: player.userName,
-      email: player.email,
-      experience: player.experience
     };
     const { token, expiresIn } = generateToken(dataToken);
     generateRefreshToken(player.id, res);
 
     return res.status(200).json({ token, expiresIn, rol: player.Rol });
   } catch (error) {
-    console.error('Error en el servidor:', error); // Log the error for debugging purposes
-    return res.status(400).json({ error: error.message || "Error en el servidor" });
+    console.error("Error en el servidor:", error); // Log the error for debugging purposes
+    return res
+      .status(400)
+      .json({ error: error.message || "Error en el servidor" });
   }
 };

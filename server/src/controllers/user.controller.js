@@ -3,7 +3,7 @@ import { formatError } from "../utils/formatError.js";
 
 export const GetAllUsers = async (req, res) => {
   try {
-    let player = await Player.find();
+    let player = await Player.find().select("-password");
     return res.status(200).json(player.reverse());
   } catch (error) {
     res.status(400).json(formatError(error.message));
@@ -13,7 +13,7 @@ export const GetAllUsers = async (req, res) => {
 export const GetPlayerById = async (req, res) => {
   const { id } = req.params;
   try {
-    let player = await Player.findById(id);
+    let player = await Player.findById(id).select("-password");
     return res.status(200).json({ player });
   } catch (error) {
     res.status(400).json(formatError(error.message));
@@ -29,6 +29,7 @@ export const UpdatePlayerById = async (req, res) => {
       {
         ...req.body.player,
         userName: userName,
+        avatarProfile:selectedAvatar
       },
       { new: true }
     );
