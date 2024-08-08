@@ -199,7 +199,7 @@ const JoinRoomHorseRace = () => {
   const handleFilter = (filteredRooms) => {
     setFilteredRooms(filteredRooms);
   };
-
+  console.log(userInfo);
   return (
     <div className={style.containRoom}>
       {showModal && (
@@ -233,16 +233,33 @@ const JoinRoomHorseRace = () => {
             </div>
             {userInfo && userInfo.experience && (
               <div className={style.levelMap}>
-                <p>Level {userInfo.experience[3].level}</p>
-                <p>
-                  {`xp ${userInfo.experience[3].xp}/${
-                    userInfo.experience[3].xp +
-                    userInfo.experience[3].xpRemainingForNextLevel
-                  }`}
-                </p>
+                {userInfo.experience.find(
+                  (gameObj) => Object.keys(gameObj)[0] === game
+                ) && (
+                  <div>
+                    {userInfo.experience.map((gameObj, index) => {
+                      const gameName = Object.keys(gameObj)[0]; // Nombre del juego (ej: Berenjena)
+                      if (gameName === game) {
+                        const gameData = gameObj[gameName]; // Datos del juego (nivel, xp, etc.)
+                        return (
+                          <div key={index} className={style.levelMap}>
+                            <p>
+                              Level {gameData.level} - {gameName}
+                            </p>
+                            <p>
+                              {`xp ${gameData.xp}/${
+                                gameData.xp + gameData.xpRemainingForNextLevel
+                              }`}
+                            </p>
+                          </div>
+                        );
+                      }
+                      return null;
+                    })}
+                  </div>
+                )}
               </div>
             )}
-
             <div className={style.DivInputRoom}>
               <span>Create a new room: </span>
               <input

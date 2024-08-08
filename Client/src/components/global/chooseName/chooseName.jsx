@@ -6,9 +6,9 @@ import Swal from "sweetalert2";
 import { DecodedToken } from "../../../utils/DecodedToken";
 
 const ChooseName = ({ setShowModal, userInfo, setUserInfo }) => {
-  const token = GetDecodedCookie("cookieToken"); //
   const [writeName, setWriteName] = useState(userInfo.userName);
   const [selectedAvatar, setSelectedAvatar] = useState(userInfo.avatarProfile); // Estado para el avatar seleccionado
+  const token = GetDecodedCookie("cookieToken"); //
 
   const handleSubmit = async () => {
     if (writeName && selectedAvatar) {
@@ -16,7 +16,7 @@ const ChooseName = ({ setShowModal, userInfo, setUserInfo }) => {
       if (token !== undefined) {
         await InstanceOfAxios(`/user/${userInfo.uid}`, "PUT", {
           userName: userInfo.userName,
-          selectedAvatar, 
+          selectedAvatar,
         }).then((data) =>
           setUserInfo({ ...userInfo, userName: data.player.userName })
         );
@@ -55,6 +55,7 @@ const ChooseName = ({ setShowModal, userInfo, setUserInfo }) => {
             `/user/${data.user.id}`,
             "GET"
           );
+
           setUserInfo(response.player);
         }
       } catch (error) {

@@ -14,20 +14,16 @@ const playerSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  experience: [
-    {
-      game: { type: String, required: true },
-      level: { type: Number, default: 1 },
-      xp: { type: Number, default: 0 },
-      xpRemainingForNextLevel: { type: Number, default: 0 },
-    },
-  ],
+  experience: {
+    type: Array,
+    default: [],
+  },
   Rol: {
     type: String,
     default: "Rol_player",
   },
   coins: { type: Number, default: 0 },
-  
+
   colorName: { type: String, default: "normal" },
 
   avatarProfile: {
@@ -37,7 +33,7 @@ const playerSchema = new mongoose.Schema({
       price: 0,
       description: "static avatar",
       levelNecesary: [{ levelB: 0, levelH: 0 }],
-      url: "DefaultAvatar",
+      url: "https://res.cloudinary.com/dbu2biawj/image/upload/v1723124994/cardgame/dlr139ow1nsgg6439c1k.png",
       image: true,
       category: "Avatar",
     },
@@ -50,7 +46,7 @@ const playerSchema = new mongoose.Schema({
         price: 0,
         description: "static avatar",
         levelNecesary: [{ levelB: 0, levelH: 0 }],
-        url: "DefaultAvatar",
+        url: "https://res.cloudinary.com/dbu2biawj/image/upload/v1723124994/cardgame/dlr139ow1nsgg6439c1k.png",
         image: true,
         category: "Avatar",
       },

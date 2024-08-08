@@ -158,3 +158,8 @@
   background-color: white;
   transition: 1s;
 }
+
+.cardProduct button:disabled {
+  background-color: rgba(255, 0, 0, 0.596);
+  transition: 1s;
+}

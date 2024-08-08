@@ -19,17 +19,20 @@ export const register = async (req, res) => {
     const timeZoneOffset = -3; // La diferencia de la zona horaria en horas
     currentDate.setHours(currentDate.getHours() + timeZoneOffset);
 
+    // Configurar la experiencia inicial en el formato deseado
+    const initialExperience = [
+      { "Berenjena": { level: 1, xp: 0, xpRemainingForNextLevel: 100 } },
+      { "Poker": { level: 1, xp: 0, xpRemainingForNextLevel: 100 } },
+      { "Horserace": { level: 1, xp: 0, xpRemainingForNextLevel: 100 } },
+      { "Truco": { level: 1, xp: 0, xpRemainingForNextLevel: 100 } },
+    ];
+
     player = new Player({
       email,
       password,
       userName,
       admission: currentDate,
-      experience: [
-        { game: "Berenjena", level: 1, xp: 0 }, // Valor inicial para experiencia
-        { game: "Poker", level: 1, xp: 0 }, // Valor inicial para experiencia
-        { game: "Horserace", level: 1, xp: 0 }, // Valor inicial para experiencia
-        { game: "Truco", level: 1, xp: 0 }, // Valor inicial para experiencia
-      ],
+      experience: initialExperience, // Asignar la experiencia inicial
     });
 
     const { token, expiresIn } = generateToken(player._id);
@@ -43,23 +46,22 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
-  let player;
-  const emaillower = email.toLowerCase();
+  const emaillower = email.toLowerCase(); // Convertir el email a minúsculas
 
   try {
-    player = await Player.findOne({ email: emaillower });
+    const player = await Player.findOne({ email: emaillower });
 
     if (!player) {
       return res.status(404).json({ error: "No existe este usuario" });
     }
 
-    // compara que las contraseñas coincidan
+    // Comparar que las contraseñas coincidan
     const respuestaPassword = await player.comparePassword(password);
 
     if (!respuestaPassword) {
       return res.status(401).json({ error: "Contraseña incorrecta" });
     }
- 
+
     const dataToken = {
       id: player.id,
     };
