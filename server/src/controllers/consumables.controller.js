@@ -1,4 +1,5 @@
 import { Consumable } from "../models/consumables.js";
+import { Player } from "../models/players.js";
 
 export const AddConsumable = async (req, res) => {
   const { title, price, description, levelNecesary, url, image, category } =
@@ -42,13 +43,29 @@ export const GetConsumablesById = async (req, res) => {
 };
 
 export const DeleteConsumableById = async (req, res) => {
-    const { id } = req.params;
-    try {
-      await Consumable.findByIdAndDelete(id);
-  
-      return res.status(200).json("consumable eliminado");
-    } catch (error) {
-      console.log(error);
-      res.status(400).json(formatError(error.message));
+  const { id } = req.params;
+  try {
+    await Consumable.findByIdAndDelete(id);
+
+    return res.status(200).json("consumable eliminado");
+  } catch (error) {
+    console.log(error);
+    res.status(400).json(formatError(error.message));
+  }
+};
+
+export const BuyConsumable = async (req, res) => {
+  const { id } = req.params;
+  const { selectConsumable } = req.body;
+  try {
+    const player = await Player.findById(id);
+    if (selectConsumable.category === "avatar") {
+      player.coins = player.coins - selectConsumable.price;
+      player.avatares.push(selectConsumable);
     }
-  };
+    player.save();
+    res.status(200).json("compra hecha");
+  } catch (error) {
+    res.status(400).json(formatError(error.message));
+  }
+};

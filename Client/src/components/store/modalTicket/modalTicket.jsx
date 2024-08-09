@@ -12,12 +12,12 @@ const ModalTicket = ({
     
   const handleSubmit = async () => {
     setShowModalTicket(false);
-    await InstanceOfAxios(`/user/store${userInfo.uid}`, "PUT", {
+    await InstanceOfAxios(`/consumable/${userInfo.uid}`, "PUT", {
       selectConsumable,
     });
   };
 
-  console.log(selectConsumable);
+ 
 
   return (
     <div className={style.modal}>
