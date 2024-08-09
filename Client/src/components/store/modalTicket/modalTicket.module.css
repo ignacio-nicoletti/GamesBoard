@@ -1,0 +1,77 @@
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.modalContent {
+  width: 50%;
+  background: white;
+  margin-inline: 0.5rem;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px,
+    rgba(0, 0, 0, 0.22) 0px 10px 10px;
+}
+
+.modalContent h2 {
+  font-size: 2rem;
+  color: #333;
+}
+
+.modalContent button {
+  width: 8rem;
+  border-radius: 5px;
+  margin-top: 2rem;
+  cursor: pointer;
+  background-color: #669bbc;
+  color: white;
+  border: none;
+  padding: 0.5rem;
+  transition: background-color 0.3s;
+  font-family: "Bebas Neue";
+  font-size: 1.2rem;
+  transition: width 0.3s ease-in-out;
+}
+
+.modalContent button:hover {
+  background-color: #003049;
+  width: calc(8rem + 2rem);
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+}
+
+.cardProductMedia img,
+.cardProductMedia video {
+  width: 120px;
+  border-radius: 50%;
+  border: 2px solid black;
+  padding: 1rem;
+}
+.modalCancel {
+  display: flex;
+  justify-content: space-between;
+  font-size: 3rem;
+  align-items: center;
+}
+
+.modalCancelMOney {
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+.modalCancel_button {
+  cursor: pointer;
+}
+
+.priceDiv {
+  font-size: 2rem;
+}

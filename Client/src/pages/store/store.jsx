@@ -4,10 +4,14 @@ import { useEffect, useState } from "react";
 import InstanceOfAxios from "../../utils/intanceAxios";
 import { DecodedToken } from "../../utils/DecodedToken";
 import { GetDecodedCookie } from "../../utils/DecodedCookie";
+import ModalTicket from "../../components/store/modalTicket/modalTicket";
 
 const Store = () => {
   const [dataStore, setDataStore] = useState([]);
   const [userInfo, setUserInfo] = useState({});
+  const [showModalTicket, setShowModalTicket] = useState(false);
+  const [selectConsumable, setSelectConsumable] = useState({});
+
   const token = GetDecodedCookie("cookieToken");
 
   useEffect(() => {
@@ -43,14 +47,13 @@ const Store = () => {
     };
 
     fetchUserInfo();
-  }, [token]); // Asegúrate de incluir `token` en las dependencias
+  }, [token]);
 
-  // Función para verificar si el botón debe estar deshabilitado
   const isButtonDisabled = (requirements, price) => {
     if (!requirements || !Array.isArray(requirements)) return true;
 
-    const experience = userInfo.experience || {}; // Asegúrate de que `experience` esté definido
-    const userCoins = userInfo.coins || 0; // Asegúrate de que `coins` esté definido
+    const experience = userInfo.experience || {};
+    const userCoins = userInfo.coins || 0;
 
     const hasRequiredLevels = requirements.every((requirement) => {
       const requiredLevelB = requirement.levelB || 0;
@@ -66,6 +69,8 @@ const Store = () => {
 
     return !(hasRequiredLevels && hasEnoughCoins);
   };
+
+ 
 
   return (
     <div className={style.contain}>
@@ -125,11 +130,24 @@ const Store = () => {
 
             <button
               disabled={isButtonDisabled(el.levelNecesary, el.price)}
+              onClick={() => {
+                setSelectConsumable(el);
+                setShowModalTicket(true);
+              }}
             >
               OBTAIN
             </button>
           </div>
         ))}
+
+        {showModalTicket && (
+          <ModalTicket
+            setShowModalTicket={setShowModalTicket}
+            selectConsumable={selectConsumable}
+            setSelectConsumable={setSelectConsumable}
+            userInfo={userInfo}
+          />
+        )}
       </div>
     </div>
   );
