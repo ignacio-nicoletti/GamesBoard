@@ -1,3 +1,4 @@
+import { Consumable } from "../models/consumables.js";
 import { Player } from "../models/players.js";
 import { generateRefreshToken, generateToken } from "../utils/tokenManager.js";
 
@@ -27,12 +28,16 @@ export const register = async (req, res) => {
       { "Truco": { level: 1, xp: 0, xpRemainingForNextLevel: 100 } },
     ];
 
+    let avatarDefault= await Consumable.findOne({title:"Default Avatar"})
+console.log(avatarDefault);
     player = new Player({
       email,
       password,
       userName,
       admission: currentDate,
-      experience: initialExperience, // Asignar la experiencia inicial
+      experience: initialExperience,
+      avatarProfile:avatarDefault, 
+      avatares:[avatarDefault]// Asignar la experiencia inicial
     });
 
     const { token, expiresIn } = generateToken(player._id);

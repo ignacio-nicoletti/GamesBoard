@@ -48,7 +48,7 @@ const ChooseName = ({ setShowModal, userInfo, setUserInfo }) => {
     const fetchUserInfo = async () => {
       try {
         if (token) {
-          setShowModal(false);
+          // setShowModal(false);
           const data = DecodedToken(token);
 
           const response = await InstanceOfAxios(

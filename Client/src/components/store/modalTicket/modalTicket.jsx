@@ -2,22 +2,38 @@ import style from "./modalTicket.module.css";
 import CancelIcon from "@mui/icons-material/Cancel";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import InstanceOfAxios from "../../../utils/intanceAxios";
+import Swal from "sweetalert2";
 
 const ModalTicket = ({
   setShowModalTicket,
   selectConsumable,
   setSelectConsumable,
   userInfo,
+  fetchUserInfo,
+  fetchConsumables,
 }) => {
-    
   const handleSubmit = async () => {
     setShowModalTicket(false);
-    await InstanceOfAxios(`/consumable/${userInfo.uid}`, "PUT", {
-      selectConsumable,
-    });
-  };
+    try {
+      await InstanceOfAxios(`/consumable/${userInfo.uid}`, "PUT", {
+        selectConsumable,
+      });
+    } catch (error) {
+      Swal.fire({
+        title: "Error!",
+        text: "Ocurrio un error en la compra, intente de nuevo mas tarde.",
+        icon: "error",
+        confirmButtonText: "OK",
+        customClass: {
+          container: "swal2-container",
+        },
+      });
+    }
 
- 
+    // Llamar a fetchUserInfo para actualizar la información del usuario
+    fetchUserInfo();
+    fetchConsumables();
+  };
 
   return (
     <div className={style.modal}>

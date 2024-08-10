@@ -11,9 +11,9 @@ const consumableSchema = new mongoose.Schema({
 });
 
 consumableSchema.methods.toJSON = function () {
-  const { __v, _id, ...avatar } = this.toObject();
-  avatar.uid = _id;
-  return avatar;
+  const { __v, _id, ...consumable } = this.toObject();
+  consumable.uid = _id;
+  return consumable;
 };
 
 export const Consumable = mongoose.model("consumable", consumableSchema);

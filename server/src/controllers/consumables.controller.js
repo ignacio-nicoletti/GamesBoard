@@ -59,11 +59,15 @@ export const BuyConsumable = async (req, res) => {
   const { selectConsumable } = req.body;
   try {
     const player = await Player.findById(id);
-    if (selectConsumable.category === "avatar") {
-      player.coins = player.coins - selectConsumable.price;
-      player.avatares.push(selectConsumable);
+    if (selectConsumable.category === "Avatar") {
+      if (player.coins >= selectConsumable.price) {
+        player.coins = player.coins - selectConsumable.price;
+        player.avatares.push(selectConsumable);
+        player.save();
+      } else {
+        throw new Error("Insufficient coins");
+      }
     }
-    player.save();
     res.status(200).json("compra hecha");
   } catch (error) {
     res.status(400).json(formatError(error.message));

@@ -14,47 +14,47 @@ const Store = () => {
 
   const token = GetDecodedCookie("cookieToken");
 
-  useEffect(() => {
-    const fetchConsumables = async () => {
-      try {
-        const response = await InstanceOfAxios(`/consumable`, "GET");
-        if (response) {
-          setDataStore(response);
-        }
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-    };
+  const fetchUserInfo = async () => {
+    try {
+      if (token) {
+        const data = DecodedToken(token);
 
+        const response = await InstanceOfAxios(`/user/${data.user.id}`, "GET");
+        setUserInfo(response.player);
+      }
+    } catch (error) {
+      console.error("Error fetching user info:", error);
+    }
+  };
+
+  const fetchConsumables = async () => {
+    try {
+      const response = await InstanceOfAxios(`/consumable`, "GET");
+      if (response) {
+        setDataStore(response);
+      }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+  
+  useEffect(() => {
     fetchConsumables();
-  }, []);
-
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        if (token) {
-          const data = DecodedToken(token);
-
-          const response = await InstanceOfAxios(
-            `/user/${data.user.id}`,
-            "GET"
-          );
-          setUserInfo(response.player);
-        }
-      } catch (error) {
-        console.error("Error fetching user info:", error);
-      }
-    };
-
     fetchUserInfo();
   }, [token]);
 
-  const isButtonDisabled = (requirements, price) => {
+  const isButtonDisabled = (requirements, price, consumable) => {
     if (!requirements || !Array.isArray(requirements)) return true;
 
     const experience = userInfo.experience || {};
     const userCoins = userInfo.coins || 0;
 
+    // Verificar si el consumable ya está en los avatares del usuario
+    const hasConsumable = userInfo.avatares?.some(
+      (avatar) => avatar._id === consumable.uid || avatar.uid === consumable.uid
+    );
+
+    // Verificar si el usuario cumple con los niveles requeridos
     const hasRequiredLevels = requirements.every((requirement) => {
       const requiredLevelB = requirement.levelB || 0;
       const requiredLevelH = requirement.levelH || 0;
@@ -67,10 +67,9 @@ const Store = () => {
 
     const hasEnoughCoins = userCoins >= price;
 
-    return !(hasRequiredLevels && hasEnoughCoins);
+    // Deshabilitar el botón si no tiene los niveles requeridos, no tiene suficientes monedas o ya posee el consumable
+    return !(hasRequiredLevels && hasEnoughCoins) || hasConsumable;
   };
-
- 
 
   return (
     <div className={style.contain}>
@@ -129,7 +128,7 @@ const Store = () => {
             </div>
 
             <button
-              disabled={isButtonDisabled(el.levelNecesary, el.price)}
+              disabled={isButtonDisabled(el.levelNecesary, el.price, el)}
               onClick={() => {
                 setSelectConsumable(el);
                 setShowModalTicket(true);
@@ -146,6 +145,8 @@ const Store = () => {
             selectConsumable={selectConsumable}
             setSelectConsumable={setSelectConsumable}
             userInfo={userInfo}
+            fetchUserInfo={fetchUserInfo}
+            fetchConsumables={fetchConsumables}
           />
         )}
       </div>

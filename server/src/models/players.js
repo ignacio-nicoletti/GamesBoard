@@ -28,29 +28,9 @@ const playerSchema = new mongoose.Schema({
 
   avatarProfile: {
     type: Object,
-    default: {
-      title: "Default Avatar",
-      price: 0,
-      description: "static avatar",
-      levelNecesary: [{ levelB: 0, levelH: 0 }],
-      url: "https://res.cloudinary.com/dbu2biawj/image/upload/v1723124994/cardgame/dlr139ow1nsgg6439c1k.png",
-      image: true,
-      category: "Avatar",
-    },
   },
   avatares: {
     type: [],
-    default: [
-      {
-        title: "Default Avatar",
-        price: 0,
-        description: "static avatar",
-        levelNecesary: [{ levelB: 0, levelH: 0 }],
-        url: "https://res.cloudinary.com/dbu2biawj/image/upload/v1723124994/cardgame/dlr139ow1nsgg6439c1k.png",
-        image: true,
-        category: "Avatar",
-      },
-    ],
   },
 });
 
