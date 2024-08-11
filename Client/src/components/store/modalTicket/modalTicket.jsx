@@ -3,6 +3,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import InstanceOfAxios from "../../../utils/intanceAxios";
 import Swal from "sweetalert2";
+import { useState } from "react";
 
 const ModalTicket = ({
   setShowModalTicket,
@@ -12,16 +13,19 @@ const ModalTicket = ({
   fetchUserInfo,
   fetchConsumables,
 }) => {
+  const [selectedGame, setSelectedGame] = useState(""); // Estado para almacenar la opción seleccionada
+
   const handleSubmit = async () => {
     setShowModalTicket(false);
     try {
       await InstanceOfAxios(`/consumable/${userInfo.uid}`, "PUT", {
         selectConsumable,
+        selectedGame, // Incluimos la opción seleccionada en el objeto a enviar
       });
     } catch (error) {
       Swal.fire({
         title: "Error!",
-        text: "Ocurrio un error en la compra, intente de nuevo mas tarde.",
+        text: "Ocurrió un error en la compra, intente de nuevo más tarde.",
         icon: "error",
         confirmButtonText: "OK",
         customClass: {
@@ -38,20 +42,20 @@ const ModalTicket = ({
   return (
     <div className={style.modal}>
       <div className={style.modalContent}>
-        <div
-          className={style.modalCancel}
-          onClick={() => {
-            setShowModalTicket(false);
-            setSelectConsumable({});
-          }}
-        >
+        <div className={style.modalCancel}>
           <div className={style.modalCancelMOney}>
             <p>{userInfo.coins}</p>
             <MonetizationOnIcon />
           </div>
-          <CancelIcon className={style.modalCancel_button} />
+          <p>Ticket</p>
+          <CancelIcon
+            className={style.modalCancel_button}
+            onClick={() => {
+              setShowModalTicket(false);
+              setSelectConsumable({});
+            }}
+          />
         </div>
-        <h2>Ticket</h2>
 
         <div className={style.DivAvatars}>
           <p>{selectConsumable.title}</p>
@@ -102,7 +106,23 @@ const ModalTicket = ({
             </p>
           </div>
         </div>
-        <button onClick={handleSubmit}>Save</button>
+        {selectConsumable.category === "XP" && (
+          <div className={style.Divselect}>
+            <select
+              name="Games"
+              id=""
+              value={selectedGame} // Establecemos el valor actual del estado
+              onChange={(e) => setSelectedGame(e.target.value)} // Actualizamos el estado cuando cambia la selección
+            >
+              <option value="" disabled={true}>
+                Select a game
+              </option>
+              <option value="Berenjena">Berenjena</option>
+              <option value="Horserace">Horserace</option>
+            </select>
+          </div>
+        )}
+        <button onClick={handleSubmit}>Finish</button>
       </div>
     </div>
   );

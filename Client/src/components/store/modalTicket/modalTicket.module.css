@@ -13,7 +13,7 @@
 }
 
 .modalContent {
-  width: 50%;
+  width: 70%;
   background: white;
   margin-inline: 0.5rem;
   padding: 20px;
@@ -74,4 +74,17 @@
 
 .priceDiv {
   font-size: 2rem;
+}
+.Divselect select{
+  background-color: #669bbc;
+  padding: 1rem;
+  border-radius: 10px;
+
+}
+
+@media only screen and (max-width: 970px) {
+  .modalContent {
+    width: 90%;
+
+  }
 }

@@ -1,5 +1,6 @@
 import { Consumable } from "../models/consumables.js";
 import { Player } from "../models/players.js";
+import { formatError } from "../utils/formatError.js";
 
 export const AddConsumable = async (req, res) => {
   const { title, price, description, levelNecesary, url, image, category } =
@@ -54,22 +55,87 @@ export const DeleteConsumableById = async (req, res) => {
   }
 };
 
+const xpForNextLevel = (level) => Math.round(100 * Math.pow(1.2, level - 1));
+
+const updatePlayerExperience = (player, game, xpToAdd) => {
+
+  // Buscar el objeto que coincide con el juego en el array de experience
+  let gameExperience = player.experience.find(
+    (exp) => Object.keys(exp)[0] === game
+  );
+
+  if (!gameExperience) {
+    // Si no se encuentra, crear una nueva entrada para ese juego
+    gameExperience = {
+      [game]: {
+        level: 1,
+        xp: 0,
+        xpRemainingForNextLevel: xpForNextLevel(1),
+      },
+    };
+    player.experience.push(gameExperience);
+  }
+
+  // Acceder al objeto del juego dentro de gameExperience
+  const experienceData = gameExperience[game];
+
+  // Añadir experiencia
+  experienceData.xp += xpToAdd;
+
+  // Ajustar niveles si es necesario
+  while (experienceData.xp >= xpForNextLevel(experienceData.level)) {
+    experienceData.xp -= xpForNextLevel(experienceData.level);
+    experienceData.level++;
+  }
+
+  // Ajustar nivel y XP si la XP es negativa
+  while (experienceData.xp < 0 && experienceData.level > 1) {
+    experienceData.level--;
+    experienceData.xp += xpForNextLevel(experienceData.level);
+  }
+
+  // Asegurarse de que la XP no sea negativa en el nivel 1
+  if (experienceData.level === 1 && experienceData.xp < 0) {
+    experienceData.xp = 0;
+  }
+
+  // Actualizar la XP restante para el próximo nivel
+  experienceData.xpRemainingForNextLevel = Math.round(
+    xpForNextLevel(experienceData.level) - experienceData.xp
+  );
+
+  return player;
+};
+
 export const BuyConsumable = async (req, res) => {
   const { id } = req.params;
-  const { selectConsumable } = req.body;
+  const { selectConsumable, selectedGame } = req.body;
+
   try {
     const player = await Player.findById(id);
-    if (selectConsumable.category === "Avatar") {
-      if (player.coins >= selectConsumable.price) {
-        player.coins = player.coins - selectConsumable.price;
-        player.avatares.push(selectConsumable);
-        player.save();
-      } else {
-        throw new Error("Insufficient coins");
-      }
+    if (!player) {
+      throw new Error("Player not found");
     }
-    res.status(200).json("compra hecha");
+    if (player.coins < selectConsumable.price) {
+      throw new Error("Insufficient coins");
+    }
+
+    if (selectConsumable.category === "Avatar") {
+      player.avatares.push(selectConsumable);
+    } else if (selectConsumable.category === "Paint") {
+      player.colorName = selectConsumable.title;
+    } else if (selectConsumable.category === "XP") {
+      const xpToAdd = selectConsumable.value;
+       updatePlayerExperience(player, selectedGame, xpToAdd);
+    }
+
+    player.coins -= selectConsumable.price;
+    player.markModified('experience');
+    await player.save();
+
+    res.status(200).json("Compra hecha");
   } catch (error) {
-    res.status(400).json(formatError(error.message));
+    console.log(error);
+    res.status(400).json({ error: error.message });
   }
 };

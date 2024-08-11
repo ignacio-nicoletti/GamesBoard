@@ -8,6 +8,7 @@ const consumableSchema = new mongoose.Schema({
   url: { type: String },
   image: { type: Boolean },
   category: { type: String, default: "Avatar" },
+  value:{type:Number}
 });
 
 consumableSchema.methods.toJSON = function () {

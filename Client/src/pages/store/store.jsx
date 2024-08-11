@@ -37,7 +37,7 @@ const Store = () => {
       console.error("Error fetching products:", error);
     }
   };
-  
+
   useEffect(() => {
     fetchConsumables();
     fetchUserInfo();
@@ -45,41 +45,42 @@ const Store = () => {
 
   const isButtonDisabled = (requirements, price, consumable) => {
     if (!requirements || !Array.isArray(requirements)) return true;
+    if (consumable.category === "Avatar" || consumable.category === "Paint") {
+      const experience = userInfo.experience || {};
+      const userCoins = userInfo.coins || 0;
 
-    const experience = userInfo.experience || {};
-    const userCoins = userInfo.coins || 0;
+      // Verificar si el consumable ya está en los avatares del usuario
+      const hasConsumable = userInfo.avatares?.some(
+        (avatar) =>
+          avatar._id === consumable.uid || avatar.uid === consumable.uid
+      );
 
-    // Verificar si el consumable ya está en los avatares del usuario
-    const hasConsumable = userInfo.avatares?.some(
-      (avatar) => avatar._id === consumable.uid || avatar.uid === consumable.uid
-    );
+      // Verificar si el usuario cumple con los niveles requeridos
+      const hasRequiredLevels = requirements.every((requirement) => {
+        const requiredLevelB = requirement.levelB || 0;
+        const requiredLevelH = requirement.levelH || 0;
 
-    // Verificar si el usuario cumple con los niveles requeridos
-    const hasRequiredLevels = requirements.every((requirement) => {
-      const requiredLevelB = requirement.levelB || 0;
-      const requiredLevelH = requirement.levelH || 0;
+        const userLevelB = experience["Berenjena"]?.level || 0;
+        const userLevelH = experience["Horserace"]?.level || 0;
 
-      const userLevelB = experience["Berenjena"]?.level || 0;
-      const userLevelH = experience["Horserace"]?.level || 0;
+        return userLevelB >= requiredLevelB && userLevelH >= requiredLevelH;
+      });
 
-      return userLevelB >= requiredLevelB && userLevelH >= requiredLevelH;
-    });
+      const hasEnoughCoins = userCoins >= price;
 
-    const hasEnoughCoins = userCoins >= price;
-
-    // Deshabilitar el botón si no tiene los niveles requeridos, no tiene suficientes monedas o ya posee el consumable
-    return !(hasRequiredLevels && hasEnoughCoins) || hasConsumable;
+      // Deshabilitar el botón si no tiene los niveles requeridos, no tiene suficientes monedas o ya posee el consumable
+      return !(hasRequiredLevels && hasEnoughCoins) || hasConsumable;
+    }
   };
 
   return (
     <div className={style.contain}>
       <SesionLogged />
 
-      <div className={style.title}>
-        <p>Store</p>
-      </div>
-
       <div className={style.MapProducts}>
+        <div className={style.title}>
+          <p>Store</p>
+        </div>
         {dataStore.map((el, index) => (
           <div key={index} className={style.cardProduct}>
             <p className={style.titleCard}>{el.title}</p>
