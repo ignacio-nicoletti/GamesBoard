@@ -122,7 +122,16 @@ const ModalTicket = ({
             </select>
           </div>
         )}
-        <button onClick={handleSubmit}>Finish</button>
+        <button
+          onClick={handleSubmit}
+          disabled={
+            selectConsumable.category === "XP" && selectedGame === ""
+              ? true
+              : false
+          }
+        >
+          Finish
+        </button>
       </div>
     </div>
   );

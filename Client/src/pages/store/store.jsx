@@ -161,3 +161,7 @@ const Store = () => {
 };
 
 export default Store;
+
+
+//comprar coins
+//modificar los precios y requisitos de los consumibles 

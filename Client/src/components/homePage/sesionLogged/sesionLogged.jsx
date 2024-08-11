@@ -39,7 +39,7 @@ const SesionLogged = () => {
     };
 
     fetchUserInfo();
-  }, []); 
+  }, []);
   const toggleModal = (isLogin) => {
     setIsLogin(isLogin);
     setModalOpen(!isModalOpen);
@@ -86,10 +86,12 @@ const SesionLogged = () => {
               ""
             )}
           </button>
-          <span className={styles.logoutBtn}>
-            {userInfo.coins}
-            <MonetizationOnIcon />
-          </span>
+          <div className={styles.moneyicon}>
+                <MonetizationOnIcon />
+            <p>
+              {userInfo.coins}
+            </p>
+          </div>
         </div>
       ) : (
         <>

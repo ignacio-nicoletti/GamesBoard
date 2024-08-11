@@ -1,4 +1,4 @@
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { GetDecodedCookie } from "../DecodedCookie";
 import React, { useEffect, useState } from "react";
 import styles from "./ProtectedRoutes.module.css";
