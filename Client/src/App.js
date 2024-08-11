@@ -12,18 +12,26 @@ import JoinRoomHorseRace from "./pages/HorseRaceGame/JoinRoomHorseRace/JoinRoomH
 import HorseRace from "./pages/HorseRaceGame/horseRace/horseRace";
 import PagePrimaryPoker from "./pages/PokerGame/PagePrimaryPoker/PagePrimaryPoker";
 import Store from "./pages/store/store";
+import { ProtectedRoute } from "./utils/ProtectedRoutes/ProtectedRoute";
 
 function App() {
   return (
     <div className="App">
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/store" element={<Store />} />
+        <Route
+          path="/store"
+          element={
+            <ProtectedRoute>
+              <Store />
+            </ProtectedRoute>
+          }
+        />
 
         {/* BERENJENA */}
         <Route path="/berenjena" element={<PagePrimaryBerenjena />} />
         <Route path="/berenjena/rules" element={<RulesOfBerenjena />} />
-        <Route path="/berenjena/joinRoom" element={<JoinRoom/>}/>
+        <Route path="/berenjena/joinRoom" element={<JoinRoom />} />
         <Route path="/berenjena/multiplayer/:id" element={<GameBerenjena />} />
         <Route path="/gameberenjenaIA" element={<JoinRoom />} />
 
@@ -31,7 +39,7 @@ function App() {
         <Route path="/poker" element={<PagePrimaryPoker />} />
         {/* HorseGame */}
         <Route path="/horserace" element={<PagePrimaryHorseGame />} />
-        <Route path="/horserace/joinRoom" element={<JoinRoomHorseRace/>}/>
+        <Route path="/horserace/joinRoom" element={<JoinRoomHorseRace />} />
         <Route path="/horserace/multiplayer/:id" element={<HorseRace />} />
       </Routes>
     </div>

@@ -78,7 +78,6 @@ const Store = () => {
     return !hasRequiredLevels || !hasEnoughCoins || hasConsumable;
   };
 
-  console.log(userInfo);
   return (
     <div className={style.contain}>
       <SesionLogged />
