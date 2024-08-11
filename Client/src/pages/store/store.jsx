@@ -87,7 +87,7 @@ const Store = () => {
           <p>Store</p>
         </div>
         {dataStore.map((el, index) => {
-          const isAvatar = el.category === "Avatar"; // Suponiendo que tienes un campo que indica si es un avatar
+          const isAvatar = el.category === "Avatar"; 
           const hasConsumable = userInfo.avatares?.some(
             (avatar) => avatar._id === el.uid || avatar.uid === el.uid
           );

@@ -18,6 +18,7 @@ import imgRoom from "../../../assets/global/jugadores/imgRoom.png";
 import logoHorserace from "../../../assets/horseGame/logohorserace.png";
 import { FadeLoader } from "react-spinners";
 import ChooseName from "../../../components/global/chooseName/chooseName";
+import InstanceOfAxios from "../../../utils/intanceAxios";
 
 const JoinRoomHorseRace = () => {
   const [rooms, setRooms] = useState([]);
@@ -32,18 +33,8 @@ const JoinRoomHorseRace = () => {
 
   const [game] = useState("Horserace");
   const [showModal, setShowModal] = useState(true);
-  const [userInfo, setUserInfo] = useState({
-    userName: "Invitado",
-    avatarProfile: {
-      title: "Default Avatar",
-      price: 0,
-      description: "static avatar",
-      levelNecesary: [{ levelB: 0, levelH: 0 }],
-      url: "https://res.cloudinary.com/dbu2biawj/image/upload/v1723124993/cardgame/bwzkxvxx2jhdzibaoofc.png",
-      image: true,
-      category: "avatar",
-    },
-  });
+  const [userInfo, setUserInfo] = useState({});
+  const token = GetDecodedCookie("cookieToken"); //
 
   const handlerCreateRoom = async (e) => {
     e.preventDefault();
@@ -199,17 +190,38 @@ const JoinRoomHorseRace = () => {
   const handleFilter = (filteredRooms) => {
     setFilteredRooms(filteredRooms);
   };
-  console.log(userInfo);
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        if (token) {
+          setShowModal(false);
+          const data = DecodedToken(token);
+
+          const response = await InstanceOfAxios(
+            `/user/${data.user.id}`,
+            "GET"
+          );
+
+          setUserInfo(response.player);
+        }
+      } catch (error) {
+        console.error("Error fetching user info:", error);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
+
   return (
     <div className={style.containRoom}>
-      {showModal && (
+      {showModal && userInfo.userName && (
         <ChooseName
           setShowModal={setShowModal}
           userInfo={userInfo}
           setUserInfo={setUserInfo}
         />
       )}
-      {!showModal && (
+      {!showModal && userInfo.userName && (
         <>
           <div className={style.sideBar}>
             <div className={style.DivButtonBack}>

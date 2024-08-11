@@ -19,10 +19,10 @@ const SesionLogged = () => {
 
   let location = useLocation();
 
+  const token = GetDecodedCookie("cookieToken");
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const token = GetDecodedCookie("cookieToken");
         if (token) {
           const data = DecodedToken(token);
 
@@ -39,7 +39,8 @@ const SesionLogged = () => {
     };
 
     fetchUserInfo();
-  }, []);
+  }, [token]);
+
   const toggleModal = (isLogin) => {
     setIsLogin(isLogin);
     setModalOpen(!isModalOpen);

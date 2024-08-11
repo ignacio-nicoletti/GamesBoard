@@ -1,133 +1,132 @@
-
 .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-image: url("../../../assets/global/jugadores//bgModal.png");
-  }
-  
-  .modalContent {
-    background: white;
-    margin-inline: 0.5rem;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px,
-      rgba(0, 0, 0, 0.22) 0px 10px 10px;
-  }
-  
-  .modalContent h2 {
-    font-size: 1.5rem;
-    color: #333;
-  }
-  
-  .modalContent button {
-    width: 8rem;
-    border-radius: 5px;
-    margin-top: 2rem;
-    cursor: pointer;
-    background-color: #669bbc;
-    color: white;
-    border: none;
-    padding: 0.5rem;
-    transition: background-color 0.3s;
-    font-family: "Bebas Neue";
-    font-size: 1.2rem;
-    transition: width 0.3s ease-in-out;
-  }
-  
-  .modalContent button:hover {
-    background-color: #003049;
-    width: calc(8rem + 2rem);
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
-  }
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url("../../../assets/global/jugadores//bgModal.png");
+}
 
+.modalContent {
+  background: white;
+  margin-inline: 0.5rem;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px,
+    rgba(0, 0, 0, 0.22) 0px 10px 10px;
+}
 
-  
+.modalContent h2 {
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.modalContent button {
+  width: 8rem;
+  border-radius: 5px;
+  margin-top: 2rem;
+  cursor: pointer;
+  background-color: #669bbc;
+  color: white;
+  border: none;
+  padding: 0.5rem;
+  transition: background-color 0.3s;
+  font-family: "Bebas Neue";
+  font-size: 1.2rem;
+  transition: width 0.3s ease-in-out;
+}
+
+.modalContent button:hover {
+  background-color: #003049;
+  width: calc(8rem + 2rem);
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+}
+
 .DivName {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    gap: 2rem;
-    margin-top: 2rem;
-  }
-  
-  .DivName span {
-    font-size: 1.5rem;
-    display: flex;
-    align-items: center;
-  }
-  
-  .DivName input {
-    height: 2rem;
-    border-radius: 8px;
-    width: 50%;
-    padding-left: 0.75rem;
-    font-family: "Bebas Neue";
-    border: 1px solid #669bbc;
-    transition: border-color 0.3s, box-shadow 0.3s;
-    outline: none;
-    font-size: 1rem;
-    color: #333;
-    background-color: #f9f9f9;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .DivName input:focus {
-    border-color: #669bbc;
-    box-shadow: 0 0 8px #669bbc;
-    background-color: #fff;
-  }
-  
-  .DivName input::placeholder {
-    color: #aaa;
-  }
-  
-  .DivAvatars {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 2rem;
-  }
-  
-  .DivAvatars p {
-    font-size: 1.5rem;
-    display: flex;
-    align-items: center;
-  }
-  
-  .DivAvatarsGrid {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    flex-wrap: wrap;
-    gap: 2rem;
-  }
-  
-  .DivAvatars img {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    transition: transform 0.3s;
-    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
-      rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
-  }
-  
-  .DivAvatars img:hover {
-    transform: scale(1.5);
-    cursor: pointer;
-  }
-  
-  .selectedAvatar {
-    border: 3px solid #669bbc;
-  }
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.DivName span {
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.DivName input {
+  height: 2rem;
+  border-radius: 8px;
+  width: 50%;
+  padding-left: 0.75rem;
+  font-family: "Bebas Neue";
+  border: 1px solid #669bbc;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  outline: none;
+  font-size: 1rem;
+  color: #333;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.DivName input:focus {
+  border-color: #669bbc;
+  box-shadow: 0 0 8px #669bbc;
+  background-color: #fff;
+}
+
+.DivName input::placeholder {
+  color: #aaa;
+}
+
+.DivAvatars {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+.DivAvatars p {
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.DivAvatarsGrid {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.DivAvatars img,
+.DivAvatars video {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  transition: transform 0.3s;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
+    rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+}
+
+.DivAvatars img:hover,
+.DivAvatars video:hover {
+  transform: scale(1.5);
+  cursor: pointer;
+}
+
+.selectedAvatar {
+  border: 3px solid #669bbc;
+}

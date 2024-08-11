@@ -1,22 +1,21 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import InstanceOfAxios from "../../../utils/intanceAxios";
 import styles from "./choosename.module.css";
 import { GetDecodedCookie } from "../../../utils/DecodedCookie";
 import Swal from "sweetalert2";
-import { DecodedToken } from "../../../utils/DecodedToken";
 
 const ChooseName = ({ setShowModal, userInfo, setUserInfo }) => {
   const [writeName, setWriteName] = useState(userInfo.userName);
   const [selectedAvatar, setSelectedAvatar] = useState(userInfo.avatarProfile); // Estado para el avatar seleccionado
-  const token = GetDecodedCookie("cookieToken"); //
+  const token = GetDecodedCookie("cookieToken");
 
   const handleSubmit = async () => {
     if (writeName && selectedAvatar) {
       setShowModal(false);
       if (token !== undefined) {
         await InstanceOfAxios(`/user/${userInfo.uid}`, "PUT", {
-          userName: userInfo.userName,
-          selectedAvatar,
+          userName: writeName, // Corrige aquí para usar el nuevo nombre
+          avatarProfile: selectedAvatar, // Aquí asegúrate de enviar el avatar correcto
         }).then((data) =>
           setUserInfo({ ...userInfo, userName: data.player.userName })
         );
@@ -44,28 +43,6 @@ const ChooseName = ({ setShowModal, userInfo, setUserInfo }) => {
     setWriteName(e.target.value);
   };
 
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        if (token) {
-          // setShowModal(false);
-          const data = DecodedToken(token);
-
-          const response = await InstanceOfAxios(
-            `/user/${data.user.id}`,
-            "GET"
-          );
-
-          setUserInfo(response.player);
-        }
-      } catch (error) {
-        console.error("Error fetching user info:", error);
-      }
-    };
-
-    fetchUserInfo();
-  }, []);
-
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modal}>
@@ -84,30 +61,32 @@ const ChooseName = ({ setShowModal, userInfo, setUserInfo }) => {
           <div className={styles.DivAvatars}>
             <p>Choose your Avatar</p>
             <div className={styles.DivAvatarsGrid}>
-              {userInfo.avatares ? (
-                userInfo.avatares.map((avatar, index) => (
-                  <img
-                    key={index}
-                    src={avatar.url}
-                    alt={avatar.name}
-                    className={
-                      selectedAvatar === avatar ? styles.selectedAvatar : ""
-                    }
-                    onClick={() => setSelectedAvatar(avatar)} // Almacena el objeto del avatar seleccionado
-                  />
-                ))
-              ) : (
-                <img
-                  src={selectedAvatar.url}
-                  alt={selectedAvatar.name}
-                  className={
-                    selectedAvatar === selectedAvatar
-                      ? styles.selectedAvatar
-                      : ""
-                  }
-                  onClick={() => setSelectedAvatar(selectedAvatar)} // Almacena el objeto del avatar seleccionado
-                />
-              )}
+              {userInfo.avatares &&
+                userInfo.avatares.map((avatar, index) =>
+                  avatar.image ? (
+                    <img
+                      key={index}
+                      src={avatar.url}
+                      alt={avatar.name}
+                      onClick={() => setSelectedAvatar(avatar)} // Almacena el objeto del avatar seleccionado
+                      className={
+                        selectedAvatar === avatar ? styles.selectedAvatar : ""
+                      }
+                    />
+                  ) : (
+                    <video
+                      key={index}
+                      src={avatar.url}
+                      autoPlay
+                      loop
+                      muted
+                      onClick={() => setSelectedAvatar(avatar)} // Evento onClick para seleccionar video
+                      className={
+                        selectedAvatar === avatar ? styles.selectedAvatar : ""
+                      }
+                    />
+                  )
+                )}
             </div>
           </div>
           <button onClick={handleSubmit}>Save</button>
