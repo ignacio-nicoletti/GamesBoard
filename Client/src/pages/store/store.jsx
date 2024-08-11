@@ -45,34 +45,40 @@ const Store = () => {
 
   const isButtonDisabled = (requirements, price, consumable) => {
     if (!requirements || !Array.isArray(requirements)) return true;
-    if (consumable.category === "Avatar" || consumable.category === "Paint") {
-      const experience = userInfo.experience || {};
-      const userCoins = userInfo.coins || 0;
 
-      // Verificar si el consumable ya está en los avatares del usuario
-      const hasConsumable = userInfo.avatares?.some(
-        (avatar) =>
-          avatar._id === consumable.uid || avatar.uid === consumable.uid
-      );
+    const experienceArray = userInfo.experience || [];
+    const userCoins = userInfo.coins || 0;
 
-      // Verificar si el usuario cumple con los niveles requeridos
-      const hasRequiredLevels = requirements.every((requirement) => {
-        const requiredLevelB = requirement.levelB || 0;
-        const requiredLevelH = requirement.levelH || 0;
+    // Convertir el array de experiencia en un objeto para un acceso más fácil
+    const experience = experienceArray.reduce((acc, exp) => {
+      const gameName = Object.keys(exp)[0]; // Extrae el nombre del juego
+      acc[gameName] = exp[gameName]; // Asigna el objeto de experiencia al nombre del juego
+      return acc;
+    }, {});
 
-        const userLevelB = experience["Berenjena"]?.level || 0;
-        const userLevelH = experience["Horserace"]?.level || 0;
+    // Verificar si el consumable ya está en los avatares del usuario
+    const hasConsumable = userInfo.avatares?.some(
+      (avatar) => avatar._id === consumable.uid || avatar.uid === consumable.uid
+    );
 
-        return userLevelB >= requiredLevelB && userLevelH >= requiredLevelH;
-      });
+    // Verificar si el usuario cumple con los niveles requeridos
+    const hasRequiredLevels = requirements.every((requirement) => {
+      const requiredLevelB = requirement.levelB || 0;
+      const requiredLevelH = requirement.levelH || 0;
 
-      const hasEnoughCoins = userCoins >= price;
+      const userLevelB = experience["Berenjena"]?.level || 0;
+      const userLevelH = experience["Horserace"]?.level || 0;
 
-      // Deshabilitar el botón si no tiene los niveles requeridos, no tiene suficientes monedas o ya posee el consumable
-      return !(hasRequiredLevels && hasEnoughCoins) || hasConsumable;
-    }
+      return userLevelB >= requiredLevelB && userLevelH >= requiredLevelH;
+    });
+
+    const hasEnoughCoins = userCoins >= price;
+
+    // Deshabilitar el botón si no tiene los niveles requeridos, no tiene suficientes monedas o ya posee el consumable
+    return !hasRequiredLevels || !hasEnoughCoins || hasConsumable;
   };
 
+  console.log(userInfo);
   return (
     <div className={style.contain}>
       <SesionLogged />

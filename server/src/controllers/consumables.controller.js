@@ -55,9 +55,9 @@ export const DeleteConsumableById = async (req, res) => {
   }
 };
 
-const xpForNextLevel = (level) => Math.round(100 * Math.pow(1.2, level - 1));
 
 const updatePlayerExperience = (player, game, xpToAdd) => {
+  const xpForNextLevel = (level) => Math.round(100 * Math.pow(1.2, level - 1));
 
   // Buscar el objeto que coincide con el juego en el array de experience
   let gameExperience = player.experience.find(
