@@ -86,64 +86,75 @@ const Store = () => {
         <div className={style.title}>
           <p>Store</p>
         </div>
-        {dataStore.map((el, index) => (
-          <div key={index} className={style.cardProduct}>
-            <p className={style.titleCard}>{el.title}</p>
-            <div className={style.cardProductMedia}>
-              {el.image ? (
-                <img src={el.url} alt={el.title} />
-              ) : (
-                <video autoPlay loop controls={false}>
-                  <source src={el.url} type="video/mp4" />
-                </video>
-              )}
-            </div>
-            <div className={style.descriptionDiv}>
-              <p
-                className={
-                  el.title === "Rainbow Name"
-                    ? style.rainbow_text
-                    : el.title === "Color specific"
-                    ? style.rgb_text
-                    : style.description
-                }
-              >
-                {el.description}
-              </p>
-            </div>
-            <div className={style.priceDiv}>
-              <p>${el.price}</p>
-            </div>
-            <div className={style.NecesaryDiv}>
-              <p>
-                Necesary:{" "}
-                {el.levelNecesary.map((level, index) => (
-                  <span key={index}>
-                    Berenjena: Lvl{" "}
-                    <span className={style.NecesaryValue}>
-                      {level.levelB || 0}
-                    </span>{" "}
-                    - HorseRace: Lvl{" "}
-                    <span className={style.NecesaryValue}>
-                      {level.levelH || 0}
-                    </span>
-                    {index < el.levelNecesary.length - 1 ? ", " : ""}
-                  </span>
-                ))}
-              </p>
-            </div>
+        {dataStore.map((el, index) => {
+          const isAvatar = el.category === "Avatar"; // Suponiendo que tienes un campo que indica si es un avatar
+          const hasConsumable = userInfo.avatares?.some(
+            (avatar) => avatar._id === el.uid || avatar.uid === el.uid
+          );
 
-            <button
-              disabled={isButtonDisabled(el.levelNecesary, el.price, el)}
-              onClick={() => {
-                setSelectConsumable(el);
-                setShowModalTicket(true);
-              }}
-            >
-              OBTAIN
-            </button>
-          </div>
-        ))}
+          return (
+            <div key={index} className={style.cardProduct}>
+              {isAvatar && hasConsumable && (
+                <div className={style.ribbon}>
+                  <span>Canjeado</span>
+                </div>
+              )}
+              <p className={style.titleCard}>{el.title}</p>
+              <div className={style.cardProductMedia}>
+                {el.image ? (
+                  <img src={el.url} alt={el.title} />
+                ) : (
+                  <video autoPlay loop controls={false}>
+                    <source src={el.url} type="video/mp4" />
+                  </video>
+                )}
+              </div>
+              <div className={style.descriptionDiv}>
+                <p
+                  className={
+                    el.title === "Rainbow Name"
+                      ? style.rainbow_text
+                      : el.title === "Color specific"
+                      ? style.rgb_text
+                      : style.description
+                  }
+                >
+                  {el.description}
+                </p>
+              </div>
+              <div className={style.priceDiv}>
+                <p>${el.price}</p>
+              </div>
+              <div className={style.NecesaryDiv}>
+                <p>
+                  Necesary:{" "}
+                  {el.levelNecesary.map((level, index) => (
+                    <span key={index}>
+                      Berenjena: Lvl{" "}
+                      <span className={style.NecesaryValue}>
+                        {level.levelB || 0}
+                      </span>{" "}
+                      - HorseRace: Lvl{" "}
+                      <span className={style.NecesaryValue}>
+                        {level.levelH || 0}
+                      </span>
+                      {index < el.levelNecesary.length - 1 ? ", " : ""}
+                    </span>
+                  ))}
+                </p>
+              </div>
+              <button
+                disabled={isButtonDisabled(el.levelNecesary, el.price, el)}
+                onClick={() => {
+                  setSelectConsumable(el);
+                  setShowModalTicket(true);
+                }}
+              >
+                OBTAIN
+              </button>
+            </div>
+          );
+        })}
 
         {showModalTicket && (
           <ModalTicket
@@ -162,6 +173,5 @@ const Store = () => {
 
 export default Store;
 
-
 //comprar coins
-//modificar los precios y requisitos de los consumibles 
+//modificar los precios y requisitos de los consumibles
