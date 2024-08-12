@@ -122,7 +122,17 @@ const SideBar = ({ userInfo, setShowModal, game, setRoomId, roomId }) => {
       }
     >
       <div className={style.DivButtonBack}>
-        <Link to="/horserace">Back to menu</Link>
+        <Link
+          to={
+            game === "Berenjena"
+              ? "/berenjena"
+              : game === "Horserace"
+              ? "/horserace"
+              : ""
+          }
+        >
+          Back to menu
+        </Link>
       </div>
       <div className={style.profile}>
         {userInfo.avatarProfile.image ? (
