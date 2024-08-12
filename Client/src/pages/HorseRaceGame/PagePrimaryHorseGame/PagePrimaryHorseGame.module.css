@@ -19,10 +19,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* background-image: url("../../../assets/poker/bgPokerMenu.png"); */
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
   font-family: "Bebas Neue", sans-serif;
 }
 
@@ -38,12 +34,16 @@
 .title {
   background-color: brown;
   border-radius: 50%;
-  padding: 1rem 3rem;
+  padding: 0;
 }
+.title img {
+  width: 80%;
+  padding: 1rem;
+}
+
 .welcomeImg {
   width: 100%;
   height: auto;
-  max-height: 70vh; /* Limitar la altura máxima */
   border-radius: 10px;
   background-color: rgba(255, 255, 255, 0.849);
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
@@ -68,10 +68,10 @@
   background-color: rgb(255, 255, 255);
   border: none;
   border-radius: 10px;
-  /* color: #da0505; */
   color: brown;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   cursor: pointer;
+  transition: box-shadow 0.3s ease;
 }
 
 .link:hover {
@@ -87,24 +87,51 @@
   filter: grayscale(1);
 }
 
+/* Ajustes para pantallas medianas */
 @media only screen and (max-width: 730px) {
-  .containOption {
-    width: 90%;
+  .loaderVideo {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    filter: grayscale(1);
   }
   .option {
     font-size: 1.5rem;
   }
   .link {
-    width: 15rem;
+    width: 14rem;
+  }
+  .title {
+    background-color: brown;
+    border-radius: 50%;
+    padding: 0;
+  }
+  .title img {
+    width: 80%;
+    padding: 1rem;
   }
 }
 
+/* Ajustes para pantallas pequeñas */
 @media only screen and (max-width: 480px) {
-  .welcomeTitle {
-    height: 20rem;
+  .containOption {
+    width: 100%;
+    padding: 0;
+  }
+  .title {
+    background-color: brown;
+    border-radius: 50%;
+    padding: 0;
+  }
+  .title img {
+    width: 80%;
+    padding: 1rem;
   }
   .option {
     font-size: 1.2rem;
+    margin-top: 1.5rem;
   }
   .link {
     width: 12rem;

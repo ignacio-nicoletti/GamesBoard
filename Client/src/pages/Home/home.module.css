@@ -1,8 +1,6 @@
 .contain {
   width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
+  height: 100vh;
   position: absolute;
   display: flex;
   justify-content: center;
@@ -88,6 +86,11 @@
     font-size: 1.3rem;
   }
 
+  .gameCard {
+    width: 8rem;
+    height: 10rem;
+  }
+
   .gameCard p {
     font-size: 1.3rem;
   }
@@ -111,6 +114,11 @@
     font-size: 1.2rem;
   }
 
+  .gameCard {
+    width: 7rem;
+    height: 9rem;
+  }
+
   .gameCard p {
     font-size: 1.2rem;
   }
@@ -132,6 +140,12 @@
 
   .description {
     font-size: 1rem;
+    padding: 0 0.5rem;
+  }
+
+  .gameCard {
+    width: 6rem;
+    height: 8rem;
   }
 
   .gameCard p {
@@ -140,5 +154,32 @@
 
   .gameCard img {
     max-width: 80px;
+  }
+}
+
+@media only screen and (max-width: 360px) {
+  .containOption {
+    margin-top: 4rem;
+  }
+
+  .containOption h1 {
+    font-size: 1.2rem;
+  }
+
+  .description {
+    font-size: 0.9rem;
+  }
+
+  .gameCard {
+    width: 5rem;
+    height: 7rem;
+  }
+
+  .gameCard p {
+    font-size: 0.9rem;
+  }
+
+  .gameCard img {
+    max-width: 70px;
   }
 }

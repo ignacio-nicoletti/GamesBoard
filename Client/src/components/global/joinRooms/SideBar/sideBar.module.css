@@ -8,16 +8,6 @@
   width: 15%;
   height: auto;
 }
-.sideBarBerenjena {
-  background-color: #ff914d;
-  color: white;
-  padding: 1rem;
-  font-size: 1.3rem;
-  display: flex;
-  flex-direction: column;
-  width: 15%;
-  height: auto;
-}
 
 .DivButtonBack {
   display: flex;
@@ -82,6 +72,13 @@
   transition: background-color 0.3s;
   transition: width 0.3s ease-in-out;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.editIcon:hover {
+  transform: scale(1.1);
+  background-color: white;
+  color: #003049;
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
 }
 
 .createButton {
@@ -161,13 +158,6 @@
   transition: width 0.3s ease-in-out;
 }
 
-.editIcon:hover {
-  transform: scale(1.1);
-  background-color: white;
-  color: #003049;
-  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
-}
-
 .DivInputRoom {
   display: flex;
   flex-direction: column;
@@ -223,18 +213,6 @@
     justify-content: space-between;
     width: auto;
   }
-  .sideBarBerenjena {
-    background-color: #ff914d;
-    color: white;
-    padding: 1rem;
-    font-size: 1.3rem;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    width: auto;
-  }
 
   .DivInputRoom {
     display: flex;
@@ -262,6 +240,195 @@
     padding-left: 0.3rem;
     font-family: "Bebas Neue";
     border: 2px solid #669bbc;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    outline: none;
+    font-size: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Berenjena */
+
+.sideBarBerenjena {
+  background-color: #ff914d;
+  color: white;
+  padding: 1rem;
+  font-size: 1.3rem;
+  display: flex;
+  flex-direction: column;
+  width: 15%;
+  height: auto;
+}
+
+.DivButtonBackBerenjena {
+  display: flex;
+  justify-content: center;
+}
+
+.DivButtonBackBerenjena a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-family: "Bebas Neue";
+  text-decoration: none;
+  background-color: green;
+  color: white;
+  width: 6rem;
+  padding: 0.5rem;
+  transition: background-color 0.3s;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.DivButtonBackBerenjena a:hover {
+  background-color: white;
+  color: #ff914d;
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+}
+
+.editIconBerenjena {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  font-family: "Bebas Neue";
+  font-size: 1rem;
+  text-decoration: none;
+  background-color: green;
+  color: white;
+  padding: 0.5rem;
+  transition: background-color 0.3s;
+  transition: width 0.3s ease-in-out;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.editIconBerenjena:hover {
+  transform: scale(1.1);
+  background-color: white;
+  color: #ff914d;
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+}
+
+.createButtonBerenjena {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  width: 5rem;
+  font-family: "Bebas Neue";
+  font-size: 1rem;
+  text-decoration: none;
+  background-color: green;
+  color: white;
+  padding: 0.5rem;
+  transition: background-color 0.3s;
+  transition: width 0.3s ease-in-out;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.createButtonBerenjena:hover {
+  width: calc(5rem + 2rem);
+  background-color: white;
+  color: #ff914d;
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+}
+
+.DivInputRoomBerenjena {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 4rem;
+  font-size: 1.3rem;
+  gap: 1rem;
+}
+
+.DivInputRoomBerenjena input {
+  height: 2rem;
+  border-radius: 8px;
+  width: 80%;
+  padding-left: 0.5rem;
+  font-family: "Bebas Neue";
+  border: 2px solid #218838;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  outline: none;
+  font-size: 1rem;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.storeButtonBerenjena {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  width: 90%;
+  font-family: "Bebas Neue";
+  font-size: 1rem;
+  text-decoration: none;
+  background-color: #218838;
+  color: white;
+  padding: 0.5rem;
+  transition: background-color 0.3s;
+  transition: width 0.3s ease-in-out;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.storeButtonBerenjena:hover {
+  width: calc(100% + 2rem);
+  color: #ff914d;
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+  background-color: white;
+}
+
+@media (max-width: 815px) {
+
+  .sideBarBerenjena {
+    background-color: #ff914d;
+    color: white;
+    padding: 1rem;
+    font-size: 1.3rem;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: auto;
+  }
+
+  .DivInputRoomBerenjena {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 0;
+    margin-top: 1rem;
+    font-size: 1.3rem;
+    gap: 1rem;
+  }
+
+  .DivInputRoomBerenjena span {
+    display: flex;
+    width: auto;
+    font-size: 1rem;
+  }
+
+  .DivInputRoomBerenjena input {
+    height: 2rem;
+    border-radius: 8px;
+    width: 5rem;
+    padding-left: 0.3rem;
+    font-family: "Bebas Neue";
+    border: 2px solid #218838;
     transition: border-color 0.3s, box-shadow 0.3s;
     outline: none;
     font-size: 1rem;

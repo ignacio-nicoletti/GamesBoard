@@ -121,7 +121,15 @@ const SideBar = ({ userInfo, setShowModal, game, setRoomId, roomId }) => {
           : ""
       }
     >
-      <div className={style.DivButtonBack}>
+      <div
+        className={
+          game === "Horserace"
+            ? style.DivButtonBack
+            : game === "Berenjena"
+            ? style.DivButtonBackBerenjena
+            : ""
+        }
+      >
         <Link
           to={
             game === "Berenjena"
@@ -152,7 +160,16 @@ const SideBar = ({ userInfo, setShowModal, game, setRoomId, roomId }) => {
         )}
 
         <span className={style.userName}>{userInfo && userInfo.userName}</span>
-        <button className={style.editIcon} onClick={() => setShowModal(true)}>
+        <button
+          className={
+            game === "Horserace"
+              ? style.editIcon
+              : game === "Berenjena"
+              ? style.editIconBerenjena
+              : ""
+          }
+          onClick={() => setShowModal(true)}
+        >
           <EditIcon />
         </button>
       </div>
@@ -185,7 +202,15 @@ const SideBar = ({ userInfo, setShowModal, game, setRoomId, roomId }) => {
           )}
         </div>
       )}
-      <div className={style.DivInputRoom}>
+      <div
+        className={
+          game === "Horserace"
+            ? style.DivInputRoom
+            : game === "Berenjena"
+            ? style.DivInputRoomBerenjena
+            : ""
+        }
+      >
         <span>Create a new room: </span>
         <input
           type="number"
@@ -216,15 +241,34 @@ const SideBar = ({ userInfo, setShowModal, game, setRoomId, roomId }) => {
           </div>
         )}
         <button
-          className={style.createButton}
+          className={
+            game === "Horserace"
+              ? style.createButton
+              : game === "Berenjena"
+              ? style.createButtonBerenjena
+              : ""
+          }
           onClick={handlerCreateRoom}
           disabled={!isFormValid}
         >
           Create
         </button>
         <div className={style.divstoreButton}>
-          <Link to="/store" className={style.storeButtonLink}>
-            <button className={style.storeButton}>Store</button>
+          <Link
+            to="/store"
+            className={
+               style.storeButtonLink
+              
+            }
+          >
+            <button className={
+                 game === "Horserace"
+                 ? style.storeButton
+                   : game === "Berenjena"
+                   ? style.storeButtonBerenjena
+                   : ""
+              
+            }>Store</button>
           </Link>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import style from "./mapRoomsComponent.module.css";
-import AutocompleteExample from "../../../berenjena/autocomplete/autocomplete";
+import AutocompleteExample from "../autocomplete/autocomplete";
 import Swal from "sweetalert2";
 import {
   joinGameRoom,
@@ -128,7 +128,7 @@ const MapRoomsComponent = ({
           />
         </div>
         <div>
-          <AutocompleteExample roomsInfo={rooms} onFilter={handleFilter} />
+          <AutocompleteExample roomsInfo={rooms} onFilter={handleFilter} game={game}/>
         </div>
       </div>
       <div className={style.roomsContainer}>
@@ -145,7 +145,16 @@ const MapRoomsComponent = ({
           </div>
         ) : (
           filteredRooms.map((el) => (
-            <div key={el.roomId} className={style.DivRoom}>
+            <div
+              key={el.roomId}
+              className={
+                game === "Horserace"
+                  ? style.DivRoom
+                  : game === "Berenjena"
+                  ? style.DivRoomBerenjena
+                  : ""
+              }
+            >
               <div className={style.textRoom}>
                 <p>Room {el.roomId}</p>
                 <p className={style.groupIcon}>
