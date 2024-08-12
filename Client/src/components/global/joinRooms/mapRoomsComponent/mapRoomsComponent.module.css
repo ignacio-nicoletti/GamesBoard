@@ -1,0 +1,174 @@
+
+.loaderContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15rem;
+    font-size: 2rem;
+  }
+  
+  .levelMap {
+    margin-top: 1rem;
+  }
+  
+  .levelMap p {
+    margin: 0;
+  }
+  
+  .containRoom.blurredBackground {
+    backdrop-filter: blur(5px);
+    pointer-events: none;
+  }
+  
+  .swal2-container {
+    font-family: "Bebas Neue";
+  }
+  
+  .DivRooms {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    width: 100%;
+    padding: 1.5rem;
+    gap: 2rem;
+  }
+  
+  .roomsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    flex-direction: row;
+    gap: 2rem;
+  }
+  
+  .logoContainer {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  
+  .logoHorserace {
+    width: 100%;
+    max-width: 12rem;
+  }
+  
+  .autocomplete {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 10px;
+    padding: 1rem;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
+  }
+  
+  .DivRoom {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.3rem;
+    color: rgb(0, 0, 0);
+    background-color: rgb(255, 255, 255);
+    padding: 1rem;
+    border-radius: 10px;
+    width: 10rem;
+    height: 11rem;
+    text-align: center;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  }
+  
+  .textRoom {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 2rem;
+    font-family: "Reddit Sans";
+    font-size: 1rem;
+  }
+  
+  .groupIcon {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .DivRoom p {
+    margin: 0;
+  }
+  
+  .DivRoom img {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    margin-inline: 1rem;
+  }
+  
+  .DivRoom button {
+    width: 5rem;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-family: "Reddit Sans";
+    background-color: #669bbc;
+    color: white;
+    padding: 0.5rem;
+    transition: background-color 0.3s;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  }
+  
+  .DivRoom button:hover {
+    background-color: rgb(0, 32, 100);
+    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+  }
+
+  @media (max-width: 1000px) {
+    .autocomplete {
+      flex-direction: column;
+      justify-content: center;
+    }
+    .DivRooms {
+      padding: 1rem;
+    }
+  }
+  
+  @media (max-width: 455px) {
+    .DivRooms {
+      padding: 0;
+    }
+    .DivRoom {
+      display: flex;
+      justify-content: space-evenly;
+      flex-direction: row;
+      width: 90%;
+      height: 3rem;
+    }
+  
+    .roomsContainer {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .textRoom {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: start;
+      width: auto;
+      gap: 2rem;
+      font-family: "Reddit Sans";
+      font-size: 1rem;
+    }
+  
+    .DivRoom img {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+      margin-inline: 1rem;
+    }
+  }

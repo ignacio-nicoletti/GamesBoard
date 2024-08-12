@@ -3,7 +3,7 @@ import { Player } from "../models/players.js";
 import { formatError } from "../utils/formatError.js";
 
 export const AddConsumable = async (req, res) => {
-  const { title, price, description, levelNecesary, url, image, category } =
+  const { title, price, description, levelNecesary, url, image, category,value } =
     req.body;
 
   try {
@@ -15,6 +15,7 @@ export const AddConsumable = async (req, res) => {
       url,
       image,
       category,
+      value
     });
 
     await consumable.save();

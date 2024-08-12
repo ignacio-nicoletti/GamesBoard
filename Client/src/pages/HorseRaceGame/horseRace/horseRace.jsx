@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./horseRace.module.css";
 import DataPlayerHorseRace from "../../../components/horseRace/dataPlayerHorseRace/dataPlayerHorseRace";
-import ButtonExitRoomHorserace from "../../../components/horseRace/buttonExitRoomHorserace/buttonExitRoomHorserace";
 import {
   distributeHorserace,
   socket,
@@ -13,6 +12,7 @@ import HorseContain from "../../../components/horseRace/horseContain/horseContai
 import HorseSideLeft from "../../../components/horseRace/horseSideLeft/horseSideLeft";
 import DeckRight from "../../../components/horseRace/deckRight/deckRight";
 import WinnerComponentHorserace from "../../../components/horseRace/winnerComponentHorserace/winnerComponentHorserace";
+import ButtonExitRoom from "../../../components/global/buttonExitRoom/buttonExitRoom";
 
 const HorseRace = () => {
   const [showResult, setShowResult] = useState(false);
@@ -70,7 +70,7 @@ const HorseRace = () => {
     <div className={styles.contain}>
       <div className={styles.contain}>
         <DataPlayerHorseRace myPlayer={myPlayer} />
-        <ButtonExitRoomHorserace />
+        <ButtonExitRoom game={dataRoom.game} />
         {dataRoom && dataRoom.gameStarted && round.typeRound === "Bet" && (
           <BetHorse
             setPlayers={setPlayers}

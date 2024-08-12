@@ -3,8 +3,9 @@ import {useParams} from 'react-router-dom';
 import {socket} from '../../../functions/SocketIO/sockets/sockets';
 import PersonIcon from '@mui/icons-material/Person';
 import CheckIcon from '@mui/icons-material/Check';
-import ButtonExitRoom from '../buttonExitRoom/buttonExitRoom';
+
 import style from './loader.module.css';
+import ButtonExitRoom from '../../global/buttonExitRoom/buttonExitRoom';
 
 const Loader = ({setPlayers, setRound, myPlayer, setMyPlayer,setLoader,setDataRoom,dataRoom}) => {
   const [readyMe, setReadyMe] = useState (false);
@@ -129,7 +130,7 @@ const Loader = ({setPlayers, setRound, myPlayer, setMyPlayer,setLoader,setDataRo
           Ready
         </button>
       </div>
-      <ButtonExitRoom />
+      <ButtonExitRoom game={dataRoom.game} />
     </div>
   );
 };

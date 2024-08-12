@@ -23,21 +23,26 @@ export const GetPlayerById = async (req, res) => {
 
 export const UpdatePlayerById = async (req, res) => {
   const { id } = req.params;
-  const { userName, selectedAvatar } = req.body;
+  const { userName, avatarProfile } = req.body; // Asegúrate de extraer avatarProfile aquí
+
   try {
     let player = await Player.findByIdAndUpdate(
       id,
       {
-        ...req.body.player,
-        userName: userName,
-        avatarProfile:selectedAvatar
+        userName,          // Usa el nombre directamente del body
+        avatarProfile,     // Actualiza el avatarProfile directamente
       },
-      { new: true }
+      { new: true } // Esto garantiza que se devuelva el documento actualizado
     );
+
+    if (!player) {
+      return res.status(404).json({ error: "Player not found" });
+    }
+
     return res.status(200).json({ player });
   } catch (error) {
-    console.log(error);
-    res.status(400).json(formatError(error.message));
+    console.error(error);
+    return res.status(400).json({ error: error.message });
   }
 };
 

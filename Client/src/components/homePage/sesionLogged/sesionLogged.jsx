@@ -69,11 +69,21 @@ const SesionLogged = () => {
     <div className={styles.header}>
       {userInfo ? (
         <div className={styles.userInfo}>
-          <img
-            src={userInfo.avatarProfile.url || DefaultAvatar}
-            alt="Avatar"
-            className={styles.avatar}
-          />
+          {userInfo.avatarProfile && userInfo.avatarProfile.image ? (
+            <img
+              src={userInfo.avatarProfile.url}
+              alt={userInfo.avatarProfile.title}
+              className={styles.avatar}
+            />
+          ) : (
+            <video
+              src={userInfo.avatarProfile.url}
+              autoPlay
+              loop
+              muted
+              className={styles.avatar}
+            />
+          )}
           Hello, <span>{userInfo.userName}</span>
           <button className={styles.logoutBtn} onClick={handleLogout}>
             <LogoutIcon />
@@ -88,10 +98,8 @@ const SesionLogged = () => {
             )}
           </button>
           <div className={styles.moneyicon}>
-                <MonetizationOnIcon />
-            <p>
-              {userInfo.coins}
-            </p>
+            <MonetizationOnIcon />
+            <p>{userInfo.coins}</p>
           </div>
         </div>
       ) : (

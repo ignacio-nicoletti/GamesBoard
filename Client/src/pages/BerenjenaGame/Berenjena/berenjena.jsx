@@ -6,7 +6,6 @@ import DataGame from "../../../components/berenjena/informationGame/dataGame/dat
 import DataPlayer from "../../../components/berenjena/informationGame/dataPlayer/dataPlayer";
 import Result from "../../../components/berenjena/informationGame/Results/result";
 import Apuesta from "../../../components/berenjena/apuesta/apuesta";
-import ButtonExitRoom from "../../../components/berenjena/buttonExitRoom/buttonExitRoom.jsx";
 import {
   distribute,
   socket,
@@ -14,6 +13,7 @@ import {
 import MyCards from "../../../components/berenjena/myCards/myCards.jsx";
 import TimmerComponent from "../../../components/berenjena/timmerComponent/timmerComponent";
 import WinnerComponent from "../../../components/berenjena/winnerComponent/winnerComponent";
+import ButtonExitRoom from "../../../components/global/buttonExitRoom/buttonExitRoom";
 
 const GameBerenjena = () => {
   const [loader, setLoader] = useState(false);
@@ -246,7 +246,7 @@ const GameBerenjena = () => {
         <WinnerComponent winner={winner} dataRoom={dataRoom} players={players} />
       )}
 
-      <ButtonExitRoom dataRoom={dataRoom} />
+      <ButtonExitRoom game={dataRoom.game} />
 
       <DataGame round={round} players={players} />
     </div>

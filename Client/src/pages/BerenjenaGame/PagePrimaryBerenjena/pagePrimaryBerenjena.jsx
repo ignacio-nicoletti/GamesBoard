@@ -8,10 +8,10 @@ const PagePrimaryBerenjena = () => {
       <div className={styles.containOption}>
       <img src={welcomeTitle} alt="" className={styles.welcomeImg} />
         <div className={`${styles.option} no-text-select`}>
-          <Link to="/gameberenjenaIA" className={styles.link}>
+          <Link to="/" className={styles.link}>
             VS CPU
           </Link>
-          <Link to="/berenjena/joinRoom" className={styles.link}>
+          <Link to="/joinRoom/berenjena" className={styles.link}>
             Multiplayer
           </Link>
           <Link to="/berenjena/rules" className={styles.link}>

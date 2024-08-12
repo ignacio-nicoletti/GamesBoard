@@ -24,7 +24,7 @@ const PagePrimaryPoker = () => {
       <div className={styles.containOption}>
         <img src={pokerTitle} alt="" className={styles.welcomeImg} />
         <div className={`${styles.option} no-text-select`}>
-          <Link to="/gamepokerIA" className={styles.link}>
+          <Link to="" className={styles.link}>
             VS CPU
           </Link>
           <Link to="/poker/joinRoom" className={styles.link}>

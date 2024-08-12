@@ -82,9 +82,7 @@ export const CreateGameRoom = (
 export const joinGameRoom = (
   game,
   roomId,
-  userName,
-  selectedAvatar,
-  infoUser
+  userInfo
 ) => {
   return new Promise((resolve, reject) => {
     const responses = {};
@@ -108,9 +106,12 @@ export const joinGameRoom = (
     socket.emit("join_room", {
       game,
       roomId,
-      userName,
-      selectedAvatar,
-      email: infoUser.email,
+      userName: userInfo.userName,
+      selectedAvatar: userInfo.avatarProfile,
+      email: userInfo.email ? userInfo.email : "invitado",
+
+
+
     });
   });
 };
@@ -152,12 +153,7 @@ export const CreateGameRoomHorserace = (
   });
 };
 
-export const joinGameRoomHorserace = (
-  game,
-  maxUsers = 10,
-  roomId,
-  userInfo
-) => {
+export const joinGameRoomHorserace = (game, roomId, userInfo) => {
   return new Promise((resolve, reject) => {
     const responses = {};
 
@@ -181,7 +177,6 @@ export const joinGameRoomHorserace = (
       game,
       roomId,
       userName: userInfo.userName,
-      maxUsers,
       selectedAvatar: userInfo.avatarProfile,
       email: userInfo.email ? userInfo.email : "invitado",
     });

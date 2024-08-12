@@ -51,7 +51,7 @@ export default function HorseRaceSockets(io) {
           userName,
           roomId,
           email: email,
-          avatar: selectedAvatar,
+          avatarProfile: selectedAvatar,
           betP: "", // suit apostado
           hasBet: false, // flag to check if the player has bet
           inBet: false,
@@ -112,6 +112,7 @@ export default function HorseRaceSockets(io) {
     socket.on(
       "join_room_horserace",
       async ({ game, roomId, userName, selectedAvatar, email }) => {
+    
         const rooms = permanentRooms[game];
         if (!rooms) {
           socket.emit("error", { error: "Invalid game" });
@@ -155,7 +156,7 @@ export default function HorseRaceSockets(io) {
           userName,
           roomId,
           email: email,
-          avatar: selectedAvatar,
+          avatarProfile: selectedAvatar,
           betP: "", // suit apostado
           hasBet: false, // flag to check if the player has bet
           inBet: false,

@@ -14,10 +14,10 @@ const PagePrimaryHorseGame = () => {
           <img src={logoHorserace} alt="" />
         </div>
         <div className={`${styles.option} no-text-select`}>
-          <Link to="/" className={styles.link}>
+          <Link to="" className={styles.link}>
             VS CPU
           </Link>
-          <Link to="/horserace/joinRoom" className={styles.link}>
+          <Link to="/joinRoom/horserace" className={styles.link}>
             Multiplayer
           </Link>
           <Link to="/" className={styles.link}>

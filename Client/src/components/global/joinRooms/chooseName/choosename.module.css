@@ -10,7 +10,7 @@
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  background-image: url("../../../assets/global/jugadores//bgModal.png");
+  background-image: url("../../../../assets/global/jugadores//bgModal.png");
 }
 
 .modalContent {
@@ -21,6 +21,7 @@
   text-align: center;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px,
     rgba(0, 0, 0, 0.22) 0px 10px 10px;
+  width: 40%;
 }
 
 .modalContent h2 {
@@ -116,6 +117,7 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
+  background-color: black;
   transition: transform 0.3s;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
     rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
@@ -129,4 +131,10 @@
 
 .selectedAvatar {
   border: 3px solid #669bbc;
+}
+
+@media (max-width: 815px) {
+  .modalContent {
+    width: 90%;
+  }
 }

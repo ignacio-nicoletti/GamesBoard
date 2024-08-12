@@ -1,7 +1,7 @@
 import { useState } from "react";
-import InstanceOfAxios from "../../../utils/intanceAxios";
+import InstanceOfAxios from "../../../../utils/intanceAxios";
 import styles from "./choosename.module.css";
-import { GetDecodedCookie } from "../../../utils/DecodedCookie";
+import { GetDecodedCookie } from "../../../../utils/DecodedCookie";
 import Swal from "sweetalert2";
 
 const ChooseName = ({ setShowModal, userInfo, setUserInfo }) => {
@@ -16,15 +16,21 @@ const ChooseName = ({ setShowModal, userInfo, setUserInfo }) => {
         await InstanceOfAxios(`/user/${userInfo.uid}`, "PUT", {
           userName: writeName, // Corrige aquí para usar el nuevo nombre
           avatarProfile: selectedAvatar, // Aquí asegúrate de enviar el avatar correcto
-        }).then((data) =>
-          setUserInfo({ ...userInfo, userName: data.player.userName })
-        );
+        }).then((data) => {
+          setUserInfo({
+            ...userInfo,
+            userName: data.player.userName,
+            avatarProfile: data.player.avatarProfile,
+          });
+          setShowModal(false);
+        });
       } else {
         setUserInfo({
           ...userInfo,
           userName: writeName,
-          avatarPlayer: selectedAvatar,
+          avatarProfile: selectedAvatar,
         });
+        setShowModal(false);
       }
     } else {
       Swal.fire({
