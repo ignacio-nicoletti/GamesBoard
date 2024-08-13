@@ -13,16 +13,28 @@ import HorseSideLeft from "../../../components/horseRace/horseSideLeft/horseSide
 import DeckRight from "../../../components/horseRace/deckRight/deckRight";
 import WinnerComponentHorserace from "../../../components/horseRace/winnerComponentHorserace/winnerComponentHorserace";
 import ButtonExitRoom from "../../../components/global/buttonExitRoom/buttonExitRoom";
+import TableChartIcon from "@mui/icons-material/TableChart";
 
 const HorseRace = () => {
   const [showResult, setShowResult] = useState(false);
   const [myPlayer, setMyPlayer] = useState({});
-
   const [players, setPlayers] = useState([]);
   const [round, setRound] = useState({});
   const [dataRoom, setDataRoom] = useState({});
-
   const [winner, setWinner] = useState({});
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1170);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 1170);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     socket.on("Finish_game_horserace", (data) => {
@@ -57,7 +69,6 @@ const HorseRace = () => {
       round.typeRound === "ronda" &&
       round.sideLeftCards.suit === ""
     ) {
-      //si es ronda y no hay cartas dadas...mezcla
       distributeHorserace(dataRoom, setRound);
     }
     return () => {
@@ -65,6 +76,10 @@ const HorseRace = () => {
       socket.off("start_game_horserace");
     };
   }, [round, players]);
+
+  const toggleTable = () => {
+    setShowResult((prev) => !prev);
+  };
 
   return (
     <div className={styles.contain}>
@@ -83,7 +98,6 @@ const HorseRace = () => {
         {dataRoom && dataRoom.gameStarted && round.typeRound === "waiting" && (
           <TimmerComponentHorserace dataRoom={dataRoom} setRound={setRound} />
         )}
-
         {dataRoom &&
           dataRoom.gameStarted &&
           round.typeRound === "FinishGame" && (
@@ -97,11 +111,22 @@ const HorseRace = () => {
         <HorseContain round={round} />
         <HorseSideLeft round={round} />
         <DeckRight round={round} dataRoom={dataRoom} setRound={setRound} />
-        <BetHorseTable players={players} />
+
+        {isMobile ? (
+          <>
+            <button className={styles.toggleTableButton} onClick={toggleTable}>
+              <TableChartIcon />
+            </button>
+            {showResult && (
+              <BetHorseTable players={players} setShowResult={setShowResult} />
+            )}
+          </>
+        ) : (
+          <BetHorseTable players={players} setShowResult={setShowResult} />
+        )}
       </div>
     </div>
   );
 };
 
 export default HorseRace;
-// hacer que el distribute sea post apostar carta

@@ -60,15 +60,15 @@ const BetHorse = ({ setPlayers, round, setRound, myPlayer, dataRoom }) => {
       return () => clearInterval(timer);
     }
 
-    if (timeLeft === 0 && !hasBet) {
-      socket.emit("BetPlayer_horserace", {
-        inBet: inBet,
-        bet: { value: "11", suit: "-" },
-        myPlayer,
-        dataRoom,
-      });
-      setHasBet(true);
-    }
+    // if (timeLeft === 0 && !hasBet) {
+    //   socket.emit("BetPlayer_horserace", {
+    //     inBet: inBet,
+    //     bet: { value: "11", suit: "-" },
+    //     myPlayer,
+    //     dataRoom,
+    //   });
+    //   setHasBet(true);
+    // }
   }, [timeLeft, hasBet, dataRoom]);
 
   return (

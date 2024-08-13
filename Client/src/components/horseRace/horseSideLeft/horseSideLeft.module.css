@@ -6,14 +6,13 @@
   position: absolute;
   left: 0;
   top: 0;
-  /* align-items: center; */
+  align-items: start;
   margin-top: 1rem;
 }
 
 .cardsSideLeft {
   width: 50%;
   margin-left: 20%;
-  /* margin-bottom: 2rem; */
   border: 3px solid darkgoldenrod;
   border-radius: 13px;
   position: absolute;
@@ -38,4 +37,28 @@
 
 .yPos5 {
   top: 80%;
+}
+
+
+@media only screen and (max-width: 840px) {
+  .ContainSideLeft {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 80vh;
+    position: absolute;
+    left: 0;
+    top: 0;
+    align-items: start;
+    margin-top: 1rem;
+  }
+  
+  .cardsSideLeft {
+    width: 80%;
+    margin-left: 1.5%;
+    border: 3px solid darkgoldenrod;
+    border-radius: 13px;
+    position: absolute;
+  }
+  
 }

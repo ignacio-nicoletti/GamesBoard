@@ -5,21 +5,25 @@
   z-index: 2;
   font-size: 2rem;
   border: 3px solid black;
+  box-sizing: border-box; /* Añadido para asegurarse de que el padding no afecte el tamaño total */
 }
 
 .title {
   color: white;
   margin: 0;
+  text-align: center; /* Centramos el texto */
 }
 
 .contain p {
   margin: 0;
+  text-align: center; /* Centramos el texto */
 }
 
 .checkbox_wrapper_24 {
   display: flex;
-  justify-content: center;
-  gap: 25px;
+  flex-direction: column; /* Cambiamos a columna para mejor disposición en pantallas pequeñas */
+  align-items: center;
+  gap: 10px;
   padding: 1rem;
 }
 
@@ -28,7 +32,7 @@
 }
 
 .checkbox_wrapper_24 label {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   cursor: pointer;
 }
@@ -40,8 +44,7 @@
   border: 2px solid black;
   border-radius: 50%;
   margin-right: 10px;
-  transition: background-color 150ms 200ms,
-    transform 350ms cubic-bezier(0.78, -1.22, 0.17, 1.89);
+  transition: background-color 150ms 200ms, transform 350ms cubic-bezier(0.78, -1.22, 0.17, 1.89);
   position: relative;
   display: flex;
   justify-content: center;
@@ -54,14 +57,17 @@
 }
 
 .checkbox_wrapper_24 label span svg {
-  width: 15px; /* Adjust size as needed */
-  height: 15px; /* Adjust size as needed */
-  stroke: white; /* Change color if needed */
+  width: 15px; /* Ajustar tamaño según sea necesario */
+  height: 15px; /* Ajustar tamaño según sea necesario */
+  stroke: white;
 }
 
 .containCards {
   display: flex;
-  gap: 25px;
+  flex-wrap: wrap; /* Permite que las tarjetas se ajusten en múltiples filas si es necesario */
+  justify-content: center; /* Centramos las tarjetas horizontalmente */
+  gap: 15px;
+  margin: 0 auto;
 }
 
 .divCard {
@@ -79,14 +85,78 @@
 
 .buttonDiv {
   margin-top: 1rem;
+  display: flex;
+  justify-content: center; /* Centramos el botón horizontalmente */
 }
 
 .buttonDiv button {
-  width: 50%;
+  width: 100%; /* Aseguramos que el botón ocupa el 100% del contenedor */
+  max-width: 200px; /* Limitar el ancho máximo para evitar que sea demasiado grande en pantallas grandes */
   background-color: #669bbc;
   font-size: 1rem;
   color: white;
   padding: 0.5rem;
   border-radius: 10px;
   cursor: pointer;
+}
+
+@media only screen and (max-width: 840px) {
+  .contain {
+    font-size: 1.5rem; /* Reducimos el tamaño de la fuente */
+  width: 100%;
+  }
+
+  .checkbox_wrapper_24 {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .checkbox_wrapper_24 label span {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+  }
+
+  .checkbox_wrapper_24 label span svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .containCards {
+    gap: 10px;
+    justify-content: space-evenly;
+  }
+
+  .buttonDiv button {
+    width: 100%;
+    max-width: 150px; /* Reducimos el ancho máximo del botón en pantallas más pequeñas */
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .contain {
+    font-size: 1.2rem; /* Reducimos aún más el tamaño de la fuente */
+    padding: 0.5rem;
+  }
+
+  .checkbox_wrapper_24 label span {
+    width: 18px;
+    height: 18px;
+    margin-right: 6px;
+  }
+
+  .checkbox_wrapper_24 label span svg {
+    width: 10px;
+    height: 10px;
+  }
+
+  .containCards {
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .buttonDiv button {
+    width: 100%;
+    max-width: 120px; /* Reducimos el ancho máximo del botón en pantallas muy pequeñas */
+  }
 }

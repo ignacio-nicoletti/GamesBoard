@@ -1,3 +1,5 @@
+/* Añadir a betHorseTable.module.css */
+
 .table {
   display: table;
   position: absolute;
@@ -18,4 +20,50 @@
   border: 1px solid #000;
   padding: 8px;
   text-align: center;
+}
+
+.tableMobileContain {
+  display: none;
+  width: 95%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #557a9d;
+  border-radius: 10px;
+  padding-block: 1rem;
+  z-index: 2;
+  top:20%;
+  position: absolute;
+}
+
+.tableMobile {
+  display: table;
+  border-collapse: collapse;
+  color: #ddd;
+  flex: 1;
+  width: 90%;
+}
+
+.rowMobile {
+  display: table-row;
+}
+
+.cellMobile {
+  display: table-cell;
+  border: 1px solid #000;
+  padding: 8px;
+  text-align: center;
+}
+
+@media only screen and (max-width: 1170px) {
+  .table {
+    display: none;
+  }
+  .tableMobileContain {
+    display: flex;
+  }
+}
+
+@media only screen and (max-width: 840px) {
+  /* Puedes ajustar más detalles para móviles aquí si es necesario */
 }

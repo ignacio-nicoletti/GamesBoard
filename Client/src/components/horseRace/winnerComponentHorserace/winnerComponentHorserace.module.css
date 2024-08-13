@@ -8,6 +8,8 @@
   background-color: #ff914d;
   width: 25%;
   border-radius: 10px;
+  
+
 }
 
 .divWinners {
@@ -189,4 +191,18 @@
   left: 70%;
   top: 60%;
   animation-delay: -0.4s;
+}
+
+@media only screen and (max-width: 840px) {
+  .container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    background-color: #ff914d;
+    width: 90%;
+    border-radius: 10px;
+  }
+
 }
