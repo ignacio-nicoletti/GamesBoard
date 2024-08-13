@@ -13,6 +13,7 @@ import PagePrimaryPoker from "./pages/PokerGame/PagePrimaryPoker/PagePrimaryPoke
 import Store from "./pages/store/store";
 import { ProtectedRoute } from "./utils/ProtectedRoutes/ProtectedRoute";
 import JoinRoom from "./pages/joinRoom/JoinRoom";
+import Profile from "./pages/profile/profile";
 
 function App() {
   return (
@@ -24,6 +25,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Store />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
             </ProtectedRoute>
           }
         />

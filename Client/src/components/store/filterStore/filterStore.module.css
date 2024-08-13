@@ -1,0 +1,36 @@
+.filterContainer {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  gap: 50px;
+}
+
+.filterContainer input,
+.filterContainer select,
+.filterContainer button {
+  padding: 1rem;
+  border-radius: 1rem;
+  background-color: #669bbc;
+  color: white;
+  text-align: center;
+  font-size: 1.5rem;
+  border:2px solid white
+}
+
+.filterContainer label {
+  font-size: 1.5rem;
+}
+
+.filterContainer input::placeholder {
+  color: white;
+}
+
+@media only screen and (max-width: 970px) {
+  .filterContainer {
+    flex-direction: column;
+    gap: 20px;
+    width: 90%;
+    
+  }
+
+}

@@ -189,7 +189,7 @@ const SideBar = ({ userInfo, setShowModal, game, setRoomId, roomId }) => {
                         Level {gameData.level} - {gameName}
                       </p>
                       <p>
-                        {`xp ${gameData.xp}/${
+                        {`XP ${gameData.xp} / ${
                           gameData.xp + gameData.xpRemainingForNextLevel
                         }`}
                       </p>

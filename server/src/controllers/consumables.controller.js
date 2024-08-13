@@ -125,6 +125,7 @@ export const BuyConsumable = async (req, res) => {
       player.avatares.push(selectConsumable);
     } else if (selectConsumable.category === "Paint") {
       player.colorName = selectConsumable.title;
+      player.avatares.push(selectConsumable);
     } else if (selectConsumable.category === "XP") {
       const xpToAdd = selectConsumable.value;
        updatePlayerExperience(player, selectedGame, xpToAdd);

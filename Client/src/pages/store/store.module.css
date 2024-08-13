@@ -1,13 +1,17 @@
 .contain {
   width: 100%;
+  min-height: 100vh; /* Asegura que el contenedor cubra al menos la altura completa de la ventana de visualización */
+  position: relative; /* Cambia a relative para que el fondo se ajuste a la ventana completa */
   margin: 0;
+  top: 0;
+  left: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   font-family: "Bebas Neue", sans-serif;
   background-image: url("../../../src/assets/global/fondoo.png");
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: cover; /* Asegura que la imagen de fondo cubra toda la pantalla */
 }
 
 .contain p {
@@ -204,5 +208,12 @@
     box-shadow: rgba(0, 0, 0, 0.35) 0px -50px 36px -28px inset;
     border-radius: 10px;
     border: 3px solid black;
+  }
+}
+
+@media only screen and (max-width: 1030px) {
+  .title {
+    width: 100%;
+    margin-top: 10%;
   }
 }

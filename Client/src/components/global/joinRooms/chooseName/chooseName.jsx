@@ -68,31 +68,33 @@ const ChooseName = ({ setShowModal, userInfo, setUserInfo }) => {
             <p>Choose your Avatar</p>
             <div className={styles.DivAvatarsGrid}>
               {userInfo.avatares &&
-                userInfo.avatares.map((avatar, index) =>
-                  avatar.image ? (
-                    <img
-                      key={index}
-                      src={avatar.url}
-                      alt={avatar.name}
-                      onClick={() => setSelectedAvatar(avatar)} // Almacena el objeto del avatar seleccionado
-                      className={
-                        selectedAvatar === avatar ? styles.selectedAvatar : ""
-                      }
-                    />
-                  ) : (
-                    <video
-                      key={index}
-                      src={avatar.url}
-                      autoPlay
-                      loop
-                      muted
-                      onClick={() => setSelectedAvatar(avatar)} // Evento onClick para seleccionar video
-                      className={
-                        selectedAvatar === avatar ? styles.selectedAvatar : ""
-                      }
-                    />
-                  )
-                )}
+                userInfo.avatares
+                  .filter((el) => el.category === "Avatar")
+                  .map((avatar, index) =>
+                    avatar.image ? (
+                      <img
+                        key={index}
+                        src={avatar.url}
+                        alt={avatar.name}
+                        onClick={() => setSelectedAvatar(avatar)} // Almacena el objeto del avatar seleccionado
+                        className={
+                          selectedAvatar === avatar ? styles.selectedAvatar : ""
+                        }
+                      />
+                    ) : (
+                      <video
+                        key={index}
+                        src={avatar.url}
+                        autoPlay
+                        loop
+                        muted
+                        onClick={() => setSelectedAvatar(avatar)} // Evento onClick para seleccionar video
+                        className={
+                          selectedAvatar === avatar ? styles.selectedAvatar : ""
+                        }
+                      />
+                    )
+                  )}
             </div>
           </div>
           <button onClick={handleSubmit}>Save</button>
