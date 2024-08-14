@@ -4,6 +4,7 @@
   right: 1rem;
   display: flex;
   align-items: center;
+  font-family: "Bebas Neue", sans-serif;
 }
 
 .authButton {
@@ -80,14 +81,28 @@
   font-size: 1.5rem;
   margin: 0;
 }
+.Link{
+  text-decoration: none;
+  color: white;
+  padding: 0.3rem;
+}
+.Link:hover{
+  color: rgb(0, 0, 0);
+  background-color: rgb(255, 255, 255);
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+  border-radius: 50%;
+  padding: 0.3rem;
+}
 
 /* Responsive adjustments */
 @media only screen and (max-width: 768px) {
   .header {
     flex-direction: column;
     top: 0.5rem;
-    right: 0.5rem;
-    gap: 0.5rem;
+    right: -1px;
+    width: 100%;
   }
 
   .authButton,
@@ -113,7 +128,6 @@
 @media only screen and (max-width: 480px) {
   .header {
     flex-direction: row;
-    right: 0.5rem;  
   }
 
   .authButton,
@@ -140,7 +154,6 @@
     flex-direction: column;
     align-items: flex-start;
     top: 0.5rem;
-    right: 0.5rem;
   }
 
   .authButton,

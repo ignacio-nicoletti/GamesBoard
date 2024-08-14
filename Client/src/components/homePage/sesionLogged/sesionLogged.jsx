@@ -1,6 +1,5 @@
 import styles from "./sesionLogged.module.css";
 import Cookies from "js-cookie";
-import DefaultAvatar from "../../../assets/global/jugadores/DefaultAvatar.png";
 import LogoutIcon from "@mui/icons-material/Logout";
 import StoreIcon from "@mui/icons-material/Store";
 import HomeIcon from "@mui/icons-material/Home";
@@ -8,7 +7,7 @@ import { useEffect, useState } from "react";
 import { GetDecodedCookie } from "../../../utils/DecodedCookie";
 import { DecodedToken } from "../../../utils/DecodedToken";
 import Login from "../login/login";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import InstanceOfAxios from "../../../utils/intanceAxios";
 
@@ -55,7 +54,7 @@ const SesionLogged = () => {
   const handleLocation = () => {
     if (location.pathname === "/") {
       window.location.href = "/store";
-    } else if (location.pathname === "/store") {
+    } else if (location.pathname === "/store" || location.pathname === "/profile") {
       window.location.href = "/";
     }
   };
@@ -84,14 +83,17 @@ const SesionLogged = () => {
               className={styles.avatar}
             />
           )}
-          Hello, <span>{userInfo.userName}</span>
+          Hello,{" "}
+          <Link to ="/profile" className={styles.Link}>
+            <span>{userInfo.userName}</span>
+          </Link>
           <button className={styles.logoutBtn} onClick={handleLogout}>
             <LogoutIcon />
           </button>
           <button className={styles.logoutBtn} onClick={handleLocation}>
             {location.pathname == "/" ? (
               <StoreIcon />
-            ) : location.pathname == "/store" ? (
+            ) : location.pathname == "/store" || location.pathname == "/profile"? (
               <HomeIcon />
             ) : (
               ""
