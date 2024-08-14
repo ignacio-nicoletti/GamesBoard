@@ -8,7 +8,7 @@ const DataPlayerHorseRace = ({ myPlayer }) => {
         {myPlayer && myPlayer.avatarProfile && myPlayer.avatarProfile.image ? (
           <img
             src={myPlayer.avatarProfile && myPlayer.avatarProfile.url}
-            alt={myPlayer.avatar.title}
+            alt={myPlayer.avatarProfile.title}
           />
         ) : (
           <video
