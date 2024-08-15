@@ -8,6 +8,8 @@ import style from "./profile.module.css";
 const Profile = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [selectedAvatar, setSelectedAvatar] = useState(null);
+  const [selectedColorName, setSelectedColorName] = useState(""); // Estado para almacenar la opción seleccionada
+
   const token = GetDecodedCookie("cookieToken");
 
   useEffect(() => {
@@ -37,7 +39,8 @@ const Profile = () => {
     if (userInfo && selectedAvatar) {
       try {
         const response = await InstanceOfAxios(`/user/${userInfo.uid}`, "PUT", {
-          avatarProfile: selectedAvatar,
+          avatarUpdateProfile: selectedAvatar,
+          selectedColorName,
         });
         setUserInfo({
           ...userInfo,
@@ -65,7 +68,11 @@ const Profile = () => {
                     ? style.selected
                     : ""
                 }`}
-                onClick={() => handleAvatarClick(avatar)}
+                onClick={
+                  avatar && avatar.title === "Rainbow Name"
+                    ? () => {setSelectedColorName(avatar.title);handleAvatarClick(avatar)}
+                    : () => handleAvatarClick(avatar)
+                }
               >
                 {avatar.image ? (
                   <img
@@ -85,6 +92,18 @@ const Profile = () => {
                 )}
                 <h3 className={style.avatarTitle}>{avatar.title}</h3>
                 <p className={style.avatarDescription}>{avatar.description}</p>
+                {avatar.category === "Paint" &&
+                  avatar.title === "Color specific" && (
+                    <select
+                      name=""
+                      id=""
+                      onChange={(e) => setSelectedColorName(e.target.value)}
+                    >
+                      <option value="Red">Red</option>
+                      <option value="Blue">Blue</option>
+                      <option value="Green">Green</option>
+                    </select>
+                  )}
               </div>
             ))
           ) : (
@@ -93,7 +112,9 @@ const Profile = () => {
         </div>
         {selectedAvatar && (
           <div className={style.updateButton}>
-            <button onClick={updateProfile} disabled={!selectedAvatar.title}>Update Profile</button>
+            <button onClick={updateProfile} disabled={!selectedAvatar.title}>
+              Update Profile
+            </button>
           </div>
         )}
       </div>

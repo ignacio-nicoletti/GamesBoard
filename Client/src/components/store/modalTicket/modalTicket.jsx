@@ -14,13 +14,18 @@ const ModalTicket = ({
   fetchConsumables,
 }) => {
   const [selectedGame, setSelectedGame] = useState(""); // Estado para almacenar la opción seleccionada
+  const [selectedColorName, setSelectedColorName] = useState(""); // Estado para almacenar la opción seleccionada
 
   const handleSubmit = async () => {
     setShowModalTicket(false);
     try {
       await InstanceOfAxios(`/consumable/${userInfo.uid}`, "PUT", {
         selectConsumable,
-        selectedGame, // Incluimos la opción seleccionada en el objeto a enviar
+        selectedGame,
+        selectedColorName, // Asegúrate de enviar el color seleccionado
+      }).then(() => {
+        fetchUserInfo();
+        fetchConsumables();
       });
     } catch (error) {
       Swal.fire({
@@ -33,11 +38,8 @@ const ModalTicket = ({
         },
       });
     }
-
-    // Llamar a fetchUserInfo para actualizar la información del usuario
-    fetchUserInfo();
-    fetchConsumables();
   };
+  // Llamar a fetchUserInfo para actualizar la información del usuario
 
   return (
     <div className={style.modal}>
@@ -47,14 +49,17 @@ const ModalTicket = ({
             <p>{userInfo.coins}</p>
             <MonetizationOnIcon />
           </div>
-          <p>Ticket</p>
-          <CancelIcon
-            className={style.modalCancel_button}
-            onClick={() => {
-              setShowModalTicket(false);
-              setSelectConsumable({});
-            }}
-          />
+          <div className={style.modalCancelTitle}>
+            <p>Ticket</p>
+          </div>
+          <div className={style.modalCancel_button}>
+            <CancelIcon
+              onClick={() => {
+                setShowModalTicket(false);
+                setSelectConsumable({});
+              }}
+            />
+          </div>
         </div>
 
         <div className={style.DivAvatars}>
@@ -106,6 +111,30 @@ const ModalTicket = ({
             </p>
           </div>
         </div>
+        {selectConsumable.category === "Paint" &&
+          selectConsumable.title === "Color specific" && (
+            <div className={style.Divselect}>
+              <select
+                name="Color"
+                id=""
+                value={selectedColorName} // Establecemos el valor actual del estado
+                onChange={(e) => setSelectedColorName(e.target.value)} // Actualizamos el estado cuando cambia la selección
+              >
+                <option value="" disabled={true}>
+                  Select your color of name
+                </option>
+                <option value="Red" className={style.optionRed}>
+                  Red
+                </option>
+                <option value="Blue" className={style.optionBlue}>
+                  Blue
+                </option>
+                <option value="Green" className={style.optionGreen}>
+                  Green
+                </option>
+              </select>
+            </div>
+          )}
         {selectConsumable.category === "XP" && (
           <div className={style.Divselect}>
             <select
@@ -122,6 +151,7 @@ const ModalTicket = ({
             </select>
           </div>
         )}
+
         <button
           onClick={handleSubmit}
           disabled={

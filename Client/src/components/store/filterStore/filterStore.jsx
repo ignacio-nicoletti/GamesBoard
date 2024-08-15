@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import style from './filterStore.module.css';
+import React, { useState, useEffect } from "react";
+import style from "./filterStore.module.css";
 
 const FilterStore = ({ onFilter }) => {
   const [filters, setFilters] = useState({
-    name: '',
-    category: '',
-    filterStatus: 'all', // 'all', 'redeemed', 'notRedeemed'
+    name: "",
+    category: "",
+    filterStatus: "all", // 'all', 'redeemed', 'notRedeemed'
   });
 
   // Actualiza el filtro en tiempo real
@@ -19,7 +19,7 @@ const FilterStore = ({ onFilter }) => {
 
   useEffect(() => {
     onFilter(filters); // Llama a la función de filtro en tiempo real cuando el estado cambia
-  }, [filters, onFilter]);
+  }, [filters]);
 
   return (
     <div className={style.filterContainer}>

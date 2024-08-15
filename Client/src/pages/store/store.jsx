@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import SesionLogged from '../../components/homePage/sesionLogged/sesionLogged';
-import style from './store.module.css';
-import InstanceOfAxios from '../../utils/intanceAxios';
-import { DecodedToken } from '../../utils/DecodedToken';
-import { GetDecodedCookie } from '../../utils/DecodedCookie';
-import ModalTicket from '../../components/store/modalTicket/modalTicket';
-import FilterStore from '../../components/store/filterStore/filterStore';
+import React, { useEffect, useState } from "react";
+import SesionLogged from "../../components/homePage/sesionLogged/sesionLogged";
+import style from "./store.module.css";
+import InstanceOfAxios from "../../utils/intanceAxios";
+import { DecodedToken } from "../../utils/DecodedToken";
+import { GetDecodedCookie } from "../../utils/DecodedCookie";
+import ModalTicket from "../../components/store/modalTicket/modalTicket";
+import FilterStore from "../../components/store/filterStore/filterStore";
 
 const Store = () => {
   const [dataStore, setDataStore] = useState([]);
@@ -14,34 +14,34 @@ const Store = () => {
   const [showModalTicket, setShowModalTicket] = useState(false);
   const [selectConsumable, setSelectConsumable] = useState({});
   const [filters, setFilters] = useState({
-    name: '',
-    category: '',
-    filterStatus: 'all',
+    name: "",
+    category: "",
+    filterStatus: "all",
   });
 
-  const token = GetDecodedCookie('cookieToken');
+  const token = GetDecodedCookie("cookieToken");
 
   const fetchUserInfo = async () => {
     try {
       if (token) {
         const data = DecodedToken(token);
-        const response = await InstanceOfAxios(`/user/${data.user.id}`, 'GET');
+        const response = await InstanceOfAxios(`/user/${data.user.id}`, "GET");
         setUserInfo(response.player);
       }
     } catch (error) {
-      console.error('Error fetching user info:', error);
+      console.error("Error fetching user info:", error);
     }
   };
 
   const fetchConsumables = async () => {
     try {
-      const response = await InstanceOfAxios(`/consumable`, 'GET');
+      const response = await InstanceOfAxios(`/consumable`, "GET");
       if (response) {
         setDataStore(response);
         setFilteredData(response); // Inicialmente, el filtrado es igual a los datos completos
       }
     } catch (error) {
-      console.error('Error fetching products:', error);
+      console.error("Error fetching products:", error);
     }
   };
 
@@ -67,17 +67,18 @@ const Store = () => {
       filtered = filtered.filter((item) => item.category === filters.category);
     }
 
-    if (filters.filterStatus === 'redeemed') {
+    if (filters.filterStatus === "redeemed") {
       filtered = filtered.filter((item) =>
         userInfo.avatares?.some(
           (avatar) => avatar._id === item.uid || avatar.uid === item.uid
         )
       );
-    } else if (filters.filterStatus === 'notRedeemed') {
+    } else if (filters.filterStatus === "notRedeemed") {
       filtered = filtered.filter(
-        (item) => !userInfo.avatares?.some(
-          (avatar) => avatar._id === item.uid || avatar.uid === item.uid
-        )
+        (item) =>
+          !userInfo.avatares?.some(
+            (avatar) => avatar._id === item.uid || avatar.uid === item.uid
+          )
       );
     }
 
@@ -107,8 +108,8 @@ const Store = () => {
       const requiredLevelB = requirement.levelB || 0;
       const requiredLevelH = requirement.levelH || 0;
 
-      const userLevelB = experience['Berenjena']?.level || 0;
-      const userLevelH = experience['Horserace']?.level || 0;
+      const userLevelB = experience["Berenjena"]?.level || 0;
+      const userLevelH = experience["Horserace"]?.level || 0;
 
       return userLevelB >= requiredLevelB && userLevelH >= requiredLevelH;
     });
@@ -120,7 +121,7 @@ const Store = () => {
   };
 
   const handleFilterChange = (newFilters) => {
-    setFilters(prevFilters => ({
+    setFilters((prevFilters) => ({
       ...prevFilters,
       ...newFilters,
     }));
@@ -130,14 +131,14 @@ const Store = () => {
     <div className={style.contain}>
       <SesionLogged />
 
-        <div className={style.title}>
-          <p>Store</p>
-        </div>
+      <div className={style.title}>
+        <p>Store</p>
+      </div>
       <FilterStore onFilter={handleFilterChange} />
 
       <div className={style.MapProducts}>
         {filteredData.map((el, index) => {
-          const isAvatar = el.category === 'Avatar'||el.category === 'Paint';
+          const isAvatar = el.category === "Avatar" || el.category === "Paint";
           const hasConsumable = userInfo.avatares?.some(
             (avatar) => avatar._id === el.uid || avatar.uid === el.uid
           );
@@ -162,9 +163,9 @@ const Store = () => {
               <div className={style.descriptionDiv}>
                 <p
                   className={
-                    el.title === 'Rainbow Name'
+                    el.title === "Rainbow Name"
                       ? style.rainbow_text
-                      : el.title === 'Color specific'
+                      : el.title === "Color specific"
                       ? style.rgb_text
                       : style.description
                   }
@@ -177,18 +178,18 @@ const Store = () => {
               </div>
               <div className={style.NecesaryDiv}>
                 <p>
-                  Necesary:{' '}
+                  Necesary:{" "}
                   {el.levelNecesary.map((level, index) => (
                     <span key={index}>
-                      Berenjena: Lvl{' '}
+                      Berenjena: Lvl{" "}
                       <span className={style.NecesaryValue}>
                         {level.levelB || 0}
-                      </span>{' '}
-                      - HorseRace: Lvl{' '}
+                      </span>{" "}
+                      - HorseRace: Lvl{" "}
                       <span className={style.NecesaryValue}>
                         {level.levelH || 0}
                       </span>
-                      {index < el.levelNecesary.length - 1 ? ', ' : ''}
+                      {index < el.levelNecesary.length - 1 ? ", " : ""}
                     </span>
                   ))}
                 </p>

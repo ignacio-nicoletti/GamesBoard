@@ -14,7 +14,7 @@ export const GetPlayerById = async (req, res) => {
   const { id } = req.params;
   try {
     let player = await Player.findById(id).select("-password");
-  
+
     return res.status(200).json({ player });
   } catch (error) {
     res.status(400).json(formatError(error.message));
@@ -23,21 +23,30 @@ export const GetPlayerById = async (req, res) => {
 
 export const UpdatePlayerById = async (req, res) => {
   const { id } = req.params;
-  const { userName, avatarProfile } = req.body; // Asegúrate de extraer avatarProfile aquí
+  const { userName, avatarUpdateProfile, selectedColorName } = req.body;
 
   try {
-    let player = await Player.findByIdAndUpdate(
-      id,
-      {
-        userName,          // Usa el nombre directamente del body
-        avatarProfile,     // Actualiza el avatarProfile directamente
-      },
-      { new: true } // Esto garantiza que se devuelva el documento actualizado
-    );
+    let player = await Player.findById(id);
 
     if (!player) {
       return res.status(404).json({ error: "Player not found" });
     }
+
+    player = await Player.findByIdAndUpdate(
+      id,
+      {
+        userName: userName,
+        avatarProfile:
+          avatarUpdateProfile && avatarUpdateProfile.category === "Avatar"
+            ? avatarUpdateProfile
+            : player.avatarProfile,
+        colorName:
+          selectedColorName && avatarUpdateProfile.category === "Paint"
+            ? selectedColorName
+            : player.colorName,
+      },
+      { new: true }
+    );
 
     return res.status(200).json({ player });
   } catch (error) {
@@ -120,7 +129,10 @@ export const AddExperience = async (req, res) => {
           await player.save();
           return player;
         } catch (error) {
-          console.error(`Error updating experience for player ${playerId}:`, error);
+          console.error(
+            `Error updating experience for player ${playerId}:`,
+            error
+          );
           throw error;
         }
       };
@@ -154,7 +166,10 @@ export const AddExperience = async (req, res) => {
         }
 
         // Actualizar la experiencia de los perdedores que apostaron
-        const losers = players.filter(player => player.inBet && !winner.some(w => w.idDB === player.idDB));
+        const losers = players.filter(
+          (player) =>
+            player.inBet && !winner.some((w) => w.idDB === player.idDB)
+        );
         for (const loser of losers) {
           if (loser.idDB && loser.idDB !== "-") {
             await updatePlayerExperience(loser.idDB, loseExperience);
@@ -171,5 +186,3 @@ export const AddExperience = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
-

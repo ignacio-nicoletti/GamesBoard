@@ -23,11 +23,11 @@
   width: 100%;
 }
 
-.avatarContainer h3{
-    color: white;
-    font-size: 2rem;
-    margin: 0;
-    margin-top: 5%;
+.avatarContainer h3 {
+  color: white;
+  font-size: 2rem;
+  margin: 0;
+  margin-top: 5%;
 }
 
 .avatarContainerMap {
@@ -89,6 +89,50 @@
   font-size: 1.2rem;
   background-color: #4a90e2;
   color: white;
-  border:3px solid black;
+  border: 3px solid black;
   cursor: pointer;
+}
+
+.avatarContainerMap select {
+  padding: 0.5rem;
+  border-radius: 10px;
+  background-color: #4a90e2;
+  color: white;
+  width: 50%;
+}
+
+@media only screen and (max-width: 970px) {
+  .avatarContainer {
+    width: 90%;
+    margin-block: 1rem;
+    margin-top: 15%;
+  }
+
+  .avatarContainerMap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .updateButton {
+    display: flex;
+    justify-content: center;
+    position: sticky;
+    width: 100%;
+    bottom: 0vh;
+    padding-bottom: 0.5rem;
+  }
+  
+  .updateButton button {
+    padding: 1rem;
+    border-radius: 10px;
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 1.2rem;
+    background-color: #4a90e2;
+    color: white;
+    border: 3px solid black;
+    cursor: pointer;
+  }
 }

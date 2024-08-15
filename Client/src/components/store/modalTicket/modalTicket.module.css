@@ -15,17 +15,11 @@
 .modalContent {
   width: 70%;
   background: white;
-  margin-inline: 0.5rem;
   padding: 20px;
   border-radius: 10px;
-  text-align: center;
+  justify-content: center;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px,
     rgba(0, 0, 0, 0.22) 0px 10px 10px;
-}
-
-.modalContent h2 {
-  font-size: 2rem;
-  color: #333;
 }
 
 .modalContent button {
@@ -56,35 +50,57 @@
   border: 2px solid black;
   padding: 1rem;
 }
+
 .modalCancel {
   display: flex;
   justify-content: space-between;
   font-size: 3rem;
-  align-items: center;
 }
 
 .modalCancelMOney {
   font-size: 1.5rem;
   display: flex;
   align-items: center;
+  width: 10%;
 }
 .modalCancel_button {
   cursor: pointer;
+  width: 10%;
+}
+
+.modalCancelTitle {
+  width: 10%;
+}
+
+.DivAvatars {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .priceDiv {
   font-size: 2rem;
 }
-.Divselect select{
+.Divselect select {
   background-color: #669bbc;
   padding: 1rem;
   border-radius: 10px;
+}
 
+.optionRed {
+  color: red;
+}
+
+.optionBlue {
+  color: blue;
+}
+
+.optionGreen {
+  color: green;
 }
 
 @media only screen and (max-width: 970px) {
   .modalContent {
     width: 90%;
-
   }
 }

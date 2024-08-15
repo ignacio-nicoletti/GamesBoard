@@ -3,8 +3,16 @@ import { Player } from "../models/players.js";
 import { formatError } from "../utils/formatError.js";
 
 export const AddConsumable = async (req, res) => {
-  const { title, price, description, levelNecesary, url, image, category,value } =
-    req.body;
+  const {
+    title,
+    price,
+    description,
+    levelNecesary,
+    url,
+    image,
+    category,
+    value,
+  } = req.body;
 
   try {
     let consumable = new Consumable({
@@ -15,7 +23,7 @@ export const AddConsumable = async (req, res) => {
       url,
       image,
       category,
-      value
+      value,
     });
 
     await consumable.save();
@@ -55,7 +63,6 @@ export const DeleteConsumableById = async (req, res) => {
     res.status(400).json(formatError(error.message));
   }
 };
-
 
 const updatePlayerExperience = (player, game, xpToAdd) => {
   const xpForNextLevel = (level) => Math.round(100 * Math.pow(1.2, level - 1));
@@ -110,7 +117,7 @@ const updatePlayerExperience = (player, game, xpToAdd) => {
 
 export const BuyConsumable = async (req, res) => {
   const { id } = req.params;
-  const { selectConsumable, selectedGame } = req.body;
+  const { selectConsumable, selectedGame, selectedColorName } = req.body;
 
   try {
     const player = await Player.findById(id);
@@ -124,15 +131,19 @@ export const BuyConsumable = async (req, res) => {
     if (selectConsumable.category === "Avatar") {
       player.avatares.push(selectConsumable);
     } else if (selectConsumable.category === "Paint") {
-      player.colorName = selectConsumable.title;
+      if (selectConsumable.title === "Rainbow Name") {
+        player.colorName = selectConsumable.title;
+      } else {
+        player.colorName = selectedColorName;
+      }
       player.avatares.push(selectConsumable);
     } else if (selectConsumable.category === "XP") {
       const xpToAdd = selectConsumable.value;
-       updatePlayerExperience(player, selectedGame, xpToAdd);
+      updatePlayerExperience(player, selectedGame, xpToAdd);
     }
 
     player.coins -= selectConsumable.price;
-    player.markModified('experience');
+    player.markModified("experience");
     await player.save();
 
     res.status(200).json("Compra hecha");
