@@ -16,8 +16,8 @@ const HorseContain = ({ round }) => {
     <div className={styles.Contain}>
       {round &&
         round.horseDeck &&
-        round.horseDeck.map((el) => (
-          <div className={`${styles.cards} ${yClasses[el.pos]}`}>
+        round.horseDeck.map((el,index) => (
+          <div className={`${styles.cards} ${yClasses[el.pos]}`} key={index}>
             <Cards value={el.value} suit={el.suit} back={false} />
           </div>
         ))}

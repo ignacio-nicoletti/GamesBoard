@@ -12,7 +12,6 @@ export default function AutocompleteExample({ roomsInfo, onFilter, game }) {
   const [selectedRoom, setSelectedRoom] = React.useState("all");
   const [selectedPlayer, setSelectedPlayer] = React.useState("");
   const [roomNumber, setRoomNumber] = React.useState(null);
-  console.log(roomsInfo);
   React.useEffect(() => {
     filterRooms();
   }, [selectedRoom, selectedPlayer, roomNumber]);
