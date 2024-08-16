@@ -1,7 +1,9 @@
 import React from "react";
 import styles from "./betHorseTable.module.css"; // Asegúrate de que la ruta sea correcta
 import CancelIcon from "@mui/icons-material/Cancel";
+
 const BetHorseTable = ({ players, setShowResult }) => {
+  console.log(players);
   return (
     <>
       <div className={styles.table}>
@@ -16,7 +18,21 @@ const BetHorseTable = ({ players, setShowResult }) => {
         {players &&
           players.map((player, index) => (
             <div key={index} className={styles.row}>
-              <div className={styles.cell}>{player.userName}</div>
+              <div
+                className={`${styles.cellMobile} ${
+                  player.colorName === "Rainbow Name"
+                    ? styles.rainbow_text
+                    : player.colorName === "Red"
+                    ? styles.red_text
+                    : player.colorName === "Blue"
+                    ? styles.blue_text
+                    : player.colorName === "Green"
+                    ? styles.green_text
+                    : ""
+                }`}
+              >
+                {player.userName}
+              </div>
               <div className={styles.cell}>
                 {player.betP && player.betP.suit === "oro"
                   ? "•"
@@ -70,7 +86,21 @@ const BetHorseTable = ({ players, setShowResult }) => {
           {players &&
             players.map((player, index) => (
               <div key={index} className={styles.rowMobile}>
-                <div className={styles.cellMobile}>{player.userName}</div>
+                <div
+                  className={`${styles.cellMobile} ${
+                    player.colorName === "Rainbow Name"
+                      ? styles.rainbow_text
+                      : player.colorName === "Red"
+                      ? styles.red_text
+                      : player.colorName === "Blue"
+                      ? styles.blue_text
+                      : player.colorName === "Green"
+                      ? styles.green_text
+                      : ""
+                  }`}
+                >
+                  {player.userName}
+                </div>
                 <div className={styles.cellMobile}>
                   {player.betP && player.betP.suit === "oro"
                     ? "•"

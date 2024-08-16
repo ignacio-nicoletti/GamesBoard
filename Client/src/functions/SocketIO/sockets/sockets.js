@@ -79,11 +79,7 @@ export const CreateGameRoom = (
   });
 };
 
-export const joinGameRoom = (
-  game,
-  roomId,
-  userInfo
-) => {
+export const joinGameRoom = (game, roomId, userInfo) => {
   return new Promise((resolve, reject) => {
     const responses = {};
 
@@ -109,9 +105,6 @@ export const joinGameRoom = (
       userName: userInfo.userName,
       selectedAvatar: userInfo.avatarProfile,
       email: userInfo.email ? userInfo.email : "invitado",
-
-
-
     });
   });
 };
@@ -149,6 +142,7 @@ export const CreateGameRoomHorserace = (
       maxUsers,
       selectedAvatar: userInfo.avatarProfile,
       email: userInfo.email ? userInfo.email : "invitado",
+      colorName: userInfo.colorName,
     });
   });
 };
@@ -179,6 +173,7 @@ export const joinGameRoomHorserace = (game, roomId, userInfo) => {
       userName: userInfo.userName,
       selectedAvatar: userInfo.avatarProfile,
       email: userInfo.email ? userInfo.email : "invitado",
+      colorName: userInfo.colorName,
     });
   });
 };

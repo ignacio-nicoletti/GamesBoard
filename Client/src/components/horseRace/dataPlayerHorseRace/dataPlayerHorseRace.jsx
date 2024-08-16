@@ -18,7 +18,19 @@ const DataPlayerHorseRace = ({ myPlayer }) => {
             muted
           />
         )}
-        <span className={style.name}>
+        <span
+          className={`${style.name} ${
+            myPlayer?.colorName === "Rainbow Name"
+              ? style.rainbow_text
+              : myPlayer?.colorName === "Red"
+              ? style.red_text
+              : myPlayer?.colorName === "Blue"
+              ? style.blue_text
+              : myPlayer?.colorName === "Green"
+              ? style.green_text
+              : ""
+          }`}
+        >
           {myPlayer?.userName ? myPlayer.userName : "Invitado"}
         </span>
       </div>

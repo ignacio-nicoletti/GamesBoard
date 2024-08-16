@@ -55,6 +55,53 @@
   text-align: center;
 }
 
+
+.rainbow_text {
+  font-size: 2rem;
+  font-weight: bold;
+  animation: rainbow 5s linear infinite;
+}
+
+@keyframes rainbow {
+  0% {
+    color: red;
+  }
+  14% {
+    color: orange;
+  }
+  28% {
+    color: yellow;
+  }
+  42% {
+    color: green;
+  }
+  57% {
+    color: blue;
+  }
+  71% {
+    color: indigo;
+  }
+  85% {
+    color: violet;
+  }
+  100% {
+    color: red;
+  }
+}
+
+.red_text {
+  color: red;
+}
+
+.blue_text {
+  color: blue;
+}
+
+.green_text {
+  color: green;
+}
+
+
 @media only screen and (max-width: 1170px) {
   .table {
     display: none;

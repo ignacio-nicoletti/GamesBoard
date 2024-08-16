@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 
 const ChooseName = ({ setShowModal, userInfo, setUserInfo }) => {
   const [writeName, setWriteName] = useState(userInfo.userName);
-  const [selectedAvatar, setSelectedAvatar] = useState(userInfo.avatarProfile); // Estado para el avatar seleccionado
+  const [selectedAvatar, setSelectedAvatar] = useState(userInfo.avatarProfile);
   const token = GetDecodedCookie("cookieToken");
 
   const handleSubmit = async () => {
@@ -14,8 +14,8 @@ const ChooseName = ({ setShowModal, userInfo, setUserInfo }) => {
       setShowModal(false);
       if (token !== undefined) {
         await InstanceOfAxios(`/user/${userInfo.uid}`, "PUT", {
-          userName: writeName, // Corrige aquí para usar el nuevo nombre
-          avatarProfile: selectedAvatar, // Aquí asegúrate de enviar el avatar correcto
+          userName: writeName,
+          avatarUpdateProfile: selectedAvatar,
         }).then((data) => {
           setUserInfo({
             ...userInfo,
@@ -76,7 +76,7 @@ const ChooseName = ({ setShowModal, userInfo, setUserInfo }) => {
                         key={index}
                         src={avatar.url}
                         alt={avatar.name}
-                        onClick={() => setSelectedAvatar(avatar)} // Almacena el objeto del avatar seleccionado
+                        onClick={() => setSelectedAvatar(avatar)}
                         className={
                           selectedAvatar === avatar ? styles.selectedAvatar : ""
                         }
@@ -88,7 +88,7 @@ const ChooseName = ({ setShowModal, userInfo, setUserInfo }) => {
                         autoPlay
                         loop
                         muted
-                        onClick={() => setSelectedAvatar(avatar)} // Evento onClick para seleccionar video
+                        onClick={() => setSelectedAvatar(avatar)}
                         className={
                           selectedAvatar === avatar ? styles.selectedAvatar : ""
                         }
