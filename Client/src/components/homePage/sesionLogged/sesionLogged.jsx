@@ -105,7 +105,7 @@ const SesionLogged = () => {
           </div>
         </div>
       ) : (
-        <>
+        <div className={styles.ContainLogin}>
           <button
             className={styles.authButton}
             onClick={() => toggleModal(true)}
@@ -118,7 +118,7 @@ const SesionLogged = () => {
           >
             Sign Up
           </button>
-        </>
+        </div>
       )}
       {isModalOpen && (
         <Login

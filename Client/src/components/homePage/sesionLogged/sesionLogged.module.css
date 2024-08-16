@@ -16,7 +16,7 @@
   color: white;
   border: none;
   border-radius: 5px;
-  padding-inline:1.5rem;
+  padding-inline: 1.5rem;
   cursor: pointer;
   font-size: 1.2rem;
   font-family: "Bebas Neue", sans-serif;
@@ -81,12 +81,12 @@
   font-size: 1.5rem;
   margin: 0;
 }
-.Link{
+.Link {
   text-decoration: none;
   color: white;
   padding: 0.3rem;
 }
-.Link:hover{
+.Link:hover {
   color: rgb(0, 0, 0);
   background-color: rgb(255, 255, 255);
   box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
@@ -94,6 +94,17 @@
   transition: transform 0.3s ease;
   border-radius: 50%;
   padding: 0.3rem;
+}
+
+.ContainLogin {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 10px;
+}
+.ContainLogin button {
+  width: 100px;
 }
 
 /* Responsive adjustments */
