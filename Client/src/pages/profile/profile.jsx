@@ -9,7 +9,8 @@ const Profile = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [selectedAvatar, setSelectedAvatar] = useState(null);
   const [selectedColorName, setSelectedColorName] = useState(""); // Estado para almacenar la opción seleccionada
-
+  const [updateName, setUpdateName] = useState("");
+  const [isNameChanged, setIsNameChanged] = useState(false); // Estado para controlar si el nombre ha cambiado
   const token = GetDecodedCookie("cookieToken");
 
   useEffect(() => {
@@ -22,6 +23,7 @@ const Profile = () => {
             "GET"
           );
           setUserInfo(response.player);
+          setUpdateName(response.player.userName);
         }
       } catch (error) {
         console.error("Error fetching user info:", error);
@@ -35,16 +37,28 @@ const Profile = () => {
     setSelectedAvatar(avatar);
   };
 
+  const handleNameChange = (e) => {
+    setUpdateName(e.target.value);
+    setIsNameChanged(e.target.value !== userInfo.userName); // Verificar si el nombre ha cambiado
+  };
+
   const updateProfile = async () => {
-    if (userInfo && selectedAvatar) {
+    if (userInfo && (selectedAvatar || isNameChanged)) {
       try {
-        const response = await InstanceOfAxios(`/user/${userInfo.uid}`, "PUT", {
+        const updatedData = {
           avatarUpdateProfile: selectedAvatar,
           selectedColorName,
-        });
+        };
+
+        if (isNameChanged) {
+          updatedData.userName = updateName; // Añadir el nuevo nombre si ha cambiado
+        }
+
+        const response = await InstanceOfAxios(`/user/${userInfo.uid}`, "PUT", updatedData);
         setUserInfo({
           ...userInfo,
           avatarProfile: response.player.avatarProfile,
+          userName: response.player.userName, // Actualizar el nombre en el estado
         });
         window.location.reload();
       } catch (error) {
@@ -58,6 +72,16 @@ const Profile = () => {
       <SesionLogged />
       <div className={style.avatarContainer}>
         <h3>Inventario</h3>
+
+        <div>
+          <input
+            type="text"
+            placeholder="Change your name"
+            value={updateName}
+            onChange={handleNameChange}
+          />
+        </div>
+
         <div className={style.avatarContainerMap}>
           {userInfo && userInfo.avatares && userInfo.avatares.length > 0 ? (
             userInfo.avatares.map((avatar) => (
@@ -70,7 +94,10 @@ const Profile = () => {
                 }`}
                 onClick={
                   avatar && avatar.title === "Rainbow Name"
-                    ? () => {setSelectedColorName(avatar.title);handleAvatarClick(avatar)}
+                    ? () => {
+                        setSelectedColorName(avatar.title);
+                        handleAvatarClick(avatar);
+                      }
                     : () => handleAvatarClick(avatar)
                 }
               >
@@ -110,9 +137,9 @@ const Profile = () => {
             <p>No avatares found</p>
           )}
         </div>
-        {selectedAvatar && (
+        {(selectedAvatar || isNameChanged) && ( // Mostrar botón solo si hay un avatar seleccionado o si el nombre ha cambiado
           <div className={style.updateButton}>
-            <button onClick={updateProfile} disabled={!selectedAvatar.title}>
+            <button onClick={updateProfile} disabled={!selectedAvatar?.title && !isNameChanged}>
               Update Profile
             </button>
           </div>
